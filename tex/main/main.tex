@@ -1,0 +1,295 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{soul}
+\usepackage{indentfirst}
+\usepackage{multicol}
+\usepackage{tikz}
+\usetikzlibrary{automata}
+
+
+\title{A game theoretic model of the behavioural gaming that takes place at the EMS - ED interface}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[-, node distance = 3cm, auto]
+        \node[anchor=north](H1){$H_1$};
+        \node[anchor=north](H1_d1) at (3, 2){.};
+        \node[anchor=north](H1_d2) at (3, -2){.};
+
+        \path(H1) edge node {}(H1_d1);
+        \path(H1) edge node {}(H1_d2);
+        \path(H1_d1) edge [bend left] node {}(H1_d2);
+        \path(H1_d1) [dashed] edge node {}(H1_d2);
+
+        \node[anchor=north](H2) at (3.9, 0){$H_2$};
+        \node[anchor=north](H2_d1) at (6.9, 2){.};
+        \node[anchor=north](H2_d2) at (6.9, -2){.};
+
+        \path(H2) edge node {}(H2_d1);
+        \path(H2) edge node {}(H2_d2);
+        \path(H2_d1) edge [bend left] node {}(H2_d2);
+
+        \node[anchor=north](A) at (7.8, 0){$A$};
+        \node[anchor=north](A_d1) at (10.8, 2){.};
+        \node[anchor=north](A_d2) at (10.8, -2){.};
+        
+        \path(A) edge node {}(A_d1);
+        \path(A) edge node {}(A_d2);
+        \path(A_d1) edge [bend left] node {}(A_d2);
+
+    \end{tikzpicture}
+    \caption{Ambulance Decision Problem} 
+    \label{Ambulance_Problem}
+\end{figure}
+
+{\Large\textbf{States:}}
+
+\begin{enumerate}
+    \item $A$ = Ambulance
+    \item $H_i$ = Hospital i
+\end{enumerate}
+
+{\Large\textbf{Notation:}}
+\begin{itemize}
+    \item $\Lambda$ = total number of patients that need to be hospitalised
+    \item $p_i$ = proportion of patients going to Hospital i ($p_i\Lambda$ = number of patients going to hospital i)
+    \item $d_i$ = distance from Hospital i
+    \item $\hat{c_i}$ = capacity of hospital i
+    \item $W(c, \lambda\, \mu)$ = waiting time in the system function
+    \item $\mu_i$ = service rate of hospital i
+    \item $\lambda_i^o$ = arrival rate of other patients to the hospital (not by ambulance)
+    \item $C_i(p_i) = d_i + W(c = \hat{c_i},\hspace{0.1cm} \lambda = p_i\Lambda + \lambda_i^o, \hspace{0.1cm} \mu = \mu_i)$
+\end{itemize}
+
+\newpage
+
+\section{Game Theory component:} 
+\textbf{\underline{Players:}} 
+\begin{itemize}
+    \item Ambulance
+    \item Hospital A
+    \item Hospital B
+\end{itemize}
+
+\noindent 
+\textbf{\underline{Strategies of players:}}
+\begin{itemize}
+    \item Hospital i:    
+    \begin{enumerate} 
+        \item Close doors at $\hat{c_i} = 1$ 
+        \item Close doors at $\hat{c_i} = 2$
+        \item \dots
+        \item Close doors at $\hat{c_i} = C_i$
+    \end{enumerate}
+    \item Ambulance:
+    \begin{enumerate}
+        \item Choose $p_1 \in [0,1]$ 
+    \end{enumerate}
+\end{itemize}
+
+\noindent 
+\textbf{\underline{Cost Functions:}} Waiting times + the distance to each hospital. 
+
+
+
+
+
+% \section{Queuing Theory component}
+
+% The waiting times are functions dependent to the service rate ($\mu$), the arrival rate ($\lambda$) and the hospital's capacity. Thus, for every instance of the routing game (i.e. for every different value of $p_1$ and $p_2$) a new waiting time value will be calculated. The mean waiting time in the queue for an $M|M|c$ system is defined as:
+
+
+
+\section{Formulas}
+$$\hat{c_i} \in \{1,2, \dots, C_i\} $$
+$$ \rho_i = \frac{p_i \Lambda + \lambda_i^o}{\hat{c_i}\mu_i} $$
+$$ (W_q)_i = \frac{1}{\hat{c_i} \mu_i} \frac{(\hat{c_i} \rho_i)^{\hat{c_i}}}{\hat{c_i}!(1-\rho_i)^2}(P_0)_i $$
+$$ (P_0)_i = \frac{1}{\sum_{n = 0}^{\hat{c_i} - 1} \left[ \frac{(\hat{c_i} \rho_i)^n}{n!} \right] + \frac{(\hat{c_i}\rho_i)^{\hat{c_i}}}{\hat{c_i}!(1-\rho_i)}} $$
+
+\newpage
+\section{Quick Methodology}
+
+\begin{itemize}
+    \item Fix the parameters $\Lambda$, $\lambda_i^o$, $\mu_i$ and $C_i$. 
+    \item $\forall \hspace{0.2cm} \hat{c_i} \in \{1,2, \dots, C_A\}$ and $\forall \hspace{0.2cm} \hat{c_j} \in \{1,2, \dots, C_B\}$ 
+    \item Calculate $p_A$ and $p_B = 1-p_A$ s.t. $(W_q)_A = (W_q)_B$. 
+    \item Calculate the probability $P((W_q)_i \leq 4$ hours
+    \item Fill matrix A with $ U_{\hat{c_i}, \hat{c_j}}^A = 1 - |0.95 - P((W_q)_A \leq 4)|$ and
+    \item fill matrix B with $ U_{\hat{c_i}, \hat{c_j}}^B = 1 - |0.95 - P((W_q)_B \leq 4)| $
+\end{itemize}
+
+
+
+\begin{table}[h]
+    \centering
+    A = 
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    $U_{1,1}^A$ & $U_{1,2}^A$ & \dots & $U_{1,C_B}^A$ \\ \hline
+    $U_{2,1}^A$ & $U_{2,2}^A$ & \dots & $U_{2,C_B}^A$ \\ \hline
+    \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+    $U_{C_A,1}^A$ & $U_{C_A,2}^A$ & \dots & $U_{C_A,C_B}^A$ \\ \hline
+    \end{tabular}
+\end{table}  
+
+\begin{table}[h]
+    \centering
+    B = 
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    $U_{1,1}^B$ & $U_{1,2}^B$ & \dots & $U_{1,C_B}^B$ \\ \hline
+    $U_{2,1}^B$ & $U_{2,2}^B$ & \dots & $U_{2,C_B}^B$ \\ \hline
+    \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+    $U_{C_A,1}^B$ & $U_{C_A,2}^B$ & \dots & $U_{C_A,C_B}^B$ \\ \hline
+    \end{tabular}
+\end{table}  
+
+\begin{itemize}
+    \item Ambulance decides the proportion of people to distribute to each hospital based on optimal patient distribution.
+\end{itemize}
+
+\newpage
+\section{Proper Methodology}
+The problem is formulated as a normal form game where the players are the two hospitals. Each hospital is given $C_A$ and $C_B$ number of strategies where $C_A$ and $C_B$ are the total capacities of the hospitals. In other words, depending on the capacity of each hospital, they may choose to stop receiving patients from arriving ambulances whenever they reach a certain capacity threshold. The goal of this problem is to satisfy the ED regulations which state that 95\% of the patients should see a specialist within 4 hours of their arrival to the hospital. The mean of the random variable $W_q$ is the average waiting time in the queue for hospital i.
+
+
+\begin{equation}
+     W_q(\lambda_i, \mu_i, \hat{c_i}) = \frac{1}{\hat{c_i} \mu_i} \frac{(\hat{c_i} \rho_i) ^ {\hat{c_i}}}{\hat{c_i}! (1 - \rho_i) ^ 2}P_0, \quad i \in \{A,B\}
+\end{equation}
+
+Thus, the utilities of the two players should be the proportion of people that fall within the 4 hours target. This is also equivalent to the probability of the waiting time of an individual to be less than or equal to 4 hours. 
+
+\begin{equation}
+    P(W_q(\lambda_i, \mu_i, \hat{c_i}) \leq 4), \quad i \in \{A,B\}
+\end{equation}
+
+Therefore, a sensible goal for each player should be to minimise that probability, but the actual target of the hospitals is to satisfy 95\% of those patients within the 4-hour time limit. Therefore, the goal should be to get that probability as close to 0.95 as possible. Thus each player should aim to minimise:
+
+\begin{equation}
+    |0.95 - P(W_q(\lambda_i, \mu_i, \hat{c_i}) \leq 4)|, \quad i \in \{A,B\}
+\end{equation}
+
+The classic formulation of a normal form game looks into the maximisation of each player's payoff. Consequently the utilities can be altered such that the goal of each player is to maximise:
+
+\begin{align}\label{Utilities}
+    U_{\hat{c_A}, \hat{c_B}} ^ {A} = 1 - |0.95 - P(W_q(\lambda_A, \mu_A, \hat{c_A}) \leq 4)| \\
+    U_{\hat{c_A}, \hat{c_B}} ^ {B} = 1 - |0.95 - P(W_q(\lambda_B, \mu_B, \hat{c_B}) \leq 4)|
+\end{align}
+
+Finally, the problem can be expressed as a normal form game with two players where each player/hospital has $C_A$ and $C_B$ strategies respectively. The two $C_A \times C_B$ payoff matrices for the utilities of the two hospitals can be defined as:
+
+\begin{table}[h]
+    \centering
+    \begin{minipage}{.5\linewidth}
+        A = 
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            $U_{1,1}^A$ & $U_{1,2}^A$ & \dots & $U_{1,C_2}^A$ \\ \hline
+            $U_{2,1}^A$ & $U_{2,2}^A$ & \dots & $U_{2,C_2}^A$ \\ \hline
+            \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+            $U_{C_1,1}^A$ & $U_{C_1,2}^A$ & \dots & $U_{C_1,C_2}^A$ \\ \hline
+        \end{tabular}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        B = 
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            $U_{1,1}^B$ & $U_{1,2}^B$ & \dots & $U_{1,C_2}^B$ \\ \hline
+            $U_{2,1}^B$ & $U_{2,2}^B$ & \dots & $U_{2,C_2}^B$ \\ \hline
+            \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+            $U_{C_1,1}^B$ & $U_{C_1,2}^B$ & \dots & $U_{C_1,C_2}^B$ \\ \hline
+        \end{tabular}
+    \end{minipage}
+\end{table}  
+Once the certain strategies of the game have been selected the ambulance service can decide what would be the optimal way to distribute patients. However, the way the ambulance service distributes patients can affect the utilities of the game. So how would one solve this kind of problem?
+ 
+\subsection{Solution}
+As mentioned before the problem requires the construction of two queuing models that will be needed for the formulation of the normal form game. Based on those utilities the ambulance service will then decide the percentage of patients that will distribute to each hospital. 
+
+First and foremost, the model consists of several parameters that are unknown and are assumed to be fixed. The model will be run multiple times for various values of these parameters.
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        $\Lambda$ & Number of patients that need to be distributed \\ \hline
+        $\lambda_i^o$ & Arrival rate of other patients that enter hospital i \\ \hline
+        $\mu_i$ & Service rate of hospital i \\ \hline
+        $C_i$ & Total capacity of hospital i \\ \hline
+    \end{tabular}
+    \caption{Fixed Parameters}
+\end{table}
+
+Having established the fixed parameters of the model, the hospitals' utilities need to be calculated. In order to do so a backwards induction approach will be used. The EMS aims to distribute the patients such that the mean waiting time of patients is minimal. This can be further interpreted as when the mean waiting time of hospital A equals the mean waiting time of hospital B. Thus, the minimal mean waiting time can be found for the values of $p_A$ and $p_B$ that solve the following equation:
+
+\begin{equation}\label{Equal_Wait}
+    W_q(\lambda_A, \mu_A, \hat{c_A}) = W_q(\lambda_B, \mu_B, \hat{c_B})
+\end{equation}
+
+Equation (\ref{Equal_Wait}) needs to be solved for all values of $c_i \in \{1,2, \dots C_A\}$ and $c_j \in \{1,2, \dots C_B\}$. Then, for every $c_i$ and $c_j$ the utility equation (\ref{Utilities}) has to be calculated for both hospitals. In order to solve it though, one must first estimate the probability $P[(W_q)_{\{A, B\}}] \leq 4]$. That is the probability that the waiting time in the queue for one of the hospitals is less than 4 hours. For a multi-server system, the distribution of the waiting time can be given by equation \ref{Dist_Wait}. The above expression returns the probability that the waiting time in the queue is less than some time T.
+
+\begin{equation}\label{Dist_Wait}
+    P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T})
+\end{equation}
+
+Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}) a newer utility equation can be acquired:
+ 
+\begin{equation}\label{Utilities2}
+    U_{\hat{c_i}, \hat{c_j}} ^ {\{A, B\}} = 1 - \left| \left[ \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} \left( e^{-(c \mu - \lambda)T} \right) \right] - 0.05 \right|
+\end{equation}
+
+\begin{table}[h]
+    \centering
+    \begin{minipage}{.5\linewidth}
+        A = 
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            $U_{1,1}^A$ & $U_{1,2}^A$ & \dots & $U_{1,C_2}^A$ \\ \hline
+            $U_{2,1}^A$ & $U_{2,2}^A$ & \dots & $U_{2,C_2}^A$ \\ \hline
+            \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+            $U_{C_1,1}^A$ & $U_{C_1,2}^A$ & \dots & $U_{C_1,C_2}^A$ \\ \hline
+        \end{tabular}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        B = 
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            $U_{1,1}^B$ & $U_{1,2}^B$ & \dots & $U_{1,C_2}^B$ \\ \hline
+            $U_{2,1}^B$ & $U_{2,2}^B$ & \dots & $U_{2,C_2}^B$ \\ \hline
+            \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+            $U_{C_1,1}^B$ & $U_{C_1,2}^B$ & \dots & $U_{C_1,C_2}^B$ \\ \hline
+        \end{tabular}
+    \end{minipage}
+\end{table}  
+
+
+\section{Probability of waiting time}
+
+\begin{itemize}
+    \item Suppose there are s identical and independent \underline{busy servers} 
+    \item Let t = waiting time for one of the servers to be free
+    \item Let $t_1, t_2, \dots, t_c$ be the service times of the $i_{th}$ sever 
+    \item Each $t_i \sim$ Exp($\mu$)
+    \item $t = min \{t_1, t_2 , \dots, t_c \}$
+    \item $P(t \leq T) = 1 - e^{-c \mu T}$
+    \item Initial assumption has been that the servers are busy and that the customer is first in the queue
+    \item Further investigation of the formula required
+\end{itemize}
+
+\newpage
+Donald Gross, Carl M. Harris
+Fundamentals of Queueing Theory: Page 73
+$ P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T}) $
+
+
+\end{document}

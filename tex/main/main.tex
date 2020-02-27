@@ -6,7 +6,7 @@
 \usepackage{indentfirst}
 \usepackage{multicol}
 \usepackage{tikz}
-\usetikzlibrary{automata}
+\usetikzlibrary{calc, automata, chains, arrows.meta}
 
 
 \title{A game theoretic model of the behavioural gaming that takes place at the EMS - ED interface}
@@ -273,23 +273,72 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
 \end{table}  
 
 
-\section{Probability of waiting time}
+\section{Distribution of waiting time}
+\begin{equation}
+    P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T})
+\end{equation}
 
-\begin{itemize}
-    \item Suppose there are s identical and independent \underline{busy servers} 
-    \item Let t = waiting time for one of the servers to be free
-    \item Let $t_1, t_2, \dots, t_c$ be the service times of the $i_{th}$ sever 
-    \item Each $t_i \sim$ Exp($\mu$)
-    \item $t = min \{t_1, t_2 , \dots, t_c \}$
-    \item $P(t \leq T) = 1 - e^{-c \mu T}$
-    \item Initial assumption has been that the servers are busy and that the customer is first in the queue
-    \item Further investigation of the formula required
-\end{itemize}
 
-\newpage
-Donald Gross, Carl M. Harris
-Fundamentals of Queueing Theory: Page 73
-$ P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T}) $
+\section{Markov Chain Representation}
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[-, node distance = 1cm, auto]
+        \node[state] (empty) {(0,0)};
+        \node[state, right=of empty] (one) {(0,1)};
+        \node[state, right=of one] (two) {(0,2)};
+        \node[state, right=of two] (three) {(0,3)};
+        \node[state, right=of three] (four) {(0,4)};
+        \node[state, right=of four] (five) {(0,5)};
+
+        \node[state, below=of three] (three_one) {(1,3)};
+        \node[state, below=of three_one] (three_two) {(2,3)};
+        \node[state, below=of four] (four_one) {(1,4)};
+        \node[state, below=of four_one] (four_two) {(2,4)};
+        \node[state, below=of five] (five_one) {(1,5)};
+        \node[state, below=of five_one] (five_two) {(2,5)};
+
+
+
+        \draw[every loop]
+            (empty) edge[bend left] node {$\Lambda$} (one)
+            (one) edge[bend left] node {$\mu$} (empty)
+            (one) edge[bend left] node {$\Lambda$} (two)
+            (two) edge[bend left] node {$\mu$} (one)
+            (two) edge[bend left] node {$\Lambda$} (three)
+            (three) edge[bend left] node {$\mu$} (two)
+            (three) edge[bend left] node {$\lambda^o$} (four)
+            (four) edge[bend left] node {$\mu$} (three)
+            (four) edge[bend left] node {$\lambda^o$} (five)
+            (five) edge[bend left] node {$\mu$} (four)
+            (three) edge[bend left] node {$\lambda^A$} (three_one)
+            (three_one) edge[bend left] node {$\mu$} (three)
+            (three_one) edge[bend left] node {$\lambda^o$} (four_one)
+            (four_one) edge[bend left] node {$\mu$} (three_one)
+            (four_one) edge[bend left] node {$\lambda^o$} (five_one)
+            (five_one) edge[bend left] node {$\mu$} (four_one)
+            (four) edge node {$\lambda^A$} (four_one)
+            % (four_one) edge[bend left] node {$\mu$} (four)
+            (five) edge node {$\lambda^A$} (five_one)
+            % (five_one) edge[bend left] node {$\mu$} (five)
+            (three_one) edge[bend left] node {$\lambda^A$} (three_two)
+            (three_two) edge[bend left] node {$\mu$} (three_one)
+            (four_one) edge node {$\lambda^A$} (four_two)
+            % (four_two) edge[bend left] node {$\mu$} (four_one)
+            (five_one) edge node {$\lambda^A$} (five_two)
+            % (five_two) edge[bend left] node {$\mu$} (five_one)
+            (three_two) edge[bend left] node {$\lambda^o$} (four_two)
+            (four_two) edge[bend left] node {$\mu$} (three_two)
+            (four_two) edge[bend left] node {$\lambda^o$} (five_two)
+            (five_two) edge[bend left] node {$\mu$} (four_two)
+            ;       
+
+
+    \end{tikzpicture}
+    \caption{Markov chains} 
+    \label{Markov}
+\end{figure}
+
 
 
 \end{document}

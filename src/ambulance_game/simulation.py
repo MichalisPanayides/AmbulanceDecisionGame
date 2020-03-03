@@ -4,7 +4,6 @@ import ciw
 from collections import Counter
 
 
-
 def build_model(lambda_a, lambda_o, mu, total_capacity):
     """ Builds the required ciw network
 
@@ -18,15 +17,15 @@ def build_model(lambda_a, lambda_o, mu, total_capacity):
         [Service rate of hospital]
     total_capacity : [integer]
         [The total capacity of the hospital]
-    """          
+    """
     model = ciw.create_network(
-        arrival_distributions = [ciw.dists.Exponential(lambda_a),
-                                 ciw.dists.Exponential(lambda_o)],
-        service_distributions = [ciw.dists.Deterministic(0),
-                                 ciw.dists.Exponential(mu)],
-        routing=[[0.0, 1.0],
-                 [0.0, 0.0]],
-        number_of_servers=[float('inf'), total_capacity]
+        arrival_distributions=[
+            ciw.dists.Exponential(lambda_a),
+            ciw.dists.Exponential(lambda_o),
+        ],
+        service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
+        routing=[[0.0, 1.0], [0.0, 0.0]],
+        number_of_servers=[float("inf"), total_capacity],
     )
     return model
 
@@ -43,8 +42,9 @@ def build_custom_node(threshold=8):
     -------
     [class]
         [A custom node class that inherits from ciw.Node]
-    """    
-    class CustomNode(ciw.Node):   
+    """
+
+    class CustomNode(ciw.Node):
         def finish_service(self):
             """
             The next individual finishes service:
@@ -61,16 +61,21 @@ def build_custom_node(threshold=8):
             next_node = self.next_node(next_individual)
             next_individual.destination = next_node.id_number
             if not np.isinf(self.c):
-                next_individual.server.next_end_service_date = float('Inf')
-            blockage = (next_node.number_of_individuals >= threshold and self.id_number == 1)
-            if (next_node.number_of_individuals < next_node.node_capacity) and not blockage:
+                next_individual.server.next_end_service_date = float("Inf")
+            blockage = (
+                next_node.number_of_individuals >= threshold and self.id_number == 1
+            )
+            if (
+                next_node.number_of_individuals < next_node.node_capacity
+            ) and not blockage:
                 self.release(next_individual_index, next_node)
             else:
                 self.block_individual(next_individual, next_node)
+
     return CustomNode
 
 
-def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num = None):    
+def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=None):
     """Simulating the model and returning the simulation object
     
     Parameters
@@ -82,7 +87,7 @@ def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num =
     -------
     [object]
         [An object that contains all simulation records]
-    """    
+    """
     if seed_num == None:
         seed_num = random.random()
     model = build_model(lambda_a, lambda_o, mu, total_capacity)
@@ -93,5 +98,5 @@ def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num =
     return Simulation
 
 
-print(type(build_model(1,1,3,1)))
+print(type(build_model(1, 1, 3, 1)))
 print(type(build_custom_node(1)))

@@ -11,15 +11,21 @@ from ambulance_game import (
 )
 
 
-@given(l_a = floats(min_value = 0.1, max_value = 10), l_o = floats(min_value = 0.1, max_value = 10), mu = floats(min_value = 0.1, max_value = 10), c = integers(min_value = 1, max_value = 20))
+@given(
+    l_a=floats(min_value=0.1, max_value=10),
+    l_o=floats(min_value=0.1, max_value=10),
+    mu=floats(min_value=0.1, max_value=10),
+    c=integers(min_value=1, max_value=20),
+)
 def test_build_model(l_a, l_o, mu, c):
     """
     Test to ensure consistent outcome type
-    """    
+    """
     result = build_model(l_a, l_o, mu, c)
     assert type(result) == ciw.network.Network
     # more specific examples
     # run black
+
 
 def test_specific_model():
     """
@@ -36,12 +42,13 @@ def test_specific_model():
     assert sum(wait) == 1089.854729732795
     assert sum(blocks) == 0
 
+
 def test_build_custom_node():
     """
     Test to ensure blocking occurs for specific case
     """
     ciw.seed(5)
-    Q = ciw.Simulation(build_model(1, 1, 2, 1), node_class=build_custom_node(7))   
+    Q = ciw.Simulation(build_model(1, 1, 2, 1), node_class=build_custom_node(7))
 
     Q.simulate_until_max_time(100)
     records = Q.get_all_records()

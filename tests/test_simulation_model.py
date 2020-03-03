@@ -18,14 +18,15 @@ def test_build_model(l_a, l_o, mu, c):
     """    
     result = build_model(l_a, l_o, mu, c)
     assert type(result) == ciw.network.Network
-
+    # more specific examples
+    # run black
 
 def test_specific_model():
     """
     Test to ensure correct results to specific problem
     """
     ciw.seed(5)
-    Q = ciw.Simulation(build_model(1, 1, 2, 1))
+    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, total_capacity=1))
     Q.simulate_until_max_time(100)
     records = Q.get_all_records()
     wait = [r.waiting_time for r in records]

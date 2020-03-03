@@ -31,7 +31,7 @@ def build_model(lambda_a, lambda_o, mu, total_capacity):
     return model
 
 
-def build_custom_node(threshold=7):
+def build_custom_node(threshold=8):
     """Build a custome node to replace the default ciw.Node
     
     Parameters
@@ -70,8 +70,8 @@ def build_custom_node(threshold=7):
     return CustomNode
 
 
-def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num = random.random()):    
-    """[Simulate the model]
+def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num = None):    
+    """Simulating the model and returning the simulation object
     
     Parameters
     ----------
@@ -83,6 +83,8 @@ def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num =
     [object]
         [An object that contains all simulation records]
     """    
+    if seed_num == None:
+        seed_num = random.random()
     model = build_model(lambda_a, lambda_o, mu, total_capacity)
     node = build_custom_node(threshold)
     ciw.seed(seed_num)

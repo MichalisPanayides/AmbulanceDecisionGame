@@ -58,7 +58,7 @@ def build_custom_node(threshold=8):
               - release that individual from their node
             """
             continue_blockage = (
-                self.number_of_individuals > threshold and self.id_number == 2
+                self.number_of_individuals >= threshold and self.id_number == 2
             )
             if (
                 self.len_blocked_queue > 0
@@ -112,7 +112,9 @@ def build_custom_node(threshold=8):
     return CustomNode
 
 
-def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=None):
+def simulate_model(
+    lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=None, runtime=1440
+):
     """Simulating the model and returning the simulation object
  
     Parameters
@@ -131,7 +133,7 @@ def simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=N
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
     simulation = ciw.Simulation(model, node_class=node)
-    simulation.simulate_until_max_time(1440)
+    simulation.simulate_until_max_time(runtime)
     return simulation
 
 
@@ -150,11 +152,17 @@ def extract_times_from_records(simulation_records, warm_up_time):
     [list, list, list]
         [Three lists that contain waiting, service and blocking times]
     """
-    waiting = [r.waiting_time for r in simulation_records if r.arrival_date > warm_up_time]
-    serving = [r.service_time for r in simulation_records if r.arrival_date > warm_up_time]
-    blocking = [r.time_blocked for r in simulation_records if r.arrival_date > warm_up_time]
+    waiting = [
+        r.waiting_time for r in simulation_records if r.arrival_date > warm_up_time
+    ]
+    serving = [
+        r.service_time for r in simulation_records if r.arrival_date > warm_up_time
+    ]
+    blocking = [
+        r.time_blocked for r in simulation_records if r.arrival_date > warm_up_time
+    ]
     return waiting, serving, blocking
-    
+
 
 def get_list_of_results(results):
     """Modify the outputs even further so that it is output in a different more convenient format for some graphs 
@@ -175,8 +183,19 @@ def get_list_of_results(results):
     return all_waits, all_services, all_blocks
 
 
-def get_multiple_runs_results(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=None, warm_up_time=100, num_of_trials=10, output_type="tuple"):
-    """[summary]
+def get_multiple_runs_results(
+    lambda_a,
+    lambda_o,
+    mu,
+    total_capacity,
+    threshold,
+    seed_num=None,
+    warm_up_time=100,
+    num_of_trials=10,
+    runtime=1440,
+    output_type="tuple",
+):
+    """Get waiting, service and blocking times for multiple runs 
     
     Parameters
     ----------
@@ -189,21 +208,26 @@ def get_multiple_runs_results(lambda_a, lambda_o, mu, total_capacity, threshold,
     
     Returns
     -------
-    [type]
-        [description]
+    [list]
+        [A list of records where each record consists of the waiting, service and blocking times of one trial. Alternatively if the output_type = "list" then returns theree lists with all waiting, service and blocking times] 
+
     """
     if seed_num == None:
         seed_num = random.random()
-    records = collections.namedtuple('records', 'waiting_times service_times blocking_times')
+    records = collections.namedtuple(
+        "records", "waiting_times service_times blocking_times"
+    )
     results = []
     for trial in range(num_of_trials):
-        simulation = simulate_model(lambda_a, lambda_o, mu, total_capacity, threshold, seed_num + trial)
+        simulation = simulate_model(
+            lambda_a, lambda_o, mu, total_capacity, threshold, seed_num + trial, runtime
+        )
         sim_results = simulation.get_all_records()
         ext = extract_times_from_records(sim_results, warm_up_time)
         results.append(records(ext[0], ext[1], ext[2]))
-        
+
     if output_type == "list":
         all_waits, all_services, all_blocks = get_list_of_results(results)
         return [all_waits, all_services, all_blocks]
-    
+
     return results

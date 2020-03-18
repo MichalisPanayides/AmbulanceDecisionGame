@@ -249,7 +249,7 @@ def make_plot_for_different_thresholds(
 
 # Plot 2: Proportion of people within target
 
-def get_target_proportions_of_current_trial(individuals):
+def get_target_proportions_of_current_trial(individuals, target):
     """Get the proportion waiting times within the target for a given trial of a threshold
     
     Parameters
@@ -275,18 +275,18 @@ def get_target_proportions_of_current_trial(individuals):
         rec = individual.data_records[-1]
         if rec.node == 2 and ind_class == 0:
             other_waits += 1
-            if rec.waiting_time < 4:
+            if rec.waiting_time < target:
                 other_target_waits += 1
         elif rec.node == 2 and ind_class == 1:
             ambulance_waits += 1
-            if rec.waiting_time < 4:
+            if rec.waiting_time < target:
                 ambulance_target_waits += 1
 
     return ambulance_waits, ambulance_target_waits, other_waits, other_target_waits
 
 
 def get_mean_waits_of_current_threshold(
-    lambda_a, lambda_o, mu, total_capacity, threshold, seed_num, num_of_trials, runtime
+    lambda_a, lambda_o, mu, total_capacity, threshold, seed_num, num_of_trials, runtime, target
 ):
     """Calculates the mean proportion of times that satisfy the target of all trials for the current threshold iteration
     
@@ -311,7 +311,7 @@ def get_mean_waits_of_current_threshold(
             ambulance_target_waits,
             other_waits,
             other_target_waits,
-        ) = get_target_proportions_of_current_trial(individuals)
+        ) = get_target_proportions_of_current_trial(individuals, target)
 
         current_ambulance_proportions.append(
             (ambulance_target_waits / ambulance_waits) if ambulance_waits != 0 else 1
@@ -372,6 +372,7 @@ def make_proportion_plot(
             seed_num,
             num_of_trials,
             runtime,
+            target,
         )
         ambulance_proportions.append(mean_ambulance)
         other_proportions.append(mean_other)

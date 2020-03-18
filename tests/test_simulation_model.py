@@ -74,16 +74,16 @@ def test_simulate_model():
         )
         sim_results.append(len(simulation.get_all_records()))
 
-    assert sim_results[0] == 577
-    assert sim_results[1] == 556
-    assert sim_results[2] == 586
-    assert sim_results[3] == 563
-    assert sim_results[4] == 520
-    assert sim_results[5] == 597
-    assert sim_results[6] == 560
-    assert sim_results[7] == 574
-    assert sim_results[8] == 570
-    assert sim_results[9] == 599
+    assert sim_results[0] == 474
+    assert sim_results[1] == 490
+    assert sim_results[2] == 491
+    assert sim_results[3] == 486
+    assert sim_results[4] == 458
+    assert sim_results[5] == 539
+    assert sim_results[6] == 453
+    assert sim_results[7] == 470
+    assert sim_results[8] == 492
+    assert sim_results[9] == 483
 
 
 def test_get_multiple_results():
@@ -104,6 +104,6 @@ def test_get_multiple_results():
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
 
     assert type(mult_results) == list
-    assert np.mean(all_waits) == 0.45804141527385156
-    assert np.mean(all_servs) == 14.980241792997736
-    assert np.mean(all_blocks) == 54.615982278042125
+    assert np.mean(all_waits) == 0.3333489337233605
+    assert np.mean(all_servs) == 15.94133405666149
+    assert np.mean(all_blocks) == 77.92554258000573

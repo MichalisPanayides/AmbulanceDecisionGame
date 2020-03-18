@@ -249,7 +249,6 @@ def make_plot_for_different_thresholds(
 
 # Plot 2: Proportion of people within target
 
-
 def get_target_proportions_of_current_trial(individuals):
     """Get the proportion waiting times within the target for a given trial of a threshold
     
@@ -396,7 +395,6 @@ def make_proportion_plot(
 
 # Plot 3: Arrival rate vs waiting/blocking time between two Hospitals
 
-
 def update_hospitals_lists(
     hospital_times_1, hospital_times_2, times_1, times_2, measurement_type
 ):
@@ -530,8 +528,7 @@ def make_plot_two_hospitals_arrival_split(
     return waiting_time_plot
 
 
-# Plot 4: Waiting/Blocking time confidence interavls VS warm-up time
-
+# Plot 4: Waiting/Blocking time distribution VS warm-up time
 
 def get_times_and_labels(records, measurement_type):
     """Identifies the required times (waiting or blocking) and plot lebels (Function is used in Plot 5 as well)
@@ -623,7 +620,6 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
 
 
 # Plot 5: Waiting/Blocking time confidence interavls VS runtime
-
 
 def make_plot_of_confidence_intervals_over_runtime(
     lambda_a,

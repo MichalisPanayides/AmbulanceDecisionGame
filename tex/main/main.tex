@@ -2,11 +2,26 @@
 
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{geometry}
 \usepackage{soul}
 \usepackage{indentfirst}
 \usepackage{multicol}
 \usepackage{tikz}
 \usetikzlibrary{calc, automata, chains, arrows.meta}
+
+
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+
+
 
 
 \title{A game theoretic model of the behavioural gaming that takes place at the EMS - ED interface}
@@ -15,7 +30,6 @@
 
 \begin{document}
 \maketitle
-
 
 
 \begin{figure}[h]
@@ -157,6 +171,14 @@ $$ (P_0)_i = \frac{1}{\sum_{n = 0}^{\hat{c_i} - 1} \left[ \frac{(\hat{c_i} \rho_
     \item Ambulance decides the proportion of people to distribute to each hospital based on optimal patient distribution.
 \end{itemize}
 
+
+\section{Distribution of waiting time}
+\begin{equation}
+    P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T})
+\end{equation}
+
+
+
 \newpage
 \section{Proper Methodology}
 The problem is formulated as a normal form game where the players are the two hospitals. Each hospital is given $C_A$ and $C_B$ number of strategies where $C_A$ and $C_B$ are the total capacities of the hospitals. In other words, depending on the capacity of each hospital, they may choose to stop receiving patients from arriving ambulances whenever they reach a certain capacity threshold. The goal of this problem is to satisfy the ED regulations which state that 95\% of the patients should see a specialist within 4 hours of their arrival to the hospital. The mean of the random variable $W_q$ is the average waiting time in the queue for hospital i.
@@ -273,76 +295,124 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
 \end{table}  
 
 
-\section{Distribution of waiting time}
-\begin{equation}
-    P(W_q > T) = \frac{(\frac{\lambda}{\mu})^c P_0}{c!(1-\frac{\lambda}{c \mu})} (e^{-(c \mu - \lambda)T})
-\end{equation}
 
 
-\section{Markov Chain Representation}
 
+\newgeometry{left=0.3cm, right=0.3cm}
+\section{Markov Chain Representation of Hospital}
 \begin{figure}[h]
     \centering
-    \begin{tikzpicture}[-, node distance = 1cm, auto]
-        \node[state] (empty) {(0,0)};
-        \node[state, right=of empty] (one) {(0,1)};
-        \node[state, right=of one] (two) {(0,2)};
-        \node[state, right=of two] (three) {(0,3)};
-        \node[state, right=of three] (four) {(0,4)};
-        \node[state, right=of four] (five) {(0,5)};
+    \begin{tikzpicture}[-, node distance = 1cm, auto, every node/.style={scale=1}]
+        \node[state, minimum size=1.5cm] (zero) {(0,0)};
+        \node[state, minimum size=1.5cm,  right=of zero] (one) {(0,1)};
+        \node[draw=none, minimum size=1.5cm, right=of one] (two) {\dots};
+        \node[state, minimum size=1.5cm, right=of two] (three) {(0,t)};
+        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of three] (four) {(0,t+1)};
+        \node[draw=none, node distance = 1.5cm, minimum size=1.5cm, right=of four] (five) {\dots};
+    
+        \node[state, minimum size=1.5cm, below=of three] (three_one) {(1,t)};
+        \node[state, minimum size=1.5cm, below=of three_one] (three_two) {(2,t)};
+        \node[state, minimum size=1.5cm, below=of four] (four_one) {(1,t+1)};
+        \node[state, minimum size=1.5cm, below=of four_one] (four_two) {(2,t+1)};
+        \node[draw=none, minimum size=1.5cm, below=of five] (five_one) {\dots};
+        \node[draw=none, minimum size=1.5cm, below=of five_one] (five_two) {\dots};
+    
 
-        \node[state, below=of three] (three_one) {(1,3)};
-        \node[state, below=of three_one] (three_two) {(2,3)};
-        \node[state, below=of four] (four_one) {(1,4)};
-        \node[state, below=of four_one] (four_two) {(2,4)};
-        \node[state, below=of five] (five_one) {(1,5)};
-        \node[state, below=of five_one] (five_two) {(2,5)};
+        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five] (after_five) {(0,C)};
+        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five_one] (after_five_one) {(1,C)};
+        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five_two] (after_five_two_right) {(2,C)};
+
+        \node[draw=none, minimum size=1.5cm, below=of three_two] (after_three_two) {};
+        \node[draw=none, minimum size=1.5cm, below=of four_two] (after_four_two) {};
+        \node[draw=none, minimum size=1.5cm, below=of five_two] (after_five_two_down) {};
+        
+        \node[draw=none, node distance = 1.5cm, minimum size=1.5cm, right=of after_five_two_down] (after_five_two_down_right) {};
 
 
+        \node[draw=none, minimum size=1.5cm, right=of after_five] (last) {};
+        \node[draw=none, minimum size=1.5cm, right=of after_five_one] (last_one) {};
+        \node[draw=none, minimum size=1.5cm, right=of after_five_two_right] (last_two) {};
 
         \draw[every loop]
-            (empty) edge[bend left] node {$\Lambda$} (one)
-            (one) edge[bend left] node {$\mu$} (empty)
+            (zero) edge[bend left] node {$\Lambda$} (one)
+            (one) edge[bend left] node [above] {$\mu$} (zero)
             (one) edge[bend left] node {$\Lambda$} (two)
-            (two) edge[bend left] node {$\mu$} (one)
+            (two) edge[bend left] node [above] {$2 \mu$} (one)
             (two) edge[bend left] node {$\Lambda$} (three)
-            (three) edge[bend left] node {$\mu$} (two)
+            (three) edge[bend left] node [above] {$t \mu$} (two)
+
             (three) edge[bend left] node {$\lambda^o$} (four)
-            (four) edge[bend left] node {$\mu$} (three)
+            (four) edge[bend left] node [above] {$(t+1) \mu$} (three)
             (four) edge[bend left] node {$\lambda^o$} (five)
-            (five) edge[bend left] node {$\mu$} (four)
+            (five) edge[bend left] node [above] {$(t+2) \mu$} (four)
+
             (three) edge[bend left] node {$\lambda^A$} (three_one)
-            (three_one) edge[bend left] node {$\mu$} (three)
-            (three_one) edge[bend left] node {$\lambda^o$} (four_one)
-            (four_one) edge[bend left] node {$\mu$} (three_one)
-            (four_one) edge[bend left] node {$\lambda^o$} (five_one)
-            (five_one) edge[bend left] node {$\mu$} (four_one)
+            (three_one) edge[bend left] node {$t \mu$} (three)
             (four) edge node {$\lambda^A$} (four_one)
-            % (four_one) edge[bend left] node {$\mu$} (four)
-            (five) edge node {$\lambda^A$} (five_one)
-            % (five_one) edge[bend left] node {$\mu$} (five)
+
+            (three_one) edge[bend left] node {$\lambda^o$} (four_one)
+            (four_one) edge[bend left] node [above] {$(t+1) \mu$} (three_one)
+            (four_one) edge[bend left] node {$\lambda^o$} (five_one)
+            (five_one) edge[bend left] node [above] {$(t+2) \mu$} (four_one)
+
             (three_one) edge[bend left] node {$\lambda^A$} (three_two)
-            (three_two) edge[bend left] node {$\mu$} (three_one)
+            (three_two) edge[bend left] node {$t \mu$} (three_one)
             (four_one) edge node {$\lambda^A$} (four_two)
-            % (four_two) edge[bend left] node {$\mu$} (four_one)
-            (five_one) edge node {$\lambda^A$} (five_two)
-            % (five_two) edge[bend left] node {$\mu$} (five_one)
+
             (three_two) edge[bend left] node {$\lambda^o$} (four_two)
-            (four_two) edge[bend left] node {$\mu$} (three_two)
+            (four_two) edge[bend left] node [above] {$(t+1) \mu$} (three_two)
             (four_two) edge[bend left] node {$\lambda^o$} (five_two)
-            (five_two) edge[bend left] node {$\mu$} (four_two)
+            (five_two) edge[bend left] node [above] {$(t+2) \mu$} (four_two)
+
+            (three_two) edge[bend left] node {$\lambda^A$} (after_three_two)
+            (after_three_two) edge[bend left] node {$t\mu$} (three_two)
+            (four_two) edge node {$\lambda^A$} (after_four_two)
+
+            (five) edge[bend left] node {$\lambda^o$} (after_five)
+            (after_five) edge[bend left] node [above] {$C\mu$} (five)
+            (five_one) edge[bend left] node {$\lambda^o$} (after_five_one)
+            (after_five_one) edge[bend left] node [above] {$C\mu$} (five_one)
+            (five_two) edge[bend left] node {$\lambda^o$} (after_five_two_right)
+            (after_five_two_right) edge[bend left] node [above] {$C\mu$} (five_two)
+
+            (after_five) edge[bend left] node {$\lambda^o$} (last)
+            (last) edge[bend left] node [above] {$C\mu$} (after_five)
+            (after_five_one) edge[bend left] node {$\lambda^o$} (last_one)
+            (last_one) edge[bend left] node [above] {$C\mu$} (after_five_one)
+            (after_five_two_right) edge[bend left] node {$\lambda^o$} (last_two)
+            (last_two) edge[bend left] node [above] {$C\mu$} (after_five_two_right)
+
+            (after_five) edge node {$\lambda^A$} (after_five_one)
+            (after_five_one) edge node {$\lambda^A$} (after_five_two_right)
+            (after_five_two_right) edge node {$\lambda^A$} (after_five_two_down_right)
             ;       
-
-
     \end{tikzpicture}
     \caption{Markov chains} 
-    \label{Markov}
+    \label{Markov_3}
 \end{figure}
+
+\subsection{Markov-chain state mapping function}
+The transition matrix of the Markov-chain representation described above can be denoted by a state mapping function. Therefore, the entries of the transition matrix can be given by $r_{i,j} = r_{(p_i, h_i),(p_j, h_j)}$ which is the transition rate from state $i = (p_i, h_i)$ to state $j = (p_j , h_j)$.
+
+\begin{equation}
+    r_{i, j} = 
+    \begin{cases}
+        \Lambda, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,-1) \text{ and } h_i < \text{t} \\
+        \lambda^o, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,-1) \text{ and } h_i \geq \text{t} \\
+        \lambda^a, & \text{if } (p_i,h_i) - (p_j, h_j) = (-1,0) \\
+        h_i \mu, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,1) \text{ or } \\
+         & \hspace{0.4cm} [(p_i,h_i) - (p_j, h_j) = (1,0) \text{ and } h_i = \text{t}]
+    \end{cases}
+\end{equation}
+\restoregeometry
+
+
+
+
 
 
 
 \newpage
-
 \begin{figure}
     \centering
     \begin{tikzpicture}[>=latex]
@@ -378,5 +448,67 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
     \end{tikzpicture}
 
 \end{figure}
+
+
+
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[-, node distance = 1cm, auto]
+        \node[state] (empty) {(0,0)};
+        \node[state, right=of empty] (one) {(0,1)};
+        \node[state, right=of one] (two) {(0,2)};
+        \node[state, right=of two] (three) {(0,3)};
+        \node[state, right=of three] (four) {(0,4)};
+        \node[state, right=of four] (five) {(0,5)};
+
+        \node[state, below=of three] (three_one) {(1,3)};
+        \node[state, below=of three_one] (three_two) {(2,3)};
+        \node[state, below=of four] (four_one) {(1,4)};
+        \node[state, below=of four_one] (four_two) {(2,4)};
+        \node[state, below=of five] (five_one) {(1,5)};
+        \node[state, below=of five_one] (five_two) {(2,5)};
+
+
+
+        \draw[every loop]
+            (empty) edge[bend left] node {$\Lambda$} (one)
+            (one) edge[bend left] node {$\mu$} (empty)
+            (one) edge[bend left] node {$\Lambda$} (two)
+            (two) edge[bend left] node {$2 \mu$} (one)
+            (two) edge[bend left] node {$\Lambda$} (three)
+            (three) edge[bend left] node {$3 \mu$} (two)
+            (three) edge[bend left] node {$\lambda^o$} (four)
+            (four) edge[bend left] node {$4 \mu$} (three)
+            (four) edge[bend left] node {$\lambda^o$} (five)
+            (five) edge[bend left] node {$5 \mu$} (four)
+            (three) edge[bend left] node {$\lambda^A$} (three_one)
+            (three_one) edge[bend left] node {$3 \mu$} (three)
+            (three_one) edge[bend left] node {$\lambda^o$} (four_one)
+            (four_one) edge[bend left] node {$4 \mu$} (three_one)
+            (four_one) edge[bend left] node {$\lambda^o$} (five_one)
+            (five_one) edge[bend left] node {$5 \mu$} (four_one)
+            (four) edge node {$\lambda^A$} (four_one)
+            % (four_one) edge[bend left] node {$\mu$} (four)
+            (five) edge node {$\lambda^A$} (five_one)
+            % (five_one) edge[bend left] node {$\mu$} (five)
+            (three_one) edge[bend left] node {$\lambda^A$} (three_two)
+            (three_two) edge[bend left] node {$3 \mu$} (three_one)
+            (four_one) edge node {$\lambda^A$} (four_two)
+            % (four_two) edge[bend left] node {$\mu$} (four_one)
+            (five_one) edge node {$\lambda^A$} (five_two)
+            % (five_two) edge[bend left] node {$\mu$} (five_one)
+            (three_two) edge[bend left] node {$\lambda^o$} (four_two)
+            (four_two) edge[bend left] node {$4 \mu$} (three_two)
+            (four_two) edge[bend left] node {$\lambda^o$} (five_two)
+            (five_two) edge[bend left] node {$5 \mu$} (four_two)
+            ;       
+
+
+    \end{tikzpicture}
+    \caption{Markov chains} 
+    \label{Markov_2}
+\end{figure}
+
 
 \end{document}

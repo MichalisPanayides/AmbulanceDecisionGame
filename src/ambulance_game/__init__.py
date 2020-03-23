@@ -2,6 +2,7 @@ import ambulance_game.models
 
 from .timing_experiments import (
     time_for_different_number_of_trials,
+    old_import_trials_duration,
     import_trials_duration,
     get_duration_distribution_plot,
     get_duration_all_lines_plot,

@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{amsfonts} 
 \usepackage{geometry}
 \usepackage{soul}
 \usepackage{indentfirst}
@@ -298,40 +299,46 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
 
 
 
-\newgeometry{left=0.3cm, right=0.3cm}
+% \newgeometry{left=0.6cm, right=0.4cm}
 \section{Markov Chain Representation of Hospital}
+The following Markov chain represents the transition between states of a hospital while capturing the EMS interaction with it. The hospital accepts both ambulance and other patients normally until a certain threshold $T$ is reached. When it is reached all ambulances that arrive will be marked as \textit{"parked outside"} until the number of people in the system is reduced below $T$. Alternatively, if the patients in the system keep rising, they may reach the total capacity $C$ of the hospital and the other patients will be waiting for until a service becomes free. The states of the Markov chain are denoted by $(u,v)$ where:
+\begin{itemize}
+    \item $u$ = number of ambulances parked outside of the hospital
+    \item $v$ = number of patients in the hospital
+\end{itemize}
+
 \begin{figure}[h]
     \centering
-    \begin{tikzpicture}[-, node distance = 1cm, auto, every node/.style={scale=1}]
+    \begin{tikzpicture}[-, node distance = 1cm, auto, every node/.style={scale=0.59}]
         \node[state, minimum size=1.5cm] (zero) {(0,0)};
         \node[state, minimum size=1.5cm,  right=of zero] (one) {(0,1)};
         \node[draw=none, minimum size=1.5cm, right=of one] (two) {\dots};
-        \node[state, minimum size=1.5cm, right=of two] (three) {(0,t)};
-        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of three] (four) {(0,t+1)};
-        \node[draw=none, node distance = 1.5cm, minimum size=1.5cm, right=of four] (five) {\dots};
+        \node[state, minimum size=1.5cm, right=of two] (three) {(0,T)};
+        \node[state, node distance = 1.3cm, minimum size=1.5cm, right=of three] (four) {(0,T+1)};
+        \node[draw=none, node distance = 1.3cm, minimum size=1.5cm, right=of four] (five) {\dots};
     
-        \node[state, minimum size=1.5cm, below=of three] (three_one) {(1,t)};
-        \node[state, minimum size=1.5cm, below=of three_one] (three_two) {(2,t)};
-        \node[state, minimum size=1.5cm, below=of four] (four_one) {(1,t+1)};
-        \node[state, minimum size=1.5cm, below=of four_one] (four_two) {(2,t+1)};
+        \node[state, minimum size=1.5cm, below=of three] (three_one) {(1,T)};
+        \node[state, minimum size=1.5cm, below=of three_one] (three_two) {(2,T)};
+        \node[state, minimum size=1.5cm, below=of four] (four_one) {(1,T+1)};
+        \node[state, minimum size=1.5cm, below=of four_one] (four_two) {(2,T+1)};
         \node[draw=none, minimum size=1.5cm, below=of five] (five_one) {\dots};
         \node[draw=none, minimum size=1.5cm, below=of five_one] (five_two) {\dots};
     
 
-        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five] (after_five) {(0,C)};
-        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five_one] (after_five_one) {(1,C)};
-        \node[state, node distance = 1.5cm, minimum size=1.5cm, right=of five_two] (after_five_two_right) {(2,C)};
+        \node[state, node distance = 1.3cm, minimum size=1.5cm, right=of five] (after_five) {(0,C)};
+        \node[state, node distance = 1.3cm, minimum size=1.5cm, right=of five_one] (after_five_one) {(1,C)};
+        \node[state, node distance = 1.3cm, minimum size=1.5cm, right=of five_two] (after_five_two_right) {(2,C)};
 
-        \node[draw=none, minimum size=1.5cm, below=of three_two] (after_three_two) {};
-        \node[draw=none, minimum size=1.5cm, below=of four_two] (after_four_two) {};
+        \node[draw=none, minimum size=1.5cm, below=of three_two] (after_three_two) {\vdots};
+        \node[draw=none, minimum size=1.5cm, below=of four_two] (after_four_two) {\vdots};
         \node[draw=none, minimum size=1.5cm, below=of five_two] (after_five_two_down) {};
         
-        \node[draw=none, node distance = 1.5cm, minimum size=1.5cm, right=of after_five_two_down] (after_five_two_down_right) {};
+        \node[draw=none, node distance = 1.3cm, minimum size=1.5cm, right=of after_five_two_down] (after_five_two_down_right) {\vdots};
 
 
-        \node[draw=none, minimum size=1.5cm, right=of after_five] (last) {};
-        \node[draw=none, minimum size=1.5cm, right=of after_five_one] (last_one) {};
-        \node[draw=none, minimum size=1.5cm, right=of after_five_two_right] (last_two) {};
+        \node[draw=none, minimum size=1.5cm, right=of after_five] (last) {\dots};
+        \node[draw=none, minimum size=1.5cm, right=of after_five_one] (last_one) {\dots};
+        \node[draw=none, minimum size=1.5cm, right=of after_five_two_right] (last_two) {\dots};
 
         \draw[every loop]
             (zero) edge[bend left] node {$\Lambda$} (one)
@@ -342,30 +349,30 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
             (three) edge[bend left] node [above] {$t \mu$} (two)
 
             (three) edge[bend left] node {$\lambda^o$} (four)
-            (four) edge[bend left] node [above] {$(t+1) \mu$} (three)
+            (four) edge[bend left] node [above] {$(T+1) \mu$} (three)
             (four) edge[bend left] node {$\lambda^o$} (five)
-            (five) edge[bend left] node [above] {$(t+2) \mu$} (four)
+            (five) edge[bend left] node [above] {$(T+2) \mu$} (four)
 
             (three) edge[bend left] node {$\lambda^A$} (three_one)
             (three_one) edge[bend left] node {$t \mu$} (three)
             (four) edge node {$\lambda^A$} (four_one)
 
             (three_one) edge[bend left] node {$\lambda^o$} (four_one)
-            (four_one) edge[bend left] node [above] {$(t+1) \mu$} (three_one)
+            (four_one) edge[bend left] node [above] {$(T+1) \mu$} (three_one)
             (four_one) edge[bend left] node {$\lambda^o$} (five_one)
-            (five_one) edge[bend left] node [above] {$(t+2) \mu$} (four_one)
+            (five_one) edge[bend left] node [above] {$(T+2) \mu$} (four_one)
 
             (three_one) edge[bend left] node {$\lambda^A$} (three_two)
-            (three_two) edge[bend left] node {$t \mu$} (three_one)
+            (three_two) edge[bend left] node {$T\mu$} (three_one)
             (four_one) edge node {$\lambda^A$} (four_two)
 
             (three_two) edge[bend left] node {$\lambda^o$} (four_two)
-            (four_two) edge[bend left] node [above] {$(t+1) \mu$} (three_two)
+            (four_two) edge[bend left] node [above] {$(T+1) \mu$} (three_two)
             (four_two) edge[bend left] node {$\lambda^o$} (five_two)
-            (five_two) edge[bend left] node [above] {$(t+2) \mu$} (four_two)
+            (five_two) edge[bend left] node [above] {$(T+2) \mu$} (four_two)
 
             (three_two) edge[bend left] node {$\lambda^A$} (after_three_two)
-            (after_three_two) edge[bend left] node {$t\mu$} (three_two)
+            (after_three_two) edge[bend left] node {$T\mu$} (three_two)
             (four_two) edge node {$\lambda^A$} (after_four_two)
 
             (five) edge[bend left] node {$\lambda^o$} (after_five)
@@ -392,21 +399,38 @@ Consequently when incorporating equation (\ref{Dist_Wait}) into (\ref{Utilities}
 \end{figure}
 
 \subsection{Markov-chain state mapping function}
-The transition matrix of the Markov-chain representation described above can be denoted by a state mapping function. Therefore, the entries of the transition matrix can be given by $r_{i,j} = r_{(p_i, h_i),(p_j, h_j)}$ which is the transition rate from state $i = (p_i, h_i)$ to state $j = (p_j , h_j)$.
+The transition matrix of the Markov-chain representation described above can be denoted by a state mapping function. The state space of this function is defined as:
+
+% \begin{equation}
+%     S = S(T,C) = \left\{(u, v) \in \mathbb{N}_0^2\;\|\text{ if } v\leq T \text{ then } u = 0 \right\}
+% \end{equation}
+
+
+\begin{align}
+    S(T) =& S_1(T) \cup S_2(T) \text{ where:} \nonumber \\
+    S_1(T) =& \left\{(0, v)\in\mathbb{N}_0^2 \; \| v < T \right\} \\
+    S_2(T) =& \{(u, v)\in\mathbb{N}_0^2 \; \| v \geq T \} \nonumber
+\end{align}
+
+Therefore, the entries of the transition matrix can be given by $r_{i,j} = r_{(u_i, v_i),(u_j, v_j)}$ which is the transition rate from state $i = (u_i, v_i)$ to state $j = (u_j , v_j)$ for all $(u_i, v_i), (u_j, v_j) \in S$.
 
 \begin{equation}
     r_{i, j} = 
     \begin{cases}
-        \Lambda, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,-1) \text{ and } h_i < \text{t} \\
-        \lambda^o, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,-1) \text{ and } h_i \geq \text{t} \\
-        \lambda^a, & \text{if } (p_i,h_i) - (p_j, h_j) = (-1,0) \\
-        h_i \mu, & \text{if } (p_i,h_i) - (p_j, h_j) = (0,1) \text{ or } \\
-         & \hspace{0.4cm} [(p_i,h_i) - (p_j, h_j) = (1,0) \text{ and } h_i = \text{t}]
+        \Lambda, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
+        \lambda^o, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
+        \lambda^a, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (-1,0) \\
+        v_i \mu, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ or } \\
+        & \hspace{0.2cm} \{(u_i,v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t}\} \\
+        0, & \textbf{otherwise}
     \end{cases}
 \end{equation}
-\restoregeometry
 
+In order to acquire an exact solution of the problem a slight adjustment needs to be considered. The problem defined above assumes no upper boundary to the number of people that can wait for service or the number of ambulances that can be parked outside. Therefore, a different state space $\tilde S$ needs to be constructed where $\tilde S \subseteq S $ and there is a maximum allowed number of people $N$ that can be in the system and a maximum allowed number of ambulances $M$ parked outside:
 
+\begin{equation}
+    \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N\ \right\}
+\end{equation}
 
 
 

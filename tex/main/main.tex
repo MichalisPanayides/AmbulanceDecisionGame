@@ -346,7 +346,7 @@ The following Markov chain represents the transition between states of a hospita
             (one) edge[bend left] node {$\Lambda$} (two)
             (two) edge[bend left] node [above] {$2 \mu$} (one)
             (two) edge[bend left] node {$\Lambda$} (three)
-            (three) edge[bend left] node [above] {$t \mu$} (two)
+            (three) edge[bend left] node [above] {$T \mu$} (two)
 
             (three) edge[bend left] node {$\lambda^o$} (four)
             (four) edge[bend left] node [above] {$(T+1) \mu$} (three)
@@ -354,7 +354,7 @@ The following Markov chain represents the transition between states of a hospita
             (five) edge[bend left] node [above] {$(T+2) \mu$} (four)
 
             (three) edge[bend left] node {$\lambda^A$} (three_one)
-            (three_one) edge[bend left] node {$t \mu$} (three)
+            (three_one) edge[bend left] node {$T \mu$} (three)
             (four) edge node {$\lambda^A$} (four_one)
 
             (three_one) edge[bend left] node {$\lambda^o$} (four_one)
@@ -412,16 +412,17 @@ The transition matrix of the Markov-chain representation described above can be 
     S_2(T) =& \{(u, v)\in\mathbb{N}_0^2 \; \| v \geq T \} \nonumber
 \end{align}
 
-Therefore, the entries of the transition matrix can be given by $r_{i,j} = r_{(u_i, v_i),(u_j, v_j)}$ which is the transition rate from state $i = (u_i, v_i)$ to state $j = (u_j , v_j)$ for all $(u_i, v_i), (u_j, v_j) \in S$.
+Therefore, the entries of the transition matrix $Q$, can be given by $q_{i,j} = q_{(u_i, v_i),(u_j, v_j)}$ which is the transition rate from state $i = (u_i, v_i)$ to state $j = (u_j , v_j)$ for all $(u_i, v_i), (u_j, v_j) \in S$.
 
 \begin{equation}
-    r_{i, j} = 
+    q_{i, j} = 
     \begin{cases}
         \Lambda, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
         \lambda^o, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
         \lambda^a, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (-1,0) \\
-        v_i \mu, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ or } \\
-        & \hspace{0.2cm} \{(u_i,v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t}\} \\
+        v_i \mu, & \textbf{if } \{ (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\}\\
+        C \mu, & \textbf{if } \{ (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C\} \\
+        T \mu & \hspace{0.4cm} \{(u_i,v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t}\} \\
         0, & \textbf{otherwise}
     \end{cases}
 \end{equation}

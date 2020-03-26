@@ -109,7 +109,7 @@ def get_times_for_patients(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     threshold,
     seed_num,
     measurement_type,
@@ -122,7 +122,7 @@ def get_times_for_patients(
     lambda_a : [float]
     lambda_o : [float]
     mu : [float]
-    total_capacity : [int]
+    num_of_servers : [int]
     threshold : [int]
     seed_num : [float]
     measurement_type : [string]
@@ -134,7 +134,7 @@ def get_times_for_patients(
         [Three lists that store the times of patients from the ambulance, other patients and patients still in system]
     """
     individuals = simulate_model(
-        lambda_a, lambda_o, mu, total_capacity, threshold, seed_num, runtime
+        lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, runtime
     ).get_all_individuals()
 
     if measurement_type == "w":
@@ -168,7 +168,7 @@ def make_plot_for_different_thresholds(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     num_of_trials,
     seed_num=None,
     measurement_type=None,
@@ -181,7 +181,7 @@ def make_plot_for_different_thresholds(
     lambda_a : [float]
     lambda_o : [float]
     mu : [float]
-    total_capacity : [int]
+    num_of_servers : [int]
     seed_num : [float], optional
         [The ciw.seed value to be used by ciw], by default None
     measurement_type : [string], optional
@@ -197,7 +197,7 @@ def make_plot_for_different_thresholds(
     all_ambulance_patients_mean_times = []
     all_other_patients_mean_times = []
     all_total_mean_times = []
-    for threshold in range(1, total_capacity + 1):
+    for threshold in range(1, num_of_servers + 1):
         current_ambulance_patients_mean_times = []
         current_other_patients_mean_times = []
         current_total_mean_times = []
@@ -206,7 +206,7 @@ def make_plot_for_different_thresholds(
                 lambda_a,
                 lambda_o,
                 mu,
-                total_capacity,
+                num_of_servers,
                 threshold,
                 seed_num,
                 measurement_type,
@@ -221,7 +221,7 @@ def make_plot_for_different_thresholds(
         all_other_patients_mean_times.append(np.mean(current_other_patients_mean_times))
         all_total_mean_times.append(np.mean(current_total_mean_times))
 
-    x_axis = [thres for thres in range(1, total_capacity + 1)]
+    x_axis = [thres for thres in range(1, num_of_servers + 1)]
     x_axis_label, y_axis_label, title = get_plot_for_different_thresholds_labels(
         measurement_type
     )
@@ -286,7 +286,7 @@ def get_target_proportions_of_current_trial(individuals, target):
 
 
 def get_mean_waits_of_current_threshold(
-    lambda_a, lambda_o, mu, total_capacity, threshold, seed_num, num_of_trials, runtime, target
+    lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, num_of_trials, runtime, target
 ):
     """Calculates the mean proportion of times that satisfy the target of all trials for the current threshold iteration
     
@@ -304,7 +304,7 @@ def get_mean_waits_of_current_threshold(
 
     for trial in range(num_of_trials):
         individuals = simulate_model(
-            lambda_a, lambda_o, mu, total_capacity, threshold, seed_num + trial, runtime
+            lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num + trial, runtime
         ).get_all_individuals()
         (
             ambulance_waits,
@@ -337,7 +337,7 @@ def make_proportion_plot(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     num_of_trials,
     seed_num,
     target,
@@ -362,12 +362,12 @@ def make_proportion_plot(
     ambulance_proportions = []
     other_proportions = []
     all_proportions = []
-    for threshold in range(total_capacity + 1):
+    for threshold in range(num_of_servers + 1):
         mean_ambulance, mean_other, mean_combined = get_mean_waits_of_current_threshold(
             lambda_a,
             lambda_o,
             mu,
-            total_capacity,
+            num_of_servers,
             threshold,
             seed_num,
             num_of_trials,
@@ -448,8 +448,8 @@ def make_plot_two_hospitals_arrival_split(
     lambda_o_2,
     mu_1,
     mu_2,
-    total_capacity_1,
-    total_capacity_2,
+    num_of_servers_1,
+    num_of_servers_2,
     threshold_1,
     threshold_2,
     measurement_type="b",
@@ -469,8 +469,8 @@ def make_plot_two_hospitals_arrival_split(
     lambda_o_2 : [float]
     mu_1 : [float]
     mu_2 : [float]
-    total_capacity_1 : [int]
-    total_capacity_2 : [int]
+    num_of_servers_1 : [int]
+    num_of_servers_2 : [int]
     threshold_1 : [int]
     threshold_2 : [int]
     measurement_type : [string], optional, by default "b"
@@ -494,7 +494,7 @@ def make_plot_two_hospitals_arrival_split(
             arrival_rate_1,
             lambda_o_1,
             mu_1,
-            total_capacity_1,
+            num_of_servers_1,
             threshold_1,
             seed_num_1,
             warm_up_time,
@@ -505,7 +505,7 @@ def make_plot_two_hospitals_arrival_split(
             arrival_rate_2,
             lambda_o_2,
             mu_2,
-            total_capacity_2,
+            num_of_servers_2,
             threshold_2,
             seed_num_2,
             warm_up_time,
@@ -565,7 +565,7 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     threshold,
     num_of_trials,
     min_w=0,
@@ -598,7 +598,7 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
             lambda_a,
             lambda_o,
             mu,
-            total_capacity,
+            num_of_servers,
             threshold,
             seed_num,
             warm_up_time,
@@ -626,7 +626,7 @@ def make_plot_of_confidence_intervals_over_runtime(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     threshold,
     warm_up_time=100,
     num_of_trials=10,
@@ -659,7 +659,7 @@ def make_plot_of_confidence_intervals_over_runtime(
             lambda_a,
             lambda_o,
             mu,
-            total_capacity,
+            num_of_servers,
             threshold,
             seed_num,
             warm_up_time,

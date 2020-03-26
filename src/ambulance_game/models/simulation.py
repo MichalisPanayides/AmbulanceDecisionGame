@@ -4,7 +4,7 @@ import ciw
 import collections
 
 
-def build_model(lambda_a, lambda_o, mu, total_capacity):
+def build_model(lambda_a, lambda_o, mu, num_of_servers):
     """ Builds the required ciw network
 
     Parameters
@@ -15,8 +15,8 @@ def build_model(lambda_a, lambda_o, mu, total_capacity):
         [Arrival rate of other patients]
     mu : [float]
         [Service rate of hospital]
-    total_capacity : [integer]
-        [The total capacity of the hospital]
+    num_of_servers : [integer]
+        [The num_of_servers of the hospital]
     """
     model = ciw.create_network(
         arrival_distributions=[
@@ -25,7 +25,7 @@ def build_model(lambda_a, lambda_o, mu, total_capacity):
         ],
         service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
         routing=[[0.0, 1.0], [0.0, 0.0]],
-        number_of_servers=[float("inf"), total_capacity],
+        number_of_servers=[float("inf"), num_of_servers],
     )
     return model
 
@@ -113,7 +113,7 @@ def build_custom_node(threshold=8):
 
 
 def simulate_model(
-    lambda_a, lambda_o, mu, total_capacity, threshold, seed_num=None, runtime=1440
+    lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num=None, runtime=1440
 ):
     """Simulating the model and returning the simulation object
  
@@ -129,7 +129,7 @@ def simulate_model(
     """
     if seed_num == None:
         seed_num = random.random()
-    model = build_model(lambda_a, lambda_o, mu, total_capacity)
+    model = build_model(lambda_a, lambda_o, mu, num_of_servers)
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
     simulation = ciw.Simulation(model, node_class=node)
@@ -187,7 +187,7 @@ def get_multiple_runs_results(
     lambda_a,
     lambda_o,
     mu,
-    total_capacity,
+    num_of_servers,
     threshold,
     seed_num=None,
     warm_up_time=100,
@@ -220,7 +220,7 @@ def get_multiple_runs_results(
     results = []
     for trial in range(num_of_trials):
         simulation = simulate_model(
-            lambda_a, lambda_o, mu, total_capacity, threshold, seed_num + trial, runtime
+            lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num + trial, runtime
         )
         sim_results = simulation.get_all_records()
         ext = extract_times_from_records(sim_results, warm_up_time)

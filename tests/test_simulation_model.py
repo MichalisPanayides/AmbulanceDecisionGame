@@ -33,7 +33,7 @@ def test_example_model():
     Test to ensure correct results to specific problem
     """
     ciw.seed(5)
-    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, total_capacity=1))
+    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, num_of_servers=1))
     Q.simulate_until_max_time(max_simulation_time=100)
     records = Q.get_all_records()
     wait = [r.waiting_time for r in records]
@@ -45,20 +45,20 @@ def test_example_model():
 
 
 @given(
-    total_capacity=integers(min_value=1, max_value=20),
+    num_of_servers=integers(min_value=1, max_value=20),
 )
-def test_build_custom_node(total_capacity):
+def test_build_custom_node(num_of_servers):
     """
     Test to ensure blocking works as expected for extreme cases where the threshold is set to infinity and -1
     """
     ciw.seed(5)
-    model_1 = ciw.Simulation(build_model(lambda_a=0.2, lambda_o=0.15, mu=0.05, total_capacity=total_capacity), node_class=build_custom_node(np.inf))
+    model_1 = ciw.Simulation(build_model(lambda_a=0.2, lambda_o=0.15, mu=0.05, num_of_servers=num_of_servers), node_class=build_custom_node(np.inf))
     model_1.simulate_until_max_time(max_simulation_time=100)
     records_1 = model_1.get_all_records()
     model_1_blocks = [r.time_blocked for r in records_1]
     model_1_waits = [r.waiting_time for r in records_1 if r.node == 1]
 
-    model_2 = ciw.Simulation(build_model(lambda_a=0.2, lambda_o=0.15, mu=0.05, total_capacity=total_capacity), node_class=build_custom_node(-1))
+    model_2 = ciw.Simulation(build_model(lambda_a=0.2, lambda_o=0.15, mu=0.05, num_of_servers=num_of_servers), node_class=build_custom_node(-1))
     model_2.simulate_until_max_time(max_simulation_time=100)
     records_2 = model_2.get_all_records()
     model_2_blocks = [r.time_blocked for r in records_2 if r.node == 1]
@@ -73,7 +73,7 @@ def test_example_build_custom_node():
     Test to ensure blocking occurs for specific case
     """
     ciw.seed(5)
-    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, total_capacity=1), node_class=build_custom_node(7))
+    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, num_of_servers=1), node_class=build_custom_node(7))
     Q.simulate_until_max_time(max_simulation_time=100)
     records = Q.get_all_records()
     wait = [r.waiting_time for r in records]
@@ -97,7 +97,7 @@ def test_simulate_model():
             lambda_a=0.15,
             lambda_o=0.2,
             mu=0.05,
-            total_capacity=8,
+            num_of_servers=8,
             threshold=4,
             seed_num=seed,
         )
@@ -124,7 +124,7 @@ def test_get_multiple_results():
         lambda_a=0.15,
         lambda_o=0.2,
         mu=0.05,
-        total_capacity=8,
+        num_of_servers=8,
         threshold=4,
         num_of_trials=5,
         seed_num=1,
@@ -133,7 +133,7 @@ def test_get_multiple_results():
         lambda_a=0.15,
         lambda_o=0.2,
         mu=0.05,
-        total_capacity=8,
+        num_of_servers=8,
         threshold=4,
         num_of_trials=5,
         seed_num=1,
@@ -160,7 +160,7 @@ def test_example_get_multiple_results():
         lambda_a=0.15,
         lambda_o=0.2,
         mu=0.05,
-        total_capacity=8,
+        num_of_servers=8,
         threshold=4,
         num_of_trials=10,
         seed_num=1,

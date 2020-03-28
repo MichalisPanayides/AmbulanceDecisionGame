@@ -11,16 +11,16 @@
 \usetikzlibrary{calc, automata, chains, arrows.meta}
 
 
-\newenvironment{changemargin}[2]{%
-\begin{list}{}{%
-\setlength{\topsep}{0pt}%
-\setlength{\leftmargin}{#1}%
-\setlength{\rightmargin}{#2}%
-\setlength{\listparindent}{\parindent}%
-\setlength{\itemindent}{\parindent}%
-\setlength{\parsep}{\parskip}%
-}%
-\item[]}{\end{list}}
+% \newenvironment{changemargin}[2]{%
+% \begin{list}{}{%
+% \setlength{\topsep}{0pt}%
+% \setlength{\leftmargin}{#1}%
+% \setlength{\rightmargin}{#2}%
+% \setlength{\listparindent}{\parindent}%
+% \setlength{\itemindent}{\parindent}%
+% \setlength{\parsep}{\parskip}%
+% }%
+% \item[]}{\end{list}}
 
 
 
@@ -417,12 +417,12 @@ Therefore, the entries of the transition matrix $Q$, can be given by $q_{i,j} = 
 \begin{equation}
     q_{i, j} = 
     \begin{cases}
-        \Lambda, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
-        \lambda^o, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
-        \lambda^a, & \textbf{if } (u_i,v_i) - (u_j, v_j) = (-1,0) \\
-        v_i \mu, & \textbf{if } \{ (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\}\\
-        C \mu, & \textbf{if } \{ (u_i,v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C\} \\
-        T \mu & \hspace{0.4cm} \{(u_i,v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t}\} \\
+        \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
+        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
+        \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
+        v_i \mu, & \textbf{if } \{ (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\}\\
+        C \mu, & \textbf{if } \{ (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C\} \\
+        T \mu & \hspace{0.4cm} \{(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t}\} \\
         0, & \textbf{otherwise}
     \end{cases}
 \end{equation}
@@ -432,6 +432,14 @@ In order to acquire an exact solution of the problem a slight adjustment needs t
 \begin{equation}
     \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N\ \right\}
 \end{equation}
+
+
+\subsection{Steady State}
+Having calculated the transition matrix $Q$ for a given set of parameters the probability vector $\pi$ needs to be considered. The vector $\pi$ is commonly used to study such stochastic systems and it's main purpose is to keep track of the probability of being at any given state. Thus, by the definition of the steady state vector $\pi$ the relationship between it and $Q$  is given by:
+
+$$
+\frac{d\pi}{dt} = \pi Q
+$$
 
 
 

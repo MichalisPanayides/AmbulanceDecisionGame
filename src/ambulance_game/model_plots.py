@@ -212,14 +212,14 @@ def make_plot_for_different_thresholds(
                 measurement_type,
                 runtime,
             )
-            current_ambulance_patients_mean_times.append(np.mean(times[0]))
-            current_other_patients_mean_times.append(np.mean(times[1]))
-            current_total_mean_times.append(np.mean(times[0] + times[1]))
+            current_ambulance_patients_mean_times.append(np.nanmean(times[0]))
+            current_other_patients_mean_times.append(np.nanmean(times[1]))
+            current_total_mean_times.append(np.nanmean(times[0] + times[1]))
         all_ambulance_patients_mean_times.append(
-            np.mean(current_ambulance_patients_mean_times)
+            np.nanmean(current_ambulance_patients_mean_times)
         )
-        all_other_patients_mean_times.append(np.mean(current_other_patients_mean_times))
-        all_total_mean_times.append(np.mean(current_total_mean_times))
+        all_other_patients_mean_times.append(np.nanmean(current_other_patients_mean_times))
+        all_total_mean_times.append(np.nanmean(current_total_mean_times))
 
     x_axis = [thres for thres in range(1, num_of_servers + 1)]
     x_axis_label, y_axis_label, title = get_plot_for_different_thresholds_labels(
@@ -327,9 +327,9 @@ def get_mean_waits_of_current_threshold(
         )
 
     return (
-        np.mean(current_ambulance_proportions),
-        np.mean(current_other_proportions),
-        np.mean(current_combined_proportions),
+        np.nanmean(current_ambulance_proportions),
+        np.nanmean(current_other_proportions),
+        np.nanmean(current_combined_proportions),
     )
 
 
@@ -419,11 +419,11 @@ def update_hospitals_lists(
         [description]
     """
     if measurement_type == "w":
-        hospital_times_1.append(np.mean([np.mean(w.waiting_times) for w in times_1]))
-        hospital_times_2.append(np.mean([np.mean(w.waiting_times) for w in times_2]))
+        hospital_times_1.append(np.nanmean([np.nanmean(w.waiting_times) for w in times_1]))
+        hospital_times_2.append(np.nanmean([np.nanmean(w.waiting_times) for w in times_2]))
     else:
-        hospital_times_1.append(np.mean([np.mean(b.blocking_times) for b in times_1]))
-        hospital_times_2.append(np.mean([np.mean(b.blocking_times) for b in times_2]))
+        hospital_times_1.append(np.nanmean([np.nanmean(b.blocking_times) for b in times_1]))
+        hospital_times_2.append(np.nanmean([np.nanmean(b.blocking_times) for b in times_2]))
     return hospital_times_1, hospital_times_2
 
 
@@ -551,11 +551,11 @@ def get_times_and_labels(records, measurement_type):
         y-axis label
     """
     if measurement_type == "w":
-        mean_time = [np.mean(w.waiting_times) for w in records]
+        mean_time = [np.nanmean(w.waiting_times) for w in records]
         title = "Distributions of waiting times over runtimes"
         y_axis_label = "Waiting Times"
     else:
-        mean_time = [np.mean(b.blocking_times) for b in records]
+        mean_time = [np.nanmean(b.blocking_times) for b in records]
         title = "Distributions of blocking times over runtimes"
         y_axis_label = "Blocking Times"
     return mean_time, title, y_axis_label

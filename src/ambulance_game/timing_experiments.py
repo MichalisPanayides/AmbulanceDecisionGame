@@ -212,7 +212,7 @@ def get_duration_mean_plot(times):
         [plot of time (in seconds) vs trials]
     """
     plt.figure(figsize=(23, 10))
-    time_plot = plt.plot([np.mean(t) for t in times])
+    time_plot = plt.plot([np.nanmean(t) for t in times])
     time_plot = plt.xlabel("Number of Trials")
     time_plot = plt.ylabel("Time in seconds")
     return time_plot
@@ -271,7 +271,7 @@ def get_distributions_over_time(all_times):
     step = int(np.ceil(len(all_times) / 20))
     aggregated_times = [[] for _ in range(int(np.ceil(len(all_times) / step)))]
     for times in range(len(all_times)):
-        mean_times.append(np.mean(all_times[times]))
+        mean_times.append(np.nanmean(all_times[times]))
         if times % step == 0:
             plot_labels, aggregated_times, list_pos = update_aggregated_list(
                 times, plot_labels, aggregated_times, mean_times, list_pos

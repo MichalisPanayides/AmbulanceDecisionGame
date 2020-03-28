@@ -18,6 +18,7 @@ def build_model(lambda_a, lambda_o, mu, num_of_servers):
     num_of_servers : [integer]
         [The num_of_servers of the hospital]
     """
+ 
     model = ciw.create_network(
         arrival_distributions=[
             ciw.dists.Exponential(lambda_a),
@@ -153,13 +154,13 @@ def extract_times_from_records(simulation_records, warm_up_time):
         [Three lists that contain waiting, service and blocking times]
     """
     waiting = [
-        r.waiting_time for r in simulation_records if r.arrival_date > warm_up_time
+        r.waiting_time for r in simulation_records if r.arrival_date > warm_up_time and r.node == 2
     ]
     serving = [
-        r.service_time for r in simulation_records if r.arrival_date > warm_up_time
+        r.service_time for r in simulation_records if r.arrival_date > warm_up_time and r.node == 2
     ]
     blocking = [
-        r.time_blocked for r in simulation_records if r.arrival_date > warm_up_time
+        r.time_blocked for r in simulation_records if r.arrival_date > warm_up_time and r.node == 1
     ]
     return waiting, serving, blocking
 

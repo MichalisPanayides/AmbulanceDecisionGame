@@ -173,6 +173,7 @@ def make_plot_for_different_thresholds(
     seed_num=None,
     measurement_type=None,
     runtime=1440,
+    max_threshold=None
 ):
     """Makes a plot of the mean/waiting time vs different thresholds
     
@@ -197,7 +198,9 @@ def make_plot_for_different_thresholds(
     all_ambulance_patients_mean_times = []
     all_other_patients_mean_times = []
     all_total_mean_times = []
-    for threshold in range(1, num_of_servers + 1):
+    if (max_threshold == None): 
+        max_threshold = num_of_servers
+    for threshold in range(1, max_threshold + 1):
         current_ambulance_patients_mean_times = []
         current_other_patients_mean_times = []
         current_total_mean_times = []
@@ -221,7 +224,7 @@ def make_plot_for_different_thresholds(
         all_other_patients_mean_times.append(np.nanmean(current_other_patients_mean_times))
         all_total_mean_times.append(np.nanmean(current_total_mean_times))
 
-    x_axis = [thres for thres in range(1, num_of_servers + 1)]
+    x_axis = [thres for thres in range(1, max_threshold + 1)]
     x_axis_label, y_axis_label, title = get_plot_for_different_thresholds_labels(
         measurement_type
     )
@@ -333,7 +336,7 @@ def get_mean_waits_of_current_threshold(
     )
 
 
-def make_proportion_plot(
+def make_plot_for_proportion_within_target(
     lambda_a,
     lambda_o,
     mu,
@@ -342,6 +345,7 @@ def make_proportion_plot(
     seed_num,
     target,
     runtime=1440,
+    max_threshold=None
 ):
     """Builds a plot that shows the proportion of individuals that satisfy the desired waiting time target. The plot shows the proportions of ambulance patients, other patients and the combined proportion of the two, that satisfy the target.
     
@@ -362,7 +366,9 @@ def make_proportion_plot(
     ambulance_proportions = []
     other_proportions = []
     all_proportions = []
-    for threshold in range(num_of_servers + 1):
+    if (max_threshold == None):
+        max_threshold = num_of_servers
+    for threshold in range(max_threshold + 1):
         mean_ambulance, mean_other, mean_combined = get_mean_waits_of_current_threshold(
             lambda_a,
             lambda_o,

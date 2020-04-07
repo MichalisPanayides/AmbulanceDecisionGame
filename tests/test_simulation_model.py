@@ -169,6 +169,6 @@ def test_example_get_multiple_results():
     all_servs = [np.mean(s.service_times) for s in mult_results]
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
 
-    assert np.mean(all_waits) == 0.3333489337233605
-    assert np.mean(all_servs) == 15.94133405666149
-    assert np.mean(all_blocks) == 77.92554258000573
+    assert np.mean(all_waits) == 0.40499090339103355
+    assert np.mean(all_servs) == 19.47582689268173
+    assert np.mean(all_blocks) == 432.68444649763916

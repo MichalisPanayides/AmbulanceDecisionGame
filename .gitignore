@@ -1,5 +1,8 @@
 .vscode
 .hypothesis
 .coverage
+*.log
+*.fdb_latexmk
+*.synctex.gz
 *.ipynb_checkpoints
 */__pycache__/

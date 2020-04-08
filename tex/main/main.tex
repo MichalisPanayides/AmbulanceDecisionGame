@@ -23,7 +23,7 @@
 \begin{figure}[h]
     \centering
     \begin{tikzpicture}[-, node distance = 3cm, auto]
-        \node[anchor=north](H1){\(H_1\)};
+        \node[anchor=north](H1){$H_1$};
         \node[anchor=north](H1_d1) at (3, 2){.};
         \node[anchor=north](H1_d2) at (3, -2){.};
 
@@ -32,7 +32,7 @@
         \path(H1_d1) edge [bend left] node {}(H1_d2);
         \path(H1_d1) [dashed] edge node {}(H1_d2);
 
-        \node[anchor=north](H2) at (3.9, 0){\(H_2\)};
+        \node[anchor=north](H2) at (3.9, 0){$H_2$};
         \node[anchor=north](H2_d1) at (6.9, 2){.};
         \node[anchor=north](H2_d2) at (6.9, -2){.};
 
@@ -40,7 +40,7 @@
         \path(H2) edge node {}(H2_d2);
         \path(H2_d1) edge [bend left] node {}(H2_d2);
 
-        \node[anchor=north](A) at (7.8, 0){\(A\)};
+        \node[anchor=north](A) at (7.8, 0){$A$};
         \node[anchor=north](A_d1) at (10.8, 2){.};
         \node[anchor=north](A_d2) at (10.8, -2){.};
         
@@ -56,20 +56,20 @@
 {\Large\textbf{States:}}
 
 \begin{enumerate}
-    \item \(A\) = Ambulance
-    \item \(H_i\) = Hospital i
+    \item $A$ = Ambulance
+    \item $H_i$ = Hospital i
 \end{enumerate}
 
 {\Large\textbf{Notation:}}
 \begin{itemize}
-    \item \(\Lambda\) = total number of patients that need to be hospitalised
-    \item \(p_i\) = proportion of patients going to Hospital i (\(p_i\Lambda\) = number of patients going to hospital i)
-    \item \(d_i\) = distance from Hospital i
-    \item \(\hat{c_i}\) = capacity of hospital i
-    \item \(W(c, \lambda\, \mu)\) = waiting time in the system function
-    \item \(\mu_i\) = service rate of hospital i
-    \item \(\lambda_i^o\) = arrival rate of other patients to the hospital (not by ambulance)
-    \item \(C_i(p_i) = d_i + W(c = \hat{c_i},\hspace{0.1cm} \lambda = p_i\Lambda + \lambda_i^o, \hspace{0.1cm} \mu = \mu_i)\)
+    \item $\Lambda$ = total number of patients that need to be hospitalised
+    \item $p_i$ = proportion of patients going to Hospital i ($p_i\Lambda$ = number of patients going to hospital i)
+    \item $d_i$ = distance from Hospital i
+    \item $\hat{c_i}$ = capacity of hospital i
+    \item $W(c, \lambda\, \mu)$ = waiting time in the system function
+    \item $\mu_i$ = service rate of hospital i
+    \item $\lambda_i^o$ = arrival rate of other patients to the hospital (not by ambulance)
+    \item $C_i(p_i) = d_i + W(c = \hat{c_i},\hspace{0.1cm} \lambda = p_i\Lambda + \lambda_i^o, \hspace{0.1cm} \mu = \mu_i)$
 \end{itemize}
 
 \newpage
@@ -343,7 +343,7 @@ The following Markov chain represents the transition between states of a hospita
         \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
         \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\textbf{\dots}};
-        \node[state, minimum size=\minsz, right=of five_one] (six_one) {$(1, v_i)$};
+        \node[state, minimum size=\minsz, right=of five_one] (six_one) {$(u_i, v_i)$};
         \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of seven_one] (eight_one) {(1,C)};
         \node[draw=none, minimum size=\minsz, right=of eight_one] (nine_one) {\textbf{\dots}};
@@ -457,7 +457,7 @@ The transition matrix of the Markov-chain representation described above can be 
 Therefore, the entries of the transition matrix $Q$, can be given by $q_{i,j} = q_{(u_i, v_i),(u_j, v_j)}$ which is the transition rate from state $i = (u_i, v_i)$ to state $j = (u_j , v_j)$ for all $(u_i, v_i), (u_j, v_j) \in S$.
 
 \begin{equation}
-    q_{i j} = 
+    q_{i, j} = 
     \begin{cases}
         \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
         \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
@@ -465,7 +465,7 @@ Therefore, the entries of the transition matrix $Q$, can be given by $q_{i,j} = 
         v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\\
         C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C \\
         T \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t} \\
-        -\sum_{j=1}^{|S|}{q_{i j}} & \textbf{if } i = j \\
+        -\sum_{j=1}^{|Q|}{q_{i,j}} & \textbf{if } i = j \\
         0, & \textbf{otherwise}
     \end{cases}
 \end{equation}
@@ -473,16 +473,16 @@ Therefore, the entries of the transition matrix $Q$, can be given by $q_{i,j} = 
 In order to acquire an exact solution of the problem a slight adjustment needs to be considered. The problem defined above assumes no upper boundary to the number of people that can wait for service or the number of ambulances that can be parked outside. Therefore, a different state space $\tilde S$ needs to be constructed where $\tilde S \subseteq S $ and there is a maximum allowed number of people $N$ that can be in the system and a maximum allowed number of ambulances $M$ parked outside:
 
 \begin{equation}
-    \tilde S = \left\{ (u, v) \in S \; | \; u \leq M, v\leq N\ \right\}
+    \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N\ \right\}
 \end{equation}
 
 
 \subsection{Steady State}
 Having calculated the transition matrix $Q$ for a given set of parameters the probability vector $\pi$ needs to be considered. The vector $\pi$ is commonly used to study such stochastic systems and it's main purpose is to keep track of the probability of being at any given state of the system. The term \textit{steady state} refers to the instance of the vector $\pi$ where the probabilities of being at any state become stable over time. Thus, by considering the steady state vector $\pi$ the relationship between it and $Q$  is given by:
 
-\begin{equation}
+$$
 \frac{d\pi}{dt} = \pi Q = 0
-\end{equation}
+$$
 
 There are numerous methods that can be used to solve problems of such kind. In this paper only numeric and algebraic approaches will be considered. 
 
@@ -491,79 +491,78 @@ The first approach to be considered is to solve the differential equation numeri
 
 \subsubsection{Linear algebraic approach}
 Another approach to be considered is the linear algebraic method. The steady state vector can be found algebraically by satisfying the following set of equations:
-
-\begin{align}
-    \pi Q = 0 \\
-    \sum_{i} \pi_i = 1
-\end{align}
+$$\pi Q = 0$$
+$$\sum_{i} \pi_i = 1$$
 
 These equations can be solved by slightly altering $Q$ such that the final column is replaced by a vector of ones. Thus, the resultant solution occurs from solving the equation $\tilde{Q}^T \pi = b$ where $\tilde{Q}$ and $b$ are defined as:
 
-\begin{align}
-    \tilde{q}_{i j} &= 
-    \begin{cases}
-        1, & \textbf{if } j = |Q| \\
-        q_{i j}, & \textbf{otherwise}
-    \end{cases} \\
-    b &= 
-    \begin{bmatrix}
-        x_{1} \\
-        x_{2} \\
-        \vdots \\
-        x_{m}
-    \end{bmatrix}
-\end{align}
+$$
+\tilde{q_{i, j}} = 
+\begin{cases}
+    1, & \textbf{if } j = |Q| \\
+    q_{i,j}, & \textbf{otherwise}
+\end{cases}
+$$
+
+$$
+b = 
+\begin{bmatrix}
+    x_{1} \\
+    x_{2} \\
+    \vdots \\
+    x_{m}
+\end{bmatrix}
+$$
 
 
 \subsubsection{Least Squares approach}
 Finally, the last approach to be considered is the least squares method. This approach is considered because while the problem becomes more complex (in terms of input parameters) the computational time required to solve it increases exponentially. Thus, one may obtain the steady state vector $\pi$ by solving the following equation.
 
-\begin{equation}
+$$
 \pi = \text{argmin}_{x\in\mathbb{R}^{d}}\|Mx-b\|_2^2
-\end{equation}
+$$
 
 
 \newpage
 \subsection{Expressions derived from $\pi$}
 Average number of patients in the whole system: 
-
-\begin{equation}
-L = \sum_{i=1}^{\infty} \pi_i (u_i + v_i)
-\end{equation} 
+$$
+L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
+$$ 
 
 Average number of patients in the hospital: 
-\begin{equation}
-L_H = \sum_{i=1}^{\infty} \pi_i v_i
-\end{equation} 
+$$
+L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
+$$ 
 
 Average number of ambulances being blocked:
-\begin{equation}
-L_A = \sum_{i=1}^{\infty} \pi_i u_i
-\end{equation}
+$$
+L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
+$$
 
 Mean time in the system:
-\begin{equation}
+$$
 W = \frac{L}{\Lambda}
-\end{equation}
+$$
 
 Mean time in the hospital:
-\begin{equation}
+$$
 W_H = \frac{L_H}{\Lambda}
-\end{equation}
+$$
 
 Mean waiting time in the hospital:
-\begin{equation}
+$$
 W_{H_q} = \frac{L_H}{\lambda^o} - \frac{1}{\mu}
-\end{equation}
+$$
 \hspace{7.2cm} OR
-\begin{equation}
+$$
 W_{H_q} = \frac{L_H}{\Lambda} - \frac{1}{\mu}
-\end{equation}
+$$
 
 Mean blocking time of ambulances:
-\begin{equation}
+$$
 B = \frac{L_A}{\lambda^A}
-\end{equation}
+$$
 
 \newpage
 \section{Figures that might be useful}
@@ -793,7 +792,7 @@ B = \frac{L_A}{\lambda^A}
         \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
         \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] (six_one) {$(1, v_i)$};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] (six_one) {$(u_i, v_i)$};
         \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\dots};
         \node[state, node distance = \altdist, minimum size=\minsz, right=of seven_one] (eight_one) {(1,C)};
         \node[draw=none, minimum size=\minsz, right=of eight_one] (nine_one) {\dots};
@@ -942,7 +941,7 @@ B = \frac{L_A}{\lambda^A}
         \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
         \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\textbf{\dots}};
-        \node[state, minimum size=\minsz, right=of five_one] (six_one) {$(1, v_i)$};
+        \node[state, minimum size=\minsz, right=of five_one] (six_one) {$(u_i, v_i)$};
         \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of seven_one] (eight_one) {(1,C)};
         \node[draw=none, minimum size=\minsz, right=of eight_one] (nine_one) {\textbf{\dots}};

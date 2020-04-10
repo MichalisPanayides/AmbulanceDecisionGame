@@ -6,12 +6,13 @@ import pandas as pd
 import seaborn as sbr
 import random
 
-from .models.simulation import (
+from .simulation.simulation import (
     simulate_model,
     get_multiple_runs_results,
 )
 
 # Plot 1: Mean waiting Time vs Threshold
+
 
 def get_waiting_times(individuals):
     """Extracts waiting times from results to be used for the plot
@@ -173,7 +174,7 @@ def make_plot_for_different_thresholds(
     seed_num=None,
     measurement_type=None,
     runtime=1440,
-    max_threshold=None
+    max_threshold=None,
 ):
     """Makes a plot of the mean/waiting time vs different thresholds
     
@@ -198,7 +199,7 @@ def make_plot_for_different_thresholds(
     all_ambulance_patients_mean_times = []
     all_other_patients_mean_times = []
     all_total_mean_times = []
-    if (max_threshold == None): 
+    if max_threshold == None:
         max_threshold = num_of_servers
     for threshold in range(1, max_threshold + 1):
         current_ambulance_patients_mean_times = []
@@ -221,7 +222,9 @@ def make_plot_for_different_thresholds(
         all_ambulance_patients_mean_times.append(
             np.nanmean(current_ambulance_patients_mean_times)
         )
-        all_other_patients_mean_times.append(np.nanmean(current_other_patients_mean_times))
+        all_other_patients_mean_times.append(
+            np.nanmean(current_other_patients_mean_times)
+        )
         all_total_mean_times.append(np.nanmean(current_total_mean_times))
 
     x_axis = [thres for thres in range(1, max_threshold + 1)]
@@ -251,6 +254,7 @@ def make_plot_for_different_thresholds(
 
 
 # Plot 2: Proportion of people within target
+
 
 def get_target_proportions_of_current_trial(individuals, target):
     """Get the proportion waiting times within the target for a given trial of a threshold
@@ -289,7 +293,15 @@ def get_target_proportions_of_current_trial(individuals, target):
 
 
 def get_mean_waits_of_current_threshold(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, num_of_trials, runtime, target
+    lambda_a,
+    lambda_o,
+    mu,
+    num_of_servers,
+    threshold,
+    seed_num,
+    num_of_trials,
+    runtime,
+    target,
 ):
     """Calculates the mean proportion of times that satisfy the target of all trials for the current threshold iteration
     
@@ -345,7 +357,7 @@ def make_plot_for_proportion_within_target(
     seed_num,
     target,
     runtime=1440,
-    max_threshold=None
+    max_threshold=None,
 ):
     """Builds a plot that shows the proportion of individuals that satisfy the desired waiting time target. The plot shows the proportions of ambulance patients, other patients and the combined proportion of the two, that satisfy the target.
     
@@ -366,7 +378,7 @@ def make_plot_for_proportion_within_target(
     ambulance_proportions = []
     other_proportions = []
     all_proportions = []
-    if (max_threshold == None):
+    if max_threshold == None:
         max_threshold = num_of_servers
     for threshold in range(max_threshold + 1):
         mean_ambulance, mean_other, mean_combined = get_mean_waits_of_current_threshold(
@@ -402,6 +414,7 @@ def make_plot_for_proportion_within_target(
 
 # Plot 3: Arrival rate vs waiting/blocking time between two Hospitals
 
+
 def update_hospitals_lists(
     hospital_times_1, hospital_times_2, times_1, times_2, measurement_type
 ):
@@ -425,11 +438,19 @@ def update_hospitals_lists(
         [description]
     """
     if measurement_type == "w":
-        hospital_times_1.append(np.nanmean([np.nanmean(w.waiting_times) for w in times_1]))
-        hospital_times_2.append(np.nanmean([np.nanmean(w.waiting_times) for w in times_2]))
+        hospital_times_1.append(
+            np.nanmean([np.nanmean(w.waiting_times) for w in times_1])
+        )
+        hospital_times_2.append(
+            np.nanmean([np.nanmean(w.waiting_times) for w in times_2])
+        )
     else:
-        hospital_times_1.append(np.nanmean([np.nanmean(b.blocking_times) for b in times_1]))
-        hospital_times_2.append(np.nanmean([np.nanmean(b.blocking_times) for b in times_2]))
+        hospital_times_1.append(
+            np.nanmean([np.nanmean(b.blocking_times) for b in times_1])
+        )
+        hospital_times_2.append(
+            np.nanmean([np.nanmean(b.blocking_times) for b in times_2])
+        )
     return hospital_times_1, hospital_times_2
 
 
@@ -537,6 +558,7 @@ def make_plot_two_hospitals_arrival_split(
 
 # Plot 4: Waiting/Blocking time distribution VS warm-up time
 
+
 def get_times_and_labels(records, measurement_type):
     """Identifies the required times (waiting or blocking) and plot lebels (Function is used in Plot 5 as well)
     
@@ -627,6 +649,7 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
 
 
 # Plot 5: Waiting/Blocking time confidence interavls VS runtime
+
 
 def make_plot_of_confidence_intervals_over_runtime(
     lambda_a,

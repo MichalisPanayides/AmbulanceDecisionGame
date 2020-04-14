@@ -50,7 +50,7 @@ def build_states(threshold, system_capacity, parking_capacity):
 
 
 def visualise_ambulance_markov_chain(
-    num_of_servers, threshold, parking_capacity, system_capacity
+    num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """This function's purpose is the visualisation of the markov chain system using the networkx library. The networkx object that is created positions all states based on their (u, v) labels.
     
@@ -112,28 +112,6 @@ def visualise_ambulance_markov_chain(
 #######################
 ## Transition Matrix ##
 #######################
-
-# def get_symbolic_transition_matrix_entry(origin, destination, threshold, lambda_a, lambda_o, Lambda, mu, num_of_servers):
-
-#     row_diff = origin[0] - destination[0]
-#     column_diff = origin[1] - destination[1]
-
-#     if row_diff == 0 and column_diff == -1:
-#         if origin[1] < threshold:
-#             return Lambda
-#         return lambda_o
-#     elif row_diff == -1 and column_diff == 0:
-#         return lambda_a
-#     elif row_diff == 0 and column_diff == 1:
-#         if origin[1] <= num_of_servers:
-#             return origin[1] * mu
-#         else:
-#             return num_of_servers * mu
-#     elif row_diff == 1 and column_diff == 0 and origin[1] == threshold:
-#         return threshold * mu
-#     else:
-#         return 0
-
 
 def get_transition_matrix_entry(
     origin, destination, threshold, lambda_a, lambda_o, Lambda, mu, num_of_servers

@@ -233,7 +233,9 @@ def test_example_get_multiple_results():
     lambda_o=floats(min_value=0.1, max_value=0.4),
 )
 @settings(deadline=None)
-def test_get_mean_blocking_difference_between_two_hospitals_equal_split(lambda_a, lambda_o):
+def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
+    lambda_a, lambda_o
+):
     """
     Test that ensures that the function that finds the optimal distribution of ambulance patients in two identical hospitals returns a solution that corresponds to 50% of patients going to one hospital and 50% going to another. That means that the difference in the number of patients must be 0, and that is precisely what the function checks. This test runs the function with a proportion variable of 0.5 (meaning equally distributing the ambulances between the two hospitals) and ensures that the difference is 0, given any values of λ^α and λ^ο_1 = λ^ο_2 = λ^ο
 
@@ -267,9 +269,27 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
     """Ensuring that the function is increasing for specific inputs
     """
     diff_list = []
-    proportions = np.linspace(0.1,0.9,9)
+    proportions = np.linspace(0.1, 0.9, 9)
     for prop in proportions:
-        diff_list.append(get_mean_blocking_difference_between_two_hospitals(prop_1=prop, lambda_a=0.15, lambda_o_1=0.08, lambda_o_2=0.08, mu_1=0.05, mu_2=0.05, num_of_servers_1=6, num_of_servers_2=6, threshold_1=5, threshold_2=5, seed_num_1=2, seed_num_2=2, num_of_trials=100, warm_up_time=100, runtime=500))
+        diff_list.append(
+            get_mean_blocking_difference_between_two_hospitals(
+                prop_1=prop,
+                lambda_a=0.15,
+                lambda_o_1=0.08,
+                lambda_o_2=0.08,
+                mu_1=0.05,
+                mu_2=0.05,
+                num_of_servers_1=6,
+                num_of_servers_2=6,
+                threshold_1=5,
+                threshold_2=5,
+                seed_num_1=2,
+                seed_num_2=2,
+                num_of_trials=100,
+                warm_up_time=100,
+                runtime=500,
+            )
+        )
     print(diff_list)
     is_increasing = all(x <= y for x, y in zip(diff_list, diff_list[1:]))
     assert is_increasing
@@ -284,8 +304,22 @@ def test_calculate_optimal_ambulance_distribution_equal_split():
 
     Note here that due to the ciw.seed() function it was possible to eliminate any randomness and make both hospitals identical, in terms of arrivals, services and any other stochasticity that the simulation models incorporates.
     """
-    lambda_a=0.3
-    equal_split = calculate_optimal_ambulance_distribution(lambda_a=lambda_a, lambda_o_1=0.3, lambda_o_2=0.3, mu_1=0.2, mu_2=0.2, num_of_servers_1=4, num_of_servers_2=4, threshold_1=3, threshold_2=3, seed_num_1=10, seed_num_2=10, num_of_trials=5, warm_up_time=100, runtime=500) 
-    
-    assert np.isclose(equal_split, 0.5)
+    lambda_a = 0.3
+    equal_split = calculate_optimal_ambulance_distribution(
+        lambda_a=lambda_a,
+        lambda_o_1=0.3,
+        lambda_o_2=0.3,
+        mu_1=0.2,
+        mu_2=0.2,
+        num_of_servers_1=4,
+        num_of_servers_2=4,
+        threshold_1=3,
+        threshold_2=3,
+        seed_num_1=10,
+        seed_num_2=10,
+        num_of_trials=5,
+        warm_up_time=100,
+        runtime=500,
+    )
 
+    assert np.isclose(equal_split, 0.5)

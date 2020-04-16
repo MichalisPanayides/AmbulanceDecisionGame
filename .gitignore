@@ -2,4 +2,9 @@
 .hypothesis
 .coverage
 *.ipynb_checkpoints
+*.aux
+*.fdb_latexmk
+*.ffs
+*.log
+*synctex.gz
 *__pycache__

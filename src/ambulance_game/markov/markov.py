@@ -32,6 +32,8 @@ def build_states(threshold, system_capacity, parking_capacity):
     -------
     list
         a list of all the states
+    
+    TODO: turn into a generator
     """
     states_1 = [(0, v) for v in range(0, threshold)]
     states_2 = [
@@ -112,6 +114,7 @@ def visualise_ambulance_markov_chain(
 #######################
 ## Transition Matrix ##
 #######################
+
 
 def get_transition_matrix_entry(
     origin, destination, threshold, lambda_a, lambda_o, Lambda, mu, num_of_servers
@@ -254,6 +257,8 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     -------
     numpy.ndarray
         The transition matrix Q
+
+    TODO: get rid of first four lines somehow
     """
     sym_Lambda = sym.symbols("Lambda")
     sym_lambda_o = sym.symbols("lambda") ** sym.symbols("o")
@@ -327,6 +332,7 @@ def get_steady_state_numerically(
     numpy.ndarray
         The steady state vector of the Markov chain
     """
+
     def derivative_odeint(x, t):
         return np.dot(x, Q)
 

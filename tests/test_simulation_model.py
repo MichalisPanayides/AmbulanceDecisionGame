@@ -318,10 +318,7 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
     assert is_increasing
 
 
-# @given(
-#     lambda_a=floats(min_value=0.3, max_value=0.4),
-# )
-# @settings(deadline=None)
+#  TODO Investigate making it a property based test
 def test_calculate_optimal_ambulance_distribution_equal_split():
     """Make sure that the brenq() function that is used suggests that when two identical hospitals are considered the patients will be split equally between them (50% - 50%)
 

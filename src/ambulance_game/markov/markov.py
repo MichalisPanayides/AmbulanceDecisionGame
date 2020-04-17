@@ -46,8 +46,6 @@ def build_states(threshold, system_capacity, parking_capacity):
     return all_states
 
 
-
-
 def visualise_ambulance_markov_chain(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -106,8 +104,6 @@ def visualise_ambulance_markov_chain(
     plt.axis("off")
 
     return G
-
-
 
 
 def get_transition_matrix_entry(
@@ -272,8 +268,6 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     return Q
 
 
-
-
 def is_steady_state(state, Q):
     """Checks if a give vector π is a steady state vector of the Markov chain by confirming that:
             πQ = 0
@@ -393,7 +387,6 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     elif algebraic_function == np.linalg.lstsq:
         state = algebraic_function(M, b, rcond=None)[0][:, 0]
     return state
-
 
 
 def get_mean_number_of_patients_in_system(pi, states):

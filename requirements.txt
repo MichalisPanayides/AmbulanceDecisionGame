@@ -1,0 +1,7 @@
+matplotlib
+networkx>=2.3
+sympy
+pandas
+seaborn
+scipy
+ciw

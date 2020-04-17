@@ -272,9 +272,6 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     return Q
 
 
-#########################
-## Steady state vector ##
-#########################
 
 
 def is_steady_state(state, Q):

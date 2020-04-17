@@ -48,8 +48,8 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     )
 
     states_after_threshold = system_capacity - threshold + 1
-    S_2_size = states_after_threshold if states_after_threshold >= 0 else 0
-    all_states_size = S_2_size * (parking_capacity + 1) + threshold
+    size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
+    all_states_size = size_of_S2 * (parking_capacity + 1) + threshold
 
     assert len(states) == all_states_size
 

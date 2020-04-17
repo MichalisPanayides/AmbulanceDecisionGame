@@ -395,10 +395,6 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     return state
 
 
-##########################
-## Performance measures ##
-##########################
-
 
 def get_mean_number_of_patients_in_system(pi, states):
     """Mean number of patients in the system = Σ[π_i * (u_i + v_i)]

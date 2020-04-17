@@ -46,9 +46,6 @@ def build_states(threshold, system_capacity, parking_capacity):
     return all_states
 
 
-######################
-## Visualising Model #
-######################
 
 
 def visualise_ambulance_markov_chain(

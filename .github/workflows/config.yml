@@ -18,6 +18,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install matplotlib
         python -m pip install ciw
+        python -m pip install sympy
         python -m pip install networkx
     - name: Install testing dependencies
       run: |

@@ -287,10 +287,7 @@ def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
     assert diff == 0
 
 
-# @given(
-#     lambda_a=floats(min_value=0.1, max_value=0.2),
-# )
-# @settings(deadline=None)
+# TODO Investigate making this a property based test
 def test_get_mean_blocking_difference_between_two_hospitals_increasing():
     """Ensuring that the function is increasing for specific inputs
     """

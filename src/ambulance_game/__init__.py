@@ -1,4 +1,5 @@
-import ambulance_game.models
+import ambulance_game.simulation
+import ambulance_game.markov
 
 from .timing_experiments import (
     time_for_different_number_of_trials,

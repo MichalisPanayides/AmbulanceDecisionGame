@@ -2,23 +2,31 @@ import numpy as np
 import random
 import ciw
 import collections
+import scipy.optimize
 
 
-def build_model(lambda_a, lambda_o, mu, num_of_servers):
+def build_model(
+    lambda_a,
+    lambda_o,
+    mu,
+    num_of_servers,
+    system_capacity=float("inf"),
+    parking_capacity=float("inf"),
+):
     """ Builds the required ciw network
 
     Parameters
     ----------
-    lambda_a : [float]
-        [Arrival rate of ambulance patients]
-    lambda_o : [float]
-        [Arrival rate of other patients]
-    mu : [float]
-        [Service rate of hospital]
-    num_of_servers : [integer]
-        [The num_of_servers of the hospital]
+    lambda_a : float
+        Arrival rate of ambulance patients
+    lambda_o : float
+        Arrival rate of other patients
+    mu : float
+        Service rate of hospital
+    num_of_servers : integer
+        The num_of_servers of the hospital
     """
- 
+
     model = ciw.create_network(
         arrival_distributions=[
             ciw.dists.Exponential(lambda_a),
@@ -27,6 +35,7 @@ def build_model(lambda_a, lambda_o, mu, num_of_servers):
         service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
         routing=[[0.0, 1.0], [0.0, 0.0]],
         number_of_servers=[float("inf"), num_of_servers],
+        queue_capacities=[0, system_capacity - num_of_servers],
     )
     return model
 
@@ -36,13 +45,13 @@ def build_custom_node(threshold=8):
     
     Parameters
     ----------
-    threshold : [int], optional
-        [The capacity threshold to be used by the method, by default 7]
+    threshold : int, optional
+        The capacity threshold to be used by the method, by default 7
     
     Returns
     -------
-    [class]
-        [A custom node class that inherits from ciw.Node]
+    class
+        A custom node class that inherits from ciw.Node
     """
 
     class CustomNode(ciw.Node):
@@ -114,23 +123,33 @@ def build_custom_node(threshold=8):
 
 
 def simulate_model(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num=None, runtime=1440
+    lambda_a,
+    lambda_o,
+    mu,
+    num_of_servers,
+    threshold,
+    seed_num=None,
+    runtime=1440,
+    system_capacity=float("inf"),
+    parking_capacity=float("inf"),
 ):
     """Simulating the model and returning the simulation object
  
     Parameters
     ----------
     seed_num : [float], optional
-        [A seed number in order to be able to replicate results], by default random.random()
+        A seed number in order to be able to replicate results, by default random.random()
     
     Returns
     -------
-    [object]
-        [An object that contains all simulation records]
+    object
+        An object that contains all simulation records
     """
     if seed_num == None:
         seed_num = random.random()
-    model = build_model(lambda_a, lambda_o, mu, num_of_servers)
+    model = build_model(
+        lambda_a, lambda_o, mu, num_of_servers, system_capacity, parking_capacity
+    )
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
     simulation = ciw.Simulation(model, node_class=node)
@@ -143,24 +162,30 @@ def extract_times_from_records(simulation_records, warm_up_time):
     
     Parameters
     ----------
-    simulation_records : [list]
-        [A list of all simulated records]
-    warm_up_time : [int]
-        [The time we start collecting results]
+    simulation_records : list
+        A list of all simulated records
+    warm_up_time : int
+        The time we start collecting results
     
     Returns
     -------
-    [list, list, list]
-        [Three lists that contain waiting, service and blocking times]
+    list, list, list
+        Three lists that contain waiting, service and blocking times
     """
     waiting = [
-        r.waiting_time for r in simulation_records if r.arrival_date > warm_up_time and r.node == 2
+        r.waiting_time
+        for r in simulation_records
+        if r.arrival_date > warm_up_time and r.node == 2
     ]
     serving = [
-        r.service_time for r in simulation_records if r.arrival_date > warm_up_time and r.node == 2
+        r.service_time
+        for r in simulation_records
+        if r.arrival_date > warm_up_time and r.node == 2
     ]
     blocking = [
-        r.time_blocked for r in simulation_records if r.arrival_date > warm_up_time and r.node == 1
+        r.time_blocked
+        for r in simulation_records
+        if r.arrival_date > warm_up_time and r.node == 1
     ]
     return waiting, serving, blocking
 
@@ -170,13 +195,13 @@ def get_list_of_results(results):
     
     Parameters
     ----------
-    results : [list]
-        [A list of named tuples for each iteration]
+    results : list
+        A list of named tuples for each iteration
     
     Returns
     -------
-    [list, list, list]
-        [Three lists that include all waits, services and blocks of all runs of all individuals]
+    list, list, list
+        Three lists that include all waits, services and blocks of all runs of all individuals
     """
     all_waits = [w.waiting_times for w in results]
     all_services = [s.service_times for s in results]
@@ -195,22 +220,24 @@ def get_multiple_runs_results(
     num_of_trials=10,
     runtime=1440,
     output_type="tuple",
+    system_capacity=float("inf"),
+    parking_capacity=float("inf"),
 ):
     """Get waiting, service and blocking times for multiple runs 
     
     Parameters
     ----------
     warm_up_time : int, optional
-        [Time to start collecting results], by default 100
+        Time to start collecting results, by default 100
     num_of_trials : int, optional
-        [Number of trials to run the model], by default 10
+        Number of trials to run the model, by default 10
     output_type : str, optional
-        [The results' output type (either tuple or list)], by default "tuple"
+        The results' output type (either tuple or list)], by default "tuple"
     
     Returns
     -------
-    [list]
-        [A list of records where each record consists of the waiting, service and blocking times of one trial. Alternatively if the output_type = "list" then returns theree lists with all waiting, service and blocking times] 
+    list
+        A list of records where each record consists of the waiting, service and blocking times of one trial. Alternatively if the output_type = "list" then returns theree lists with all waiting, service and blocking times
 
     """
     if seed_num == None:
@@ -221,7 +248,15 @@ def get_multiple_runs_results(
     results = []
     for trial in range(num_of_trials):
         simulation = simulate_model(
-            lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num + trial, runtime
+            lambda_a,
+            lambda_o,
+            mu,
+            num_of_servers,
+            threshold,
+            seed_num + trial,
+            runtime,
+            system_capacity,
+            parking_capacity,
         )
         sim_results = simulation.get_all_records()
         ext = extract_times_from_records(sim_results, warm_up_time)
@@ -232,3 +267,122 @@ def get_multiple_runs_results(
         return [all_waits, all_services, all_blocks]
 
     return results
+
+
+def get_mean_blocking_difference_between_two_hospitals(
+    prop_1,
+    lambda_a,
+    lambda_o_1,
+    lambda_o_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    seed_num_1,
+    seed_num_2,
+    num_of_trials,
+    warm_up_time,
+    runtime,
+):
+    """Given a predefined proportion of the ambulance's arrival rate calculate the mean difference between blocking times of two hospitals with given set of parameters. Note that all parameters that end in "_1" correspond to the first hospital while "_2" to the second.
+    
+    Parameters
+    ----------
+    prop_1 : float
+        Proportion of ambulance's arrival rate that will be distributed to hospital 1
+    lambda_a : float
+        Total ambulance arrival rate
+    
+    Returns
+    -------
+    float
+        The difference between the mean blocking time of the two hospitals
+    """
+    lambda_a_1 = prop_1 * lambda_a
+    lambda_a_2 = (1 - prop_1) * lambda_a
+
+    res_1 = get_multiple_runs_results(
+        lambda_a=lambda_a_1,
+        lambda_o=lambda_o_1,
+        mu=mu_1,
+        num_of_servers=num_of_servers_1,
+        threshold=threshold_1,
+        seed_num=seed_num_1,
+        warm_up_time=warm_up_time,
+        num_of_trials=num_of_trials,
+        output_type="tuple",
+        runtime=runtime,
+    )
+    res_2 = get_multiple_runs_results(
+        lambda_a=lambda_a_2,
+        lambda_o=lambda_o_2,
+        mu=mu_2,
+        num_of_servers=num_of_servers_2,
+        threshold=threshold_2,
+        seed_num=seed_num_2,
+        warm_up_time=warm_up_time,
+        num_of_trials=num_of_trials,
+        output_type="tuple",
+        runtime=runtime,
+    )
+
+    hospital_1_blockages = [
+        np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_1
+    ]
+    hospital_2_blockages = [
+        np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_2
+    ]
+    diff = np.mean(hospital_1_blockages) - np.mean(hospital_2_blockages)
+
+    return diff
+
+
+def calculate_optimal_ambulance_distribution(
+    lambda_a,
+    lambda_o_1,
+    lambda_o_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    seed_num_1,
+    seed_num_2,
+    num_of_trials,
+    warm_up_time,
+    runtime,
+):
+    """Obtains the optimal distribution of ambulances such that the blocking times of the ambulances in the two hospitals are identical and thus optimal(minimised). 
+    
+    The brentq function is used which is an algorithm created to find the root of a function that combines root bracketing, bisection, and inverse quadratic interpolation. In this specific example the root to be found is the difference between the blocking times of two hospitals. In essence the brentq algorith atempts to find the value of "prop_1" where the "diff" is zero (see function: get_mean_blocking_difference_between_two_hospitals).
+    
+    Returns
+    -------
+    float
+        The optimal proportion where the hospitals have identical blocking times
+    """
+    optimal_prop = scipy.optimize.brentq(
+        get_mean_blocking_difference_between_two_hospitals,
+        a=0.01,
+        b=0.99,
+        args=(
+            lambda_a,
+            lambda_o_1,
+            lambda_o_2,
+            mu_1,
+            mu_2,
+            num_of_servers_1,
+            num_of_servers_2,
+            threshold_1,
+            threshold_2,
+            seed_num_1,
+            seed_num_2,
+            num_of_trials,
+            warm_up_time,
+            runtime,
+        ),
+    )
+    return optimal_prop

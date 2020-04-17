@@ -1,5 +1,11 @@
+src/ambulance_game.egg-info/
 .vscode
 .hypothesis
 .coverage
 *.ipynb_checkpoints
-*/__pycache__/
+*.aux
+*.fdb_latexmk
+*.ffs
+*.log
+*synctex.gz
+*__pycache__

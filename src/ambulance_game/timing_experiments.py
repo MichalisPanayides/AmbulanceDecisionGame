@@ -18,15 +18,15 @@ def get_trial_duration(
     
     Parameters
     ----------
-    trials : [int]
-        [Number of trials to run timeit on]
-    repeat_trial : [int]
-        [Number of repetitions per trial to run timeit on]
+    trials : int
+        Number of trials to run timeit on
+    repeat_trial : int
+        Number of repetitions per trial to run timeit on
     
     Returns
     -------
-    [list]
-        [A list of floats that represent the time required for the specified number of trials to for each repetition]
+    list
+        A list of floats that represent the time required for the specified number of trials to for each repetition
     """
     parameters = [lambda_a, lambda_o, mu, num_of_servers, threshold]
     timeit_string = "simulate_model("
@@ -34,7 +34,7 @@ def get_trial_duration(
         timeit_string += str(parameters[par]) + ","
     timeit_string += ")"
     duration_object = timeit.Timer(
-        timeit_string, "from ambulance_game.models.simulation import simulate_model"
+        timeit_string, "from ambulance_game.simulation.simulation import simulate_model"
     )
     duration_of_trial = duration_object.repeat(repeat=repeat_trial, number=trials)
     return duration_of_trial
@@ -45,10 +45,10 @@ def save_to_file(duration, filename):
     
     Parameters
     ----------
-    duration : [list of floats]
-        [A list of value to be saved to a file]
+    duration : list of floats
+        A list of value to be saved to a file
     filename : str, optional
-        [The filename where the files will be saved], by default "Custom_Trials.csv"
+        The filename where the files will be saved, by default "Custom_Trials.csv"
     """
     with open(filename, "a", newline="") as times_file:
         csv_object = csv.writer(times_file)
@@ -70,14 +70,14 @@ def time_for_different_number_of_trials(
     
     Parameters
     ----------
-    num_of_trials : [int]
-        [The number of trials to run the duration on]
+    num_of_trials : int
+        The number of trials to run the duration on
     repeat_trial : int, optional
-        [A number to indicate how many repetitions to make for each trial], by default 1
+        A number to indicate how many repetitions to make for each trial, by default 1
     method : str, optional
-        [An arguement to identify which approach to use (currently only supports 'Simulation')], by default 'Simulation'
+        An arguement to identify which approach to use (currently only supports 'Simulation'), by default 'Simulation'
     filename : str, optional
-        [A string that contains the filename that the recorded times will be saved to], dy default None
+        A string that contains the filename that the recorded times will be saved to, dy default None
 
     Returns
     -------
@@ -117,13 +117,13 @@ def import_trials_duration(path):
     
     Parameters
     ----------
-    path : [string]
-        [the path that the file is located in]
+    path : string
+        the path that the file is located in
     
     Returns
     -------
-    [list]
-        [a list of times to be plotted or viewed]
+    list
+        a list of times to be plotted or viewed
     """
     with open(path, "r") as times_file:
         csv_object = csv.reader(times_file)
@@ -136,10 +136,10 @@ def get_duration_distribution_plot(times, kind=None):
     
     Parameters
     ----------
-    times : [list]
-        [A list of durations of the simulation]
-    kind : [string], optional
-        [A keyword to identify the type of distribution plot ("violin": violinplot, "box": boxplot, otherwise: scatterplot)], by default None
+    times : list
+        A list of durations of the simulation
+    kind : string, optional
+        A keyword to identify the type of distribution plot ("violin": violinplot, "box": boxplot, otherwise: scatterplot), by default None
     
     Returns
     -------

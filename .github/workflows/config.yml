@@ -19,6 +19,8 @@ jobs:
         python -m pip install matplotlib
         python -m pip install ciw
         python -m pip install sympy
+        python -m pip install pandas
+        python -m pip install seaborn
         python -m pip install scipy
         python -m pip install networkx
     - name: Install testing dependencies

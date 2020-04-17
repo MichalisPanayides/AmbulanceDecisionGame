@@ -20,6 +20,8 @@ from ambulance_game.simulation.simulation import (
     calculate_optimal_ambulance_distribution,
 )
 
+number_of_digits_to_round = 8
+
 
 @given(
     lambda_a=floats(min_value=0.1, max_value=10),
@@ -48,7 +50,9 @@ def test_example_model():
     blocks = [r.time_blocked for r in records]
 
     assert len(records) == 290
-    assert sum(wait) == 1089.854729732795
+    assert round(sum(wait), number_of_digits_to_round) == round(
+        1089.854729732795, number_of_digits_to_round
+    )
     assert sum(blocks) == 0
 
 
@@ -99,8 +103,12 @@ def test_example_build_custom_node():
     blocks = [r.time_blocked for r in records]
 
     assert len(records) == 274
-    assert sum(wait) == 521.0071454616575
-    assert sum(blocks) == 546.9988970370749
+    assert round(sum(wait), number_of_digits_to_round) == round(
+        521.0071454616575, number_of_digits_to_round
+    )
+    assert round(sum(blocks), number_of_digits_to_round) == round(
+        546.9988970370749, number_of_digits_to_round
+    )
 
 
 def test_simulate_model_unconstrained():
@@ -132,9 +140,15 @@ def test_simulate_model_unconstrained():
     assert len(sim_results[2]) == 491
     assert len(sim_results[3]) == 486
     assert len(sim_results[4]) == 458
-    assert blocks == 171712.5200250419
-    assert waits == 580.0884411214596
-    assert services == 37134.74895651618
+    assert round(blocks, number_of_digits_to_round) == round(
+        171712.5200250419, number_of_digits_to_round
+    )
+    assert round(waits, number_of_digits_to_round) == round(
+        580.0884411214596, number_of_digits_to_round
+    )
+    assert round(services, number_of_digits_to_round) == round(
+        37134.74895651618, number_of_digits_to_round
+    )
 
 
 def test_simulate_model_constrained():
@@ -168,9 +182,15 @@ def test_simulate_model_constrained():
     assert len(sim_results[2]) == 477
     assert len(sim_results[3]) == 486
     assert len(sim_results[4]) == 455
-    assert blocks == 184149.7203971063
-    assert waits == 241.44395610608004
-    assert services == 36809.684541837734
+    assert round(blocks, number_of_digits_to_round) == round(
+        184149.7203971063, number_of_digits_to_round
+    )
+    assert round(waits, number_of_digits_to_round) == round(
+        241.44395610608004, number_of_digits_to_round
+    )
+    assert round(services, number_of_digits_to_round) == round(
+        36809.684541837734, number_of_digits_to_round
+    )
 
 
 def test_get_multiple_results():
@@ -223,9 +243,15 @@ def test_example_get_multiple_results():
     all_servs = [np.mean(s.service_times) for s in mult_results]
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
 
-    assert np.mean(all_waits) == 0.40499090339103355
-    assert np.mean(all_servs) == 19.47582689268173
-    assert np.mean(all_blocks) == 432.68444649763916
+    assert round(np.mean(all_waits), number_of_digits_to_round) == round(
+        0.40499090339103355, number_of_digits_to_round
+    )
+    assert round(np.mean(all_servs), number_of_digits_to_round) == round(
+        19.47582689268173, number_of_digits_to_round
+    )
+    assert round(np.mean(all_blocks), number_of_digits_to_round) == round(
+        432.68444649763916, number_of_digits_to_round
+    )
 
 
 @given(

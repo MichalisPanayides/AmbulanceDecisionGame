@@ -84,7 +84,7 @@ def test_visualise_ambulance_markov_chain(
 
     assert type(markov_chain_plot) == nx.classes.multidigraph.MultiDiGraph
     assert set_of_all_states == set_of_nodes
-    plt.close()
+    plt.close(). # TODO Investigate if it's possible to remove this line
 
 
 @given(

@@ -108,9 +108,6 @@ def visualise_ambulance_markov_chain(
     return G
 
 
-#######################
-## Transition Matrix ##
-#######################
 
 
 def get_transition_matrix_entry(

@@ -524,7 +524,7 @@ $$
 
 
 \newpage
-\subsection{Expressions derived from $\pi$}
+\subsection{Expressions derived from $\pi$ - Attempt 1}
 Average number of patients in the whole system: 
 $$
 L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
@@ -565,6 +565,35 @@ B = \frac{L_A}{\lambda^A}
 $$
 
 \newpage
+
+\subsection{Expressions derived from $\pi$ - Attempt 2}
+Average number of patients in the whole system: 
+\begin{equation}
+    L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
+\end{equation} 
+
+Average number of patients in the hospital: 
+\begin{equation}
+    L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
+\end{equation} 
+
+Average number of ambulances being blocked:
+\begin{equation}
+    L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
+\end{equation}
+
+Mean waiting time in the hospital:
+\begin{equation}
+    W_q = \sum_{i=1}^{|\pi|} \frac{\pi_i}{\sum_{\substack{j=1 \\ i \neq j}}^{|\pi|} q_{i j}}
+\end{equation}
+
+\begin{equation}
+    W_q = \sum_{i=1}^{|\pi|} \pi_i \frac{v_i - c}{v_i \mu}, \quad v_i > c
+\end{equation}
+
+
+\newpage
+
 \section{Figures that might be useful}
 \begin{figure}[h]
     \centering
@@ -631,13 +660,13 @@ $$
             (three) edge[bend left] node {$\lambda^o$} (four)
             (four) edge[bend left] node {$4 \mu$} (three)
             (four) edge[bend left] node {$\lambda^o$} (five)
-            (five) edge[bend left] node {$5 \mu$} (four)
+            (five) edge[bend left] node {$4 \mu$} (four)
             (three) edge[bend left] node {$\lambda^A$} (three_one)
             (three_one) edge[bend left] node {$3 \mu$} (three)
             (three_one) edge[bend left] node {$\lambda^o$} (four_one)
             (four_one) edge[bend left] node {$4 \mu$} (three_one)
             (four_one) edge[bend left] node {$\lambda^o$} (five_one)
-            (five_one) edge[bend left] node {$5 \mu$} (four_one)
+            (five_one) edge[bend left] node {$4 \mu$} (four_one)
             (four) edge node {$\lambda^A$} (four_one)
             % (four_one) edge[bend left] node {$\mu$} (four)
             (five) edge node {$\lambda^A$} (five_one)
@@ -651,12 +680,12 @@ $$
             (three_two) edge[bend left] node {$\lambda^o$} (four_two)
             (four_two) edge[bend left] node {$4 \mu$} (three_two)
             (four_two) edge[bend left] node {$\lambda^o$} (five_two)
-            (five_two) edge[bend left] node {$5 \mu$} (four_two)
+            (five_two) edge[bend left] node {$4 \mu$} (four_two)
             ;       
 
 
     \end{tikzpicture}
-    \caption{Markov chains} 
+    \caption{Markov chains: number of servers=4} 
     \label{Markov_mini}
 \end{figure}
 

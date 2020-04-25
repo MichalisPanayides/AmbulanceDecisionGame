@@ -132,7 +132,7 @@ def simulate_model(
     runtime=1440,
     system_capacity=float("inf"),
     parking_capacity=float("inf"),
-    tracker=ciw.trackers.NodePopulation()
+    tracker=ciw.trackers.NodePopulation(),
 ):
     """Simulating the model and returning the simulation object
  

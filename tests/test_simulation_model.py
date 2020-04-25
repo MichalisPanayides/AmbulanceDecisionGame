@@ -190,8 +190,7 @@ def test_simulate_model_constrained():
         253.16063529519664, number_of_digits_to_round
     )
     assert round(services, number_of_digits_to_round) == round(
-        36826.38173021053, 
-        number_of_digits_to_round
+        36826.38173021053, number_of_digits_to_round
     )
 
 
@@ -203,11 +202,22 @@ def test_get_pi():
     threshold = 3
     system_capacity = 5
     parking_capacity = 4
-    seed_num = None     
+    seed_num = None
     runtime = 2000
     tracker = ciw.trackers.NodePopulation()
 
-    Q = simulate_model(lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, runtime, system_capacity, parking_capacity, tracker=tracker)
+    Q = simulate_model(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        seed_num,
+        runtime,
+        system_capacity,
+        parking_capacity,
+        tracker=tracker,
+    )
     pi_dictionary = get_pi(Q)
     assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
 

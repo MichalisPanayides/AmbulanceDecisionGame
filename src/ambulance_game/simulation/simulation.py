@@ -34,7 +34,7 @@ def build_model(
         ],
         service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
         routing=[[0.0, 1.0], [0.0, 0.0]],
-        number_of_servers=[float("inf"), num_of_servers],
+        number_of_servers=[parking_capacity, num_of_servers],
         queue_capacities=[0, system_capacity - num_of_servers],
     )
     return model
@@ -132,6 +132,7 @@ def simulate_model(
     runtime=1440,
     system_capacity=float("inf"),
     parking_capacity=float("inf"),
+    tracker=ciw.trackers.NodePopulation()
 ):
     """Simulating the model and returning the simulation object
  
@@ -152,9 +153,14 @@ def simulate_model(
     )
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
-    simulation = ciw.Simulation(model, node_class=node)
+    simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
     simulation.simulate_until_max_time(runtime)
     return simulation
+
+
+def get_pi(Q):
+    pi_dictionary = Q.statetracker.state_probabilities()
+    return pi_dictionary
 
 
 def extract_times_from_records(simulation_records, warm_up_time):

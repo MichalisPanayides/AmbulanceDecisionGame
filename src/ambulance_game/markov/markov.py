@@ -10,8 +10,8 @@ import scipy.integrate
 def build_states(threshold, system_capacity, parking_capacity):
     """Builds the set of states in a list fromat by combine two sets of states where:
         - states_1 consists of all states before reaching the threshold
-            (0, 0), ..., (0, T-1) where T is the threshold
-        - states_2 consists of all states after reaching the theshold including the threshold
+            (0, 0), (0, 1), ..., (0, T-1) where T is the threshold
+        - states_2 consists of all states after reaching the theshold including the threshold (where S is the system capacity)
             (0, T), (0, T+1), ..., (0, S)  
             (1, T), (1, T+1), ..., (1, S)
               .         .            .
@@ -19,6 +19,8 @@ def build_states(threshold, system_capacity, parking_capacity):
               .         .            .
             (P, T), (P, T+1), ..., (P, S)
 
+    Note that if the threshold is greater than the system_capacity then the markov chain will be of the form:
+         (0, 0), (0, 1), ..., (0, S)
     Parameters
     ----------
     threshold : int
@@ -35,6 +37,9 @@ def build_states(threshold, system_capacity, parking_capacity):
     
     TODO: turn into a generator
     """
+    if threshold > system_capacity:
+        return [(0, v) for v in range(0, system_capacity + 1)]
+
     states_1 = [(0, v) for v in range(0, threshold)]
     states_2 = [
         (u, v)

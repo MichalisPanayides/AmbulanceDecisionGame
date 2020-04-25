@@ -15,6 +15,7 @@ from ambulance_game.simulation.simulation import (
     build_model,
     build_custom_node,
     simulate_model,
+    get_pi,
     get_multiple_runs_results,
     get_mean_blocking_difference_between_two_hospitals,
     calculate_optimal_ambulance_distribution,
@@ -177,20 +178,48 @@ def test_simulate_model_constrained():
         services = services + sum([s.service_time for s in rec])
 
     assert type(simulation) == ciw.simulation.Simulation
-    assert len(sim_results[0]) == 490
-    assert len(sim_results[1]) == 446
-    assert len(sim_results[2]) == 477
-    assert len(sim_results[3]) == 486
-    assert len(sim_results[4]) == 455
+    assert len(sim_results[0]) == 504
+    assert len(sim_results[1]) == 449
+    assert len(sim_results[2]) == 466
+    assert len(sim_results[3]) == 453
+    assert len(sim_results[4]) == 437
     assert round(blocks, number_of_digits_to_round) == round(
-        184149.7203971063, number_of_digits_to_round
+        27926.12213659, number_of_digits_to_round
     )
     assert round(waits, number_of_digits_to_round) == round(
-        241.44395610608004, number_of_digits_to_round
+        253.16063529519664, number_of_digits_to_round
     )
     assert round(services, number_of_digits_to_round) == round(
-        36809.684541837734, number_of_digits_to_round
+        36826.38173021053, number_of_digits_to_round
     )
+
+
+def test_get_pi():
+    lambda_a = 0.1
+    lambda_o = 0.2
+    mu = 0.2
+    num_of_servers = 3
+    threshold = 3
+    system_capacity = 5
+    parking_capacity = 4
+    seed_num = None
+    runtime = 2000
+    tracker = ciw.trackers.NodePopulation()
+
+    Q = simulate_model(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        seed_num,
+        runtime,
+        system_capacity,
+        parking_capacity,
+        tracker=tracker,
+    )
+    pi_dictionary = get_pi(Q)
+    assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
 
 
 def test_get_multiple_results():

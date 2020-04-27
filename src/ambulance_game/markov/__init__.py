@@ -7,6 +7,8 @@ from .markov import (
     is_steady_state,
     get_steady_state_numerically,
     get_steady_state_algebraically,
+    get_mar_pi_dict,
+    get_mar_pi_array,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
     get_mean_ambulances_blocked,

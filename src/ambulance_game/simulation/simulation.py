@@ -158,9 +158,37 @@ def simulate_model(
     return simulation
 
 
-def get_pi(Q):
+def get_sim_pi_dict(Q):
+    """Calculates the vector pi in a dictionary format where the values are the probabilities that the system is in a cuurent state (listed as key of the dictionary).
+
+    Returns
+    -------
+    dictionary
+        A dictionary with the markov states as keys and the equivalent probabilities as values
+    """    
     pi_dictionary = Q.statetracker.state_probabilities()
     return pi_dictionary
+
+
+def get_sim_pi_array(simulation_object, system_capacity=None, parking_capacity=None):
+    """Converts the vector pi as a numpy array where the probability of being in state (i,j) is placed in the equivalent (i,j) position in the numpy array.
+
+    Returns
+    -------
+    numpy.array
+        An array Π where: Π(i,j) = probabilitiy of being in state (i,j)
+    """
+    state_probabilities_dict = simulation_object.statetracker.state_probabilities()
+    if parking_capacity == None:
+        parking_capacity = max([state[0] for state in state_probabilities_dict.keys()])
+    if system_capacity == None:
+        system_capacity = max([state[1] for state in state_probabilities_dict.keys()])
+    state_probabilities_array = np.full((parking_capacity + 1, system_capacity + 1), np.NaN) 
+    for key, value in state_probabilities_dict.items(): 
+        if value > 0:
+            state_probabilities_array[key] = value 
+            
+    return state_probabilities_array
 
 
 def extract_times_from_records(simulation_records, warm_up_time):

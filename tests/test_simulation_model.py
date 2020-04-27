@@ -15,7 +15,8 @@ from ambulance_game.simulation.simulation import (
     build_model,
     build_custom_node,
     simulate_model,
-    get_pi,
+    get_pi_dict,
+    get_pi_array,
     get_multiple_runs_results,
     get_mean_blocking_difference_between_two_hospitals,
     calculate_optimal_ambulance_distribution,
@@ -194,7 +195,10 @@ def test_simulate_model_constrained():
     )
 
 
-def test_get_pi():
+def test_get_pi_dict():
+    """
+    Test to ensure that sum of the values of the pi dictionary equate to 1  
+    """    
     lambda_a = 0.1
     lambda_o = 0.2
     mu = 0.2
@@ -218,8 +222,40 @@ def test_get_pi():
         parking_capacity,
         tracker=tracker,
     )
-    pi_dictionary = get_pi(Q)
+    pi_dictionary = get_pi_dict(Q)
     assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
+
+
+def test_get_pi_array():
+    """
+    Test to ensure that the sum of elements of the pi array equate to 1
+    """    
+    lambda_a = 0.1
+    lambda_o = 0.2
+    mu = 0.2
+    num_of_servers = 3
+    threshold = 3
+    system_capacity = 5
+    parking_capacity = 4
+    seed_num = None
+    runtime = 2000
+    tracker = ciw.trackers.NodePopulation()
+
+    Q = simulate_model(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        seed_num,
+        runtime,
+        system_capacity,
+        parking_capacity,
+        tracker=tracker,
+    )
+    pi_array = get_pi_array(Q)
+    assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+
 
 
 def test_get_multiple_results():

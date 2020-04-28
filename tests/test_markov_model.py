@@ -26,8 +26,7 @@ from ambulance_game.markov.markov import (
     get_steady_state_numerically,
     augment_Q,
     get_steady_state_algebraically,
-    get_pi_dict,
-    get_pi_array,
+    get_markov_state_probabilities,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
     get_mean_ambulances_blocked,
@@ -389,27 +388,39 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     assert is_steady_state(steady, Q)
 
 
-def test_get_pi_dict():
+def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1  
-    """    
+    """
     lambda_a = 0.1
     lambda_o = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4 
+    parking_capacity = 4
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
-    transition_matrix = get_transition_matrix(lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity)
-    pi = get_steady_state_algebraically(transition_matrix, algebraic_function=np.linalg.lstsq)
-    pi_dictionary = get_pi_dict(pi, all_states)
+    transition_matrix = get_transition_matrix(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
+    pi = get_steady_state_algebraically(
+        transition_matrix, algebraic_function=np.linalg.lstsq
+    )
+    pi_dictionary = get_markov_state_probabilities(
+        pi=pi, all_states=all_states, output=dict
+    )
 
     assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
 
 
-def test_get_pi_array():
+def test_get_state_probabilities_array():
     """ 
     Test to ensure that the sum of elements of the pi array equate to 1
     """
@@ -419,11 +430,23 @@ def test_get_pi_array():
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4 
+    parking_capacity = 4
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
-    transition_matrix = get_transition_matrix(lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity)
-    pi = get_steady_state_algebraically(transition_matrix, algebraic_function=np.linalg.lstsq)
-    pi_array = get_pi_array(pi, all_states)
+    transition_matrix = get_transition_matrix(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
+    pi = get_steady_state_algebraically(
+        transition_matrix, algebraic_function=np.linalg.lstsq
+    )
+    pi_array = get_markov_state_probabilities(
+        pi=pi, all_states=all_states, output=np.ndarray
+    )
 
     assert round(np.nansum(pi_array), number_of_digits_to_round) == 1

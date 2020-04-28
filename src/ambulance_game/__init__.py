@@ -20,6 +20,4 @@ from .model_plots import (
 )
 
 
-from .comparisons import (
-    get_heatmaps,
-)
+from .comparisons import get_heatmaps

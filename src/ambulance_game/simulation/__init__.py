@@ -1,7 +1,7 @@
 from .simulation import (
     simulate_model,
     get_multiple_runs_results,
-    get_sim_pi_dict,
-    get_sim_pi_array,
+    get_simulated_state_probabilities,
+    get_average_simulated_state_probabilities,
     calculate_optimal_ambulance_distribution,
 )

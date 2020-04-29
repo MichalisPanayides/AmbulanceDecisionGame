@@ -1,0 +1,303 @@
+\section{Hospital Markov chain model}
+The following Markov chain represents the transition between states of a hospital while capturing the EMS interaction with it. The hospital accepts both ambulance and other patients normally until a certain threshold \(T\) is reached. When it is reached all ambulances that arrive will be marked as \textit{"parked outside"} until the number of people in the system is reduced below \(T\). Alternatively, if the patients in the system keep rising, they may reach the total capacity \(C\) of the hospital and the other patients will be waiting for until a service becomes free. The states of the Markov chain are denoted by \((u,v)\) where:
+
+\begin{itemize}
+    \item \(u\) = number of ambulances parked outside of the hospital
+    \item \(v\) = number of patients in the hospital
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[-, node distance = 0.9cm, auto, every node/.style={scale=0.5}]
+
+        % Variables
+        \tikzmath{
+            let \initdist = 0.5cm;
+            let \altdist = 1.2cm;
+            let \minsz = 1.6cm;
+            let \leftOne = -0.8;
+            let \rightOne = 2.2;
+            let \upOne = 0.8;
+            let \downOne = -2.2;
+            let \leftTwo = 2.25;
+            let \rightTwo = 14.2;
+            let \upTwo = -2.35;
+            let \downTwo = -8.8;
+        }
+
+        % Rectangle for S1
+        \draw[ultra thin, dashed] (\leftOne, \downOne) -- (\leftOne, \upOne);
+        \draw[ultra thin, dashed] (\leftOne, \upOne) -- (\rightOne, \upOne);
+        \draw[ultra thin, dashed] (\rightOne, \upOne) -- node {\Huge{\( \quad S_1 \)}}(\rightOne, \downOne);
+        \draw[ultra thin, dashed] (\rightOne, \downOne) -- (\leftOne, \downOne);
+
+        % Rectangle for S2
+        \draw[ultra thin, dashed] (\leftTwo, \downTwo) -- node {\Huge{\( S_2 \quad \)}}(\leftTwo, \upTwo);
+        \draw[ultra thin, dashed] (\leftTwo, \upTwo) -- (\rightTwo, \upTwo);
+        \draw[ultra thin, dashed] (\rightTwo, \upTwo) -- (\rightTwo, \downTwo);
+        \draw[ultra thin, dashed] (\rightTwo, \downTwo) -- (\leftTwo, \downTwo);
+
+        % First Line
+        \node[state, minimum size=1.5cm] (zero) {(0,0)};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] (one) {(0,1)};
+        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] (two) {\textbf{\( \ddots \)}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] (three) {(0,T)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] (five) {\textbf{\dots}};
+        \node[draw=none, minimum size=\minsz, right=of five] (six) {\textbf{\vdots}};
+        \node[draw=none, minimum size=\minsz, right=of six] (seven) {\textbf{\dots}};
+        \node[state, minimum size=\minsz, right=of seven] (eight) {(0,C)};
+        \node[draw=none, minimum size=\minsz, right=of eight] (nine) {\textbf{\dots}};
+
+
+        % Second Line
+        \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
+        \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
+        \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\textbf{\dots}};
+        \node[state, minimum size=\minsz, right=of five_one] (six_one) {\( (u_i, v_i) \)};
+        \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\textbf{\dots}};
+        \node[state, minimum size=\minsz, right=of seven_one] (eight_one) {(1,C)};
+        \node[draw=none, minimum size=\minsz, right=of eight_one] (nine_one) {\textbf{\dots}};
+        
+
+        % Third Line
+        \node[state, minimum size=\minsz, below=of three_one] (three_two) {(2,T)};
+        \node[state, minimum size=\minsz, below=of four_one] (four_two) {(2,T+1)};
+        \node[draw=none, minimum size=\minsz, below=of five_one] (five_two) {\textbf{\dots}};
+        \node[draw=none, minimum size=\minsz, right=of five_two] (six_two) {\textbf{\vdots}};
+        \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) {\textbf{\dots}};
+        \node[state, minimum size=\minsz, right=of seven_two] (eight_two) {(2,C)};
+        \node[draw=none, minimum size=\minsz, right=of eight_two] (nine_two) {\textbf{\dots}};
+
+        % Fourth line
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] (three_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] (four_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of five_two] (five_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] (six_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of eight_two] (eight_three) {\textbf{\vdots}};
+
+
+        \draw[every loop]
+            % First Horizontal Edges
+            (zero) edge[bend left] node {\( \Lambda \)} (one)
+            (one) edge[bend left] node {\( \mu \)} (zero)
+            (one) edge[bend left] node {\( \Lambda \)} (two)
+            (two) edge[bend left] node {\( 2 \mu \)} (one)
+            (two) edge[bend left] node {\( \Lambda \)} (three)
+            (three) edge[bend left] node {\( T \mu \)} (two)
+            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (four) edge[bend left] node {\( (T+1) \mu \)} (three)
+            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (five) edge[bend left] node {\( (T+2) \mu \)} (four)
+            % (five) edge[bend left] node {\(\lambda^o\)} (six)
+            % (six) edge[bend left] node [above] {\(C\mu\)} (five)
+            % (six) edge[bend left] node {\(\lambda^o\)} (seven)
+            % (seven) edge[bend left] node [above] {\(C\mu\)} (six)
+            (seven) edge[bend left] node {\(\lambda^o\)} (eight)
+            (eight) edge[bend left] node {\(C\mu\)} (seven)
+            (eight) edge[bend left] node {\(\lambda^o\)} (nine)
+            (nine) edge[bend left] node {\(C\mu\)} (eight)
+
+            % Second Horizontal Edges
+            (three_one) edge[bend left] node {\( \lambda^o \)} (four_one)
+            (four_one) edge[bend left] node {\( (T+1) \mu \)} (three_one)
+            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (five_one) edge[bend left] node {\( (T+2) \mu \)} (four_one)
+            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (six_one) edge[bend left] node {\( v_i\mu \)} (five_one)
+            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (seven_one) edge[bend left] node {\( (v_i+1)\mu \)} (six_one)
+            (seven_one) edge[bend left] node {\( \lambda^o \)} (eight_one)
+            (eight_one) edge[bend left] node {\( C\mu \)} (seven_one)
+            (eight_one) edge[bend left] node {\( \lambda^o \)} (nine_one)
+            (nine_one) edge[bend left] node {\( C\mu \)} (eight_one)
+
+            % Third Horizontal Edges
+            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (four_two) edge[bend left] node [below] {\( (T+1) \mu \)} (three_two)
+            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (five_two) edge[bend left] node {\( (T+2) \mu \)} (four_two)
+            % (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            % (six_two) edge[bend left] node [above] {\( C\mu \)} (five_two)
+            % (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            % (seven_two) edge[bend left] node [above] {\( C\mu \)} (six_two)
+            (seven_two) edge[bend left] node {\( \lambda^o \)} (eight_two)
+            (eight_two) edge[bend left] node {\( C\mu \)} (seven_two)
+            (eight_two) edge[bend left] node {\( \lambda^o \)} (nine_two)
+            (nine_two) edge[bend left] node {\( C\mu \)} (eight_two)
+
+            % First Vertical Edges
+            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three_one) edge[bend left] node {\( T \mu \)} (three)
+            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_two) edge[bend left] node {\( T\mu \)} (three_one)
+            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_three) edge[bend left] node {\( T\mu \)} (three_two)
+
+            % Second Vertical Edges
+            (four) edge node {\( \lambda^A \)} (four_one)
+            (four_one) edge node {\( \lambda^A \)} (four_two)
+            (four_two) edge node {\( \lambda^A \)} (four_three)
+
+            % Third Vertical Edges
+            (six) edge node {\( \lambda^A \)} (six_one)
+            (six_one) edge node {\( \lambda^A \)} (six_two)
+            % (six_two) edge node {\( \lambda^A \)} (six_three)
+
+            % Fourth Vertical Edges
+            (eight) edge node {\( \lambda^A \)} (eight_one)
+            (eight_one) edge node {\( \lambda^A \)} (eight_two)
+            (eight_two) edge node {\( \lambda^A \)} (eight_three)
+            ;       
+    \end{tikzpicture}
+    \caption{Markov chains} 
+    \label{markov_model}
+\end{figure}
+
+\subsection{Markov-chain state mapping function}
+The transition matrix of the Markov-chain representation described above can be denoted by a state mapping function. The state space of this function is defined as:
+
+
+
+\begin{align}
+    S(T) =& S_1(T) \cup S_2(T) \text{ where:} \nonumber \\
+    S_1(T) =& \left\{(0, v)\in\mathbb{N}_0^2 \; | \; v < T \right\} \\
+    S_2(T) =& \{(u, v)\in\mathbb{N}_0^2 \; | \; v \geq T \} \nonumber
+\end{align}
+
+Therefore, the entries of the transition matrix \(Q\), can be given by \( q_{i,j} = q_{(u_i, v_i),(u_j, v_j)} \) which is the transition rate from state \( i = (u_i, v_i) \) to state \( j = (u_j , v_j) \) for all \( (u_i, v_i), (u_j, v_j) \in S \).
+
+\begin{equation}
+    q_{i, j} = 
+    \begin{cases}
+        \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
+        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
+        \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
+        v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\\
+        C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C \\
+        T \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t} \\
+        -\sum_{j=1}^{|Q|}{q_{i,j}} & \textbf{if } i = j \\
+        0, & \textbf{otherwise}
+    \end{cases}
+\end{equation}
+
+In order to acquire an exact solution of the problem a slight adjustment needs to be considered. The problem defined above assumes no upper boundary to the number of people that can wait for service or the number of ambulances that can be parked outside. Therefore, a different state space \( \tilde S \) needs to be constructed where \( \tilde S \subseteq S \) and there is a maximum allowed number of people \( N \) that can be in the system and a maximum allowed number of ambulances \( M \) parked outside:
+
+\begin{equation}
+    \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N\ \right\}
+\end{equation}
+
+
+\subsection{Steady State}
+Having calculated the transition matrix \( Q \) for a given set of parameters the probability vector \( \pi \) needs to be considered. The vector \( \pi \) is commonly used to study such stochastic systems and it's main purpose is to keep track of the probability of being at any given state of the system. The term \textit{steady state} refers to the instance of the vector \( \pi \) where the probabilities of being at any state become stable over time. Thus, by considering the steady state vector \( \pi \) the relationship between it and \(Q \) is given by:
+
+\[
+\frac{d\pi}{dt} = \pi Q = 0
+\]
+
+There are numerous methods that can be used to solve problems of such kind. In this paper only numeric and algebraic approaches will be considered. 
+
+\subsubsection{Numeric integration}
+The first approach to be considered is to solve the differential equation numerically by observing the behaviour of the model over time. The solution is obtained via python's SciPy library. The functions odeint and solve\textunderscore ivp have been used in order to find a solution to the problem. Both of these functions can be used to solve any system of first order ODEs.
+
+\subsubsection{Linear algebraic approach}
+Another approach to be considered is the linear algebraic method. The steady state vector can be found algebraically by satisfying the following set of equations:
+\[ \pi Q = 0 \]
+\[ \sum_{i} \pi_i = 1 \]
+
+These equations can be solved by slightly altering \( Q \) such that the final column is replaced by a vector of ones. Thus, the resultant solution occurs from solving the equation \( \tilde{Q}^T \pi = b \) where \( \tilde{Q} \) and \( b \) are defined as:
+
+\[
+\tilde{q_{i, j}} = 
+\begin{cases}
+    1, & \textbf{if } j = |Q| \\
+    q_{i,j}, & \textbf{otherwise}
+\end{cases}
+\]
+
+\[
+b = 
+\begin{bmatrix}
+    x_{1} \\
+    x_{2} \\
+    \vdots \\
+    x_{m}
+\end{bmatrix}
+\]
+
+
+\subsubsection{Least Squares approach}
+Finally, the last approach to be considered is the least squares method. This approach is considered because while the problem becomes more complex (in terms of input parameters) the computational time required to solve it increases exponentially. Thus, one may obtain the steady state vector \( \pi \) by solving the following equation.
+
+\[
+\pi = \text{argmin}_{x\in\mathbb{R}^{d}}\|Mx-b\|_2^2
+\]
+
+
+\newpage
+\subsection{Expressions derived from \( \pi \) - Attempt 1}
+Average number of patients in the whole system: 
+\[
+L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
+\] 
+
+Average number of patients in the hospital: 
+\[
+L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
+\] 
+
+Average number of ambulances being blocked:
+\[
+L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
+\]
+
+Mean time in the system:
+\[
+W = \frac{L}{\Lambda}
+\]
+
+Mean time in the hospital:
+\[
+W_H = \frac{L_H}{\Lambda}
+\]
+
+Mean waiting time in the hospital:
+\[
+W_{H_q} = \frac{L_H}{\lambda^o} - \frac{1}{\mu}
+\]
+\hspace{7.2cm} OR
+\[
+W_{H_q} = \frac{L_H}{\Lambda} - \frac{1}{\mu}
+\]
+
+Mean blocking time of ambulances:
+\[
+B = \frac{L_A}{\lambda^A}
+\]
+
+\newpage
+
+\subsection{Expressions derived from \( \pi \) - Attempt 2}
+Average number of patients in the whole system: 
+\begin{equation}
+    L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
+\end{equation} 
+
+Average number of patients in the hospital: 
+\begin{equation}
+    L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
+\end{equation} 
+
+Average number of ambulances being blocked:
+\begin{equation}
+    L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
+\end{equation}
+
+Mean waiting time in the hospital:
+\begin{equation}
+    W_q = \sum_{i=1}^{|\pi|} \frac{\pi_i}{\sum_{\substack{j=1 \\ i \neq j}}^{|\pi|} q_{i j}}
+\end{equation}
+
+\begin{equation}
+    W_q = \sum_{i=1}^{|\pi|} \pi_i \frac{v_i - c}{v_i \mu}, \quad v_i > c
+\end{equation}

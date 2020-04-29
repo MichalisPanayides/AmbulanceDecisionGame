@@ -1,0 +1,39 @@
+\section{Quick Methodology}
+
+\begin{itemize}
+    \item Fix the parameters \( \Lambda \), \( \lambda_i^o \), \( \mu_i \) and \( C_i \). 
+    \item \( \forall \hspace{0.2cm} \hat{c_i} \in \{1,2, \dots, C_A\} \) and \( \forall \hspace{0.2cm} \hat{c_j} \in \{1,2, \dots, C_B\} \) 
+    \item Calculate \( p_A \) and \( p_B = 1-p_A \) s.t. \( (W_q)_A = (W_q)_B \). 
+    \item Calculate the probability \(P((W_q)_i \leq 4 \) hours
+    \item Fill matrix A with \( U_{\hat{c_i}, \hat{c_j}}^A = 1 - |0.95 - P((W_q)_A \leq 4)| \) and
+    \item fill matrix B with \( U_{\hat{c_i}, \hat{c_j}}^B = 1 - |0.95 - P((W_q)_B \leq 4)| \)
+\end{itemize}
+
+
+\begin{table}[h]
+    \centering
+    A = 
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \( U_{1,1}^A \) & \( U_{1,2}^A \) & \dots & \( U_{1,C_B}^A \) \\ \hline
+    \( U_{2,1}^A \) & \( U_{2,2}^A \) & \dots & \( U_{2,C_B}^A \) \\ \hline
+    \vdots & \vdots & \( \ddots \) & \vdots \\ \hline
+    \( U_{C_A,1}^A \) & \( U_{C_A,2}^A \) & \dots & \( U_{C_A,C_B}^A \) \\ \hline
+    \end{tabular}
+\end{table}  
+
+\begin{table}[h]
+    \centering
+    B = 
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \( U_{1,1}^B \) & \( U_{1,2}^B \) & \dots & \( U_{1,C_B}^B \) \\ \hline
+    \( U_{2,1}^B \) & \( U_{2,2}^B \) & \dots & \( U_{2,C_B}^B \) \\ \hline
+    \vdots & \vdots & \( \ddots \) & \vdots \\ \hline
+    \( U_{C_A,1}^B \) & \( U_{C_A,2}^B \) & \dots & \( U_{C_A,C_B}^B \) \\ \hline
+    \end{tabular}
+\end{table}  
+
+\begin{itemize}
+    \item Ambulance decides the proportion of people to distribute to each hospital based on optimal patient distribution.
+\end{itemize}

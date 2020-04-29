@@ -1,0 +1,53 @@
+\section{Introduction}
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[-, node distance = 3cm, auto]
+        \node[anchor=north](H1){\(H_1\)};
+        \node[anchor=north](H1_d1) at (3, 2){.};
+        \node[anchor=north](H1_d2) at (3, -2){.};
+
+        \path(H1) edge node {}(H1_d1);
+        \path(H1) edge node {}(H1_d2);
+        \path(H1_d1) edge [bend left] node {}(H1_d2);
+        \path(H1_d1) [dashed] edge node {}(H1_d2);
+
+        \node[anchor=north](H2) at (3.9, 0){\(H_2\)};
+        \node[anchor=north](H2_d1) at (6.9, 2){.};
+        \node[anchor=north](H2_d2) at (6.9, -2){.};
+
+        \path(H2) edge node {}(H2_d1);
+        \path(H2) edge node {}(H2_d2);
+        \path(H2_d1) edge [bend left] node {}(H2_d2);
+
+        \node[anchor=north](A) at (7.8, 0){\(A\)};
+        \node[anchor=north](A_d1) at (10.8, 2){.};
+        \node[anchor=north](A_d2) at (10.8, -2){.};
+        
+        \path(A) edge node {}(A_d1);
+        \path(A) edge node {}(A_d2);
+        \path(A_d1) edge [bend left] node {}(A_d2);
+
+    \end{tikzpicture}
+    \caption{Ambulance Decision Problem} 
+    \label{Ambulance_Problem}
+\end{figure}
+
+{\Large\textbf{States:}}
+
+\begin{enumerate}
+    \item \(A\) = Ambulance
+    \item \(H_i\) = Hospital i
+\end{enumerate}
+
+{\Large\textbf{Notation:}}
+\begin{itemize}
+    \item \(\Lambda\) = total number of patients that need to be hospitalised
+    \item \(p_i\) = proportion of patients going to Hospital i (\(p_i\Lambda\) = number of patients going to hospital i)
+    \item \(d_i\) = distance from Hospital i
+    \item \(\hat{c_i}\) = capacity of hospital i
+    \item \(W(c, \lambda\, \mu)\) = waiting time in the system function
+    \item \(\mu_i\) = service rate of hospital i
+    \item \(\lambda_i^o\) = arrival rate of other patients to the hospital (not by ambulance)
+    \item \(C_i(p_i) = d_i + W(c = \hat{c_i},\hspace{0.1cm} \lambda = p_i\Lambda + \lambda_i^o, \hspace{0.1cm} \mu = \mu_i)\)
+\end{itemize}

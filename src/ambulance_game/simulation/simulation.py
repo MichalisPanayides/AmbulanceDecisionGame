@@ -158,9 +158,102 @@ def simulate_model(
     return simulation
 
 
-def get_pi(Q):
-    pi_dictionary = Q.statetracker.state_probabilities()
-    return pi_dictionary
+def get_simulated_state_probabilities(
+    simulation_object, output=np.ndarray, system_capacity=None, parking_capacity=None
+):
+    """Calculates the vector pi in a dictionary format or an array format. For the dictionary format the keys are the states (i,j) and the values are the probabilities that the system is in a curent state. For the 2-dimensional array format the probability of being in state (i,j) is placed in the equivalent (i,j) position in the numpy array.
+
+    Parameters
+    ----------
+    simulation_object : object
+        The simulation object from ciw to extract pi from
+    type : type, optional
+        The type of format to be returned, by default np.ndarray
+
+    Returns
+    -------
+    dictionary OR np.ndarray
+        - A dictionary with the markov states as keys and the equivalent probabilities as values
+        - A numpy.ndarray Π where: Π(i,j) = probabilitiy of being in state (i,j)
+    """
+    state_probabilities_dictionary = (
+        simulation_object.statetracker.state_probabilities()
+    )
+    if output == dict:
+        return state_probabilities_dictionary
+    elif output == np.ndarray:
+        if parking_capacity == None:
+            parking_capacity = max(
+                [state[0] for state in state_probabilities_dictionary.keys()]
+            )
+        if system_capacity == None:
+            system_capacity = max(
+                [state[1] for state in state_probabilities_dictionary.keys()]
+            )
+        state_probabilities_array = np.full(
+            (parking_capacity + 1, system_capacity + 1), np.NaN
+        )
+        for key, value in state_probabilities_dictionary.items():
+            if value > 0:
+                state_probabilities_array[key] = value
+        return state_probabilities_array
+
+
+def get_average_simulated_state_probabilities(
+    lambda_a,
+    lambda_o,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    parking_capacity,
+    seed_num=None,
+    runtime=1440,
+    num_of_trials=10,
+    # output=np.ndarray,
+):
+    """
+
+    Parameters
+    ----------
+    output : [type], optional
+        [description], by default np.ndarray
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+    if seed_num == None:
+        seed_num = random.random()
+    average_state_probabilities = np.full(
+        (parking_capacity + 1, system_capacity + 1), np.NaN
+    )
+    for trial in range(num_of_trials):
+        simulation_object = simulate_model(
+            lambda_a,
+            lambda_o,
+            mu,
+            num_of_servers,
+            threshold,
+            seed_num + trial,
+            runtime,
+            system_capacity,
+            parking_capacity,
+        )
+        state_probabilities = get_simulated_state_probabilities(
+            simulation_object, np.ndarray, system_capacity, parking_capacity
+        )
+        for i in range(parking_capacity + 1):
+            for j in range(system_capacity + 1):
+                updated_entry = np.nansum(
+                    [average_state_probabilities[i, j], state_probabilities[i, j]]
+                )
+                average_state_probabilities[i, j] = (
+                    updated_entry if updated_entry != 0 else np.NaN
+                )
+
+    return average_state_probabilities / num_of_trials
 
 
 def extract_times_from_records(simulation_records, warm_up_time):

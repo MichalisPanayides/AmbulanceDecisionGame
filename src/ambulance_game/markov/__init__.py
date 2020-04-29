@@ -7,6 +7,7 @@ from .markov import (
     is_steady_state,
     get_steady_state_numerically,
     get_steady_state_algebraically,
+    get_markov_state_probabilities,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
     get_mean_ambulances_blocked,

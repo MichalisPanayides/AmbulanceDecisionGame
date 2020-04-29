@@ -18,3 +18,6 @@ from .model_plots import (
     make_plot_of_confidence_intervals_over_warm_up_time,
     make_plot_of_confidence_intervals_over_runtime,
 )
+
+
+from .comparisons import get_heatmaps

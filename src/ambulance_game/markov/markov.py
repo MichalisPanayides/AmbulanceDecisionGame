@@ -394,6 +394,34 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     return state
 
 
+def get_markov_state_probabilities(
+    pi, all_states, output=np.ndarray, system_capacity=None, parking_capacity=None
+):
+    """Calculates the vector pi in a dictionary format where the values are the probabilities that the system is in a cuurent state (listed as key of the dictionary).
+
+    Returns
+    -------
+    dictionary
+        A dictionary with the markov states as keys and the equivalent probabilities as values
+    """
+    if output == dict:
+        states_probabilities_dictionary = {}
+        for i in range(len(all_states)):
+            states_probabilities_dictionary[all_states[i]] = pi[i]
+        return states_probabilities_dictionary
+    elif output == np.ndarray:
+        if parking_capacity == None:
+            parking_capacity = max([state[0] for state in all_states])
+        if system_capacity == None:
+            system_capacity = max([state[1] for state in all_states])
+        states_probabilities_array = np.full(
+            (parking_capacity + 1, system_capacity + 1), np.NaN
+        )
+        for index in range(len(all_states)):
+            states_probabilities_array[all_states[index]] = pi[index]
+        return states_probabilities_array
+
+
 def get_mean_number_of_patients_in_system(pi, states):
     """Mean number of patients in the system = Σ[π_i * (u_i + v_i)]
     

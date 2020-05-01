@@ -1,5 +1,5 @@
 \section{Hospital Markov chain model}
-The following Markov chain represents the transition between states of a hospital while capturing the EMS interaction with it. The hospital accepts both ambulance and other patients normally until a certain threshold \(T\) is reached. When it is reached all ambulances that arrive will be marked as \textit{"parked outside"} until the number of people in the system is reduced below \(T\). Alternatively, if the patients in the system keep rising, they may reach the total capacity \(C\) of the hospital and the other patients will be waiting for until a service becomes free. The states of the Markov chain are denoted by \((u,v)\) where:
+The following Markov chain represents the transition between states of a hospital while capturing the EMS interaction with it. The hospital accepts both ambulance and other patients normally until a certain threshold \(T\) is reached. When it is reached all ambulances that arrive will be marked as \textit{"parked outside"} until the number of people in the system is reduced below \(T\). Additionally, if the patients in the hospital keep rising, they may exceed the number of servers \(C\) available, which will in turn mean that every new patient will have to wait for a server to become free. The states of the Markov chain are denoted by \((u,v)\) where:
 
 \begin{itemize}
     \item \(u\) = number of ambulances parked outside of the hospital
@@ -233,52 +233,12 @@ Finally, the last approach to be considered is the least squares method. This ap
 \pi = \text{argmin}_{x\in\mathbb{R}^{d}}\|Mx-b\|_2^2
 \]
 
-
 \newpage
-\subsection{Expressions derived from \( \pi \) - Attempt 1}
-Average number of patients in the whole system: 
-\[
-L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
-\] 
+\subsection{Expressions derived from \( \pi \):}
+One may easily derive the average number of individuals that are at any given state using \( pi \). The average number of individuals in state \( i \) can be calculated by multiplying the number of individuals that are present in state \( i \) with the probability of being at that particular state (i.e \(\pi_i (u_i + v_i)\)). Using this logic it is possible to calculate any performance measures that are related to the mean number of individuals in the system.
 
-Average number of patients in the hospital: 
-\[
-L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
-\] 
 
-Average number of ambulances being blocked:
-\[
-L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
-\]
-
-Mean time in the system:
-\[
-W = \frac{L}{\Lambda}
-\]
-
-Mean time in the hospital:
-\[
-W_H = \frac{L_H}{\Lambda}
-\]
-
-Mean waiting time in the hospital:
-\[
-W_{H_q} = \frac{L_H}{\lambda^o} - \frac{1}{\mu}
-\]
-\hspace{7.2cm} OR
-\[
-W_{H_q} = \frac{L_H}{\Lambda} - \frac{1}{\mu}
-\]
-
-Mean blocking time of ambulances:
-\[
-B = \frac{L_A}{\lambda^A}
-\]
-
-\newpage
-
-\subsection{Expressions derived from \( \pi \) - Attempt 2}
-Average number of patients in the whole system: 
+Average number of patients in the system: 
 \begin{equation}
     L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
 \end{equation} 
@@ -286,16 +246,59 @@ Average number of patients in the whole system:
 Average number of patients in the hospital: 
 \begin{equation}
     L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
-\end{equation} 
+\end{equation}
 
 Average number of ambulances being blocked:
 \begin{equation}
     L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
 \end{equation}
 
+Consequently getting the performance measures that are related to the duration of time is not as straightforward. Such performance measures are the mean waiting time in the system and the mean time blocked in the system. 
+
+\subsubsection{Mean Waiting Time}
+To calculate such times one must first identify all states \((u_i, v_i)\) that incur a wait. For this particular Markov chain, this points to all states that satisfy \( v_i \geq C \) i.e. all states where the number of individuals in the hospital exceed the number of servers. The set of such states can be denoted as a subset of all the states, where:
+
+\[
+S_w = \{(u, v) \in S \; | \; v \geq C \}    
+\]
+
+Moreover, apart from the set of states where a wait occurs, the average waiting time at each state is also needed. That is the time that the system stays at a particular state. Consider a Markov chain model that is identical to the one considered so far but by ignoring any arrivals. Thus, state transitions are only possible by completing a service. The equivalent mean time spent in state \((u,v)\) for this new Markov chain can be given by:
+
+\begin{equation} \label{eq:WaitNewMarkov}
+    w_{\bar{M}}(u,v) = \frac{1}{\text{min}(v, C) \mu}    
+\end{equation}
+
+Equation \ref{eq:WaitNewMarkov} considers the inter-service times which correspond to the inverse of the service rate. Now, using the above equation, and considering all sates that belong in \(S_W\) the following recursive formula can be used to get the mean waiting time spent in each state in the original Markov model.
+
+\begin{equation}
+    w(u,v) = 
+    \begin{cases}
+        w_{\bar{M}}(u,v) + w(u-1,v),  & \textbf{if } (u,v) \in S_w \textbf{ and } v = T \textbf{ and } u \neq 0\\
+        w_{\bar{M}}(u,v) + w(u,v-1), & \textbf{if } (u,v) \in S_w \textbf{ and } v \neq T \textbf{ and } u = 0\\
+        0, & \textbf{otherwise}
+    \end{cases}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 Mean waiting time in the hospital:
 \begin{equation}
-    W_q = \sum_{i=1}^{|\pi|} \frac{\pi_i}{\sum_{\substack{j=1 \\ i \neq j}}^{|\pi|} q_{i j}}
+    W_q = \sum_{i=1}^{|\pi|} \frac{\text{max}(v_i - C, 0) \; \pi_i}{\sum_{\substack{j=1 \\ i \neq j}}^{|\pi|} q_{i j}}
 \end{equation}
 
 \begin{equation}

@@ -259,7 +259,6 @@ def get_average_simulated_state_probabilities(
                     average_state_probabilities[row, col] = (
                         updated_entry if updated_entry != 0 else np.NaN
                     )
-
     if output == dict:
         for key, value in average_state_probabilities.items():
             average_state_probabilities[key] = value / num_of_trials

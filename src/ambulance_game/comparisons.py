@@ -138,11 +138,12 @@ def get_heatmaps(
         sim_state_probabilities_array - markov_state_probabilities_array
     )
 
-    plt.figure(figsize=(20, 20))
+    # plt.figure(figsize=(20, 20))
     grid = plt.GridSpec(2, 4)
+
     # plt.subplot(1, 3, 1)
     plt.subplot(grid[0,0:2])
-    plt.imshow(sim_state_probabilities_array, cmap="viridis")
+    plt.imshow(sim_state_probabilities_array, cmap="cividis")
     plt.title("Simulatioin state probabilities")
     plt.xlabel("Patients in Hospital")
     plt.ylabel("Patients blocked")
@@ -150,7 +151,7 @@ def get_heatmaps(
 
     # plt.subplot(1, 3, 2)
     plt.subplot(grid[0,2:4])
-    plt.imshow(markov_state_probabilities_array, cmap="viridis")
+    plt.imshow(markov_state_probabilities_array, cmap="cividis")
     plt.title("Markov chain state probabilities")
     plt.xlabel("Patients in Hospital")
     plt.ylabel("Patients blocked")

@@ -17,6 +17,17 @@ system_capacity = 5
 parking_capacity = 3
 
 plt.figure(figsize=(20, 10))
-abg.get_heatmaps(lambda_a=lambda_a, lambda_o=lambda_o, mu=mu, num_of_servers=num_of_servers, threshold=threshold, system_capacity=system_capacity, parking_capacity=parking_capacity, seed_num=seed_num, runtime=runtime, num_of_trials=num_of_trials)
+abg.get_heatmaps(
+    lambda_a=lambda_a,
+    lambda_o=lambda_o,
+    mu=mu,
+    num_of_servers=num_of_servers,
+    threshold=threshold,
+    system_capacity=system_capacity,
+    parking_capacity=parking_capacity,
+    seed_num=seed_num,
+    runtime=runtime,
+    num_of_trials=num_of_trials,
+)
 plt.savefig("Example_Heatmaps.pdf")
 plt.close()

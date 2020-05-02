@@ -222,7 +222,7 @@ def get_average_simulated_state_probabilities(
     """
     if seed_num == None:
         seed_num = random.random()
-    
+
     if output == dict:
         average_state_probabilities = {}
     else:
@@ -254,7 +254,10 @@ def get_average_simulated_state_probabilities(
             for row in range(parking_capacity + 1):
                 for col in range(system_capacity + 1):
                     updated_entry = np.nansum(
-                        [average_state_probabilities[row, col], state_probabilities[row, col]]
+                        [
+                            average_state_probabilities[row, col],
+                            state_probabilities[row, col],
+                        ]
                     )
                     average_state_probabilities[row, col] = (
                         updated_entry if updated_entry != 0 else np.NaN
@@ -264,7 +267,7 @@ def get_average_simulated_state_probabilities(
             average_state_probabilities[key] = value / num_of_trials
     else:
         average_state_probabilities /= num_of_trials
-    
+
     return average_state_probabilities
 
 

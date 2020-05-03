@@ -125,7 +125,7 @@ def get_heatmaps(
         seed_num=seed_num,
         runtime=runtime,
         num_of_trials=num_of_trials,
-        # output=np.ndarray,
+        output=np.ndarray,
     )
     markov_state_probabilities_array = get_markov_state_probabilities(
         pi=pi,
@@ -138,16 +138,29 @@ def get_heatmaps(
         sim_state_probabilities_array - markov_state_probabilities_array
     )
 
-    plt.figure(figsize=(20, 5))
+    # plt.figure(figsize=(20, 20))
+    grid = plt.GridSpec(2, 4)
 
-    plt.subplot(1, 3, 1)
-    plt.imshow(sim_state_probabilities_array, cmap="viridis")
+    # plt.subplot(1, 3, 1)
+    plt.subplot(grid[0, 0:2])
+    plt.imshow(sim_state_probabilities_array, cmap="cividis")
+    plt.title("Simulatioin state probabilities")
+    plt.xlabel("Patients in Hospital")
+    plt.ylabel("Patients blocked")
     plt.colorbar()
 
-    plt.subplot(1, 3, 2)
-    plt.imshow(markov_state_probabilities_array, cmap="viridis")
+    # plt.subplot(1, 3, 2)
+    plt.subplot(grid[0, 2:4])
+    plt.imshow(markov_state_probabilities_array, cmap="cividis")
+    plt.title("Markov chain state probabilities")
+    plt.xlabel("Patients in Hospital")
+    plt.ylabel("Patients blocked")
     plt.colorbar()
 
-    plt.subplot(1, 3, 3)
+    # plt.subplot(1, 3, 3)
+    plt.subplot(grid[1, 1:3])
     plt.imshow(diff_states_probabilities_array, cmap="viridis")
+    plt.title("Simulation and Markov chain state probability differences")
+    plt.xlabel("Patients in Hospital")
+    plt.ylabel("Patients blocked")
     plt.colorbar()

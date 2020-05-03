@@ -210,25 +210,25 @@ def get_average_simulated_state_probabilities(
     seed_num=None,
     runtime=1440,
     num_of_trials=10,
-    # output=np.ndarray,
+    output=np.ndarray,
 ):
     """
+    This function runs the get_simulated_state_proabilities() for multiple iterations to eliminate any stochasticity of the results
 
     Parameters
     ----------
-    output : [type], optional
-        [description], by default np.ndarray
-
-    Returns
-    -------
-    [type]
-        [description]
+    output : type, optional
+        The format of the output state probablites, by default np.ndarray
     """
     if seed_num == None:
         seed_num = random.random()
-    average_state_probabilities = np.full(
-        (parking_capacity + 1, system_capacity + 1), np.NaN
-    )
+
+    if output == dict:
+        average_state_probabilities = {}
+    else:
+        average_state_probabilities = np.full(
+            (parking_capacity + 1, system_capacity + 1), np.NaN
+        )
     for trial in range(num_of_trials):
         simulation_object = simulate_model(
             lambda_a,
@@ -242,18 +242,33 @@ def get_average_simulated_state_probabilities(
             parking_capacity,
         )
         state_probabilities = get_simulated_state_probabilities(
-            simulation_object, np.ndarray, system_capacity, parking_capacity
+            simulation_object, output, system_capacity, parking_capacity
         )
-        for i in range(parking_capacity + 1):
-            for j in range(system_capacity + 1):
-                updated_entry = np.nansum(
-                    [average_state_probabilities[i, j], state_probabilities[i, j]]
-                )
-                average_state_probabilities[i, j] = (
-                    updated_entry if updated_entry != 0 else np.NaN
-                )
+        if output == dict:
+            if len(average_state_probabilities) == 0:
+                average_state_probabilities = state_probabilities
+            else:
+                for key in average_state_probabilities.keys():
+                    average_state_probabilities[key] += state_probabilities[key]
+        else:
+            for row in range(parking_capacity + 1):
+                for col in range(system_capacity + 1):
+                    updated_entry = np.nansum(
+                        [
+                            average_state_probabilities[row, col],
+                            state_probabilities[row, col],
+                        ]
+                    )
+                    average_state_probabilities[row, col] = (
+                        updated_entry if updated_entry != 0 else np.NaN
+                    )
+    if output == dict:
+        for key, value in average_state_probabilities.items():
+            average_state_probabilities[key] = value / num_of_trials
+    else:
+        average_state_probabilities /= num_of_trials
 
-    return average_state_probabilities / num_of_trials
+    return average_state_probabilities
 
 
 def extract_times_from_records(simulation_records, warm_up_time):

@@ -146,6 +146,9 @@ def simulate_model(
     object
         An object that contains all simulation records
     """
+    # if threshold > system_capacity:     ## TODO: THRESHOLD > SYSTEM_CAPACITY => parking_capacity should be zero
+    #     parking_capacity = 0            
+
     if seed_num == None:
         seed_num = random.random()
     model = build_model(
@@ -453,7 +456,7 @@ def get_mean_blocking_difference_between_two_hospitals(
     return diff
 
 
-def calculate_optimal_ambulance_distribution(
+def calculate_ambulance_best_response(
     lambda_a,
     lambda_o_1,
     lambda_o_2,

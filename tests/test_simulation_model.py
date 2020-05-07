@@ -19,7 +19,7 @@ from ambulance_game.simulation.simulation import (
     get_average_simulated_state_probabilities,
     get_multiple_runs_results,
     get_mean_blocking_difference_between_two_hospitals,
-    calculate_optimal_ambulance_distribution,
+    calculate_ambulance_best_response,
 )
 
 number_of_digits_to_round = 8
@@ -415,13 +415,13 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
 
 
 #  TODO Investigate making it a property based test
-def test_calculate_optimal_ambulance_distribution_equal_split():
+def test_calculate_ambulance_best_response_equal_split():
     """Make sure that the brenq() function that is used suggests that when two identical hospitals are considered the patients will be split equally between them (50% - 50%)
 
     Note here that due to the ciw.seed() function it was possible to eliminate any randomness and make both hospitals identical, in terms of arrivals, services and any other stochasticity that the simulation models incorporates.
     """
     lambda_a = 0.3
-    equal_split = calculate_optimal_ambulance_distribution(
+    equal_split = calculate_ambulance_best_response(
         lambda_a=lambda_a,
         lambda_o_1=0.3,
         lambda_o_2=0.3,

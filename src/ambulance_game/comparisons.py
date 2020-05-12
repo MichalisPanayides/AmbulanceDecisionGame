@@ -144,7 +144,7 @@ def get_heatmaps(
     # plt.subplot(1, 3, 1)
     plt.subplot(grid[0, 0:2])
     plt.imshow(sim_state_probabilities_array, cmap="cividis")
-    plt.title("Simulatioin state probabilities")
+    plt.title("Simulation state probabilities")
     plt.xlabel("Patients in Hospital")
     plt.ylabel("Patients blocked")
     plt.colorbar()

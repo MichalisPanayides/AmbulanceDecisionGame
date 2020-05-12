@@ -147,7 +147,7 @@ def simulate_model(
         An object that contains all simulation records
     """
     # if threshold > system_capacity:     ## TODO: THRESHOLD > SYSTEM_CAPACITY => parking_capacity should be zero
-    #     parking_capacity = 0            
+    #     parking_capacity = 0
 
     if seed_num == None:
         seed_num = random.random()

@@ -307,6 +307,36 @@ def extract_times_from_records(simulation_records, warm_up_time):
     return waiting, serving, blocking
 
 
+def extract_times_from_individuals(
+    individuals, warm_up_time, first_node_to_visit, total_node_visits
+):
+    """
+    For all individuals' records
+        if not still in the system and after warm_up_time
+            
+        if finished only dummy service
+    """
+    waiting = []
+    serving = []
+    blocking = []
+
+    for ind in individuals:
+        if (
+            ind.data_records[0].node == first_node_to_visit
+            and len(ind.data_records) == total_node_visits
+            and ind.data_records[total_node_visits - 1].arrival_date > warm_up_time
+        ):
+            waiting.append(ind.data_records[total_node_visits - 1].waiting_time)
+            serving.append(ind.data_records[total_node_visits - 1].service_time)
+        if (
+            first_node_to_visit == ind.data_records[0].node == 1
+            and ind.data_records[0].arrival_date > warm_up_time
+        ):
+            blocking.append(ind.data_records[0].time_blocked)
+
+    return waiting, serving, blocking
+
+
 def get_list_of_results(results):
     """Modify the outputs even further so that it is output in a different more convenient format for some graphs 
     
@@ -339,6 +369,7 @@ def get_multiple_runs_results(
     output_type="tuple",
     system_capacity=float("inf"),
     parking_capacity=float("inf"),
+    patient_type="both",
 ):
     """Get waiting, service and blocking times for multiple runs 
     
@@ -350,6 +381,8 @@ def get_multiple_runs_results(
         Number of trials to run the model, by default 10
     output_type : str, optional
         The results' output type (either tuple or list)], by default "tuple"
+    patients_type : str, optional
+        A string to identify what type of patients to get the times for
     
     Returns
     -------
@@ -375,9 +408,23 @@ def get_multiple_runs_results(
             system_capacity,
             parking_capacity,
         )
-        sim_results = simulation.get_all_records()
-        ext = extract_times_from_records(sim_results, warm_up_time)
-        results.append(records(ext[0], ext[1], ext[2]))
+        if patient_type == "both":
+            sim_results = simulation.get_all_records()
+            ext = extract_times_from_records(sim_results, warm_up_time)
+            results.append(records(ext[0], ext[1], ext[2]))
+        elif patient_type == "ambulance":
+            individuals = simulation.get_all_individuals()
+            ext = extract_times_from_individuals(
+                individuals, warm_up_time, first_node_to_visit=1, total_node_visits=2
+            )
+            #             return ext
+            results.append(records(ext[0], ext[1], ext[2]))
+        elif patient_type == "others":
+            individuals = simulation.get_all_individuals()
+            ext = extract_times_from_individuals(
+                individuals, warm_up_time, first_node_to_visit=2, total_node_visits=1
+            )
+            results.append(records(ext[0], ext[1], ext[2]))
 
     if output_type == "list":
         all_waits, all_services, all_blocks = get_list_of_results(results)

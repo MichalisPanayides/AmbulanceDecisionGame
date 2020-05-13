@@ -85,9 +85,9 @@ def test_build_custom_node(num_of_servers):
     records_2 = model_2.get_all_records()
     model_2_blocks = [r.time_blocked for r in records_2 if r.node == 1]
 
-    assert all(model_1_blocks) == 0
-    assert all(model_1_waits) == 0
-    assert all(model_2_blocks) != 0
+    assert all(b == 0 for b in model_1_blocks)
+    assert all(w == 0 for w in model_1_waits)
+    assert len(model_2_blocks) == 0
 
 
 def test_example_build_custom_node():
@@ -348,6 +348,63 @@ def test_example_get_multiple_results():
     assert round(np.mean(all_blocks), number_of_digits_to_round) == round(
         432.68444649763916, number_of_digits_to_round
     )
+
+
+def test_example_get_multiple_results_for_different_patient_types():
+    """
+    Test that multiple results function works as expected for different patient types
+    """
+
+    mult_results = get_multiple_runs_results(
+        lambda_a=0.15,
+        lambda_o=0.2,
+        mu=0.05,
+        num_of_servers=8,
+        threshold=4,
+        num_of_trials=10,
+        seed_num=1,
+        patient_type="both",
+    )
+
+    all_servs = [np.mean(s.service_times) for s in mult_results]
+    all_blocks = [np.mean(b.blocking_times) for b in mult_results]
+
+    mult_results = get_multiple_runs_results(
+        lambda_a=0.15,
+        lambda_o=0.2,
+        mu=0.05,
+        num_of_servers=8,
+        threshold=4,
+        num_of_trials=10,
+        seed_num=1,
+        patient_type="ambulance",
+    )
+
+    all_waits_ambulance = [np.mean(w.waiting_times) for w in mult_results]
+    all_servs_ambulance = [np.mean(s.service_times) for s in mult_results]
+    all_blocks_ambulance = [np.mean(b.blocking_times) for b in mult_results]
+
+    mult_results = get_multiple_runs_results(
+        lambda_a=0.15,
+        lambda_o=0.2,
+        mu=0.05,
+        num_of_servers=8,
+        threshold=4,
+        num_of_trials=10,
+        seed_num=1,
+        patient_type="others",
+    )
+    all_waits_other = [np.mean(w.waiting_times) for w in mult_results]
+    all_servs_other = [np.mean(s.service_times) for s in mult_results]
+    all_blocks_other = [np.mean(b.blocking_times) for b in mult_results]
+
+    assert all(w == 0 for w in all_waits_ambulance)
+    assert int(np.mean(all_servs_ambulance)) == int(np.mean(all_servs))
+    assert all_blocks_ambulance == all_blocks
+
+    assert round(np.mean(all_waits_other), number_of_digits_to_round) == 0.53027998
+    assert int(np.mean(all_servs_other)) == int(np.mean(all_servs))
+    assert all(np.isnan(b) for b in all_blocks_other)
 
 
 @given(

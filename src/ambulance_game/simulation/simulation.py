@@ -40,7 +40,7 @@ def build_model(
     return model
 
 
-def build_custom_node(threshold=8):
+def build_custom_node(threshold=float('inf')):
     """Build a custome node to replace the default ciw.Node
     
     Parameters
@@ -134,7 +134,11 @@ def simulate_model(
     parking_capacity=float("inf"),
     tracker=ciw.trackers.NodePopulation(),
 ):
-    """Simulating the model and returning the simulation object
+    """Simulating the model by using the custom node and returning the simulation object. 
+    
+    It is important to note that when the threshold is greater than the system capacity the parking capacity is forced to be 1 because otherwise, when the hospital gets full ambulance patients will flood the parking spaces which is not what should happen in this particular scenario.
+
+    Additionally, the parking capacity should always be greater or equal to 1
  
     Parameters
     ----------
@@ -146,8 +150,12 @@ def simulate_model(
     object
         An object that contains all simulation records
     """
-    # if threshold > system_capacity:     ## TODO: THRESHOLD > SYSTEM_CAPACITY => parking_capacity should be zero
-    #     parking_capacity = 0
+
+    if parking_capacity < 1:
+        raise ValueError("parking_capacity should be greater or equal to 1")
+
+    if threshold > system_capacity:
+        parking_capacity = 1
 
     if seed_num == None:
         seed_num = random.random()

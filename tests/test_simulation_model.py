@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 import ciw
 
@@ -193,6 +194,56 @@ def test_simulate_model_constrained():
     assert round(services, number_of_digits_to_round) == round(
         36826.38173021053, number_of_digits_to_round
     )
+
+
+def test_simulate_model_invalid_arguements():
+    """
+    Tests the following scenarios where specific cases occus:
+        - when parking_capacity is less than 1 -> an error is raised
+        - when threshold is greater than system capacity -> model forces threshold=system_capacity and parking_capacity=1
+    """
+    sim_results_normal = []
+    sim_results_forced = []
+    for seed in range(5):
+        simulation = simulate_model(
+            lambda_a=0.15,
+            lambda_o=0.2,
+            mu=0.05,
+            num_of_servers=8,
+            threshold=10,
+            seed_num=seed,
+            system_capacity=10,
+            parking_capacity=1,
+        )
+        rec = simulation.get_all_records()
+        sim_results_normal.append(rec)
+
+    for seed in range(5):
+        simulation = simulate_model(
+            lambda_a=0.15,
+            lambda_o=0.2,
+            mu=0.05,
+            num_of_servers=8,
+            threshold=12,
+            seed_num=seed,
+            system_capacity=10,
+            parking_capacity=5,
+        )
+        rec = simulation.get_all_records()
+        sim_results_forced.append(rec)
+
+    assert sim_results_normal == sim_results_forced
+    with pytest.raises(ValueError):
+        simulate_model(
+            lambda_a=0.15,
+            lambda_o=0.2,
+            mu=0.05,
+            num_of_servers=8,
+            threshold=4,
+            seed_num=0,
+            system_capacity=10,
+            parking_capacity=0,
+        )
 
 
 def test_get_state_probabilities_dict():

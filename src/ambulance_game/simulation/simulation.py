@@ -40,7 +40,7 @@ def build_model(
     return model
 
 
-def build_custom_node(threshold=float('inf')):
+def build_custom_node(threshold=float("inf")):
     """Build a custome node to replace the default ciw.Node
     
     Parameters

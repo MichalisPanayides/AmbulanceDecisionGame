@@ -187,6 +187,7 @@ def test_get_transition_matrix_entry(
     system_capacity=integers(min_value=5, max_value=10),
     parking_capacity=integers(min_value=1, max_value=5),
 )
+@settings(deadline=None, max_examples=20)
 def test_get_symbolic_transition_matrix(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):

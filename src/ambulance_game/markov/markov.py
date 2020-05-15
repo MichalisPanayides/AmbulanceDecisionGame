@@ -37,13 +37,8 @@ def build_states(threshold, system_capacity, parking_capacity):
     
     TODO: turn into a generator
     """
-
     if threshold > system_capacity:
-        states_1 = [(0, v) for v in range(0, system_capacity + 1)]
-        return states_1
-        # states_2 = [(1, system_capacity)]
-        # all_states = states_1 + states_2
-        # return all_states
+        return [(0, v) for v in range(0, system_capacity + 1)]
 
     states_1 = [(0, v) for v in range(0, threshold)]
     states_2 = [

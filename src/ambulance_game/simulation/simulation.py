@@ -152,7 +152,9 @@ def simulate_model(
     """
 
     if parking_capacity < 1:
-        raise ValueError("Simulation only implemented for parking_capacity >= 1").  # TODO Add an option to ciw model to all for no parking capacity.
+        raise ValueError(
+            "Simulation only implemented for parking_capacity >= 1"
+        )  # TODO Add an option to ciw model to all for no parking capacity.
 
     if threshold > system_capacity:
         parking_capacity = 1
@@ -297,22 +299,22 @@ def extract_times_from_records(simulation_records, warm_up_time):
     list, list, list
         Three lists that contain waiting, service and blocking times
     """
-    waiting = [
+    waiting_times = [
         r.waiting_time
         for r in simulation_records
         if r.arrival_date > warm_up_time and r.node == 2
     ]
-    serving = [
+    serving_times = [
         r.service_time
         for r in simulation_records
         if r.arrival_date > warm_up_time and r.node == 2
     ]
-    blocking = [
+    blocking_times = [
         r.time_blocked
         for r in simulation_records
         if r.arrival_date > warm_up_time and r.node == 1
     ]
-    return waiting, serving, blocking
+    return waiting_times, serving_times, blocking_times
 
 
 def extract_times_from_individuals(
@@ -324,9 +326,9 @@ def extract_times_from_individuals(
             
         if finished only dummy service
     """
-    waiting = []
-    serving = []
-    blocking = []
+    waiting_times = []
+    serving_times = []
+    blocking_times = []
 
     for ind in individuals:
         if (
@@ -334,15 +336,15 @@ def extract_times_from_individuals(
             and len(ind.data_records) == total_node_visits
             and ind.data_records[total_node_visits - 1].arrival_date > warm_up_time
         ):
-            waiting.append(ind.data_records[total_node_visits - 1].waiting_time)
-            serving.append(ind.data_records[total_node_visits - 1].service_time)
+            waiting_times.append(ind.data_records[total_node_visits - 1].waiting_time)
+            serving_times.append(ind.data_records[total_node_visits - 1].service_time)
         if (
             first_node_to_visit == ind.data_records[0].node == 1
             and ind.data_records[0].arrival_date > warm_up_time
         ):
-            blocking.append(ind.data_records[0].time_blocked)
+            blocking_times.append(ind.data_records[0].time_blocked)
 
-    return waiting, serving, blocking
+    return waiting_times, serving_times, blocking_times
 
 
 def get_list_of_results(results):
@@ -416,23 +418,35 @@ def get_multiple_runs_results(
             system_capacity,
             parking_capacity,
         )
+
         if patient_type == "both":
             sim_results = simulation.get_all_records()
-            ext = extract_times_from_records(sim_results, warm_up_time)
-            results.append(records(ext[0], ext[1], ext[2]))
-        elif patient_type == "ambulance":
+            waiting_times, serving_times, blocking_times = extract_times_from_records(
+                sim_results, warm_up_time
+            )
+            results.append(records(waiting_times, serving_times, blocking_times))
+
+        if patient_type == "ambulance":
             individuals = simulation.get_all_individuals()
-            ext = extract_times_from_individuals(
+            (
+                waiting_times,
+                serving_times,
+                blocking_times,
+            ) = extract_times_from_individuals(
                 individuals, warm_up_time, first_node_to_visit=1, total_node_visits=2
             )
-            #             return ext
-            results.append(records(ext[0], ext[1], ext[2]))
-        elif patient_type == "others":
+            results.append(records(waiting_times, serving_times, blocking_times))
+
+        if patient_type == "others":
             individuals = simulation.get_all_individuals()
-            ext = extract_times_from_individuals(
+            (
+                waiting_times,
+                serving_times,
+                blocking_times,
+            ) = extract_times_from_individuals(
                 individuals, warm_up_time, first_node_to_visit=2, total_node_visits=1
             )
-            results.append(records(ext[0], ext[1], ext[2]))
+            results.append(records(waiting_times, serving_times, blocking_times))
 
     if output_type == "list":
         all_waits, all_services, all_blocks = get_list_of_results(results)

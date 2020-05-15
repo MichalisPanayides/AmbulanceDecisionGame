@@ -384,7 +384,7 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
 )
 def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     """
-    Ensures that getting the steady state numerically using numoy's lstsq function returns the steady state for different transition-like matrices
+    Ensures that getting the steady state numerically using numpy's lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
     steady = get_steady_state_algebraically(Q, algebraic_function=np.linalg.lstsq)

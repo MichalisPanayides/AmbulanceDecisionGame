@@ -152,7 +152,7 @@ def simulate_model(
     """
 
     if parking_capacity < 1:
-        raise ValueError("parking_capacity should be greater or equal to 1")
+        raise ValueError("Simulation only implemented for parking_capacity >= 1").  # TODO Add an option to ciw model to all for no parking capacity.
 
     if threshold > system_capacity:
         parking_capacity = 1

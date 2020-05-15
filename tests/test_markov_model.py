@@ -51,7 +51,7 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     )
 
     if threshold > system_capacity:
-        assert len(states) == system_capacity + 2
+        assert len(states) == system_capacity + 1  # +2
     else:
         states_after_threshold = system_capacity - threshold + 1
         size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
@@ -217,6 +217,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
+@settings(deadline=None)
 def test_get_transition_matrix(
     system_capacity, parking_capacity, lambda_a, lambda_o, mu
 ):

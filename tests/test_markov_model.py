@@ -186,6 +186,7 @@ def test_get_transition_matrix_entry(
     system_capacity=integers(min_value=5, max_value=10),
     parking_capacity=integers(min_value=1, max_value=5),
 )
+@settings(max_examples=10)
 def test_get_symbolic_transition_matrix(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -307,12 +308,12 @@ def test_is_steady_state_examples():
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     """
@@ -324,12 +325,12 @@ def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
     """
@@ -381,7 +382,7 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
 )
 def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     """
-    Ensures that getting the steady state numerically using numoy's lstsq function returns the steady state for different transition-like matrices
+    Ensures that getting the steady state numerically using numpy's lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
     steady = get_steady_state_algebraically(Q, algebraic_function=np.linalg.lstsq)

@@ -37,8 +37,8 @@ number_of_digits_to_round = 8
 
 @given(
     threshold=integers(min_value=0, max_value=1000),
-    system_capacity=integers(min_value=0, max_value=1000),
-    parking_capacity=integers(min_value=0, max_value=1000),
+    system_capacity=integers(min_value=1, max_value=1000),
+    parking_capacity=integers(min_value=1, max_value=1000),
 )
 def test_build_states(threshold, system_capacity, parking_capacity):
     """
@@ -51,7 +51,7 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     )
 
     if threshold > system_capacity:
-        assert len(states) == system_capacity + 1
+        assert len(states) == system_capacity + 2
     else:
         states_after_threshold = system_capacity - threshold + 1
         size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
@@ -177,7 +177,8 @@ def test_get_transition_matrix_entry(
     assert entry_3 == (
         mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
     )
-    assert entry_4 == (threshold * mu if hospital_state == threshold else 0)
+    service_rate = (threshold if threshold <= num_of_servers else num_of_servers)
+    assert entry_4 == (service_rate * mu if hospital_state == threshold else 0)
 
 
 @given(
@@ -307,12 +308,12 @@ def test_is_steady_state_examples():
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     """
@@ -324,12 +325,12 @@ def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
     """

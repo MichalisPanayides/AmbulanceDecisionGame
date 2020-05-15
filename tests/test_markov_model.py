@@ -177,7 +177,7 @@ def test_get_transition_matrix_entry(
     assert entry_3 == (
         mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
     )
-    service_rate = (threshold if threshold <= num_of_servers else num_of_servers)
+    service_rate = threshold if threshold <= num_of_servers else num_of_servers
     assert entry_4 == (service_rate * mu if hospital_state == threshold else 0)
 
 

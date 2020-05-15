@@ -39,7 +39,7 @@ def build_states(threshold, system_capacity, parking_capacity):
     """
     if parking_capacity < 1:
         raise ValueError("parking_capacity should be greater or equal to 1")
-    
+
     if threshold > system_capacity:
         states_1 = [(0, v) for v in range(0, system_capacity + 1)]
         states_2 = [(1, system_capacity)]
@@ -153,7 +153,9 @@ def get_transition_matrix_entry(
         return lambda_o
     elif row_diff == -1 and column_diff == 0:
         return lambda_a
-    elif (row_diff == 0 and column_diff == 1) or (row_diff == 1 and column_diff == 0 and origin[1] == threshold):
+    elif (row_diff == 0 and column_diff == 1) or (
+        row_diff == 1 and column_diff == 0 and origin[1] == threshold
+    ):
         if origin[1] <= num_of_servers:
             return origin[1] * mu
         else:

@@ -37,8 +37,8 @@ number_of_digits_to_round = 8
 
 @given(
     threshold=integers(min_value=0, max_value=1000),
-    system_capacity=integers(min_value=0, max_value=1000),
-    parking_capacity=integers(min_value=0, max_value=1000),
+    system_capacity=integers(min_value=1, max_value=1000),
+    parking_capacity=integers(min_value=1, max_value=1000),
 )
 def test_build_states(threshold, system_capacity, parking_capacity):
     """
@@ -51,7 +51,7 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     )
 
     if threshold > system_capacity:
-        assert len(states) == system_capacity + 1
+        assert len(states) == system_capacity + 1  # +2
     else:
         states_after_threshold = system_capacity - threshold + 1
         size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
@@ -177,7 +177,8 @@ def test_get_transition_matrix_entry(
     assert entry_3 == (
         mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
     )
-    assert entry_4 == (threshold * mu if hospital_state == threshold else 0)
+    service_rate = threshold if threshold <= num_of_servers else num_of_servers
+    assert entry_4 == (service_rate * mu if hospital_state == threshold else 0)
 
 
 @given(
@@ -186,7 +187,7 @@ def test_get_transition_matrix_entry(
     system_capacity=integers(min_value=5, max_value=10),
     parking_capacity=integers(min_value=1, max_value=5),
 )
-@settings(max_examples=10)
+@settings(deadline=None, max_examples=20)
 def test_get_symbolic_transition_matrix(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -217,6 +218,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
+@settings(deadline=None)
 def test_get_transition_matrix(
     system_capacity, parking_capacity, lambda_a, lambda_o, mu
 ):

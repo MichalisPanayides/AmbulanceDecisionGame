@@ -173,6 +173,22 @@ Therefore, the entries of the transition matrix \(Q\), can be given by \( q_{i,j
         \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
         \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
         \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
+        v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = T \leq C \\
+        C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = T > C\\
+        % T \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t} \\
+        -\sum_{j=1}^{|Q|}{q_{i,j}} & \textbf{if } i = j \\
+        0, & \textbf{otherwise}
+    \end{cases}
+\end{equation}
+
+
+\vspace{5cm}
+\begin{equation}
+    q_{i, j} = 
+    \begin{cases}
+        \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
+        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
+        \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
         v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C\\
         C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C \\
         T \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t} \\

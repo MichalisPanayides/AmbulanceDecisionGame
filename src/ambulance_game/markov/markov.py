@@ -37,8 +37,16 @@ def build_states(threshold, system_capacity, parking_capacity):
     
     TODO: turn into a generator
     """
+    if parking_capacity < 1:
+        raise ValueError(
+            "Simulation only implemented for parking_capacity >= 1"
+        )  # TODO Add an option to ciw model to all for no parking capacity.
+
     if threshold > system_capacity:
         return [(0, v) for v in range(0, system_capacity + 1)]
+        # states_1 = [(0, v) for v in range(0, system_capacity + 1)]
+        # states_2 = [(1, system_capacity)]
+        # return states_1 + states_2
 
     states_1 = [(0, v) for v in range(0, threshold)]
     states_2 = [
@@ -139,24 +147,18 @@ def get_transition_matrix_entry(
     float or sympy.Symbol object
         The numeric or symbolic entry of the matrix
     """
-    row_diff = origin[0] - destination[0]
-    column_diff = origin[1] - destination[1]
-
-    if row_diff == 0 and column_diff == -1:
+    # row_diff = origin[0] - destination[0]
+    # column_diff = origin[1] - destination[1]
+    delta = np.array(origin) - np.array(destination)
+    if np.all(delta == (0, -1)):  # row_diff == 0 and column_diff == -1:
         if origin[1] < threshold:
             return Lambda
         return lambda_o
-    elif row_diff == -1 and column_diff == 0:
+    if np.all(delta == (-1, 0)):  # row_diff == -1 and column_diff == 0:
         return lambda_a
-    elif row_diff == 0 and column_diff == 1:
-        if origin[1] <= num_of_servers:
-            return origin[1] * mu
-        else:
-            return num_of_servers * mu
-    elif row_diff == 1 and column_diff == 0 and origin[1] == threshold:
-        return threshold * mu
-    else:
-        return 0
+    if np.all(delta == (0, 1)) or (np.all(delta == (1, 0)) and origin[1] == threshold):
+        return min(origin[1], num_of_servers) * mu
+    return 0
 
 
 def get_symbolic_transition_matrix(
@@ -176,7 +178,8 @@ def get_symbolic_transition_matrix(
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
     Q = sym.zeros(len(all_states))
-
+    # if threshold > system_capacity:
+    #     threshold = system_capacity
     for (i, origin_state), (j, destination_state) in itertools.product(
         enumerate(all_states), repeat=2
     ):
@@ -221,7 +224,8 @@ def get_transition_matrix(
     all_states = build_states(threshold, system_capacity, parking_capacity)
     size = len(all_states)
     Q = np.zeros((size, size))
-
+    # if threshold > system_capacity:
+    #     threshold = system_capacity
     for (i, origin_state), (j, destination_state) in itertools.product(
         enumerate(all_states), repeat=2
     ):

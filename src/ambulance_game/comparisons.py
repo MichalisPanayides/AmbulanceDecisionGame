@@ -29,7 +29,7 @@ def get_heatmaps(
     seed_num=None,
     runtime=1440,
     num_of_trials=10,
-    positions="split"
+    positions="split",
 ):
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
@@ -160,7 +160,10 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         )
         ambulance_rate = lambda_a / (lambda_a + lambda_o)
         others_rate = lambda_o / (lambda_a + lambda_o)
-        return mean_waiting_time_ambulance * ambulance_rate + mean_waiting_time_other * others_rate
+        return (
+            mean_waiting_time_ambulance * ambulance_rate
+            + mean_waiting_time_other * others_rate
+        )
 
     mean_waiting_time = mean_waiting_time_formula(
         all_states,
@@ -199,10 +202,10 @@ def get_plot_comparing_times(
 
     if accuracy == None or accuracy <= 1:
         accuracy = 5
-    
+
     starting_value = locals()[plot_over]
     range_space = np.linspace(starting_value, max_parameter_value, accuracy)
-    
+
     for parameter in range_space:
         if plot_over == "lambda_a":
             lambda_a = parameter
@@ -218,7 +221,7 @@ def get_plot_comparing_times(
             system_capacity = int(parameter)
         elif plot_over == "parking_capacity":
             parking_capacity = int(parameter)
-            
+
         times = get_multiple_runs_results(
             lambda_a,
             lambda_o,
@@ -230,7 +233,7 @@ def get_plot_comparing_times(
             runtime=runtime,
             system_capacity=system_capacity,
             parking_capacity=parking_capacity,
-            patient_type=output
+            patient_type=output,
         )
         simulation_waiting_times = [np.mean(w.waiting_times) for w in times]
         mean_waiting_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(

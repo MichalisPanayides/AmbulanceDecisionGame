@@ -478,13 +478,31 @@ def test_get_mean_number_of_patients():
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.lstsq
     )
-    assert round(get_mean_number_of_patients_in_system(pi, all_states), number_of_digits_to_round) == 2.88827497
-    assert round(get_mean_number_of_patients_in_hospital(pi, all_states), number_of_digits_to_round) == 2.44439504
-    assert round(get_mean_number_of_ambulances_blocked(pi, all_states), number_of_digits_to_round) == 0.44387993
+    assert (
+        round(
+            get_mean_number_of_patients_in_system(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 2.88827497
+    )
+    assert (
+        round(
+            get_mean_number_of_patients_in_hospital(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 2.44439504
+    )
+    assert (
+        round(
+            get_mean_number_of_ambulances_blocked(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 0.44387993
+    )
 
 
 def test_get_mean_waiting_time_markov():
-    #TODO: add test for overall waiting time
+    # TODO: add test for overall waiting time
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
         lambda_o=0.2,
@@ -494,10 +512,10 @@ def test_get_mean_waiting_time_markov():
         system_capacity=10,
         parking_capacity=10,
         output="others",
-        formula="recursive"
-        )
+        formula="recursive",
+    )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
-    
+
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
         lambda_o=0.2,
@@ -507,8 +525,8 @@ def test_get_mean_waiting_time_markov():
         system_capacity=10,
         parking_capacity=10,
         output="ambulance",
-        formula="recursive"
-        )
+        formula="recursive",
+    )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
 
     mean_waiting_time = get_mean_waiting_time_markov(
@@ -520,6 +538,6 @@ def test_get_mean_waiting_time_markov():
         system_capacity=10,
         parking_capacity=10,
         output="ambulance",
-        formula="recursive"
-        )
+        formula="recursive",
+    )
     assert mean_waiting_time == 0

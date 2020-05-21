@@ -498,7 +498,9 @@ def is_accepting_state(state, patient_type, system_capacity, parking_capacity):
     return condition
 
 
-def expected_time_in_markov_state_ignoring_arrivals(state, patient_type, num_of_servers, mu):
+def expected_time_in_markov_state_ignoring_arrivals(
+    state, patient_type, num_of_servers, mu
+):
     if patient_type == "ambulance" and state[0] > 0:
         return 0
     return 1 / (min(state[1], num_of_servers) * mu)
@@ -519,24 +521,26 @@ def get_recursive_waiting_time(
         return 0
 
     arriving_state = (state[0], state[1] + 1)
-    next_state = (0, state[1] - 1) 
+    next_state = (0, state[1] - 1)
     if patient_type == "ambulance" and state[1] >= threshold:
         arriving_state = (state[0] + 1, state[1])
     if patient_type == "ambulance" and state[0] >= 1 and state[1] == threshold:
         next_state = (state[0] - 1, state[1])
-    
-    wait = expected_time_in_markov_state_ignoring_arrivals(arriving_state, patient_type, num_of_servers, mu)
+
+    wait = expected_time_in_markov_state_ignoring_arrivals(
+        arriving_state, patient_type, num_of_servers, mu
+    )
     wait += get_recursive_waiting_time(
-            next_state,
-            patient_type,
-            lambda_a,
-            lambda_o,
-            mu,
-            num_of_servers,
-            threshold,
-            system_capacity,
-            parking_capacity,
-        )
+        next_state,
+        patient_type,
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
     return wait
 
 
@@ -551,13 +555,15 @@ def mean_waiting_time_formula(
     threshold,
     system_capacity,
     parking_capacity,
-    formula="recursive"
+    formula="recursive",
 ):
     if formula == "recursive":
         mean_waiting_time = 0
         probability_of_accepting = 0
         for u, v in all_states:
-            if is_accepting_state((u, v), patient_type, system_capacity, parking_capacity):
+            if is_accepting_state(
+                (u, v), patient_type, system_capacity, parking_capacity
+            ):
                 current_state_wait = get_recursive_waiting_time(
                     (u, v),
                     patient_type,
@@ -572,9 +578,9 @@ def mean_waiting_time_formula(
                 mean_waiting_time += current_state_wait * pi[u, v]
                 probability_of_accepting += pi[u, v]
         mean_waiting_time /= probability_of_accepting
-    
+
     if formula == "closed_form":
-        mean_waiting_time = 0  # TODO: get_closed_form_fomula 
+        mean_waiting_time = 0  # TODO: get_closed_form_fomula
     return mean_waiting_time
 
 
@@ -587,7 +593,7 @@ def get_mean_waiting_time_markov(
     system_capacity,
     parking_capacity,
     output="both",
-    formula="recursive"
+    formula="recursive",
 ):
     transition_matrix = get_transition_matrix(
         lambda_a,
@@ -634,8 +640,11 @@ def get_mean_waiting_time_markov(
         )
         ambulance_rate = lambda_a / (lambda_a + lambda_o)
         others_rate = lambda_o / (lambda_a + lambda_o)
-        return mean_waiting_time_ambulance * ambulance_rate + mean_waiting_time_other * others_rate  #TODO: fix overall waiting time
-    
+        return (
+            mean_waiting_time_ambulance * ambulance_rate
+            + mean_waiting_time_other * others_rate
+        )  # TODO: fix overall waiting time
+
     mean_waiting_time = mean_waiting_time_formula(
         all_states,
         state_probabilities,
@@ -650,5 +659,3 @@ def get_mean_waiting_time_markov(
         formula=formula,
     )
     return mean_waiting_time
-
-

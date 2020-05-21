@@ -10,5 +10,7 @@ from .markov import (
     get_markov_state_probabilities,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
-    get_mean_ambulances_blocked,
+    get_mean_number_of_ambulances_blocked,
+    mean_waiting_time_formula,
+    get_mean_waiting_time_markov,
 )

@@ -29,7 +29,8 @@ from ambulance_game.markov.markov import (
     get_markov_state_probabilities,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
-    get_mean_ambulances_blocked,
+    get_mean_number_of_ambulances_blocked,
+    get_mean_waiting_time_markov,
 )
 
 number_of_digits_to_round = 8
@@ -453,3 +454,72 @@ def test_get_state_probabilities_array():
     )
 
     assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+
+
+def test_get_mean_number_of_patients():
+    lambda_a = 0.2
+    lambda_o = 0.2
+    mu = 0.2
+    num_of_servers = 3
+    threshold = 4
+    system_capacity = 20
+    parking_capacity = 20
+
+    all_states = build_states(threshold, system_capacity, parking_capacity)
+    transition_matrix = get_transition_matrix(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
+    pi = get_steady_state_algebraically(
+        transition_matrix, algebraic_function=np.linalg.lstsq
+    )
+    assert round(get_mean_number_of_patients_in_system(pi, all_states), number_of_digits_to_round) == 2.88827497
+    assert round(get_mean_number_of_patients_in_hospital(pi, all_states), number_of_digits_to_round) == 2.44439504
+    assert round(get_mean_number_of_ambulances_blocked(pi, all_states), number_of_digits_to_round) == 0.44387993
+
+
+def test_get_mean_waiting_time_markov():
+    #TODO: add test for overall waiting time
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=10,
+        parking_capacity=10,
+        output="others",
+        formula="recursive"
+        )
+    assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
+    
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=10,
+        parking_capacity=10,
+        output="ambulance",
+        formula="recursive"
+        )
+    assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
+
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=3,
+        system_capacity=10,
+        parking_capacity=10,
+        output="ambulance",
+        formula="recursive"
+        )
+    assert mean_waiting_time == 0

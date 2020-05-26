@@ -256,7 +256,7 @@ Average number of ambulances being blocked:
 Consequently getting the performance measures that are related to the duration of time is not as straightforward. Such performance measures are the mean waiting time in the system and the mean time blocked in the system. Under the scope of this study two approaches have are considered; a recursive algorithm and consequently a closed-form formula.
 
 \subsubsection{Mean Waiting Time - Recursive}
-The research question that needs to be answered here is: "When an ambulance/other patient enters the system, what is the expected time that they will have to wait?". In order to formulate the answer to that question one needs to consider all possible scenarios of what state the system can be in when an individual arrives. 
+The research question that needs to be answered here is: ``When an ambulance/other patient enters the system, what is the expected time that they will have to wait?''. In order to formulate the answer to that question one needs to consider all possible scenarios of what state the system can be in when an individual arrives. 
 
 To calculate such times one must first identify all states \((u_i, v_i)\) that when the model is in that state and an individual arrives they will incur a wait. For this particular Markov chain, this points to all states that satisfy \( v_i \geq C \) i.e. all states where the number of individuals in the hospital exceed the number of servers. It is important to note here that an this is not a strict inequality since when the model is at the state with $C$ patients, the arriving patient will proceed to wait. The set of such states is defined as \textit{waiting states} and can be denoted as a subset of all the states, where:
 
@@ -267,11 +267,11 @@ S_w = \{(u, v) \in S \; | \; v \geq C \}
 Additionally, there are certain states in the model where arrivals cannot occur. An "ambulance" patient cannot arrive in the model when the model is at any state $(M, v) \; \forall \; v \geq T$ and equivalently an "other" patient cannot arrive whenever the model is at any state $(u, N) \; \forall \; u$ where $N$ is the system capacity and $M$ is the parking capacity. In essence this indicates that the formula will behave differently for ambulance and other patients. Therefore the set of all such states that an arrival may occur are defined as \textit{accepting states} and are denoted as:
 
 \[
-S_A^A = \{(u, v) \in S \; | \; v < M \}
+S_A^{(a)} = \{(u, v) \in S \; | \; v < M \}
 \]
 
 \[
-S_A^o = \{(u, v) \in S \; | \; u < N \}
+S_A^{(o)} = \{(u, v) \in S \; | \; u < N \}
 \]
 
 Moreover, another element that needs to be considered is the expected waiting time in each state $c(u,v)$. In order to do so a variation of the Markov model has to be considered where when the individual arrives at any of the states of the model no more arrivals can occur after that. Thus, one may acquire the desired time by calculating the inverse of the sum of the out-flow rate of that state. Since we are ignoring arrivals though the only way to exit the state will only be via a service. In essence this notion can be expressed as:
@@ -280,19 +280,19 @@ Moreover, another element that needs to be considered is the expected waiting ti
     c(u,v) = \frac{1}{\text{min}(v,C)\mu}    
 \end{equation}
 
-Equation \ref{eq:ExpectedWaitState} considers two scenarios of states; whether the number of patients are more than the number of servers or not. Now, using the above equations, and considering all sates that belong in \(S_w\) the following recursive formula can be used to get the mean waiting time spent in each state in the Markov model. Note that the formula is different for each type of patients. Thus, the expected waiting time of an "other" patient when they arrive at state $(u,v)$ is given by:
+Equation \ref{eq:ExpectedWaitState} considers two scenarios of states; whether the number of patients are more than the number of servers or not. Now, using the above equations, and considering all sates that belong in \(S_w\) the following recursive formula can be used to get the mean waiting time spent in each state in the Markov model. Note that the formula is different for each type of patients. Thus, the expected waiting time of an "other" patient when they arrive at state \((u,v)\) is given by:
 
 \begin{equation}
-    w(u,v) = 
+    w^{(o)}(u,v) = 
     \begin{cases} 
         0, \hspace{4.85cm} & \textbf{if } (u,v) \notin S_w \\
         c(u,v + 1) + w(0, v-1), & \textbf{otherwise} \\
     \end{cases}
 \end{equation}
 
-The equivalent time for "ambulance" patients is denoted in a slightly different manner. States $s_a$ and $s_n$ represent the \textit{arriving state} and the \textit{next state} to be visited by the recursive formula. The arriving state is the state that the individual will actually arrive in when the model is in state $(u,v)$ and the next state is the one that the patient will move down to. Note here that all \textit{next states} move straight to the first row since no wait occurs for any ambulance patient in any row apart from the first one.
+The equivalent time for "ambulance" patients is denoted in a slightly different manner. States \(s_a\) and \(s_n\) represent the \textit{arriving state} and the \textit{next state} to be visited by the recursive formula. The arriving state is the state that the individual will actually arrive in when the model is in state \((u,v)\) and the next state is the one that the patient will move down to. Note here that all \textit{next states} move straight to the first row since no wait occurs for any ambulance patient in any row apart from the first one.
 \begin{equation}
-    w_A(u,v) = 
+    w^{(a)}(u,v) = 
     \begin{cases}
         0 & \textbf{if } (u,v) \notin S_w \\
         c(s_a) + w(s_n) & \textbf{otherwise}
@@ -318,13 +318,16 @@ The equivalent time for "ambulance" patients is denoted in a slightly different 
 \end{multicols}
 
 
-Thus, the overall mean waiting time can be calculated by summing over all expected waiting times of accepting states multiplied by the probability of being at that state and dividing by the probability of an individual arriving in the system:
+Thus, the overall mean waiting time can be calculated by summing over all expected waiting times of accepting states multiplied by the probability of being at that state and dividing by the probability of an individual arriving in the system. This formula has to be performed twice, one for each type of patient:
 
 \begin{equation}
-    W = \frac{\sum_{(u,v) \in S_A} w(u,v) \pi_{(u,v)}}{\sum_{(u,v) \in S_A} \pi_{(u,v)}}
+    W^{(o)} = \frac{\sum_{(u,v) \in S_A^{(o)}} w^{(o)}(u,v) \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(o)}} \pi_{(u,v)}}
 \end{equation}
 
-This formula has to be performed twice, one for each type of patient and then the overall expected waiting time can be found by:
+\begin{equation}
+    W^{(a)} = \frac{\sum_{(u,v) \in S_A^{(a)}} w^{(a)}(u,v) \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(a)}} \pi_{(u,v)}}
+\end{equation}
+
 
 
 

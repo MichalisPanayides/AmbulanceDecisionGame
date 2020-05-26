@@ -29,7 +29,8 @@ from ambulance_game.markov.markov import (
     get_markov_state_probabilities,
     get_mean_number_of_patients_in_system,
     get_mean_number_of_patients_in_hospital,
-    get_mean_ambulances_blocked,
+    get_mean_number_of_ambulances_blocked,
+    get_mean_waiting_time_markov,
 )
 
 number_of_digits_to_round = 8
@@ -37,8 +38,8 @@ number_of_digits_to_round = 8
 
 @given(
     threshold=integers(min_value=0, max_value=1000),
-    system_capacity=integers(min_value=0, max_value=1000),
-    parking_capacity=integers(min_value=0, max_value=1000),
+    system_capacity=integers(min_value=1, max_value=1000),
+    parking_capacity=integers(min_value=1, max_value=1000),
 )
 def test_build_states(threshold, system_capacity, parking_capacity):
     """
@@ -51,7 +52,7 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     )
 
     if threshold > system_capacity:
-        assert len(states) == system_capacity + 1
+        assert len(states) == system_capacity + 1  # +2
     else:
         states_after_threshold = system_capacity - threshold + 1
         size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
@@ -177,7 +178,8 @@ def test_get_transition_matrix_entry(
     assert entry_3 == (
         mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
     )
-    assert entry_4 == (threshold * mu if hospital_state == threshold else 0)
+    service_rate = threshold if threshold <= num_of_servers else num_of_servers
+    assert entry_4 == (service_rate * mu if hospital_state == threshold else 0)
 
 
 @given(
@@ -186,6 +188,7 @@ def test_get_transition_matrix_entry(
     system_capacity=integers(min_value=5, max_value=10),
     parking_capacity=integers(min_value=1, max_value=5),
 )
+@settings(deadline=None, max_examples=20)
 def test_get_symbolic_transition_matrix(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -216,6 +219,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
+@settings(deadline=None)
 def test_get_transition_matrix(
     system_capacity, parking_capacity, lambda_a, lambda_o, mu
 ):
@@ -307,12 +311,12 @@ def test_is_steady_state_examples():
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     """
@@ -324,12 +328,12 @@ def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
 
 
 @given(
-    a=floats(min_value=0, max_value=10),
-    b=floats(min_value=0, max_value=10),
-    c=floats(min_value=0, max_value=10),
-    d=floats(min_value=0, max_value=10),
-    e=floats(min_value=0, max_value=10),
-    f=floats(min_value=0, max_value=10),
+    a=floats(min_value=1, max_value=10),
+    b=floats(min_value=1, max_value=10),
+    c=floats(min_value=1, max_value=10),
+    d=floats(min_value=1, max_value=10),
+    e=floats(min_value=1, max_value=10),
+    f=floats(min_value=1, max_value=10),
 )
 def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
     """
@@ -381,7 +385,8 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
 )
 def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     """
-    Ensures that getting the steady state numerically using numoy's lstsq function returns the steady state for different transition-like matrices
+    Ensures that getting the steady state numerically using numpy's 
+    lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
     steady = get_steady_state_algebraically(Q, algebraic_function=np.linalg.lstsq)
@@ -450,3 +455,90 @@ def test_get_state_probabilities_array():
     )
 
     assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+
+
+def test_get_mean_number_of_patients():
+    lambda_a = 0.2
+    lambda_o = 0.2
+    mu = 0.2
+    num_of_servers = 3
+    threshold = 4
+    system_capacity = 20
+    parking_capacity = 20
+
+    all_states = build_states(threshold, system_capacity, parking_capacity)
+    transition_matrix = get_transition_matrix(
+        lambda_a,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
+    pi = get_steady_state_algebraically(
+        transition_matrix, algebraic_function=np.linalg.lstsq
+    )
+    assert (
+        round(
+            get_mean_number_of_patients_in_system(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 2.88827497
+    )
+    assert (
+        round(
+            get_mean_number_of_patients_in_hospital(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 2.44439504
+    )
+    assert (
+        round(
+            get_mean_number_of_ambulances_blocked(pi, all_states),
+            number_of_digits_to_round,
+        )
+        == 0.44387993
+    )
+
+
+def test_get_mean_waiting_time_markov():
+    # TODO: add test for overall waiting time
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=10,
+        parking_capacity=10,
+        output="others",
+        formula="recursive",
+    )
+    assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
+
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=10,
+        parking_capacity=10,
+        output="ambulance",
+        formula="recursive",
+    )
+    assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
+
+    mean_waiting_time = get_mean_waiting_time_markov(
+        lambda_a=0.2,
+        lambda_o=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=3,
+        system_capacity=10,
+        parking_capacity=10,
+        output="ambulance",
+        formula="recursive",
+    )
+    assert mean_waiting_time == 0

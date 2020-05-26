@@ -29,5 +29,5 @@ abg.get_heatmaps(
     runtime=runtime,
     num_of_trials=num_of_trials,
 )
-plt.savefig("Example_Heatmaps.pdf")
+plt.savefig("main.pdf")
 plt.close()

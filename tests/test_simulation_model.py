@@ -200,7 +200,8 @@ def test_simulate_model_invalid_arguements():
     """
     Tests the following scenarios where specific cases occus:
         - when parking_capacity is less than 1 -> an error is raised
-        - when threshold is greater than system capacity -> model forces threshold=system_capacity and parking_capacity=1
+        - when threshold is greater than system capacity the
+          model forces threshold=system_capacity and parking_capacity=1
     """
     sim_results_normal = []
     sim_results_forced = []

@@ -614,7 +614,7 @@ def get_recursive_waiting_time(
     next_state = (0, state[1] - 1)
     if patient_type == "ambulance" and state[1] >= threshold:
         arriving_state = (state[0] + 1, state[1])
-    if patient_type == "ambulance" and state[0] >= 1: 
+    if patient_type == "ambulance" and state[0] >= 1:
         next_state = (0, threshold)
 
     wait = expected_time_in_markov_state_ignoring_arrivals(

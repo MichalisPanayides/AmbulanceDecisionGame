@@ -310,7 +310,7 @@ Equation \ref{eq:ExpectedWaitState} considers two scenarios of states; whether t
     w^{(o)}(u,v) = 
     \begin{cases} 
         0, \hspace{4.85cm} & \textbf{if } (u,v) \notin S_w \\
-        c(u,v + 1) + w(0, v-1), & \textbf{otherwise} \\
+        c(0,v + 1) + w(0, v-1), & \textbf{otherwise} \\
     \end{cases}
 \end{equation}
 
@@ -352,16 +352,6 @@ Thus, the overall mean waiting time can be calculated by summing over all expect
     W^{(a)} = \frac{\sum_{(u,v) \in S_A^{(a)}} w^{(a)}(u,v) \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(a)}} \pi_{(u,v)}}
 \end{equation}
 
-
-
-% \begin{equation}
-%     w(u,v) = 
-%     \begin{cases}
-%         w_E(u,v) + w(u-1,v),  & \textbf{if } (u,v) \in S_w \textbf{ and } v = T \textbf{ and } u > 0\\
-%         w_E(u,v) + w(u,v-1), & \textbf{if } (u,v) \in S_w \textbf{ and } v \neq T \textbf{ or } u = 0\\
-%         0, & \textbf{otherwise}
-%     \end{cases}
-% \end{equation}
 
 Thus, the overall mean waiting time can be calculated by summing all arrivals that will have a wait and dividing by the probability of an individual having to wait:
 

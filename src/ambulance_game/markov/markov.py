@@ -148,14 +148,12 @@ def get_transition_matrix_entry(
     float or sympy.Symbol object
         The numeric or symbolic entry of the matrix
     """
-    # row_diff = origin[0] - destination[0]
-    # column_diff = origin[1] - destination[1]
     delta = np.array(origin) - np.array(destination)
-    if np.all(delta == (0, -1)):  # row_diff == 0 and column_diff == -1:
+    if np.all(delta == (0, -1)): 
         if origin[1] < threshold:
             return Lambda
         return lambda_o
-    if np.all(delta == (-1, 0)):  # row_diff == -1 and column_diff == 0:
+    if np.all(delta == (-1, 0)):
         return lambda_a
     if np.all(delta == (0, 1)) or (np.all(delta == (1, 0)) and origin[1] == threshold):
         return min(origin[1], num_of_servers) * mu
@@ -489,7 +487,7 @@ def get_mean_number_of_ambulances_blocked(pi, states):
 
 def is_waiting_state(state, num_of_servers):
     """Checks if waiting occurs in the given state. In essence, all states (u,v) where v < C are not considered waiting states.
-    Set of waiting states: S_w = {(u,v) ∈ S | v >= C}
+    Set of waiting states: S_w = {(u,v) ∈ S | v > C}
 
     Parameters
     ----------
@@ -502,7 +500,7 @@ def is_waiting_state(state, num_of_servers):
     boolean
         An indication of whether or not any wait occurs on the given state
     """
-    return state[1] >= num_of_servers
+    return state[1] > num_of_servers
 
 
 def is_accepting_state(state, patient_type, system_capacity, parking_capacity):
@@ -535,9 +533,9 @@ def is_accepting_state(state, patient_type, system_capacity, parking_capacity):
 
 
 def expected_time_in_markov_state_ignoring_arrivals(
-    state, patient_type, num_of_servers, mu
+    state, patient_type, num_of_servers, mu, threshold,
 ):
-    """Get the expected waiting time in a markov state when ignoring any subsequent arrivals. When considering ambulance patients waiting time and the patients are in a blocked state (v > 0) then by the definition of the problem the waiting time in sthat state is set to 0. Otherwise the function's output is: 
+    """Get the expected waiting time in a markov state when ignoring any subsequent arrivals.When considering ambulance patients waiting time and the patients are in a blocked state (v > 0) then by the definition of the problem the waiting time in sthat state is set to 0. Additionally, all states where u > 0 and v = T automatically get a waiting time of 0 because other patients only pass one of the states of that column (only state (0,T) is not zero). Otherwise the function's output is: 
         - c(u,v) = 1/vμ   if v < C
         - c(u,v) = 1/Cμ   if v >= C
 
@@ -557,8 +555,8 @@ def expected_time_in_markov_state_ignoring_arrivals(
     float
         The expected waiting time in the given state
     """
-    if patient_type == "ambulance" and state[0] > 0:
-        return 0
+    if state[0] > 0 and (state[1] == threshold or patient_type == "ambulance"):
+            return 0
     return 1 / (min(state[1], num_of_servers) * mu)
 
 
@@ -574,7 +572,7 @@ def get_recursive_waiting_time(
     system_capacity,
     parking_capacity,
 ):
-    """Performs a recursive algorithm to get the expected waiting time of patients when they enter the model at a given state. An individual arrives at the model and depending on the state that the system is currently on, they move to the according state defined as the "arriving state". The individual then moves down all the states recursively and gets the waiting time that will occur in each state. The algorithm runs slightly different for "ambulance" and "others" patients. 
+    """Performs a recursive algorithm to get the expected waiting time of patients when they enter the model at a given state. Given an arriving state the algorithm moves down to all subsequent states until it reaches one that is not a waiting state.
 
     Others:
         - If (u,v) not a waiting state: return 0
@@ -583,14 +581,12 @@ def get_recursive_waiting_time(
         - w(u,v) = c(s_a) + w(s_d)
 
     Ambulance:
-        - If (u,v) not a waiting state: return 0
-        - Arriving state:   s_a = (u + 1, v)    if v >= T
-                            s_a = (u, v + 1)    otherwise              
-        - Next state:       s_n = (0, T)        if u >= 1   
-                            s_n = (0, v - 1)    otherwise
-        - w(u,v) = c(s_a) + w(s_n)
+        - If (u,v) not a waiting state: return 0           
+        - Next state:       s_n = (u-1, v),    if u >=1 and v=T  
+                            s_n = (u, v - 1),  otherwise
+        - w(u,v) = c(u,v) + w(s_n)
 
-    Note:   For all "others" patients the recursive formula acts in a linear manner meaning that an individual will have the same waiting time when arriving at either state of the same column e.g (2, 3) or (5, 3). 
+    Note:   For all "others" patients the recursive formula acts in a linear manner meaning that an individual will have the same waiting time when arriving at either state of the same column e.g (2, 3) or (5, 3).
 
     Parameters
     ----------
@@ -611,16 +607,13 @@ def get_recursive_waiting_time(
     """
     if not is_waiting_state(state, num_of_servers):
         return 0
-
-    arriving_state = (0, state[1] + 1)
-    next_state = (0, state[1] - 1)
-    if patient_type == "ambulance" and state[1] >= threshold:
-        arriving_state = (state[0] + 1, state[1])
-    if patient_type == "ambulance" and state[0] >= 1:
-        next_state = (0, threshold)
+    if state[0] >= 1 and state[1] == threshold: 
+        next_state = (state[0] - 1, state[1])
+    else:
+        next_state = (state[0], state[1] - 1)
 
     wait = expected_time_in_markov_state_ignoring_arrivals(
-        arriving_state, patient_type, num_of_servers, mu
+        state, patient_type, num_of_servers, mu, threshold
     )
     wait += get_recursive_waiting_time(
         next_state,
@@ -684,8 +677,12 @@ def mean_waiting_time_formula(
             if is_accepting_state(
                 (u, v), patient_type, system_capacity, parking_capacity
             ):
+                arriving_state = (u, v+1)
+                if patient_type == "ambulance" and v >= threshold:
+                    arriving_state = (u+1, v)
+
                 current_state_wait = get_recursive_waiting_time(
-                    (u, v),
+                    arriving_state,
                     patient_type,
                     lambda_a,
                     lambda_o,

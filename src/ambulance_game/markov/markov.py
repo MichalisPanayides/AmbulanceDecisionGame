@@ -149,7 +149,7 @@ def get_transition_matrix_entry(
         The numeric or symbolic entry of the matrix
     """
     delta = np.array(origin) - np.array(destination)
-    if np.all(delta == (0, -1)): 
+    if np.all(delta == (0, -1)):
         if origin[1] < threshold:
             return Lambda
         return lambda_o
@@ -556,7 +556,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
         The expected waiting time in the given state
     """
     if state[0] > 0 and (state[1] == threshold or patient_type == "ambulance"):
-            return 0
+        return 0
     return 1 / (min(state[1], num_of_servers) * mu)
 
 
@@ -607,7 +607,7 @@ def get_recursive_waiting_time(
     """
     if not is_waiting_state(state, num_of_servers):
         return 0
-    if state[0] >= 1 and state[1] == threshold: 
+    if state[0] >= 1 and state[1] == threshold:
         next_state = (state[0] - 1, state[1])
     else:
         next_state = (state[0], state[1] - 1)
@@ -677,9 +677,9 @@ def mean_waiting_time_formula(
             if is_accepting_state(
                 (u, v), patient_type, system_capacity, parking_capacity
             ):
-                arriving_state = (u, v+1)
+                arriving_state = (u, v + 1)
                 if patient_type == "ambulance" and v >= threshold:
-                    arriving_state = (u+1, v)
+                    arriving_state = (u + 1, v)
 
                 current_state_wait = get_recursive_waiting_time(
                     arriving_state,

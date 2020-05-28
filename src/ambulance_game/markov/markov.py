@@ -5,6 +5,7 @@ import sympy as sym
 import itertools
 import scipy as sci
 import scipy.integrate
+import functools
 
 
 def build_states(threshold, system_capacity, parking_capacity):
@@ -561,6 +562,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     return 1 / (min(state[1], num_of_servers) * mu)
 
 
+@functools.lru_cache(maxsize=None)
 def get_recursive_waiting_time(
     state,
     patient_type,

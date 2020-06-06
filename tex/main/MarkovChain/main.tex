@@ -412,9 +412,17 @@ Finally, the recursive formula and the mean waiting time equation are identical 
 \end{equation}
 
 \subsubsection{Mean Waiting Time - Closed-form}
+Upon closer inspection of the recursive formula a more compact formula can arise. The equivalent closed-form formula eliminates the need for recursion and thus makes the computation of waiting times much more efficient. Just like in the recursive part there are two formulas; one for \textit{ambulance} and one for \textit{other patients}. The formulas are given by:
 
+\begin{equation}
+    W^{(o)} = \frac{\sum_{(u,v) \, \in S_A} \frac{1}{C \mu} \times max(v-C+1,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A} \pi(u,v)}
+\end{equation}
+    
+\begin{equation}\label{closed_form_waiting_ambulance}
+    W^{(a)} = \frac{\sum_{(u,v) \, \in S_A} \frac{1}{C \mu} \times max(min(v+1,T)-C,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A} \pi(u,v)}
+\end{equation}
 
-
+Note here that the maximisation function in both formulas is there to identify how many states an arrival will have to go through before they start being served. In addition, the minimisation function in equation \ref{closed_form_waiting_ambulance} ensures that when an ambulance arrives at any state that is greater than the predetermined threshold, the states that they will have to wait at remains the same. 
 
 
 

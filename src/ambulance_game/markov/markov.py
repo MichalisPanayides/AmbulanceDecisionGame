@@ -503,7 +503,7 @@ def is_waiting_state(state, num_of_servers):
     return state[1] > num_of_servers
 
 
-def is_accepting_state(state, patient_type, system_capacity, parking_capacity):
+def is_accepting_state(state, patient_type, threshold, system_capacity, parking_capacity):
     """Checks if a state given is an accepting state. Accepting states are defined as the states of the system where patient arrivals may occur. In essence these states are all states apart from the one when the system cannot accept additional arrivals. Because there are two types of patients arrival though, the set of accepting states is different for ambulance and other patients:
 
     Ambulance patients: S_A = {(u,v) ∈ S | u < N}
@@ -526,7 +526,7 @@ def is_accepting_state(state, patient_type, system_capacity, parking_capacity):
         An indication of whether or not an arrival of the given type (patient_type) can occur
     """
     if patient_type == "ambulance":
-        condition = state[0] < parking_capacity
+        condition = state[0] < parking_capacity if threshold <= system_capacity else state[1] < system_capacity
     if patient_type == "others":
         condition = state[1] < system_capacity
     return condition
@@ -675,7 +675,7 @@ def mean_waiting_time_formula(
         probability_of_accepting = 0
         for u, v in all_states:
             if is_accepting_state(
-                (u, v), patient_type, system_capacity, parking_capacity
+                (u, v), patient_type, threshold, system_capacity, parking_capacity
             ):
                 arriving_state = (u, v + 1)
                 if patient_type == "ambulance" and v >= threshold:

@@ -503,7 +503,9 @@ def is_waiting_state(state, num_of_servers):
     return state[1] > num_of_servers
 
 
-def is_accepting_state(state, patient_type, threshold, system_capacity, parking_capacity):
+def is_accepting_state(
+    state, patient_type, threshold, system_capacity, parking_capacity
+):
     """Checks if a state given is an accepting state. Accepting states are defined as the states of the system where patient arrivals may occur. In essence these states are all states apart from the one when the system cannot accept additional arrivals. Because there are two types of patients arrival though, the set of accepting states is different for ambulance and other patients:
 
     Ambulance patients: S_A = {(u,v) ∈ S | u < N}
@@ -526,7 +528,11 @@ def is_accepting_state(state, patient_type, threshold, system_capacity, parking_
         An indication of whether or not an arrival of the given type (patient_type) can occur
     """
     if patient_type == "ambulance":
-        condition = state[0] < parking_capacity if threshold <= system_capacity else state[1] < system_capacity
+        condition = (
+            (state[0] < parking_capacity)
+            if (threshold <= system_capacity)
+            else (state[1] < system_capacity)
+        )
     if patient_type == "others":
         condition = state[1] < system_capacity
     return condition
@@ -640,7 +646,7 @@ def mean_waiting_time_formula(
     threshold,
     system_capacity,
     parking_capacity,
-    formula="recursive",
+    formula="closed_form",
 ):
     """Get the mean waiting time by using the recursive formula or a closed-form formula (TODO). 
     
@@ -697,7 +703,62 @@ def mean_waiting_time_formula(
         mean_waiting_time /= probability_of_accepting
 
     if formula == "closed_form":
-        mean_waiting_time = 0  # TODO: get_closed_form_fomula
+        sojourn_time = 1 / (num_of_servers * mu)
+        if patient_type == "others":
+            mean_waiting_time = np.sum(
+                [
+                    max(state[1] - num_of_servers + 1, 0) * pi[state] * sojourn_time
+                    for state in all_states
+                    if is_accepting_state(
+                        state,
+                        patient_type,
+                        threshold,
+                        system_capacity,
+                        parking_capacity,
+                    )
+                ]
+            ) / np.sum(
+                [
+                    pi[state]
+                    for state in all_states
+                    if is_accepting_state(
+                        state,
+                        patient_type,
+                        threshold,
+                        system_capacity,
+                        parking_capacity,
+                    )
+                ]
+            )
+        if patient_type == "ambulance":
+            mean_waiting_time = np.sum(
+                [
+                    max(min(state[1] + 1, threshold) - num_of_servers, 0)
+                    * pi[state]
+                    * sojourn_time
+                    for state in all_states
+                    if is_accepting_state(
+                        state,
+                        patient_type,
+                        threshold,
+                        system_capacity,
+                        parking_capacity,
+                    )
+                ]
+            ) / np.sum(
+                [
+                    pi[state]
+                    for state in all_states
+                    if is_accepting_state(
+                        state,
+                        patient_type,
+                        threshold,
+                        system_capacity,
+                        parking_capacity,
+                    )
+                ]
+            )
+
     return mean_waiting_time
 
 
@@ -710,7 +771,7 @@ def get_mean_waiting_time_markov(
     system_capacity,
     parking_capacity,
     output="both",
-    formula="recursive",
+    formula="closed_form",
 ):
     """Gets the mean waiting time for a markov chain model
 

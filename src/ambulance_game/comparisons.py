@@ -92,9 +92,9 @@ def get_heatmaps(
     else:
         plt.subplot(1, 3, 1)
     plt.imshow(sim_state_probabilities_array, cmap="cividis")
-    plt.title("Simulation state probabilities")
-    plt.xlabel("Patients in Hospital")
-    plt.ylabel("Patients blocked")
+    plt.title("Simulation state probabilities", fontsize=11, fontweight="bold")
+    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
+    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
     plt.colorbar()
 
     if not linear_positioning:
@@ -103,9 +103,9 @@ def get_heatmaps(
         plt.subplot(1, 3, 2)
 
     plt.imshow(markov_state_probabilities_array, cmap="cividis")
-    plt.title("Markov chain state probabilities")
-    plt.xlabel("Patients in Hospital")
-    plt.ylabel("Patients blocked")
+    plt.title("Markov chain state probabilities", fontsize=11, fontweight="bold")
+    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
+    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
     plt.colorbar()
 
     if not linear_positioning:
@@ -113,9 +113,13 @@ def get_heatmaps(
     else:
         plt.subplot(1, 3, 3)
     plt.imshow(diff_states_probabilities_array, cmap="viridis")
-    plt.title("Simulation and Markov chain state probability differences")
-    plt.xlabel("Patients in Hospital")
-    plt.ylabel("Patients blocked")
+    plt.title(
+        "Simulation and Markov chain state probability differences",
+        fontsize=11,
+        fontweight="bold",
+    )
+    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
+    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
     plt.colorbar()
 
 
@@ -154,13 +158,13 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         The waiting time in the system of the given patient type
     """
     state_probabilities = get_average_simulated_state_probabilities(
-        lambda_a,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        lambda_a=lambda_a,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
         seed_num=seed_num,
         runtime=runtime,
         num_of_trials=num_of_trials,
@@ -344,8 +348,20 @@ def get_plot_comparing_times(
 
     diff = (range_space[1] - range_space[0]) / 2
     plt.figure(figsize=(20, 10))
-    plt.plot(range_space, all_mean_times_sim, label="Simulation State probabilities")
-    plt.plot(range_space, all_mean_times_markov, label="Markov State probabilities")
+    plt.plot(
+        range_space,
+        all_mean_times_sim,
+        label="Simulation State probabilities",
+        ls="solid",
+        lw=1.5,
+    )
+    plt.plot(
+        range_space,
+        all_mean_times_markov,
+        label="Markov State probabilities",
+        ls="solid",
+        lw=1.5,
+    )
     plt.violinplot(
         all_times_sim,
         positions=range_space,
@@ -369,8 +385,8 @@ def get_plot_comparing_times(
         + ", M="
         + str(parking_capacity)
     )
-    plt.title(title)
-    plt.xlabel(plot_over)
-    plt.ylabel("Waiting time")
+    plt.title(title, fontsize=11, fontweight="bold")
+    plt.xlabel(plot_over, fontsize=11, fontweight="bold")
+    plt.ylabel("Waiting time", fontsize=11, fontweight="bold")
     plt.legend()
     return range_space, all_mean_times_sim, all_mean_times_markov, all_times_sim

@@ -648,7 +648,7 @@ def mean_waiting_time_formula(
     parking_capacity,
     formula="closed_form",
 ):
-    """Get the mean waiting time by using the recursive formula or a closed-form formula (TODO). 
+    """Get the mean waiting time by using the recursive formula or a closed-form formula
     
     Recursive Formula:
         W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] , 
@@ -660,7 +660,7 @@ def mean_waiting_time_formula(
     Parameters
     ----------
     all_states : list
-    pi : dict
+    pi : array
     patient_type : str
     lambda_a : float
     lambda_o : float
@@ -790,7 +790,7 @@ def get_mean_waiting_time_markov(
     Returns
     -------
     float
-        The mean waiting time of the in the system of either ambulance patients, other patients or the overall of both (TODO)
+        The mean waiting time of the in the system of either ambulance patients, other patients or the overall of both
     """
     transition_matrix = get_transition_matrix(
         lambda_a,
@@ -835,12 +835,37 @@ def get_mean_waiting_time_markov(
             parking_capacity,
             formula=formula,
         )
-        ambulance_rate = lambda_a / (lambda_a + lambda_o)
-        others_rate = lambda_o / (lambda_a + lambda_o)
+
+        prob_accept_others = np.sum(
+            [
+                state_probabilities[state]
+                for state in all_states
+                if is_accepting_state(
+                    state, "others", threshold, system_capacity, parking_capacity
+                )
+            ]
+        )
+        prob_accept_ambulance = np.sum(
+            [
+                state_probabilities[state]
+                for state in all_states
+                if is_accepting_state(
+                    state, "ambulance", threshold, system_capacity, parking_capacity
+                )
+            ]
+        )
+
+        ambulance_rate = (lambda_a * prob_accept_ambulance) / (
+            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        )
+        others_rate = (lambda_o * prob_accept_others) / (
+            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        )
+
         return (
             mean_waiting_time_ambulance * ambulance_rate
             + mean_waiting_time_other * others_rate
-        )  # TODO: fix overall waiting time
+        )
 
     mean_waiting_time = mean_waiting_time_formula(
         all_states,

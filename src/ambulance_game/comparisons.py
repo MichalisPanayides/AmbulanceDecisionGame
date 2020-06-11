@@ -13,6 +13,7 @@ from .markov.markov import (
     get_transition_matrix,
     get_steady_state_algebraically,
     get_markov_state_probabilities,
+    is_accepting_state,
     mean_waiting_time_formula,
     get_mean_waiting_time_markov,
 )
@@ -201,12 +202,37 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             system_capacity,
             parking_capacity,
         )
-        ambulance_rate = lambda_a / (lambda_a + lambda_o)
-        others_rate = lambda_o / (lambda_a + lambda_o)
+
+        prob_accept_others = np.sum(
+            [
+                state_probabilities[state]
+                for state in all_states
+                if is_accepting_state(
+                    state, "others", threshold, system_capacity, parking_capacity
+                )
+            ]
+        )
+        prob_accept_ambulance = np.sum(
+            [
+                state_probabilities[state]
+                for state in all_states
+                if is_accepting_state(
+                    state, "ambulance", threshold, system_capacity, parking_capacity
+                )
+            ]
+        )
+
+        ambulance_rate = (lambda_a * prob_accept_ambulance) / (
+            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        )
+        others_rate = (lambda_o * prob_accept_others) / (
+            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        )
+
         return (
             mean_waiting_time_ambulance * ambulance_rate
             + mean_waiting_time_other * others_rate
-        )  # TODO: fix this
+        )
 
     mean_waiting_time = mean_waiting_time_formula(
         all_states,
@@ -234,6 +260,7 @@ def get_plot_comparing_times(
     runtime,
     system_capacity,
     parking_capacity,
+    warm_up_time=0,
     output="both",
     plot_over="lambda_a",
     max_parameter_value=1,
@@ -313,6 +340,7 @@ def get_plot_comparing_times(
             num_of_trials=num_of_trials,
             seed_num=seed_num,
             runtime=runtime,
+            warm_up_time=warm_up_time,
             system_capacity=system_capacity,
             parking_capacity=parking_capacity,
             patient_type=output,
@@ -370,11 +398,11 @@ def get_plot_comparing_times(
         showmedians=False,
     )
     title = (
-        "lambda_a="
+        r"$\lambda_a=$"
         + str(lambda_a)
-        + ", lambda_o="
+        + r", $\lambda_o=$"
         + str(lambda_o)
-        + ", mu="
+        + r", $\mu=$"
         + str(mu)
         + ", C="
         + str(num_of_servers)
@@ -385,8 +413,8 @@ def get_plot_comparing_times(
         + ", M="
         + str(parking_capacity)
     )
-    plt.title(title, fontsize=11, fontweight="bold")
-    plt.xlabel(plot_over, fontsize=11, fontweight="bold")
-    plt.ylabel("Waiting time", fontsize=11, fontweight="bold")
+    plt.title(title, fontsize=18)
+    plt.xlabel(plot_over, fontsize=15, fontweight="bold")
+    plt.ylabel("Waiting time", fontsize=15, fontweight="bold")
     plt.legend()
     return range_space, all_mean_times_sim, all_mean_times_markov, all_times_sim

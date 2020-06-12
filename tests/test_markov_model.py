@@ -553,7 +553,9 @@ def test_get_mean_waiting_time_recursively_markov():
         output="both",
         formula="recursive",
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(1.1051493390764142, number_of_digits_to_round)
+    assert round(mean_waiting_time, number_of_digits_to_round) == round(
+        1.1051493390764142, number_of_digits_to_round
+    )
 
 
 def test_get_mean_waiting_time_from_closed_form_markov():
@@ -607,4 +609,6 @@ def test_get_mean_waiting_time_from_closed_form_markov():
         output="both",
         formula="closed_form",
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(1.1051493390764142, number_of_digits_to_round)
+    assert round(mean_waiting_time, number_of_digits_to_round) == round(
+        1.1051493390764142, number_of_digits_to_round
+    )

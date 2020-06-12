@@ -290,11 +290,12 @@ To calculate the mean waiting time of \textit{other patients} one must first ide
     S_w = \{(u, v) \in S \; | \; v > C \}    
 \end{equation}
 
-Additionally, there are certain states in the model where arrivals cannot occur. An \textit{other patient} cannot arrive whenever the model is at any state $(u, N) \; \forall \; u$ where $N$ is the system capacity. Therefore the set of all such states that an arrival may occur are defined as \textit{accepting states} and are denoted as:
+Additionally, there are certain states in the model where arrivals cannot occur. An \textit{other patient} cannot arrive whenever the model is at any state \((u, N)\) for all \(u\) where \(N\) is the system capacity. Therefore the set of all such states that an arrival may occur are defined as \textit{accepting states} and are denoted as:
 
-\[
-S_A^{(o)} = \{(u, v) \in S \; | \; u < N \}
-\]
+\begin{equation}\label{accepting_states_others}
+    S_A^{(o)} = \{(u, v) \in S \; | \; u < N \}
+\end{equation}
+
 
 
 Moreover, another element that needs to be considered is the expected waiting time in each state \( c(u,v) \), otherwise known as sojourn time. In order to do so a variation of the Markov model has to be considered where when the individual arrives at any of the states of the model no more arrivals can occur after that. 
@@ -356,7 +357,7 @@ As illustrated in figure \ref{other_patients_trip} an \textit{other patient}, wh
 
 Note that whenever any \textit{other patient} is at a state \((u,v)\) where \(u > 0\) and \(v = T\) (i.e. all states \((1,T), (2,T) \dots, (M,T)\)) the sojourn time is set to \(0\). This is done to capture the trip thorough the Markov chain from the perspective of other patients. Meaning that they will visit all states of the threshold column but only the one in the first row will return a non-zero sojourn time.
 
-Now, using the above equations, and considering all sates that belong in \(S_w\) the following recursive formula can be used to get the mean waiting time spent in each state in the Markov model. For \textit{other patients}, whenever the model is at state \( (u,v) \), any incoming patient will proceed to arrive at state \( (u, v+1) \). Patients will then proceed to visit all other states until they reach one which has less than $C$ servers occupied (i.e. until a server becomes available). The formula goes through all states from right to left recursively and adds the sojourn times of all these states together until it reaches a state that is not in the set of waiting states. Thus, the expected waiting time of an \textit{other patient} when they arrive at state \( (u,v) \) can be given by:
+Now, using the above equations, and considering all sates that belong in \(S_w\) the following recursive formula can be used to get the mean waiting time spent in each state in the Markov model. For \textit{other patients}, whenever the model is at state \( (u,v) \), any incoming patient will proceed to arrive at state \( (u, v+1) \). Patients will then proceed to visit all other states until they reach one which has less than \(C\) servers occupied (i.e. until a server becomes available). The formula goes through all states from right to left recursively and adds the sojourn times of all these states together until it reaches a state that is not in the set of waiting states. Thus, the expected waiting time of an \textit{other patient} when they arrive at state \( (u,v) \) can be given by:
 
 \begin{equation}
     w^{(o)}(u,v) = 
@@ -383,11 +384,17 @@ Equivalently the mean waiting time for \textit{ambulance patients} can be calcul
     S_w = \{(u, v) \in S \; | \; v > C \}    
 \]
 
-\[
-S_A^{(a)} = \{(u, v) \in S \; | \; v < M \}
-\]
+\begin{equation}\label{accepting_states_ambulance}
+    S_A^{(a)}=
+    \begin{cases}
+        \{(u, v) \in S \; | \; v < M \} & \textbf{if } T \leq N\\
+        \{(u, v) \in S \; | \; v < N \} & \textbf{otherwise}
+    \end{cases}
+\end{equation}
 
-The set of accepting states is modified in such a way such that an \textit{ambulance patient} cannot arrive in the model when the model is at any state $(M, v) \; \forall \; v \geq T$ where $M$ is the parking capacity and $T$ is the threshold. Now just like in the \textit{other patients} case the sojourn time is needed. For \textit{ambulance patients} whenever individuals are at any row apart from the first one they automatically get a wait time of \(0\) since they are essentially blocked.
+The set of accepting states is modified in such a way such that an \textit{ambulance patient} cannot arrive in the model when the model is at any state \((M, v)\) for all \(v \geq T\) where \(M\) is the parking capacity and \(T\) is the threshold. An odd situation here is when the threshold is set to a very high number that is more than the actual system capacity. In such cases the set of accepting states is defined in the same way as the \textit{other patients} case. That is because whenever \(T > N\) no ambulance will ever be blocked in the model (since that threshold can never be reached) and thus the last accepting state of the model will be state \( (0,N-1)\). 
+
+Now just like in the \textit{other patients} case the sojourn time is needed. For \textit{ambulance patients} whenever individuals are at any row apart from the first one they automatically get a wait time of \(0\) since they are essentially blocked.
 
 \begin{equation} \label{eq:sojourn_ambulance}
     c^{(a)}(u,v) = 
@@ -415,17 +422,39 @@ Finally, the recursive formula and the mean waiting time equation are identical 
 Upon closer inspection of the recursive formula a more compact formula can arise. The equivalent closed-form formula eliminates the need for recursion and thus makes the computation of waiting times much more efficient. Just like in the recursive part there are two formulas; one for \textit{ambulance} and one for \textit{other patients}. The formulas are given by:
 
 \begin{equation} \label{closed_form_waiting_others}
-    W^{(o)} = \frac{\sum_{(u,v) \, \in S_A} \frac{1}{C \mu} \times max(v-C+1,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A} \pi(u,v)}
+    W^{(o)} = \frac{\sum_{(u,v) \, \in S_A^{(o)}} \frac{1}{C \mu} \times max(v-C+1,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A^{(o)}} \pi(u,v)}
 \end{equation}
     
 \begin{equation}\label{closed_form_waiting_ambulance}
-    W^{(a)} = \frac{\sum_{(u,v) \, \in S_A} \frac{1}{C \mu} \times max(min(v+1,T)-C,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A} \pi(u,v)}
+    W^{(a)} = \frac{\sum_{(u,v) \, \in S_A^{(a)}} \frac{1}{C \mu} \times max(min(v+1,T)-C,0) \times \pi(u,v)}{\sum_{(u,v) \, \in S_A^{(a)}} \pi(u,v)}
 \end{equation}
 
 Note here that the maximisation function in both formulas is there to identify how many states an arrival will have to go through before they start being served. For instance, consider a system with capacity \(N=10\), servers capacity \(C=5\) and a threshold of \(T=8\). The possible outcomes of the maximisation function in equation \ref{closed_form_waiting_others} (\textit{other patients}) would be integers from \( 0 - 5 \) indicating the amount of people in service one would have to wait for upon arrival at the hospital.
 
 Additionally, the minimisation function in equation \ref{closed_form_waiting_ambulance} (\textit{ambulance patients}) ensures that when an ambulance arrives at any state that is greater than the predetermined threshold, the states that they will have to wait at remains the same. Thus, considering the same parameters as above, the possible outcomes of the maximisation function would be integers from \( 0 - 3 \), since no ambulance patient will ever have to wait more than \(3\) patients.
 
+
+
+\subsubsection{Overall Waiting Time}
+
+Consequently, the overall waiting time should can be estimated by a linear combination of the waiting times of \textit{other and ambulance patients}. The overall waiting time can be then given by the following equation where \(c_o\) and \(c_a\) are the coefficients of each patient's type waiting time:
+
+\begin{equation}\label{overall_waiting_time_coeff}
+    W = c_o W^{(o)} + c_a W^{(a)}
+\end{equation}
+
+The two coefficients represent the proportion of patients of each patient type that traversed through the model. Theoretically, getting these percentages should be as simple as looking at the arrival rates of each patient type but in practise if the hospital or the parking space is full, some patients may be lost to the system. Thus, one should account for the probability that a patient is lost to the system. This probability can be easily calculated by using the two sets of accepting states \(S_A^{(a)}\) and \(S_A^{(o)}\) defined earlier in equations \ref{accepting_states_others} and \ref{accepting_states_ambulance}. Let us define here the probability, for either patient type, that an individual is not lost in the system by:
+
+\begin{equation*}
+    P(L'_o) = \sum_{(u,v) \, \in S_A^{(o)}} \pi(u,v) \hspace{2cm}
+    P(L'_a) = \sum_{(u,v) \, \in S_A^{(a)}} \pi(u,v)
+\end{equation*}
+
+Having defined these probabilities one may combine them with the arrival rates of each patient type in such a way to get the expected proportions of ambulance and other patients in the model. Thus, by using these values as the coefficient of equation \ref{overall_waiting_time_coeff} the resultant equation can be used to get the overall waiting time. Note here that the equation below gets the overall waiting time for both the recursive and the closed-form formula.
+
+\begin{equation}\label{overall_waiting_time}
+    W = \frac{\lambda_o P(L'_o)}{\lambda_a P(L'_a) + W^{(a)}\lambda_o P(L'_o)} W^{(o)} + \frac{\lambda_a P(L'_a)}{\lambda_a P(L'_a) + \lambda_o P(L'_o)} W^{(a)}
+\end{equation}
 
 
 

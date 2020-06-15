@@ -235,17 +235,17 @@ def make_plot_for_different_thresholds(
     diff_threshold_plot = plt.plot(
         x_axis,
         all_ambulance_patients_mean_times,
-        ":",
+        "solid",
         x_axis,
         all_other_patients_mean_times,
-        ":",
+        "solid",
         x_axis,
         all_total_mean_times,
-        "-",
+        "solid",
     )
-    plt.title(title)
-    plt.xlabel(x_axis_label)
-    plt.ylabel(y_axis_label)
+    plt.title(title, fontsize=13, fontweight="bold")
+    plt.xlabel(x_axis_label, fontsize=13, fontweight="bold")
+    plt.ylabel(y_axis_label, fontsize=13, fontweight="bold")
     plt.legend(
         ["Ambulance Patients", "Other Patients", "All times"], fontsize="x-large"
     )
@@ -546,12 +546,12 @@ def make_plot_two_hospitals_arrival_split(
     x_axis_label, y_axis_label, title = get_two_hospital_plot_labels(measurement_type)
     x_labels = all_arrival_rates[1:-1] / all_arrival_rates[-1]
     plt.figure(figsize=(23, 10))
-    waiting_time_plot = plt.plot(x_labels, hospital_times_1, ":")
-    plt.plot(x_labels, hospital_times_2, ":")
+    waiting_time_plot = plt.plot(x_labels, hospital_times_1, ls="solid", lw=1.5)
+    plt.plot(x_labels, hospital_times_2, ls="solid", lw=1.5)
     plt.legend(["Hospital 1", "Hospital 2"], fontsize="x-large")
-    plt.title(title)
-    plt.xlabel(x_axis_label)
-    plt.ylabel(y_axis_label)
+    plt.title(title, fontsize=18)
+    plt.xlabel(x_axis_label, fontsize=15, fontweight="bold")
+    plt.ylabel(y_axis_label, fontsize=15, fontweight="bold")
 
     return waiting_time_plot
 
@@ -641,9 +641,9 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
 
     plt.figure(figsize=(23, 10))
     plot = plt.boxplot(mean_time, labels=x_axis, showfliers=False)
-    plt.title(title)
-    plt.xlabel("Warm-up time")
-    plt.ylabel(y_axis_label)
+    plt.title(title, fontsize=13, fontweight="bold")
+    plt.xlabel("Warm-up time", fontsize=13, fontweight="bold")
+    plt.ylabel(y_axis_label, fontsize=13, fontweight="bold")
 
     return plot
 

@@ -707,7 +707,7 @@ def mean_waiting_time_formula(
         if patient_type == "others":
             mean_waiting_time = np.sum(
                 [
-                    max(state[1] - num_of_servers + 1, 0) * pi[state] * sojourn_time
+                    (state[1] - num_of_servers + 1) * pi[state] * sojourn_time
                     for state in all_states
                     if is_accepting_state(
                         state,
@@ -716,6 +716,7 @@ def mean_waiting_time_formula(
                         system_capacity,
                         parking_capacity,
                     )
+                    and state[1] >= num_of_servers
                 ]
             ) / np.sum(
                 [
@@ -733,7 +734,7 @@ def mean_waiting_time_formula(
         if patient_type == "ambulance":
             mean_waiting_time = np.sum(
                 [
-                    max(min(state[1] + 1, threshold) - num_of_servers, 0)
+                    (min(state[1] + 1, threshold) - num_of_servers)
                     * pi[state]
                     * sojourn_time
                     for state in all_states
@@ -744,6 +745,7 @@ def mean_waiting_time_formula(
                         system_capacity,
                         parking_capacity,
                     )
+                    and min(state[1], threshold) >= num_of_servers
                 ]
             ) / np.sum(
                 [

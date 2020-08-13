@@ -171,8 +171,8 @@ def get_symbolic_transition_matrix(
         The symbolic transition matrix
     """
     Lambda = sym.symbols("Lambda")
-    lambda_o = sym.symbols("lambda") ** sym.symbols("o")
-    lambda_a = sym.symbols("lambda") ** sym.symbols("A")
+    lambda_o = sym.symbols("lambda^o")
+    lambda_a = sym.symbols("lambda^A")
     mu = sym.symbols("mu")
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
@@ -259,8 +259,8 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     TODO: get rid of first four lines somehow
     """
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda") ** sym.symbols("o")
-    sym_lambda_a = sym.symbols("lambda") ** sym.symbols("A")
+    sym_lambda_o = sym.symbols("lambda^o")
+    sym_lambda_a = sym.symbols("lambda^A")
     sym_mu = sym.symbols("mu")
 
     Q = np.array(

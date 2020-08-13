@@ -380,7 +380,6 @@ def get_symbolic_state_probabilities_1123():
         sym_state_probs_1123[p32] / sym_state_probs_1123[p00]
     )  # (0,0) -> (3,2)
 
-
     return (
         sym_state_probs_1123,
         sym_state_recursive_ratios_1123,
@@ -1236,7 +1235,9 @@ def get_symbolic_state_probabilities_1161():
     p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16 = sym.symbols(
         "p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16"
     )
-    pi_1161 = sym.Matrix([p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16])
+    pi_1161 = sym.Matrix(
+        [p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16]
+    )
     dimension_1161 = Q_sym_1161.shape[0]
 
     M_sym_1161 = sym.Matrix(
@@ -1396,10 +1397,28 @@ def get_symbolic_state_probabilities_1171():
         num_of_servers, threshold, system_capacity, parking_capacity
     )
 
-    p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17 = sym.symbols(
+    (
+        p00,
+        p01,
+        p11,
+        p02,
+        p12,
+        p03,
+        p13,
+        p04,
+        p14,
+        p05,
+        p15,
+        p06,
+        p16,
+        p07,
+        p17,
+    ) = sym.symbols(
         "p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17"
     )
-    pi_1171 = sym.Matrix([p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17])
+    pi_1171 = sym.Matrix(
+        [p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17]
+    )
     dimension_1171 = Q_sym_1171.shape[0]
 
     M_sym_1171 = sym.Matrix(
@@ -1578,10 +1597,48 @@ def get_symbolic_state_probabilities_1181():
         num_of_servers, threshold, system_capacity, parking_capacity
     )
 
-    p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17, p08, p18 = sym.symbols(
+    (
+        p00,
+        p01,
+        p11,
+        p02,
+        p12,
+        p03,
+        p13,
+        p04,
+        p14,
+        p05,
+        p15,
+        p06,
+        p16,
+        p07,
+        p17,
+        p08,
+        p18,
+    ) = sym.symbols(
         "p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17, p08, p18"
     )
-    pi_1181 = sym.Matrix([p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17, p08, p18])
+    pi_1181 = sym.Matrix(
+        [
+            p00,
+            p01,
+            p11,
+            p02,
+            p12,
+            p03,
+            p13,
+            p04,
+            p14,
+            p05,
+            p15,
+            p06,
+            p16,
+            p07,
+            p17,
+            p08,
+            p18,
+        ]
+    )
     dimension_1181 = Q_sym_1181.shape[0]
 
     M_sym_1181 = sym.Matrix(
@@ -1629,7 +1686,25 @@ def get_symbolic_state_probabilities_1181():
             eq15_1181,
             eq16_1181,
         ],
-        (p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17, p08, p18),
+        (
+            p00,
+            p01,
+            p11,
+            p02,
+            p12,
+            p03,
+            p13,
+            p04,
+            p14,
+            p05,
+            p15,
+            p06,
+            p16,
+            p07,
+            p17,
+            p08,
+            p18,
+        ),
     )
 
     sym_state_recursive_ratios_1181 = sym.zeros(

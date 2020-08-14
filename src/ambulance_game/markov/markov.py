@@ -61,7 +61,12 @@ def build_states(threshold, system_capacity, parking_capacity):
 
 
 def visualise_ambulance_markov_chain(
-    num_of_servers, threshold, system_capacity, parking_capacity, nodesize=2000, fontsize=12
+    num_of_servers,
+    threshold,
+    system_capacity,
+    parking_capacity,
+    nodesize=2000,
+    fontsize=12,
 ):
     """This function's purpose is the visualisation of the markov chain system using the networkx library. The networkx object that is created positions all states based on their (u, v) labels.
     

@@ -11,6 +11,8 @@ from .markov import (
 def convert_networkxx_figure_to_tikz(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
+    """TODO: Build a string of latex code that generates the tikz picture of the networkxx model as constructed by the networkxx library.
+    """
 
     visualise_ambulance_markov_chain(
         num_of_servers=num_of_servers,
@@ -24,7 +26,25 @@ def convert_networkxx_figure_to_tikz(
 def generate_code_for_tikz_figure(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
+    """Builds a string of latex code that generates the tikz picture of the Markov chain with the given parameters: number of servers (C), threshold (T), system capacity (N) and parking capacity (M).
 
+    The function works using three loops:
+        - First loop to build nodes and edges of states (0,0) - (0,T)
+        - Second loop to build nodes and edges of states (0,T) - (M,T)
+        - Third loop to build nodes and edges of the remaining states (the remainig rectangle of states) 
+
+    Parameters
+    ----------
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    parking_capacity : int
+
+    Returns
+    -------
+    string
+        A string containing the full latex code to build a tikz figure of the Markov chain
+    """
     tikz_code = (
         "\\begin{figure}[h]"
         + "\n"

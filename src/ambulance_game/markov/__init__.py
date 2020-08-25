@@ -17,6 +17,6 @@ from .markov import (
 )
 
 from .additional import (
-    convert_networkxx_figure_to_tikz,
+    convert_networkx_figure_to_tikz,
     generate_code_for_tikz_figure,
 )

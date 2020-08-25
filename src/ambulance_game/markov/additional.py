@@ -8,7 +8,7 @@ from .markov import (
 )
 
 
-def convert_networkxx_figure_to_tikz(
+def convert_networkx_figure_to_tikz(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """TODO: Build a string of latex code that generates the tikz picture of the networkxx model as constructed by the networkxx library.
@@ -46,11 +46,7 @@ def generate_code_for_tikz_figure(
         A string containing the full latex code to build a tikz figure of the Markov chain
     """
     tikz_code = (
-        "\\begin{figure}[h]"
-        + "\n"
-        + "\\centering"
-        + "\n"
-        + "\\begin{tikzpicture}[-, node distance = 1cm, auto]"
+        "\\begin{tikzpicture}[-, node distance = 1cm, auto]"
         + "\n"
         + "\\node[state] (u0v0) {(0,0)};"
         + "\n"
@@ -202,22 +198,7 @@ def generate_code_for_tikz_figure(
                     + "\n"
                 )
 
-    tikz_code += (
-        "\\end{tikzpicture}"
-        + "\n"
-        + "\\caption{Markov chain model with "
-        + str(num_of_servers)
-        + " servers}"
-        + "\n"
-        + "\\label{Exmple_model-"
-        + str(num_of_servers)
-        + str(threshold)
-        + str(system_capacity)
-        + str(parking_capacity)
-        + "}"
-        + "\n"
-        + "\\end{figure}"
-    )
+    tikz_code += "\\end{tikzpicture}"
 
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
 

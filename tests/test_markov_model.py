@@ -39,9 +39,9 @@ number_of_digits_to_round = 8
 
 
 @given(
-    threshold=integers(min_value=0, max_value=1000),
-    system_capacity=integers(min_value=1, max_value=1000),
-    parking_capacity=integers(min_value=1, max_value=1000),
+    threshold=integers(min_value=0, max_value=100),
+    system_capacity=integers(min_value=1, max_value=100),
+    parking_capacity=integers(min_value=1, max_value=100),
 )
 def test_build_states(threshold, system_capacity, parking_capacity):
     """

@@ -199,6 +199,6 @@ def generate_code_for_tikz_figure(
         + "\\end{figure}"
     )
 
-    tikz_code = tikz_code.replace('1\\mu', '\\mu')
+    tikz_code = tikz_code.replace("1\\mu", "\\mu")
 
     return tikz_code

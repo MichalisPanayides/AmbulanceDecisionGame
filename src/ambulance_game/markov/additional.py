@@ -25,7 +25,7 @@ def generate_code_for_tikz_figure(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
 
-    string = (
+    tikz_code = (
         "\\begin{figure}[h]"
         + "\n"
         + "\\centering"
@@ -42,7 +42,7 @@ def generate_code_for_tikz_figure(
             (service_rate + 1) if service_rate < num_of_servers else service_rate
         )
 
-        string += (
+        tikz_code += (
             "\\node[state, right=of u0v"
             + str(v - 1)
             + "] (u0v"
@@ -54,7 +54,7 @@ def generate_code_for_tikz_figure(
             + ")};"
             + "\n"
         )
-        string += (
+        tikz_code += (
             "\\draw[->](u0v"
             + str(v - 1)
             + ") edge[bend left] node {\\( \\Lambda \\)} (u0v"
@@ -62,7 +62,7 @@ def generate_code_for_tikz_figure(
             + ");"
             + "\n"
         )
-        string += (
+        tikz_code += (
             "\\draw[->](u0v"
             + str(v)
             + ") edge[bend left] node {\\("
@@ -74,7 +74,7 @@ def generate_code_for_tikz_figure(
         )
 
     for u in range(1, parking_capacity + 1):
-        string += (
+        tikz_code += (
             "\\node[state, below=of u"
             + str(u - 1)
             + "v"
@@ -91,7 +91,7 @@ def generate_code_for_tikz_figure(
             + "\n"
         )
 
-        string += (
+        tikz_code += (
             "\\draw[->](u"
             + str(u - 1)
             + "v"
@@ -103,7 +103,7 @@ def generate_code_for_tikz_figure(
             + ");"
             + "\n"
         )
-        string += (
+        tikz_code += (
             "\\draw[->](u"
             + str(u)
             + "v"
@@ -124,7 +124,7 @@ def generate_code_for_tikz_figure(
         )
 
         for u in range(parking_capacity + 1):
-            string += (
+            tikz_code += (
                 "\\node[state, right=of u"
                 + str(u)
                 + "v"
@@ -141,7 +141,7 @@ def generate_code_for_tikz_figure(
                 + "\n"
             )
 
-            string += (
+            tikz_code += (
                 "\\draw[->](u"
                 + str(u)
                 + "v"
@@ -153,7 +153,7 @@ def generate_code_for_tikz_figure(
                 + ");"
                 + "\n"
             )
-            string += (
+            tikz_code += (
                 "\\draw[->](u"
                 + str(u)
                 + "v"
@@ -169,7 +169,7 @@ def generate_code_for_tikz_figure(
             )
 
             if u != 0:
-                string += (
+                tikz_code += (
                     "\\draw[->](u"
                     + str(u - 1)
                     + "v"
@@ -182,7 +182,7 @@ def generate_code_for_tikz_figure(
                     + "\n"
                 )
 
-    string += (
+    tikz_code += (
         "\\end{tikzpicture}"
         + "\n"
         + "\\caption{Markov chain model with "
@@ -199,4 +199,6 @@ def generate_code_for_tikz_figure(
         + "\\end{figure}"
     )
 
-    return string
+    tikz_code = tikz_code.replace('1\\mu', '\\mu')
+
+    return tikz_code

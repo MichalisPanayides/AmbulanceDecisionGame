@@ -1,28 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import tikzplotlib
-
-from .markov import (
-    build_states,
-    visualise_ambulance_markov_chain,
-)
-
-
-def convert_networkx_figure_to_tikz(
-    num_of_servers, threshold, system_capacity, parking_capacity
-):
-    """TODO: Build a string of latex code that generates the tikz picture of the networkxx model as constructed by the networkxx library.
-    """
-
-    visualise_ambulance_markov_chain(
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
-    )
-    tikzplotlib.save("example.tex")
-
-
 def generate_code_for_tikz_figure(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):

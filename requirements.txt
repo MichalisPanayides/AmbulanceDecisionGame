@@ -1,5 +1,4 @@
 matplotlib
-tikzplotlib
 networkx>=2.3
 sympy
 pandas

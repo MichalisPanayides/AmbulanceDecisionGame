@@ -15,3 +15,5 @@ from .markov import (
     mean_waiting_time_formula,
     get_mean_waiting_time_markov,
 )
+
+from .additional import generate_code_for_tikz_figure

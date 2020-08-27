@@ -1842,3 +1842,286 @@ def get_symbolic_state_probabilities_1181():
         sym_state_recursive_ratios_right_1181,
         sym_state_recursive_ratios_P0_1181,
     )
+
+
+def get_symbolic_state_probabilities_1191():
+    num_of_servers = 1
+    threshold = 1
+    system_capacity = 9
+    parking_capacity = 1
+
+    Q_sym_1191 = abg.markov.get_symbolic_transition_matrix(
+        num_of_servers, threshold, system_capacity, parking_capacity
+    )
+
+    (
+        p00,
+        p01,
+        p11,
+        p02,
+        p12,
+        p03,
+        p13,
+        p04,
+        p14,
+        p05,
+        p15,
+        p06,
+        p16,
+        p07,
+        p17,
+        p08,
+        p18,
+        p09,
+        p19,
+    ) = sym.symbols(
+        "p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16, p07, p17, p08, p18, p09, p19"
+    )
+    pi_1191 = sym.Matrix(
+        [
+            p00,
+            p01,
+            p11,
+            p02,
+            p12,
+            p03,
+            p13,
+            p04,
+            p14,
+            p05,
+            p15,
+            p06,
+            p16,
+            p07,
+            p17,
+            p08,
+            p18,
+            p09,
+            p19,
+        ]
+    )
+    dimension_1191 = Q_sym_1191.shape[0]
+
+    M_sym_1191 = sym.Matrix(
+        [Q_sym_1191.transpose()[:-1, :], sym.ones(1, dimension_1191)]
+    )
+    sym_diff_equations_1191 = M_sym_1191 @ pi_1191
+
+    b_sym_1191 = sym.Matrix([sym.zeros(dimension_1191 - 1, 1), [1]])
+
+    eq0_1191 = sym.Eq(sym_diff_equations_1191[0], b_sym_1191[0])
+    eq1_1191 = sym.Eq(sym_diff_equations_1191[1], b_sym_1191[1])
+    eq2_1191 = sym.Eq(sym_diff_equations_1191[2], b_sym_1191[2])
+    eq3_1191 = sym.Eq(sym_diff_equations_1191[3], b_sym_1191[3])
+    eq4_1191 = sym.Eq(sym_diff_equations_1191[4], b_sym_1191[4])
+    eq5_1191 = sym.Eq(sym_diff_equations_1191[5], b_sym_1191[5])
+    eq6_1191 = sym.Eq(sym_diff_equations_1191[6], b_sym_1191[6])
+    eq7_1191 = sym.Eq(sym_diff_equations_1191[7], b_sym_1191[7])
+    eq8_1191 = sym.Eq(sym_diff_equations_1191[8], b_sym_1191[8])
+    eq9_1191 = sym.Eq(sym_diff_equations_1191[9], b_sym_1191[9])
+    eq10_1191 = sym.Eq(sym_diff_equations_1191[10], b_sym_1191[10])
+    eq11_1191 = sym.Eq(sym_diff_equations_1191[11], b_sym_1191[11])
+    eq12_1191 = sym.Eq(sym_diff_equations_1191[12], b_sym_1191[12])
+    eq13_1191 = sym.Eq(sym_diff_equations_1191[13], b_sym_1191[13])
+    eq14_1191 = sym.Eq(sym_diff_equations_1191[14], b_sym_1191[14])
+    eq15_1191 = sym.Eq(sym_diff_equations_1191[15], b_sym_1191[15])
+    eq16_1191 = sym.Eq(sym_diff_equations_1191[16], b_sym_1191[16])
+    eq17_1191 = sym.Eq(sym_diff_equations_1191[17], b_sym_1191[17])
+    eq18_1191 = sym.Eq(sym_diff_equations_1191[18], b_sym_1191[18])
+
+    sym_state_probs_1191 = sym.solve(
+        [
+            eq0_1191,
+            eq1_1191,
+            eq2_1191,
+            eq3_1191,
+            eq4_1191,
+            eq5_1191,
+            eq6_1191,
+            eq7_1191,
+            eq8_1191,
+            eq9_1191,
+            eq10_1191,
+            eq11_1191,
+            eq12_1191,
+            eq13_1191,
+            eq14_1191,
+            eq15_1191,
+            eq16_1191,
+            eq17_1191,
+            eq18_1191,
+        ],
+        (
+            p00,
+            p01,
+            p11,
+            p02,
+            p12,
+            p03,
+            p13,
+            p04,
+            p14,
+            p05,
+            p15,
+            p06,
+            p16,
+            p07,
+            p17,
+            p08,
+            p18,
+            p09,
+            p19,
+        ),
+    )
+
+    sym_state_recursive_ratios_1191 = sym.zeros(
+        parking_capacity + 1, system_capacity + 1
+    )
+    sym_state_recursive_ratios_1191[0, 0] = 1
+    sym_state_recursive_ratios_1191[0, 1] = sym.factor(
+        sym_state_probs_1191[p01] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,1)
+    sym_state_recursive_ratios_1191[1, 1] = sym.factor(
+        sym_state_probs_1191[p11] / sym_state_probs_1191[p01]
+    )  # (0,1) -> (1,1)
+    sym_state_recursive_ratios_1191[0, 2] = sym.factor(
+        sym_state_probs_1191[p02] / sym_state_probs_1191[p01]
+    )  # (0,1) -> (0,2)
+    sym_state_recursive_ratios_1191[1, 2] = sym.factor(
+        sym_state_probs_1191[p12] / sym_state_probs_1191[p02]
+    )  # (0,2) -> (1,2)
+    sym_state_recursive_ratios_1191[0, 3] = sym.factor(
+        sym_state_probs_1191[p03] / sym_state_probs_1191[p02]
+    )  # (0,2) -> (0,3)
+    sym_state_recursive_ratios_1191[1, 3] = sym.factor(
+        sym_state_probs_1191[p13] / sym_state_probs_1191[p03]
+    )  # (0,3) -> (1,3)
+    sym_state_recursive_ratios_1191[0, 4] = sym.factor(
+        sym_state_probs_1191[p04] / sym_state_probs_1191[p03]
+    )  # (0,3) -> (0,4)
+    sym_state_recursive_ratios_1191[1, 4] = sym.factor(
+        sym_state_probs_1191[p14] / sym_state_probs_1191[p04]
+    )  # (0,4) -> (1,4)
+    sym_state_recursive_ratios_1191[0, 5] = sym.factor(
+        sym_state_probs_1191[p05] / sym_state_probs_1191[p04]
+    )  # (0,4) -> (0,5)
+    sym_state_recursive_ratios_1191[1, 5] = sym.factor(
+        sym_state_probs_1191[p15] / sym_state_probs_1191[p05]
+    )  # (0,5) -> (1,5)
+    sym_state_recursive_ratios_1191[0, 6] = sym.factor(
+        sym_state_probs_1191[p06] / sym_state_probs_1191[p05]
+    )  # (0,5) -> (0,6)
+    sym_state_recursive_ratios_1191[1, 6] = sym.factor(
+        sym_state_probs_1191[p16] / sym_state_probs_1191[p06]
+    )  # (0,6) -> (1,6)
+    sym_state_recursive_ratios_1191[0, 7] = sym.factor(
+        sym_state_probs_1191[p07] / sym_state_probs_1191[p06]
+    )  # (0,6) -> (0,7)
+    sym_state_recursive_ratios_1191[1, 7] = sym.factor(
+        sym_state_probs_1191[p17] / sym_state_probs_1191[p07]
+    )  # (0,7) -> (1,7)
+    sym_state_recursive_ratios_1191[0, 8] = sym.factor(
+        sym_state_probs_1191[p08] / sym_state_probs_1191[p07]
+    )  # (0,7) -> (0,8)
+    sym_state_recursive_ratios_1191[1, 8] = sym.factor(
+        sym_state_probs_1191[p18] / sym_state_probs_1191[p08]
+    )  # (0,8) -> (1,8)
+    sym_state_recursive_ratios_1191[0, 9] = sym.factor(
+        sym_state_probs_1191[p09] / sym_state_probs_1191[p08]
+    )  # (0,8) -> (0,9)
+    sym_state_recursive_ratios_1191[1, 9] = sym.factor(
+        sym_state_probs_1191[p19] / sym_state_probs_1191[p09]
+    )  # (0,9) -> (1,9)
+
+
+    sym_state_recursive_ratios_right_1191 = sym_state_recursive_ratios_1191.copy()
+    sym_state_recursive_ratios_right_1191[1, 2] = sym.factor(
+        sym_state_probs_1191[p12] / sym_state_probs_1191[p11]
+    )  # (1,1) -> (1,2)
+    sym_state_recursive_ratios_right_1191[1, 3] = sym.factor(
+        sym_state_probs_1191[p13] / sym_state_probs_1191[p12]
+    )  # (1,2) -> (1,3)
+    sym_state_recursive_ratios_right_1191[1, 4] = sym.factor(
+        sym_state_probs_1191[p14] / sym_state_probs_1191[p13]
+    )  # (1,3) -> (1,4)
+    sym_state_recursive_ratios_right_1191[1, 5] = sym.factor(
+        sym_state_probs_1191[p15] / sym_state_probs_1191[p14]
+    )  # (1,4) -> (1,5)
+    sym_state_recursive_ratios_right_1191[1, 6] = sym.factor(
+        sym_state_probs_1191[p16] / sym_state_probs_1191[p15]
+    )  # (1,5) -> (1,6)
+    sym_state_recursive_ratios_right_1191[1, 7] = sym.factor(
+        sym_state_probs_1191[p17] / sym_state_probs_1191[p16]
+    )  # (1,6) -> (1,7)
+    sym_state_recursive_ratios_right_1191[1, 8] = sym.factor(
+        sym_state_probs_1191[p18] / sym_state_probs_1191[p17]
+    )  # (1,7) -> (1,8)
+    sym_state_recursive_ratios_right_1191[1, 8] = sym.factor(
+        sym_state_probs_1191[p18] / sym_state_probs_1191[p17]
+    )  # (1,8) -> (1,9)
+
+    sym_state_recursive_ratios_P0_1191 = sym.zeros(
+        parking_capacity + 1, system_capacity + 1
+    )
+    sym_state_recursive_ratios_P0_1191[0, 0] = 1
+    sym_state_recursive_ratios_P0_1191[0, 1] = sym.factor(
+        sym_state_probs_1191[p01] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,1)
+    sym_state_recursive_ratios_P0_1191[1, 1] = sym.factor(
+        sym_state_probs_1191[p11] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,1)
+    sym_state_recursive_ratios_P0_1191[0, 2] = sym.factor(
+        sym_state_probs_1191[p02] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,2)
+    sym_state_recursive_ratios_P0_1191[1, 2] = sym.factor(
+        sym_state_probs_1191[p12] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,2)
+    sym_state_recursive_ratios_P0_1191[0, 3] = sym.factor(
+        sym_state_probs_1191[p03] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,3)
+    sym_state_recursive_ratios_P0_1191[1, 3] = sym.factor(
+        sym_state_probs_1191[p13] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,3)
+    sym_state_recursive_ratios_P0_1191[0, 4] = sym.factor(
+        sym_state_probs_1191[p04] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,4)
+    sym_state_recursive_ratios_P0_1191[1, 4] = sym.factor(
+        sym_state_probs_1191[p14] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,4)
+    sym_state_recursive_ratios_P0_1191[0, 5] = sym.factor(
+        sym_state_probs_1191[p05] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,5)
+    sym_state_recursive_ratios_P0_1191[1, 5] = sym.factor(
+        sym_state_probs_1191[p15] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,5)
+    sym_state_recursive_ratios_P0_1191[0, 6] = sym.factor(
+        sym_state_probs_1191[p06] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,6)
+    sym_state_recursive_ratios_P0_1191[1, 6] = sym.factor(
+        sym_state_probs_1191[p16] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,6)
+    sym_state_recursive_ratios_P0_1191[0, 7] = sym.factor(
+        sym_state_probs_1191[p07] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,7)
+    sym_state_recursive_ratios_P0_1191[1, 7] = sym.factor(
+        sym_state_probs_1191[p17] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,7)
+    sym_state_recursive_ratios_P0_1191[0, 8] = sym.factor(
+        sym_state_probs_1191[p08] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,8)
+    sym_state_recursive_ratios_P0_1191[1, 8] = sym.factor(
+        sym_state_probs_1191[p18] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,8)
+    sym_state_recursive_ratios_P0_1191[0, 9] = sym.factor(
+        sym_state_probs_1191[p09] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (0,9)
+    sym_state_recursive_ratios_P0_1191[1, 9] = sym.factor(
+        sym_state_probs_1191[p19] / sym_state_probs_1191[p00]
+    )  # (0,0) -> (1,9)
+
+    return (
+        sym_state_probs_1191,
+        sym_state_recursive_ratios_1191,
+        sym_state_recursive_ratios_right_1191,
+        sym_state_recursive_ratios_P0_1191,
+    )

@@ -114,8 +114,8 @@ def test_get_transition_matrix_entry(
     symbolic,
 ):
     """
-    Ensuring that the state mapping function works as it should for all cases two "adjacent" states. 
-    
+    Ensuring that the state mapping function works as it should for all cases two "adjacent" states.
+
     Note here that hypothesis considers all variations of possible inputs along with a boolean variable (symbolic) to indicate whether to test the symblic version of the function or the numeric one.
     """
     Lambda = lambda_a + lambda_o
@@ -385,7 +385,7 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
 )
 def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     """
-    Ensures that getting the steady state numerically using numpy's 
+    Ensures that getting the steady state numerically using numpy's
     lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
@@ -395,7 +395,7 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
 
 def test_get_state_probabilities_dict():
     """
-    Test to ensure that sum of the values of the pi dictionary equate to 1  
+    Test to ensure that sum of the values of the pi dictionary equate to 1
     """
     lambda_a = 0.1
     lambda_o = 0.2
@@ -426,7 +426,7 @@ def test_get_state_probabilities_dict():
 
 
 def test_get_state_probabilities_array():
-    """ 
+    """
     Test to ensure that the sum of elements of the pi array equate to 1
     """
     lambda_a = 0.1

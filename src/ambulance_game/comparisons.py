@@ -346,18 +346,20 @@ def get_plot_comparing_times(
             patient_type=output,
         )
         simulation_waiting_times = [np.mean(w.waiting_times) for w in times]
-        mean_waiting_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
-            lambda_a,
-            lambda_o,
-            mu,
-            num_of_servers,
-            threshold,
-            system_capacity,
-            parking_capacity,
-            seed_num=seed_num,
-            runtime=runtime,
-            num_of_trials=num_of_trials,
-            output=output,
+        mean_waiting_time_sim = (
+            get_mean_waiting_time_from_simulation_state_probabilities(
+                lambda_a,
+                lambda_o,
+                mu,
+                num_of_servers,
+                threshold,
+                system_capacity,
+                parking_capacity,
+                seed_num=seed_num,
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                output=output,
+            )
         )
         mean_waiting_time_markov = get_mean_waiting_time_markov(
             lambda_a,

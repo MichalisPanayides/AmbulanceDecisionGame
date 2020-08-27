@@ -13,7 +13,7 @@ def build_states(threshold, system_capacity, parking_capacity):
         - states_1 consists of all states before reaching the threshold
             (0, 0), (0, 1), ..., (0, T-1) where T is the threshold
         - states_2 consists of all states after reaching the theshold including the threshold (where S is the system capacity)
-            (0, T), (0, T+1), ..., (0, S)  
+            (0, T), (0, T+1), ..., (0, S)
             (1, T), (1, T+1), ..., (1, S)
               .         .            .
               .         .            .
@@ -30,12 +30,12 @@ def build_states(threshold, system_capacity, parking_capacity):
         The maximum capacity of the hospital (i.e. number of servers + queue size)
     parking_capacity : int
         The number of parking spaces
-    
+
     Returns
     -------
     list
         a list of all the states
-    
+
     TODO: turn into a generator
     """
     if parking_capacity < 1:
@@ -69,7 +69,7 @@ def visualise_ambulance_markov_chain(
     fontsize=12,
 ):
     """This function's purpose is the visualisation of the markov chain system using the networkx library. The networkx object that is created positions all states based on their (u, v) labels.
-    
+
     Parameters
     ----------
     num_of_servers : int
@@ -128,14 +128,14 @@ def visualise_ambulance_markov_chain(
 def get_transition_matrix_entry(
     origin, destination, threshold, lambda_a, lambda_o, Lambda, mu, num_of_servers
 ):
-    """Obtains the entry of the transition matrix based on the state mapping function. For a given entry of the transition matrix, the function uses the difference between the origin and destination states (u_i,v_i) - (u_j,v_j) along with the threshold to determine what is the rate of going from the origin state to the destenation state.  
-    
-    This function is used for both the symbolic and numeric transition matrix. 
-    
+    """Obtains the entry of the transition matrix based on the state mapping function. For a given entry of the transition matrix, the function uses the difference between the origin and destination states (u_i,v_i) - (u_j,v_j) along with the threshold to determine what is the rate of going from the origin state to the destenation state.
+
+    This function is used for both the symbolic and numeric transition matrix.
+
     Parameters
     ----------
     origin : tuple
-        The origin state (u_i, v_i) 
+        The origin state (u_i, v_i)
     destination : tuple
         The destination state (u_j,v_j)
     threshold : int
@@ -147,7 +147,7 @@ def get_transition_matrix_entry(
     mu : float or sympy.Symbol object
     num_of_servers : int
         Indication of when to stablise the service rate
-    
+
     Returns
     -------
     float or sympy.Symbol object
@@ -169,7 +169,7 @@ def get_symbolic_transition_matrix(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """Obtain the transition matrix with symbols instead of the actual values of lambda_a, lambda_o and mu.
-    
+
     Returns
     -------
     sympy.matrices object
@@ -208,7 +208,7 @@ def get_transition_matrix(
     lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """Obtain the numerical transition matrix that consists of all rates between any two states.
-    
+
     Parameters
     ----------
     num_of_servers : int
@@ -219,7 +219,7 @@ def get_transition_matrix(
         The total capacity of the system
     parking_capacity : int
         The parking capacity
-    
+
     Returns
     -------
     numpy.ndarray
@@ -250,12 +250,12 @@ def get_transition_matrix(
 
 def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     """Converts the symbolic matrix obtained from the get_symbolic_trnasition_matrix() function to the corresponding numerical matrix. The output of this function should be the same as the output of get_transition_matrix()
-    
+
     Parameters
     ----------
     Q_sym : sympy.matrices object
         The symbolic transition matrix obtained from get_symbolic_transition_matrix()
-    
+
     Returns
     -------
     numpy.ndarray
@@ -284,14 +284,14 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
 def is_steady_state(state, Q):
     """Checks if a give vector π is a steady state vector of the Markov chain by confirming that:
             πQ = 0
-    
+
     Parameters
     ----------
     state : numpy.ndarray
         A vector with probabilities to be checked if is the steady state
     Q : numpy.ndarray
         The numeric transition matrix of the corresponding Markov chain
-    
+
     Returns
     -------
     bool
@@ -313,7 +313,7 @@ def get_steady_state_numerically(
 
     -> odeint(): https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html
     -> solve_ivp(): https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp
-    
+
     Parameters
     ----------
     Q : numpy.ndarray
@@ -324,7 +324,7 @@ def get_steady_state_numerically(
         the number of timepoints between 0 and max_t, by default 1000
     integration_function : function, optional
         The integration function to be used, by default sci.integrate.odeint
-    
+
     Returns
     -------
     numpy.ndarray
@@ -361,7 +361,7 @@ def augment_Q(Q):
     ----------
     Q : numpy.ndarray
         transition matrix
-    
+
     Returns
     -------
     numpy.ndarray, numpy.ndarray
@@ -376,19 +376,19 @@ def augment_Q(Q):
 def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     """Obtain the steady state of the Markov chain agebraically by either using a linear algebraic approach numpy.linalg.solve() or the least squares method numpy.linalg.lstsq(). For both methods the following steps are taken:
         - Get M and b from the augment_Q() function
-        - Using solve() -> find π such that Mπ=b 
+        - Using solve() -> find π such that Mπ=b
         - Using lstsq() -> find π such that the squared Euclidean 2-norm between Mπ and b is minimised
 
     -> solve(): https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html
     -> lstsq(): https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
-    
+
     Parameters
     ----------
     Q : numpy.ndarray
         Transition matrix
     algebraic_function : function, optional
         The function to be used to solve the algebraic problem, by default np.linalg.solve
-    
+
     Returns
     -------
     numpy.ndarray
@@ -432,14 +432,14 @@ def get_markov_state_probabilities(
 
 def get_mean_number_of_patients_in_system(pi, states):
     """Mean number of patients in the system = Σ[π_i * (u_i + v_i)]
-    
+
     Parameters
     ----------
     pi : numpy.ndarray
         steady state vector
     states : list
         list of tuples that contains all states
-    
+
     Returns
     -------
     float
@@ -452,14 +452,14 @@ def get_mean_number_of_patients_in_system(pi, states):
 
 def get_mean_number_of_patients_in_hospital(pi, states):
     """Mean number of patients in the hospital = Σ[π_i * v_i]
-    
+
     Parameters
     ----------
     pi : numpy.ndarray
         steady state vector
     states : list
         list of tuples that contains all states
-    
+
     Returns
     -------
     float
@@ -472,14 +472,14 @@ def get_mean_number_of_patients_in_hospital(pi, states):
 
 def get_mean_number_of_ambulances_blocked(pi, states):
     """Mean number of ambulances blocked = Σ[π_i * u_i]
-    
+
     Parameters
     ----------
     pi : numpy.ndarray
         steady state vector
     states : list
         list of tuples that contains all states
-    
+
     Returns
     -------
     float
@@ -544,9 +544,13 @@ def is_accepting_state(
 
 
 def expected_time_in_markov_state_ignoring_arrivals(
-    state, patient_type, num_of_servers, mu, threshold,
+    state,
+    patient_type,
+    num_of_servers,
+    mu,
+    threshold,
 ):
-    """Get the expected waiting time in a markov state when ignoring any subsequent arrivals.When considering ambulance patients waiting time and the patients are in a blocked state (v > 0) then by the definition of the problem the waiting time in sthat state is set to 0. Additionally, all states where u > 0 and v = T automatically get a waiting time of 0 because other patients only pass one of the states of that column (only state (0,T) is not zero). Otherwise the function's output is: 
+    """Get the expected waiting time in a markov state when ignoring any subsequent arrivals.When considering ambulance patients waiting time and the patients are in a blocked state (v > 0) then by the definition of the problem the waiting time in sthat state is set to 0. Additionally, all states where u > 0 and v = T automatically get a waiting time of 0 because other patients only pass one of the states of that column (only state (0,T) is not zero). Otherwise the function's output is:
         - c(u,v) = 1/vμ   if v < C
         - c(u,v) = 1/Cμ   if v >= C
 
@@ -592,8 +596,8 @@ def get_recursive_waiting_time(
         - w(u,v) = c(s_a) + w(s_d)
 
     Ambulance:
-        - If (u,v) not a waiting state: return 0           
-        - Next state:       s_n = (u-1, v),    if u >=1 and v=T  
+        - If (u,v) not a waiting state: return 0
+        - Next state:       s_n = (u-1, v),    if u >=1 and v=T
                             s_n = (u, v - 1),  otherwise
         - w(u,v) = c(u,v) + w(s_n)
 
@@ -654,11 +658,11 @@ def mean_waiting_time_formula(
     formula="closed_form",
 ):
     """Get the mean waiting time by using the recursive formula or a closed-form formula
-    
+
     Recursive Formula:
-        W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] , 
-        
-        where:  - both summations occur over all accepting states (u,v) 
+        W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] ,
+
+        where:  - both summations occur over all accepting states (u,v)
                 - w(u,v) is the recursive waiting time of state (u,v)
                 - π(u,v) is the probability of being at state (u,v)
 
@@ -793,7 +797,7 @@ def get_mean_waiting_time_markov(
     parking_capacity : int
     formula : str, optional
     output : str, optional
-       
+
     Returns
     -------
     float

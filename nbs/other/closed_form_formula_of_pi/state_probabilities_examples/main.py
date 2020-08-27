@@ -2033,7 +2033,6 @@ def get_symbolic_state_probabilities_1191():
         sym_state_probs_1191[p19] / sym_state_probs_1191[p09]
     )  # (0,9) -> (1,9)
 
-
     sym_state_recursive_ratios_right_1191 = sym_state_recursive_ratios_1191.copy()
     sym_state_recursive_ratios_right_1191[1, 2] = sym.factor(
         sym_state_probs_1191[p12] / sym_state_probs_1191[p11]

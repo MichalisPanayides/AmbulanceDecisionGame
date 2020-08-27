@@ -59,7 +59,9 @@ def test_example_model():
     assert sum(blocks) == 0
 
 
-@given(num_of_servers=integers(min_value=1, max_value=20),)
+@given(
+    num_of_servers=integers(min_value=1, max_value=20),
+)
 def test_build_custom_node(num_of_servers):
     """
     Test to ensure blocking works as expected for extreme cases where the threshold is set to infinity and -1
@@ -249,7 +251,7 @@ def test_simulate_model_invalid_arguements():
 
 def test_get_state_probabilities_dict():
     """
-    Test to ensure that sum of the values of the pi dictionary equate to 1  
+    Test to ensure that sum of the values of the pi dictionary equate to 1
     """
     lambda_a = 0.1
     lambda_o = 0.2
@@ -494,8 +496,7 @@ def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
 
 # TODO Investigate making this a property based test
 def test_get_mean_blocking_difference_between_two_hospitals_increasing():
-    """Ensuring that the function is increasing for specific inputs
-    """
+    """Ensuring that the function is increasing for specific inputs"""
     diff_list = []
     proportions = np.linspace(0.1, 0.9, 9)
     for prop in proportions:

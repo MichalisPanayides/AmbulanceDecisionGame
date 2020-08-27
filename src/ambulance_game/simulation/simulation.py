@@ -13,7 +13,7 @@ def build_model(
     system_capacity=float("inf"),
     parking_capacity=float("inf"),
 ):
-    """ Builds the required ciw network
+    """Builds the required ciw network
 
     Parameters
     ----------
@@ -42,12 +42,12 @@ def build_model(
 
 def build_custom_node(threshold=float("inf")):
     """Build a custome node to replace the default ciw.Node
-    
+
     Parameters
     ----------
     threshold : int, optional
         The capacity threshold to be used by the method, by default 7
-    
+
     Returns
     -------
     class
@@ -100,7 +100,7 @@ def build_custom_node(threshold=float("inf")):
               - find their next node
               - release the individual if there is capacity at destination,
                 otherwise cause blockage
-              - note that blockage also occurs when we are at node 1 and the 
+              - note that blockage also occurs when we are at node 1 and the
                 number of individuals on node 2 are more than the 'thershold'
             """
             next_individual, next_individual_index = self.find_next_individual()
@@ -134,17 +134,17 @@ def simulate_model(
     parking_capacity=float("inf"),
     tracker=ciw.trackers.NodePopulation(),
 ):
-    """Simulating the model by using the custom node and returning the simulation object. 
-    
+    """Simulating the model by using the custom node and returning the simulation object.
+
     It is important to note that when the threshold is greater than the system capacity the parking capacity is forced to be 1 because otherwise, when the hospital gets full ambulance patients will flood the parking spaces which is not what should happen in this particular scenario.
 
     Additionally, the parking capacity should always be greater or equal to 1
- 
+
     Parameters
     ----------
     seed_num : [float], optional
         A seed number in order to be able to replicate results, by default random.random()
-    
+
     Returns
     -------
     object
@@ -286,14 +286,14 @@ def get_average_simulated_state_probabilities(
 
 def extract_times_from_records(simulation_records, warm_up_time):
     """Get the required times that we are interested in out of ciw's records
-    
+
     Parameters
     ----------
     simulation_records : list
         A list of all simulated records
     warm_up_time : int
         The time we start collecting results
-    
+
     Returns
     -------
     list, list, list
@@ -323,7 +323,7 @@ def extract_times_from_individuals(
     """
     For all individuals' records
         if not still in the system and after warm_up_time
-            
+
         if finished only dummy service
     """
     waiting_times = []
@@ -348,13 +348,13 @@ def extract_times_from_individuals(
 
 
 def get_list_of_results(results):
-    """Modify the outputs even further so that it is output in a different more convenient format for some graphs 
-    
+    """Modify the outputs even further so that it is output in a different more convenient format for some graphs
+
     Parameters
     ----------
     results : list
         A list of named tuples for each iteration
-    
+
     Returns
     -------
     list, list, list
@@ -381,8 +381,8 @@ def get_multiple_runs_results(
     parking_capacity=float("inf"),
     patient_type="both",
 ):
-    """Get waiting, service and blocking times for multiple runs 
-    
+    """Get waiting, service and blocking times for multiple runs
+
     Parameters
     ----------
     warm_up_time : int, optional
@@ -393,7 +393,7 @@ def get_multiple_runs_results(
         The results' output type (either tuple or list)], by default "tuple"
     patients_type : str, optional
         A string to identify what type of patients to get the times for
-    
+
     Returns
     -------
     list
@@ -473,14 +473,14 @@ def get_mean_blocking_difference_between_two_hospitals(
     runtime,
 ):
     """Given a predefined proportion of the ambulance's arrival rate calculate the mean difference between blocking times of two hospitals with given set of parameters. Note that all parameters that end in "_1" correspond to the first hospital while "_2" to the second.
-    
+
     Parameters
     ----------
     prop_1 : float
         Proportion of ambulance's arrival rate that will be distributed to hospital 1
     lambda_a : float
         Total ambulance arrival rate
-    
+
     Returns
     -------
     float
@@ -541,10 +541,10 @@ def calculate_ambulance_best_response(
     warm_up_time,
     runtime,
 ):
-    """Obtains the optimal distribution of ambulances such that the blocking times of the ambulances in the two hospitals are identical and thus optimal(minimised). 
-    
+    """Obtains the optimal distribution of ambulances such that the blocking times of the ambulances in the two hospitals are identical and thus optimal(minimised).
+
     The brentq function is used which is an algorithm created to find the root of a function that combines root bracketing, bisection, and inverse quadratic interpolation. In this specific example the root to be found is the difference between the blocking times of two hospitals. In essence the brentq algorith atempts to find the value of "prop_1" where the "diff" is zero (see function: get_mean_blocking_difference_between_two_hospitals).
-    
+
     Returns
     -------
     float

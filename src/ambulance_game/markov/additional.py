@@ -6,7 +6,7 @@ def generate_code_for_tikz_figure(
     The function works using three loops:
         - First loop to build nodes and edges of states (0,0) - (0,T)
         - Second loop to build nodes and edges of states (0,T) - (M,T)
-        - Third loop to build nodes and edges of the remaining states (the remainig rectangle of states) 
+        - Third loop to build nodes and edges of the remaining states (the remainig rectangle of states)
 
     Parameters
     ----------

@@ -61,7 +61,12 @@ def build_states(threshold, system_capacity, parking_capacity):
 
 
 def visualise_ambulance_markov_chain(
-    num_of_servers, threshold, system_capacity, parking_capacity
+    num_of_servers,
+    threshold,
+    system_capacity,
+    parking_capacity,
+    nodesize=2000,
+    fontsize=12,
 ):
     """This function's purpose is the visualisation of the markov chain system using the networkx library. The networkx object that is created positions all states based on their (u, v) labels.
 
@@ -83,7 +88,7 @@ def visualise_ambulance_markov_chain(
     """
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
-    G = nx.MultiDiGraph()
+    G = nx.DiGraph()
     for _, origin_state in enumerate(all_states):
         for _, destination_state in enumerate(all_states):
             column_adjacent = (
@@ -97,23 +102,23 @@ def visualise_ambulance_markov_chain(
             if row_adjacent or column_adjacent:
                 G.add_edge(origin_state, destination_state, color="blue")
 
-    plt.figure(figsize=(1.5 * (parking_capacity + 1), 1.5 * system_capacity))
-    pos = {state: list(state) for state in all_states}
+    plt.figure(figsize=((system_capacity + 1) * 1.5, (parking_capacity + 1) * 1.5))
+    pos = {state: [state[1], -state[0]] for state in all_states}
     nx.draw_networkx_nodes(
         G,
         pos,
-        node_size=2000,
+        node_size=nodesize,
         nodelist=[state for state in all_states if state[1] < num_of_servers],
     )
     nx.draw_networkx_nodes(
         G,
         pos,
-        node_size=2000,
+        node_size=nodesize,
         nodelist=[state for state in all_states if state[1] >= num_of_servers],
         node_color="red",
     )
-    nx.draw_networkx_edges(G, pos)
-    nx.draw_networkx_labels(G, pos)
+    nx.draw_networkx_edges(G, pos, arrowstyle="fancy")
+    nx.draw_networkx_labels(G, pos, font_size=fontsize)
 
     plt.axis("off")
 
@@ -171,8 +176,8 @@ def get_symbolic_transition_matrix(
         The symbolic transition matrix
     """
     Lambda = sym.symbols("Lambda")
-    lambda_o = sym.symbols("lambda") ** sym.symbols("o")
-    lambda_a = sym.symbols("lambda") ** sym.symbols("A")
+    lambda_o = sym.symbols("lambda^o")
+    lambda_a = sym.symbols("lambda^A")
     mu = sym.symbols("mu")
 
     all_states = build_states(threshold, system_capacity, parking_capacity)
@@ -259,8 +264,8 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     TODO: get rid of first four lines somehow
     """
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda") ** sym.symbols("o")
-    sym_lambda_a = sym.symbols("lambda") ** sym.symbols("A")
+    sym_lambda_o = sym.symbols("lambda^o")
+    sym_lambda_a = sym.symbols("lambda^A")
     sym_mu = sym.symbols("mu")
 
     Q = np.array(

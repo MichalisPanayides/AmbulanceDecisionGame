@@ -18,5 +18,12 @@ from .markov import (
 
 from .additional import (
     generate_code_for_tikz_figure,
+    build_body_of_tikz_spanning_tree,
+    reset_L_and_R_in_array,
+    find_next_permutation_over,
+    find_next_permutation_over_L_and_R,
+    generate_next_permutation_of_edges,
+    check_permutation_is_valid,
+    get_tikz_code_for_permutation,
     generate_code_for_tikz_spanning_trees_rooted_at_00,
 )

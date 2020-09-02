@@ -187,10 +187,9 @@ def generate_code_for_tikz_figure(
 def build_body_of_tikz_spanning_tree(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Builds the main body of the tikz code
-    """
+    """Builds the main body of the tikz code"""
     main_body = (
-        "\\begin{tikzpicture}[-, node distance = 1cm, auto]"
+        "\n\n\\begin{tikzpicture}[-, node distance = 1cm, auto]"
         + "\n"
         + "\\node[state] (u0v0) {(0,0)};"
         + "\n"
@@ -281,6 +280,21 @@ def build_body_of_tikz_spanning_tree(
                 + ")};"
                 + "\n"
             )
+
+        main_body += (
+            "\\draw[->](u"
+            + str(u)
+            + "v"
+            + str(v)
+            + ") edge node {\\("
+            + str(service_rate)
+            + "\\mu \\)} (u"
+            + str(u)
+            + "v"
+            + str(v - 1)
+            + ");"
+            + "\n"
+        )
 
     return main_body
 
@@ -473,8 +487,7 @@ def generate_next_permutation_of_edges(edges, downs, lefts, rights):
 
 
 def check_permutation_is_valid(edges):
-    """Check that the given array is a valid spanning tree of the graph. Specifically, the given array is not a valid spanning tree if the last element is "R" (last node cannot have a right edge) or if there exist an "L" value exaclty after an "R" value (would make a cycle between two nodes)
-    """
+    """Check that the given array is a valid spanning tree of the graph. Specifically, the given array is not a valid spanning tree if the last element is "R" (last node cannot have a right edge) or if there exist an "L" value exaclty after an "R" value (would make a cycle between two nodes)"""
     if edges[-1] == "R":
         return False
 
@@ -485,16 +498,89 @@ def check_permutation_is_valid(edges):
     return True
 
 
+def get_tikz_code_for_permutation(
+    edges, num_of_servers, threshold, system_capacity, parking_capacity
+):
+    """Given a specific valid permutation of edges that corresponds to a spanning tree of a Markov chain, generate tikz code to build that spanning tree. The function generates the appropriate string based on the elements of the edges array."""
+
+    tikz_code = ""
+    start_u = 0
+    start_v = threshold + 1
+    service_rate = num_of_servers if start_v > num_of_servers else (start_v - 1)
+
+    for pos_v, element in enumerate(edges):
+        service_rate = (
+            (service_rate + 1) if service_rate < num_of_servers else service_rate
+        )
+        if element == "L":
+            tikz_code += (
+                "\\draw[->](u"
+                + str(start_u)
+                + "v"
+                + str(start_v + pos_v)
+                + ") edge node {\\("
+                + str(service_rate)
+                + "\\mu \\)} (u"
+                + str(start_u)
+                + "v"
+                + str(start_v + pos_v - 1)
+                + ");"
+                + "\n"
+            )
+        elif element == "D":
+            tikz_code += (
+                "\\draw[->](u"
+                + str(start_u)
+                + "v"
+                + str(start_v + pos_v)
+                + ") edge node {\\(\\lambda^A \\)} (u"
+                + str(start_u + 1)
+                + "v"
+                + str(start_v + pos_v)
+                + ");"
+                + "\n"
+            )
+        elif element == "R":
+            tikz_code += (
+                "\\draw[->](u"
+                + str(start_u)
+                + "v"
+                + str(start_v + pos_v)
+                + ") edge node {\\(\\lambda^o \\)} (u"
+                + str(start_u)
+                + "v"
+                + str(start_v + pos_v + 1)
+                + ");"
+                + "\n"
+            )
+
+    return tikz_code
+
+
 def generate_code_for_tikz_spanning_trees_rooted_at_00(
     num_of_servers, threshold, system_capacity, parking_capacity=1
 ):
-    """Valid only for parking_capacity = 1"""
+    """Builds a string of latex code that generates tikz pictures of all spaning trees of the Markov chain that are rooted at node (0,0). 
+
+    Function is currently implemented only for parking_capacity = 1
+
+    Parameters
+    ----------
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    parking_capacity : int
+
+
+    Yields
+    -------
+    str
+        a string of latex_code that will generate a specific spanning tree
+    """
 
     if parking_capacity != 1:
         return "Only Valid for parking capacity of 1"
 
-    tikz_code = build_body_of_tikz_spanning_tree(num_of_servers, threshold, system_capacity, parking_capacity)
-    
     spanning_tree_counter = 1
     for down_edges in np.linspace(
         system_capacity - threshold, 1, system_capacity - threshold, dtype=int
@@ -517,6 +603,19 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
                 is_valid = check_permutation_is_valid(edges_index)
                 if is_valid:
                     spanning_tree_counter += 1
+                    tikz_code = build_body_of_tikz_spanning_tree(
+                        num_of_servers, threshold, system_capacity, parking_capacity
+                    )
+                    tikz_code += get_tikz_code_for_permutation(
+                        edges_index,
+                        num_of_servers,
+                        threshold,
+                        system_capacity,
+                        parking_capacity,
+                    )
+                    tikz_code += "\\end{tikzpicture}"
+                    tikz_code = tikz_code.replace("1\\mu", "\\mu")
+                    yield tikz_code
 
                 edges_index = generate_next_permutation_of_edges(
                     edges=edges_index,
@@ -528,10 +627,17 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
                 if edges_index == []:
                     more_trees_exist = False
 
-    edges_index = ["L" for _ in range(system_capacity - 1)]
-
-    tikz_code += "\\end{tikzpicture}"
+    edges_index = ["L" for _ in range(system_capacity - threshold)]
+    tikz_code = build_body_of_tikz_spanning_tree(
+        num_of_servers, threshold, system_capacity, parking_capacity
+    )
+    tikz_code += get_tikz_code_for_permutation(
+        edges_index,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
+    tikz_code += "\\end{tikzpicture} \n"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
-
-    return tikz_code
-
+    yield tikz_code

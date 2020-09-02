@@ -16,4 +16,7 @@ from .markov import (
     get_mean_waiting_time_markov,
 )
 
-from .additional import generate_code_for_tikz_figure
+from .additional import (
+    generate_code_for_tikz_figure,
+    generate_code_for_tikz_spanning_trees_rooted_at_00,
+)

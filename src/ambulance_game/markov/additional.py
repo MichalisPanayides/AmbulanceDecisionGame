@@ -184,121 +184,6 @@ def generate_code_for_tikz_figure(
     return tikz_code
 
 
-def build_body_of_tikz_spanning_tree(
-    num_of_servers, threshold, system_capacity, parking_capacity
-):
-    """Builds the main body of the tikz code"""
-    main_body = (
-        "\n\n\\begin{tikzpicture}[-, node distance = 1cm, auto]"
-        + "\n"
-        + "\\node[state] (u0v0) {(0,0)};"
-        + "\n"
-    )
-    service_rate = 0
-
-    for v in range(1, min(threshold + 1, system_capacity + 1)):
-        service_rate = (
-            (service_rate + 1) if service_rate < num_of_servers else service_rate
-        )
-
-        main_body += (
-            "\\node[state, right=of u0v"
-            + str(v - 1)
-            + "] (u0v"
-            + str(v)
-            + ") {("
-            + str(0)
-            + ","
-            + str(v)
-            + ")};"
-            + "\n"
-        )
-
-        main_body += (
-            "\\draw[->](u0v"
-            + str(v)
-            + ") edge node {\\("
-            + str(service_rate)
-            + "\\mu \\)} (u0v"
-            + str(v - 1)
-            + ");"
-            + "\n"
-        )
-
-    for u in range(1, parking_capacity + 1):
-        main_body += (
-            "\\node[state, below=of u"
-            + str(u - 1)
-            + "v"
-            + str(v)
-            + "] (u"
-            + str(u)
-            + "v"
-            + str(v)
-            + ") {("
-            + str(u)
-            + ","
-            + str(v)
-            + ")};"
-            + "\n"
-        )
-
-        main_body += (
-            "\\draw[->](u"
-            + str(u)
-            + "v"
-            + str(v)
-            + ") edge node {\\("
-            + str(service_rate)
-            + "\\mu \\)} (u"
-            + str(u - 1)
-            + "v"
-            + str(v)
-            + ");"
-            + "\n"
-        )
-
-    for v in range(threshold + 1, system_capacity + 1):
-        service_rate = (
-            (service_rate + 1) if service_rate < num_of_servers else service_rate
-        )
-
-        for u in range(parking_capacity + 1):
-            main_body += (
-                "\\node[state, right=of u"
-                + str(u)
-                + "v"
-                + str(v - 1)
-                + "] (u"
-                + str(u)
-                + "v"
-                + str(v)
-                + ") {("
-                + str(u)
-                + ","
-                + str(v)
-                + ")};"
-                + "\n"
-            )
-
-        main_body += (
-            "\\draw[->](u"
-            + str(u)
-            + "v"
-            + str(v)
-            + ") edge node {\\("
-            + str(service_rate)
-            + "\\mu \\)} (u"
-            + str(u)
-            + "v"
-            + str(v - 1)
-            + ");"
-            + "\n"
-        )
-
-    return main_body
-
-
 def reset_L_and_R_in_array(edges, lefts):
     """
     Take an array and re-sorts the values in such a way such that:
@@ -504,6 +389,121 @@ def check_permutation_is_valid(edges, parking_capacity):
     return True
 
 
+def build_body_of_tikz_spanning_tree(
+    num_of_servers, threshold, system_capacity, parking_capacity
+):
+    """Builds the main body of the tikz code"""
+    main_body = (
+        "\n\n\\begin{tikzpicture}[-, node distance = 1cm, auto]"
+        + "\n"
+        + "\\node[state] (u0v0) {(0,0)};"
+        + "\n"
+    )
+    service_rate = 0
+
+    for v in range(1, min(threshold + 1, system_capacity + 1)):
+        service_rate = (
+            (service_rate + 1) if service_rate < num_of_servers else service_rate
+        )
+
+        main_body += (
+            "\\node[state, right=of u0v"
+            + str(v - 1)
+            + "] (u0v"
+            + str(v)
+            + ") {("
+            + str(0)
+            + ","
+            + str(v)
+            + ")};"
+            + "\n"
+        )
+
+        main_body += (
+            "\\draw[->](u0v"
+            + str(v)
+            + ") edge node {\\("
+            + str(service_rate)
+            + "\\mu \\)} (u0v"
+            + str(v - 1)
+            + ");"
+            + "\n"
+        )
+
+    for u in range(1, parking_capacity + 1):
+        main_body += (
+            "\\node[state, below=of u"
+            + str(u - 1)
+            + "v"
+            + str(v)
+            + "] (u"
+            + str(u)
+            + "v"
+            + str(v)
+            + ") {("
+            + str(u)
+            + ","
+            + str(v)
+            + ")};"
+            + "\n"
+        )
+
+        main_body += (
+            "\\draw[->](u"
+            + str(u)
+            + "v"
+            + str(v)
+            + ") edge node {\\("
+            + str(service_rate)
+            + "\\mu \\)} (u"
+            + str(u - 1)
+            + "v"
+            + str(v)
+            + ");"
+            + "\n"
+        )
+
+    for v in range(threshold + 1, system_capacity + 1):
+        service_rate = (
+            (service_rate + 1) if service_rate < num_of_servers else service_rate
+        )
+
+        for u in range(parking_capacity + 1):
+            main_body += (
+                "\\node[state, right=of u"
+                + str(u)
+                + "v"
+                + str(v - 1)
+                + "] (u"
+                + str(u)
+                + "v"
+                + str(v)
+                + ") {("
+                + str(u)
+                + ","
+                + str(v)
+                + ")};"
+                + "\n"
+            )
+
+        main_body += (
+            "\\draw[->](u"
+            + str(u)
+            + "v"
+            + str(v)
+            + ") edge node {\\("
+            + str(service_rate)
+            + "\\mu \\)} (u"
+            + str(u)
+            + "v"
+            + str(v - 1)
+            + ");"
+            + "\n"
+        )
+
+    return main_body
+
+
 def get_tikz_code_for_permutation(
     edges, num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -664,6 +664,6 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
         system_capacity,
         parking_capacity,
     )
-    tikz_code += "\\end{tikzpicture} \n"
+    tikz_code += "\\end{tikzpicture}"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
     yield tikz_code

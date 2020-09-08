@@ -257,6 +257,8 @@ Finally, the last approach to be considered is the least squares method. This ap
 \pi = \text{argmin}_{x\in\mathbb{R}^{d}}\|Mx-b\|_2^2
 \]
 
+\input{MarkovChain/closed_form_state_probs/main.tex}
+
 \newpage
 \subsection{Expressions derived from \( \pi \):}
 One may easily derive the average number of individuals that are at any given state using \( pi \). The average number of individuals in state \( i \) can be calculated by multiplying the number of individuals that are present in state \( i \) with the probability of being at that particular state (i.e \(\pi_i (u_i + v_i)\)). Using this logic it is possible to calculate any performance measures that are related to the mean number of individuals in the system.

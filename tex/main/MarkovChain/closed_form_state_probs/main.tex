@@ -1,0 +1,17 @@
+\subsection{Closed-form formula for state probabilities}
+
+This section aims to describe a closed form formula that gets the state probabilities array \(\pi\) for a given Markov chain model.
+
+\subsubsection{Parameters}
+The inputs of the formula are the number of servers \(C\), the threshold \(T\), the system capacity \(N\) and the parking capacity \(M\). Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate, but for the purpose of this section these will remain unknown (\(\lambda^A, \lambda^o, \mu\)). More specifically, the way these parameters are translated into the model are:
+
+\begin{itemize}
+    \item \textbf{Number of servers (\(C\)):} All service rates \(\mu\) in the Markov chain are multiplied by a coefficient equal to \(v\) for a state \((u,v)\) that stops increasing at \(v=C\). Thus, the coefficients of the service rate have a lower bound of \(0\) and an upper bound of \(C\).
+    \item \textbf{Threshold (\(T\)):} Determines the length of the left \textit{arm} of the model. In essence the threshold acts as a breakpoint between states where \(u=0\) and states where \(0 \leq u \leq M\). Increasing \(T\) results in having more set of states where \(u\) can only be \(0\).
+    \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all states \((u,v)\).
+    \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all states \((u,v)\) such that \(u \geq T\).
+\end{itemize}
+
+
+\subsubsection{General Picture of Markov Model}
+\input{MarkovChain/closed_form_state_probs/markov_model_figure/main.tex}

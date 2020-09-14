@@ -285,4 +285,95 @@ It is important to note here that the above property holds when the system capac
 \textit{The number of directed spanning trees rooted at a state \(i\) can be found by calculating the determinant of the Laplacian matrix \(Q\) of the directed graph and removing row \(i\) and column \(i\).}
 
 
+\subsubsection{Conjecture of adding columns}
+Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the function \(k(C,T,N)\) that is independent of the value of the parking capacity. Thus, in this section only models with a parking capacity of \(M=1\) will be considered and will be referred to as the base cases. 
+
+\begin{multicols}{2}
+    \begin{figure}[H]
+        \centering
+        \scalebox{0.9}{\input{MarkovChain/closed_form_state_probs/example_model_1121/main.tex}}
+    \end{figure}
+    \columnbreak
+    \begin{figure}[H]
+        \centering
+        \scalebox{0.9}{\input{MarkovChain/closed_form_state_probs/example_model_1131/main.tex}}
+    \end{figure}
+\end{multicols}
+\vspace{-0.5cm}
+\begin{alignat}{2} \label{eq:00_rate_1131}
+    \hspace{4em} & \tilde{\pi}_{(0,0)} = \mu^3[\lambda^a + \mu] \hspace{8em} & \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A \mu + \mu^2] 
+\end{alignat}
+
+
+\begin{figure}[h]
+    \centering
+    \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1141/main.tex}}
+\end{figure}
+\begin{equation}\label{eq:00_rate_1141}
+    \tilde{\pi}_{(0,0)} = \mu^5[(\lambda^A)^3 + 2(\lambda^A)^2 \lambda^o + 3(\lambda^A)^2 \mu + \lambda^A (\lambda^o)^2 + 2\lambda^A \lambda^o \mu + 3\lambda^A \mu^2 + \mu^3]
+\end{equation}
+
+\begin{figure}[h]
+    \centering
+    \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1151/main.tex}}
+\end{figure}
+\begin{align}\label{eq:00_rate_1151}
+    \tilde{\pi}_{(0,0)} =& \mu^6[(\lambda^A)^4 + 3(\lambda^A)^3 \lambda^o + 4(\lambda^A)^3 \mu + 3(\lambda^A)^2 (\lambda^o)^2 + 6(\lambda^A)^2 \lambda^o \mu \\
+    & + 6(\lambda^A)^2 \mu^2 + \lambda^A (\lambda^o)^3 + 2\lambda^A (\lambda^o)^2 \mu + 3\lambda^A \lambda^o \mu^2 + 4\lambda^A \mu^3 + \mu^4] \nonumber
+\end{align}
+
+\newpage
+As explained in equation \ref{eq:rows-conjecture-general} the expressions defined above can boil down to a general form equation of the form \(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). The only thing missing is an expression for \(k(C,T,N)\). An initial attempt to get such an expression can be seen below:
+
+\begin{align}\label{eq:columns-conjecture-general}
+    k(C,T,N) &= \mu^{(C-1)} + \sum_{p_1=1}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, C-p_1-p_2-1) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} \nonumber \\
+    &= \mu^{(C-1)} + \sum_{p_1=1}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, p_3) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}
+\end{align}
+
+In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of \(\lambda^A, \lambda^o \text{ and } \mu\). Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). For the starting coefficients of the model the function \(G(p_1,p_2,p_3)\) gives the values of the coefficients and is defined as:
+
+\begin{equation} \label{eq:coefficient-function}
+    G(p_1,p_2,p_3) = 
+    \begin{cases}
+        1 & \text{if } p_1 = 0 \vspace{0.2cm} \\
+        \binom{C-1}{p_3} & \text{if } p_2 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
+        \binom{C-2}{p_2} & \text{if } p_3 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
+        C-p_2-1 & \text{if } p_1 = 1 \text{ and } p_2,p_3 > 0 \vspace{0.2cm} \\
+        \binom{C-1}{p_1} + p_3 \binom{C-2}{p_3+1} - \binom{C-2}{p_3} & \text{if } p_2 = 1 \text{ and } p_3 > 0 \text{ and } p_1 > 1 \vspace{0.2cm} \\
+        \binom{C-1}{p_1} - \binom{C-3}{p_2-1} + \sum_{i=p_3}^{C-2} i \binom{i-1}{p_3 - 1} & \text{if } p_3 = 1 \text{ and } p_1,p_2 > 1 \vspace{0.2cm} \\
+        U_{p_1,p_2,p_3} & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. In essence function \(G()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given Markov model and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. For instance consider the coefficients \((p_1,p_2,p_3)\) of each term from the equations above:
+
+\begin{multicols}{2}
+    \begin{itemize}
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): \(G(2,0,0) = \binom{3-1}{0} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): \(G(1,1,0) = \binom{3-2}{1} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): \(G(1,0,1) = \binom{3-1}{1} = 2\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \mu^2\): \(G(0,0,2) = 1\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow (\lambda^A)^3\): \(G(3,0,0) = \binom{4-1}{0} = 1\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): \(G(2,1,0) = \binom{4-2}{1} = 2\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): \(G(2,0,1) = \binom{4-1}{1} = 3\)
+        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow \lambda^A (\lambda^o)^2\): \(G(1,2,0) = \binom{4-2}{2} = 1\)
+        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2 \lambda^A \lambda^o \mu \): \(G(1,1,1) = 4 - 1 - 1 = 2\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): \(G(1,0,2) = 4 - 0 - 1 = 3\)
+        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow \mu^3\): \(G(0,0,3) = 1\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow (\lambda^A)^4\): \(G(4,0,0) = \binom{5-1}{0} = 1 \)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): \(G(3,1,0) = \binom{5-2}{1} = 3\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 4 (\lambda^A)^3 \mu\): \(G(3,0,1) = \binom{5-1}{1} = 4\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): \(G(2,2,0) = \binom{5-2}{2} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): \(G(2,0,2) = \binom{5-1}{2} = 6\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow \lambda^A (\lambda^o)^3\): \(G(1,3,0) = 5 - 3 - 1 = 1\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 2 \lambda^A (\lambda^o)^2 \mu\): \(G(0,0,3) = 5 - 2 - 1 = 2\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 \lambda^A \lambda^o \mu \): \(G(0,0,3) = 5 - 1 - 1 = 3\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 4 \lambda^A \mu^3 \): \(G(0,0,3) = 5 - 0 - 1 = 4\)
+        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow \mu^4\): \(G(0,0,4) = 1\)
+    \end{itemize}
+\end{multicols}
+
+\begin{itemize}
+    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): \(G(2,1,1) = \binom{5-1}{2} + 1\binom{5-2}{1+1} - \binom{5-2}{1} = 6 + 3 - 3 = 6\)
+\end{itemize}
 

@@ -326,8 +326,8 @@ Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the fu
 As explained in equation \ref{eq:rows-conjecture-general} the expressions defined above can boil down to a general form equation of the form \(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). The only thing missing is an expression for \(k(C,T,N)\). An initial attempt to get such an expression can be seen below:
 
 \begin{align}\label{eq:columns-conjecture-general}
-    k(C,T,N) &= \mu^{(C-1)} + \sum_{p_1=1}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, C-p_1-p_2-1) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} \nonumber \\
-    &= \mu^{(C-1)} + \sum_{p_1=1}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, p_3) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}
+    k(C,T,N) &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} \sum_{p_3=C - p_1 - p_2 - 1}^{C - p_1 - p_2 - 1} G(p_1, p_2, p_3) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3} \nonumber \\ 
+    &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, C-p_1-p_2-1) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} 
 \end{align}
 
 In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of \(\lambda^A, \lambda^o \text{ and } \mu\). Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). For the starting coefficients of the model the function \(G(p_1,p_2,p_3)\) gives the values of the coefficients and is defined as:
@@ -335,46 +335,37 @@ In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1
 \begin{equation} \label{eq:coefficient-function}
     G(p_1,p_2,p_3) = 
     \begin{cases}
-        1 & \text{if } p_1 = 0 \vspace{0.2cm} \\
-        \binom{C-1}{p_3} & \text{if } p_2 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
-        \binom{C-2}{p_2} & \text{if } p_3 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
-        C-p_2-1 & \text{if } p_1 = 1 \text{ and } p_2,p_3 > 0 \vspace{0.2cm} \\
-        \binom{C-1}{p_1} + p_3 \binom{C-2}{p_3+1} - \binom{C-2}{p_3} & \text{if } p_2 = 1 \text{ and } p_3 > 0 \text{ and } p_1 > 1 \vspace{0.2cm} \\
-        \binom{C-1}{p_1} - \binom{C-3}{p_2-1} + \sum_{i=p_3}^{C-2} i \binom{i-1}{p_3 - 1} & \text{if } p_3 = 1 \text{ and } p_1,p_2 > 1 \vspace{0.2cm} \\
+        0 & \text{if } p_1 = 0 \text{ and } p_2 > 0 \vspace{0.1cm} \\
+        1 & \text{if } p_1, p_2 = 0 \text{ and } p_3 > 0 \vspace{0.2cm} \\
+        \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
+        \binom{p_1 + p_2 - 1}{p_2} & \text{if } p_3 = 0 \text{ and } p_1, p_2 > 0 \vspace{0.2cm} \\
+        p_3 + 1 & \text{if } p_1 = 1 \vspace{0.2cm} \\
+        \binom{p_1 + p_3 + 1}{p_1} + p_3 \binom{p_1 + p_3}{p_3+1} - \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 1 \text{ and } p_1 > 1 \vspace{0.2cm} \\
+        \binom{p_1 + p_2 + 1}{p_1} - \binom{p_1 + p_2 - 1}{p_2-1} + \sum_{i=p_2}^{p_1 + p_2 - 2} i \binom{i-1}{p_2 - 1} & \text{if } p_3 = 1 \text{ and } p_1,p_2 > 1 \vspace{0.2cm} \\
         U_{p_1,p_2,p_3} & \text{otherwise}
     \end{cases}
 \end{equation}
 
-Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. In essence function \(G()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given Markov model and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. For instance consider the coefficients \((p_1,p_2,p_3)\) of each term from the equations above:
+Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. In essence function \(G()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given Markov model and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms from the equations above:
 
 \begin{multicols}{2}
     \begin{itemize}
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): \(G(2,0,0) = \binom{3-1}{0} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): \(G(1,1,0) = \binom{3-2}{1} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): \(G(1,0,1) = \binom{3-1}{1} = 2\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): \(G(2,0,0) = \binom{2+0}{0} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): \(G(1,1,0) = \binom{1+1-1}{1} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): \(G(1,0,1) = \binom{1+1}{1} = 2\)
         \item (\ref{eq:00_rate_1131}) \( \Rightarrow \mu^2\): \(G(0,0,2) = 1\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow (\lambda^A)^3\): \(G(3,0,0) = \binom{4-1}{0} = 1\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): \(G(2,1,0) = \binom{4-2}{1} = 2\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): \(G(2,0,1) = \binom{4-1}{1} = 3\)
-        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow \lambda^A (\lambda^o)^2\): \(G(1,2,0) = \binom{4-2}{2} = 1\)
-        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2 \lambda^A \lambda^o \mu \): \(G(1,1,1) = 4 - 1 - 1 = 2\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): \(G(1,0,2) = 4 - 0 - 1 = 3\)
-        % \item (\ref{eq:00_rate_1141}) \( \Rightarrow \mu^3\): \(G(0,0,3) = 1\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow (\lambda^A)^4\): \(G(4,0,0) = \binom{5-1}{0} = 1 \)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): \(G(3,1,0) = \binom{5-2}{1} = 3\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 4 (\lambda^A)^3 \mu\): \(G(3,0,1) = \binom{5-1}{1} = 4\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): \(G(2,2,0) = \binom{5-2}{2} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): \(G(2,0,2) = \binom{5-1}{2} = 6\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow \lambda^A (\lambda^o)^3\): \(G(1,3,0) = 5 - 3 - 1 = 1\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 2 \lambda^A (\lambda^o)^2 \mu\): \(G(0,0,3) = 5 - 2 - 1 = 2\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 \lambda^A \lambda^o \mu \): \(G(0,0,3) = 5 - 1 - 1 = 3\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow 4 \lambda^A \mu^3 \): \(G(0,0,3) = 5 - 0 - 1 = 4\)
-        % \item (\ref{eq:00_rate_1151}) \( \Rightarrow \mu^4\): \(G(0,0,4) = 1\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): \(G(2,1,0) = \binom{2+1-1}{1} = 2\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): \(G(2,0,1) = \binom{2+1}{1} = 3\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): \(G(1,0,2) = \binom{1+2}{2} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): \(G(3,1,0) = \binom{3+1-1}{1} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): \(G(2,2,0) = \binom{3}{2} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): \(G(2,0,2) = \binom{2+2}{2} = 6\)
     \end{itemize}
 \end{multicols}
 
 \begin{itemize}
-    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): \(G(2,1,1) = \binom{5-1}{2} + 1\binom{5-2}{1+1} - \binom{5-2}{1} = 6 + 3 - 3 = 6\)
+    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): \(G(2,1,1) = \binom{2+1+1}{2} + 1\binom{2+1}{1+1} - \binom{2+1}{1} = 6 + 3 - 3 = 6\)
+    \item \small{(e.g)} \( \Rightarrow (\lambda^A)^2 (\lambda^o)^2 \mu\): \(G(2,2,1) = \binom{2+2+1}{2} - \binom{2+2-1}{2-1} + \sum_{i=2}^{2+2-2} i\binom{i-1}{2-1} = 10 - 3 + (2 \times 1) = 9\)
 \end{itemize}
 
 

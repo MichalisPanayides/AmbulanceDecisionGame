@@ -693,7 +693,7 @@ def get_rate_of_state_00_graphically(
         - Muliplry P00_rate by the term: μ^(N*M)
 
     TODO: fix function for case of num_of_servers > 1
-    
+
     Parameters
     ----------
     lambda_a : float
@@ -756,9 +756,10 @@ def get_rate_of_state_00_graphically(
                     more_trees_exist = False
 
             P00_rate += (
-                spanning_tree_counter * lambda_a ** down_edges
-                + lambda_o ** right_edges
-                + mu ** left_edges
+                spanning_tree_counter
+                * lambda_a ** down_edges
+                * lambda_o ** right_edges
+                * mu ** left_edges
             )
 
     P00_rate += mu ** (system_capacity - threshold)

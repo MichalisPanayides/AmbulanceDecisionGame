@@ -26,4 +26,5 @@ from .additional import (
     check_permutation_is_valid,
     get_tikz_code_for_permutation,
     generate_code_for_tikz_spanning_trees_rooted_at_00,
+    get_rate_of_state_00_graphically,
 )

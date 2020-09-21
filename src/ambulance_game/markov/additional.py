@@ -568,7 +568,7 @@ def get_tikz_code_for_permutation(
 
 
 def generate_code_for_tikz_spanning_trees_rooted_at_00(
-    num_of_servers, threshold, system_capacity, parking_capacity=1
+    num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """Builds a string of latex code that generates tikz pictures of all spaning trees of the Markov chain that are rooted at node (0,0). The function considers the markov chain with the given paramaters and performs the following steps:
         - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
@@ -667,3 +667,101 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
     tikz_code += "\\end{tikzpicture}"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
     yield tikz_code
+
+
+def get_rate_of_state_00_graphically(
+    lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+):
+    """Calculates the unnormalised rate of state (0,0) using the same permutation
+    algorithm used in function generate_code_for_tikz_spanning_trees_rooted_at_00().
+    The function considers the markov chain with the given paramaters and performs
+    the following steps:
+        - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
+            - Initialise an array with the corresponding values i.e. ["L","L","R","R","R","D","D"]
+            - WHILE more trees exist with these specific values:
+                - if the array can be translated into a valid spanning tree (no cycles):
+                    - +1 to the number of spanning trees
+                - Generate the next permutation i.e. ["L","L","R","R","R","D","D"] -> ["L","R","L","R","R","D","D"]
+                - if no more permutations can be generated exit the while loop
+                - Add to the total P00_rate the term with the number of all possible spannign
+                    trees multiplied by lambda_a raised to the power of the down edges, multiplied
+                    by lambda_o raised to the power of the right edges, multiplied by mu raised
+                    to the power of the left edges:
+                    e.g num_of_spanning_trees * (λ_α^2) * (λ_ο^3) * (μ^2)
+            - Move to next combination of edges until all combinations are considered
+        - Add to P00_rate the term: μ^(N-T)
+        - Muliplry P00_rate by the term: μ^(N*M)
+
+    TODO: fix function for case of num_of_servers > 1
+    
+    Parameters
+    ----------
+    lambda_a : float
+    lambda_o : float
+    mu : float
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    parking_capacity : int
+
+    Returns
+    -------
+        The unnormalised rate of state (0,0) (P_00)
+    """
+
+    if num_of_servers != 1:
+        return "Unable to calculate for cases where number of servers is not 1"
+
+    P00_rate = 0
+    for down_edges in np.linspace(
+        parking_capacity * (system_capacity - threshold),
+        1,
+        parking_capacity * (system_capacity - threshold),
+        dtype=int,
+    ):
+        for right_edges in range(
+            parking_capacity * (system_capacity - threshold) - down_edges + 1
+        ):
+            spanning_tree_counter = 0
+            edges_index = [
+                "D"
+                if (i >= parking_capacity * (system_capacity - threshold) - down_edges)
+                else "N"
+                for i in range(parking_capacity * (system_capacity - threshold))
+            ]
+            left_edges = (
+                parking_capacity * (system_capacity - threshold)
+                - down_edges
+                - right_edges
+            )
+
+            for pos in range(left_edges):
+                edges_index[pos] = "L"
+
+            for pos in range(left_edges, left_edges + right_edges):
+                edges_index[pos] = "R"
+
+            more_trees_exist = True
+            while more_trees_exist:
+                is_valid = check_permutation_is_valid(edges_index, parking_capacity)
+                if is_valid:
+                    spanning_tree_counter += 1
+                edges_index = generate_next_permutation_of_edges(
+                    edges=edges_index,
+                    downs=down_edges,
+                    lefts=left_edges,
+                    rights=right_edges,
+                )
+                if edges_index == []:
+                    more_trees_exist = False
+
+            P00_rate += (
+                spanning_tree_counter * lambda_a ** down_edges
+                + lambda_o ** right_edges
+                + mu ** left_edges
+            )
+
+    P00_rate += mu ** (system_capacity - threshold)
+    P00_rate *= mu ** (system_capacity * parking_capacity)
+
+    return P00_rate

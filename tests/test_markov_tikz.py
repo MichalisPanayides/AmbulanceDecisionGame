@@ -1,14 +1,8 @@
-from ambulance_game.markov.additional import (
+from ambulance_game.markov.tikz import (
     generate_code_for_tikz_figure,
     build_body_of_tikz_spanning_tree,
-    reset_L_and_R_in_array,
-    find_next_permutation_over,
-    find_next_permutation_over_L_and_R,
-    generate_next_permutation_of_edges,
-    check_permutation_is_valid,
     get_tikz_code_for_permutation,
     generate_code_for_tikz_spanning_trees_rooted_at_00,
-    get_rate_of_state_00_graphically,
 )
 
 
@@ -65,105 +59,6 @@ def test_build_body_of_tikz_spanning_tree_example_2():
         tikz_code
         == "\n\n\\begin{tikzpicture}[-, node distance = 1cm, auto]\n\\node[state] (u0v0) {(0,0)};\n\\node[state, right=of u0v0] (u0v1) {(0,1)};\n\\draw[->](u0v1) edge node {\\(1\\mu \\)} (u0v0);\n\\node[state, below=of u0v1] (u1v1) {(1,1)};\n\\draw[->](u1v1) edge node {\\(1\\mu \\)} (u0v1);\n\\node[state, below=of u1v1] (u2v1) {(2,1)};\n\\draw[->](u2v1) edge node {\\(1\\mu \\)} (u1v1);\n\\node[state, below=of u2v1] (u3v1) {(3,1)};\n\\draw[->](u3v1) edge node {\\(1\\mu \\)} (u2v1);\n\\node[state, right=of u0v1] (u0v2) {(0,2)};\n\\node[state, right=of u1v1] (u1v2) {(1,2)};\n\\node[state, right=of u2v1] (u2v2) {(2,2)};\n\\node[state, right=of u3v1] (u3v2) {(3,2)};\n\\draw[->](u3v2) edge node {\\(2\\mu \\)} (u3v1);\n\\node[state, right=of u0v2] (u0v3) {(0,3)};\n\\node[state, right=of u1v2] (u1v3) {(1,3)};\n\\node[state, right=of u2v2] (u2v3) {(2,3)};\n\\node[state, right=of u3v2] (u3v3) {(3,3)};\n\\draw[->](u3v3) edge node {\\(3\\mu \\)} (u3v2);\n"
     )
-
-
-def test_reset_L_and_R_in_array():
-    array_to_reset = ["R", "D", "D", "R", "D", "L", "L"]
-    reset_array = reset_L_and_R_in_array(array_to_reset, 2)
-    assert reset_array == ["L", "D", "D", "L", "D", "R", "R"]
-
-    array_to_reset = ["R", "R", "L", "L", "L"]
-    reset_array = reset_L_and_R_in_array(array_to_reset, 3)
-    assert reset_array == ["L", "L", "L", "R", "R"]
-
-
-def test_find_next_permutation_over():
-    """Test to ensure that function works as expected in all four different cases that it is used.
-    - When the array has only "L" and "D" elements
-    - When the array has only "R" and "D" elements
-    - When the array has "L", "R" and "D" elements
-    - When the array has only "L" and "R" elements
-    """
-
-    array_to_permute = ["L", "L", "D", "L", "D"]
-    permuted_array = find_next_permutation_over(edges=array_to_permute, direction="L")
-    assert permuted_array == ["L", "L", "D", "D", "L"]
-
-    array_to_permute = ["R", "R", "D", "D", "R"]
-    permuted_array = find_next_permutation_over(edges=array_to_permute, direction="R")
-    assert permuted_array == ["R", "D", "R", "R", "D"]
-
-    array_to_permute = ["L", "L", "R", "D", "D"]
-    permuted_array = find_next_permutation_over(
-        edges=array_to_permute, direction="LR", rights=1
-    )
-    assert permuted_array == ["L", "L", "D", "R", "D"]
-
-    array_to_permute = ["L", "L", "R"]
-    permuted_array = find_next_permutation_over(
-        edges=array_to_permute, direction="L", permute_over="R"
-    )
-    assert permuted_array == ["L", "R", "L"]
-
-
-def test_find_next_permutation_over_L_and_R():
-    array_to_permute = ["L", "D", "L", "L", "R", "R"]
-    permutation_1 = find_next_permutation_over_L_and_R(edges=array_to_permute)
-    assert permutation_1 == ["L", "D", "L", "R", "L", "R"]
-
-    permutation_2 = find_next_permutation_over_L_and_R(edges=permutation_1)
-    assert permutation_2 == ["L", "D", "L", "R", "R", "L"]
-
-    permutation_3 = find_next_permutation_over_L_and_R(edges=permutation_2)
-    assert permutation_3 == ["L", "D", "R", "L", "L", "R"]
-
-    permutation_4 = find_next_permutation_over_L_and_R(edges=permutation_3)
-    assert permutation_4 == ["L", "D", "R", "L", "R", "L"]
-
-    permutation_5 = find_next_permutation_over_L_and_R(edges=permutation_4)
-    assert permutation_5 == ["L", "D", "R", "R", "L", "L"]
-
-
-def test_generate_next_permutation_of_edges():
-    array_to_permute = ["R", "D", "L", "R", "L", "L"]
-    permutation_1 = generate_next_permutation_of_edges(
-        edges=array_to_permute, downs=1, lefts=3, rights=2
-    )
-    assert permutation_1 == ["R", "D", "R", "L", "L", "L"]
-
-    permutation_2 = generate_next_permutation_of_edges(
-        edges=permutation_1, downs=1, lefts=3, rights=2
-    )
-    assert permutation_2 == ["D", "L", "L", "L", "R", "R"]
-
-    permutation_3 = generate_next_permutation_of_edges(
-        edges=permutation_2, downs=1, lefts=3, rights=2
-    )
-    assert permutation_3 == ["D", "L", "L", "R", "L", "R"]
-
-    permutation_4 = generate_next_permutation_of_edges(
-        edges=permutation_3, downs=1, lefts=3, rights=2
-    )
-    assert permutation_4 == ["D", "L", "L", "R", "R", "L"]
-
-
-def test_check_permutation_is_valid():
-    """Test that some valid permutations return true and that all cases of when a permutation is invalid return False"""
-    valid_permutation = ["L", "L", "D", "R", "D"]
-    assert check_permutation_is_valid(valid_permutation, 1)
-
-    valid_permutation = ["L", "L", "D", "R", "D", "L"]
-    assert check_permutation_is_valid(valid_permutation, 2)
-
-    invalid_permutation = ["L", "L", "D", "R"]
-    assert not check_permutation_is_valid(invalid_permutation, 1)
-
-    invalid_permutation = ["L", "L", "R", "D", "D", "L"]
-    assert not check_permutation_is_valid(invalid_permutation, 2)
-
-    invalid_permutation = ["R", "L", "L", "D", "D", "L"]
-    assert not check_permutation_is_valid(invalid_permutation, 1)
-    assert not check_permutation_is_valid(invalid_permutation, 2)
 
 
 def test_get_tikz_code_for_permutation_example_1():
@@ -244,42 +139,3 @@ def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_3():
                 len(latex_code) == num_of_trees[system_capacity - 2] ** parking_capacity
             )
 
-
-def test_get_rate_of_state_00_graphically():
-    """Test that for different values of the system capacity the values are as expected.
-    Here the values of lambda_a, lambda_o and mu are set to 1 because that way all terms
-    are forced to turn into one and the only thing that remains are their coefficients.
-
-    This test basically checks that the sum of all the coefficients (i.e. the total
-    number of spanning trees rooted at (0,0) of the model) can be found by the values
-    generated by the matrix tree theorem.
-
-    It also checks that for a parking capacity of 2 the equivalent values squaed hold."""
-
-    system_capacity = 1
-    matrix_tree_theorem_values = [1, 2, 5, 13, 34, 89]
-
-    for value in matrix_tree_theorem_values:
-        P00_rate = get_rate_of_state_00_graphically(
-            lambda_a=1,
-            lambda_o=1,
-            mu=1,
-            num_of_servers=1,
-            threshold=1,
-            system_capacity=system_capacity,
-            parking_capacity=1,
-        )
-        assert P00_rate == value
-
-        P00_rate = get_rate_of_state_00_graphically(
-            lambda_a=1,
-            lambda_o=1,
-            mu=1,
-            num_of_servers=1,
-            threshold=1,
-            system_capacity=system_capacity,
-            parking_capacity=2,
-        )
-        assert P00_rate == value ** 2
-
-        system_capacity += 1

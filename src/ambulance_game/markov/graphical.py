@@ -325,7 +325,7 @@ def get_all_permutations(D, R, L):
     int
         total number of permutations
     """
-    return np.math.factorial(D + R + L) / (
+    return np.math.factorial(D + R + L) // (
         np.math.factorial(D) * np.math.factorial(R) * np.math.factorial(L)
     )
 
@@ -351,7 +351,7 @@ def get_permutations_ending_in_R(D, R, L):
         total number of permutations ending in R
     """
     if R > 0:
-        return np.math.factorial(D + R + L - 1) / (
+        return np.math.factorial(D + R + L - 1) // (
             np.math.factorial(D) * np.math.factorial(R - 1) * np.math.factorial(L)
         )
     else:
@@ -389,7 +389,7 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
             perms += (
                 sign
                 * np.math.factorial(R + D + L - num_RL - 1)
-                / (
+                // (
                     np.math.factorial(D - 1)
                     * np.math.factorial(R - num_RL)
                     * np.math.factorial(L - num_RL)
@@ -432,7 +432,7 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
             perms += (
                 sign
                 * np.math.factorial(R + D + L - num_RL - 1)
-                / (
+                // (
                     np.math.factorial(D)
                     * np.math.factorial(R - num_RL)
                     * np.math.factorial(L - 1 - num_RL)
@@ -475,7 +475,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
             num_RL_perms = (
                 sign
                 * np.math.factorial(R + D + L - num_RL - 1)
-                / (
+                // (
                     np.math.factorial(D)
                     * np.math.factorial(R - num_RL)
                     * np.math.factorial(L - num_RL)

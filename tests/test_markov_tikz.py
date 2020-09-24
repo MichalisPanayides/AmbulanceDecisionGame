@@ -138,4 +138,3 @@ def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_3():
             assert (
                 len(latex_code) == num_of_trees[system_capacity - 2] ** parking_capacity
             )
-

@@ -32,7 +32,7 @@ from .graphical import (
 )
 
 
-from .tikz import(
+from .tikz import (
     get_tikz_code_for_permutation,
     generate_code_for_tikz_spanning_trees_rooted_at_00,
     generate_code_for_tikz_figure,

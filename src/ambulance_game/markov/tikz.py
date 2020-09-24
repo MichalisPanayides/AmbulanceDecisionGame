@@ -1,5 +1,5 @@
 import numpy as np
-from .graphical import(
+from .graphical import (
     reset_L_and_R_in_array,
     find_next_permutation_over,
     find_next_permutation_over_L_and_R,
@@ -188,6 +188,7 @@ def generate_code_for_tikz_figure(
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
 
     return tikz_code
+
 
 def build_body_of_tikz_spanning_tree(
     num_of_servers, threshold, system_capacity, parking_capacity
@@ -467,5 +468,3 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
     tikz_code += "\\end{tikzpicture}"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")
     yield tikz_code
-
-

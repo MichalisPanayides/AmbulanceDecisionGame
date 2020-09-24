@@ -490,8 +490,8 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
 
 def get_coefficient(D, R, L):
     """Get the coefficient of the term (lambda_a ^ D) * (lambda_o ^ R) * (mu ^ L) by using only the values
-    of D, R and L. The function finds all valid spanning trees by permuting around the number of D's, R's 
-    and L's. The function finds all permutations where there is no "R" at the end and there is no "R" 
+    of D, R and L. The function finds all valid spanning trees by permuting around the number of D's, R's
+    and L's. The function finds all permutations where there is no "R" at the end and there is no "R"
     followed by an "L" anywhere. This is done in the following way:
     - Find the total number of permutations
     - Subtract the permutations ending in "R"

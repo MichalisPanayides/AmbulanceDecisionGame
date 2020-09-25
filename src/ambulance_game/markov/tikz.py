@@ -1,5 +1,11 @@
-import math
 import numpy as np
+from .graphical import (
+    reset_L_and_R_in_array,
+    find_next_permutation_over,
+    find_next_permutation_over_L_and_R,
+    generate_next_permutation_of_edges,
+    check_permutation_is_valid,
+)
 
 
 def generate_code_for_tikz_figure(
@@ -184,211 +190,6 @@ def generate_code_for_tikz_figure(
     return tikz_code
 
 
-def reset_L_and_R_in_array(edges, lefts):
-    """
-    Take an array and re-sorts the values in such a way such that:
-    - All "D" values remain in the exact same position
-    - In the remaining spaces, "L" and "R" are sorted starting from the left with all "L"
-
-    Example
-    -----------
-    Input: [D, R, R, D, L, L, L]
-    Output: [D, L, L, D, L, R, R]
-    """
-
-    L_count = 0
-    for pos, element in enumerate(edges):
-        reset_this_entry = element == "L" or element == "R"
-        if reset_this_entry and L_count < lefts:
-            edges[pos] = "L"
-            L_count += 1
-        elif reset_this_entry:
-            edges[pos] = "R"
-    return edges
-
-
-def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
-    """Finds the next permutation of an array (edges) by permuting a specific element of the array (direction) over another specified element of the array (permute_over).
-    [X, X, Y, Y]->[X, Y, X, Y]->[X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
-
-    This function is used in the following cases:
-        - If the array consists only of elements "L" and "D" (direction="L"):
-            - The rightmost "L" value will be replaced with the "D" value that is exactly after it.
-            - If there is no "D" after the last "L" (meaning "L" is already in the last position):
-                1. Turn all consecutive rightmost "L" into "D"
-                2. Find an "L" value with a "D" in the next position.
-                3. Replace that "L" with "D"
-                4. Turn (the same amount as in (1)) elements after it into "L"
-
-        - If the array conssists only of elements "R" and "D" (direction="R"):
-            - Same as case of "L" and "D"
-
-        - If the array conssists of elements "L", "R" and "D" (direction="LR"):
-            - Treats all "L" and "R" values as the same element
-            - Performs the same opperations as above with (L+R vs D)
-
-        - If the array conssists only of elements "L" and "R" (direction="L", permute_over="R"):
-            - Performs the same opperations as above with (L vs R)
-
-    Example 1 (direction = "L")
-    ----------
-    Input: [L, L, D, L, D]
-    Output: [L, L, D, D, L]
-
-    Example 2 (direction = "R")
-    ----------
-    Input: [R, D, D, D, R]
-    Output: [D, R, R, D, D]
-
-    Example 3 (direction = "LR")
-    ----------
-    Input: [L, L, R, D, D]
-    Output: [L, L, D, R, D]
-
-    Example 4 (direction = "L", permute_over = "R")
-    ----------
-    Input: [L, L, R]
-    Output: [L, R, L]
-
-    Parameters
-    ----------
-    edges : array
-    direction : str
-        Indicating whether to consider "L" or "R" direction or both ("LR")
-    """
-    if direction == "LR":
-        for pos, element in enumerate(edges[:-1]):
-            if (element == "L" or element == "R") and edges[pos + 1] == permute_over:
-                target_position = pos
-
-        pos_last_D = len(edges) - edges[::-1].index(permute_over) - 1
-        edges_to_be_swapped = len(edges) - pos_last_D
-        edges[target_position] = permute_over
-
-        direction = "L"
-        for i in range(edges_to_be_swapped):
-            edges[-1 - i] = permute_over
-        for i in range(edges_to_be_swapped):
-            if i >= edges_to_be_swapped - rights:
-                direction = "R"
-            edges[target_position + 1 + i] = direction
-
-    else:
-        for pos, element in enumerate(edges[:-1]):
-            if element == direction and edges[pos + 1] == permute_over:
-                target_position = pos
-
-        pos_last_D = len(edges) - edges[::-1].index(permute_over) - 1
-        edges_to_be_swapped = len(edges) - pos_last_D
-        edges[target_position] = permute_over
-        for i in range(edges_to_be_swapped):
-            edges[-1 - i] = permute_over
-        for i in range(edges_to_be_swapped):
-            edges[target_position + 1 + i] = direction
-    return edges
-
-
-def find_next_permutation_over_L_and_R(edges):
-    """This function deals with permutations of "L" and "R" while not changing positions to any other element. In essence, it only changes the positions of "L" and "R" elements in an orderly manner.
-
-    Example
-    ----------
-    Input: [L, R, D, D, R]
-    Output: [R, L, D, D, R]
-    """
-    only_LR_edges = []
-    only_LR_positions = []
-    for pos, element in enumerate(edges):
-        if element == "L" or element == "R":
-            only_LR_edges.append(element)
-            only_LR_positions.append(pos)
-
-    only_LR_edges = find_next_permutation_over(
-        edges=only_LR_edges, direction="L", permute_over="R"
-    )
-
-    for pos, pos_LR in enumerate(only_LR_positions):
-        edges[pos_LR] = only_LR_edges[pos]
-
-    return edges
-
-
-def generate_next_permutation_of_edges(edges, downs, lefts, rights):
-    """Given an array of with elements "L", "R" and "D" finds the next permutation of the elements in an orderly manner such that all possible combinations considered at the end.
-
-    Parameters
-    ----------
-    edges : array
-        The current permutatioin of the edges
-    downs : int
-        Number of down-edges that exist in the array
-    lefts : int
-        Number of left-edges that exist in the array
-    rights : int
-        Number of right-edges that exist in the array
-
-    Returns
-    -------
-    array
-        Next permutation of the edges array
-    """
-    if "L" in edges and "R" in edges:
-        all_L_positions = []
-        all_R_positions = []
-        for pos, element in enumerate(edges):
-            if element == "L":
-                all_L_positions.append(pos)
-            elif element == "R":
-                all_R_positions.append(pos)
-
-        if max(all_R_positions) > min(all_L_positions):
-            edges = find_next_permutation_over_L_and_R(edges=edges)
-        else:
-            edges = reset_L_and_R_in_array(edges=edges, lefts=lefts)
-            pos_last_D = len(edges) - edges[::-1].index("D") - 1
-            if pos_last_D == (downs - 1):
-                return []
-            else:
-                edges = find_next_permutation_over(
-                    edges=edges, direction="LR", rights=rights
-                )
-
-    elif "L" in edges:
-        pos_last_D = len(edges) - edges[::-1].index("D") - 1
-        if pos_last_D == (downs - 1):
-            return []
-        edges = find_next_permutation_over(edges=edges, direction="L", rights=rights)
-
-    elif "R" in edges:
-        pos_last_D = len(edges) - edges[::-1].index("D") - 1
-        if pos_last_D == (downs - 1):
-            return []
-        edges = find_next_permutation_over(edges=edges, direction="R", rights=rights)
-
-    else:
-        edges = []
-
-    return edges
-
-
-def check_permutation_is_valid(edges, parking_capacity):
-    """Check that the given array is a valid spanning tree of the graph.
-    Specifically, a given array is not a valid spanning tree if:
-        - Any element that corresponds to a node of the final column is "R" (nodes of last column cannot have a right edge)
-        - If there exist an "L" value exaclty after an "R" value (would make a cycle between two nodes)"""
-
-    start = (len(edges) / parking_capacity) - 1
-    for pos in np.linspace(start, len(edges) - 1, parking_capacity, dtype=int):
-        if edges[pos] == "R":
-            return False
-
-    for pos, element in enumerate(edges[:-1]):
-        if element == "R" and edges[pos + 1] == "L":
-            return False
-
-    return True
-
-
 def build_body_of_tikz_spanning_tree(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
@@ -568,7 +369,7 @@ def get_tikz_code_for_permutation(
 
 
 def generate_code_for_tikz_spanning_trees_rooted_at_00(
-    num_of_servers, threshold, system_capacity, parking_capacity=1
+    num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """Builds a string of latex code that generates tikz pictures of all spaning trees of the Markov chain that are rooted at node (0,0). The function considers the markov chain with the given paramaters and performs the following steps:
         - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):

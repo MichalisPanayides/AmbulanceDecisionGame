@@ -1,6 +1,6 @@
-\subsection{Closed-form formula for state probabilities}
+\subsection{Graph Theoretical Approach}
 
-This section aims to describe a closed form formula that gets the state probabilities array \(\pi\) for a given Markov chain model.
+This section aims to investigate the connection between Markov chains and graph theory by exploring alternative ways of calculating the state probabilities and considering the problem from different perspectives.
 
 \subsubsection{Parameters}
 The inputs of the formula are the number of servers \(C\), the threshold \(T\), the system capacity \(N\) and the parking capacity \(M\). Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate, but for the purpose of this section these will remain unknown (\(\lambda^A, \lambda^o, \mu\)). More specifically, the way these parameters are translated into the model are:
@@ -24,7 +24,7 @@ The inputs of the formula are the number of servers \(C\), the threshold \(T\), 
 
 In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such Markov model is shown where \(C=1\) meaning the only coefficient in front of any \(\mu\) is going to be \(1\), \(T=3\) which means that the \textit{left arm} of the model has a length of \(3\), \(N=5\) that indicates that the right-most states \((u,v)\) are of the form \((u,5)\) and \(M=2\) that equivalently shows that the bottom states are of the form \((2,v)\).
 
-\subsubsection{Graph theoretical approach for state probabilities}
+\subsubsection{Transforming the Markov chain model into graph theoretic model}
 
 An additional approach that one may consider to get the state probabilities is the graph theoretical approach for state probabilities. Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M\) where every edge has a weight that corresponds to the rate of the edges of the Markov chain. 
 
@@ -285,7 +285,7 @@ It is important to note here that the above property holds when the system capac
 \textit{The number of directed spanning trees rooted at a state \(i\) can be found by calculating the determinant of the Laplacian matrix \(Q\) of the directed graph and removing row \(i\) and column \(i\).}
 
 
-\subsubsection{Conjecture of adding columns}
+\subsubsection{Conjecture of adding columns (combinatorics attempt for closed form formula)}
 Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the function \(k(C,T,N)\) that is independent of the value of the parking capacity. Thus, in this section only models with a parking capacity of \(M=1\) will be considered and will be referred to as the base cases. 
 
 \begin{multicols}{2}
@@ -422,13 +422,13 @@ These edges are the ones on the bottom row of the model, on the \textit{threshol
     S_3 &= \{(0,v) \rightarrow (0,v-1) \; | \; 0 < v \leq T\} \nonumber \\
 \end{align}
 
-In addition, these edges that are common to every spanning tree have the same weight of \(mu\). In this specified model there are four of these edges, each with a weight of \(\mu\). Thus, since these edges exist on all spanning trees, the weight of every spanning tree must have include a term \(\mu^4\). Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov model:
+In addition, these edges that are common to every spanning tree (for a threshold of \(T=1\)) have the same weight of \(\mu\). In this specified model there are four of these edges, each with a weight of \(\mu\). Thus, since these edges exist on all spanning trees, the weight of every spanning tree must have include a term \(\mu^4\). Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov model:
 
-\begin{equation}
+\begin{equation}\label{eq:pi_00_rate_example}
     \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A \mu + \mu^2] 
 \end{equation}
 
-It can be seen that there is a \(\mu^4\) term that is a common factor of all spanning trees. These term can be more generally calculated as \(\mu^{M+N}\) and by excluding all edges associated with it can make the problem slightly easier to solve. 
+It can be seen that there is a \(\mu^4\) term that is a common factor of all the terms. This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying about all these edges that belong in \(S\) the problem can be slightly simplified.
 
 \begin{figure}[h]
     \centering
@@ -451,14 +451,14 @@ It can be seen that there is a \(\mu^4\) term that is a common factor of all spa
     }
 \end{figure}
 
-The specific problem has now been reduced to finding all possible combinations of two edges where one starts from \((0,2)\) and the other from \((0,3)\). The possible edges that can be utilised here may have a direction of either left, right, or down. Thus, the objective of the problem can be transformed into finding all possible permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\) and obey certain rules so that it correspond to a valid spanning tree. These rules are:
+The specific problem has now been reduced to finding all possible combinations of two edges where one starts from \((0,2)\) and the other from \((0,3)\). The possible edges that can be utilised here may have a direction of either left, right, or down. Thus, the objective of the problem can be transformed into finding all possible permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\) and obey certain rules so that the permutation corresponds to a valid spanning tree. These rules are:
 
 \begin{enumerate}
     \item Permutations ending with an \(R\) are not valid. \label{rule1}
     \item Permutations that have an \(R\) followed by an \(L\) are not valid. \label{rule2}
 \end{enumerate}
 
-If any of these two rules does not hold then the permutation is immediately valid. Rule \ref{rule1} points to the cases where the final state has an edge pointing to the right of it, which cannot occur since that state is the right-most state of the first row. Rule \ref{rule2} makes sure that there are no neighbour states that point to each other since that would create a cycle and would not generate a valid spanning tree.
+If any of these two rules does not hold then the permutation is immediately invalid. Rule \ref{rule1} points to the cases where the final state has an edge pointing to the right of it, which cannot occur since that state is the right-most state of the first row. Rule \ref{rule2} makes sure that there are no neighbour states that point to each other since that would create a cycle and would not generate a valid spanning tree.
 
 For instance, consider the model above. Shown below, are all possible permutations of the array along with the excluded cases. The valid permutations (on the left) are shown in the same order with their corresponding spanning trees from the above figure and the invalid permutations (on the right) are followed by the rule that determines them invalid.
 
@@ -475,3 +475,45 @@ For instance, consider the model above. Shown below, are all possible permutatio
         \item \(\xcancel{[D, R]} \rightarrow \text{ Rule 1}\)
     \end{itemize}
 \end{multicols}
+
+
+\subsubsection{Closed-form formula}
+A general formula for finding all such permutations can be found, where the inputs are \( p_1\), \(p_2\) and \(p_3\) that correspond to the number of \(D\), \(R\) and \(L\) respectively and the output would be the coefficient of the term \((\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}\). 
+For instance, by applying such a formula to the example in equation \ref{eq:pi_00_rate_example}, the desired output should be:
+
+\begin{itemize}
+    \item \((\lambda^A)^2 \hspace{0.95cm} \rightarrow \hspace{1cm} p_1 = 2, p_2=0, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
+    \item \(\lambda^A \lambda^o \hspace{1cm} \rightarrow \hspace{1cm} p_1 = 1, p_2=1, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
+    \item \(2 \lambda^A \mu \hspace{1cm} \rightarrow \hspace{1cm} p_1 = 1, p_2=0, p_3=1 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 2\)
+    \item \(\mu^2 \hspace{1.45cm} \rightarrow \hspace{1cm} p_1=0, p_2=0, p_3=2 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
+\end{itemize}
+
+Thus, given all possible and valid combinations of powers among \(\lambda^A, \lambda^o \text{ and } \mu\) (i.e. \(p_1,p_2,p_3\)) the following formula takes as input these values and outputs the coefficient of the corresponding term.
+
+\begin{equation} \label{eq:permutation formula}
+    G(p_1, p_2, p_3) = T(p_1, p_2, p_3) - E_R(p_1, p_2, p_3) - E_D(p_1, p_2, p_3) - E_L(p_1, p_2, p_3) - E_{RL}(p_1, p_2, p_3)
+\end{equation}
+
+Consider the above undefined equations. 
+The term \(T(p_1,p_2,p_3)\) denotes the number of all permutations where neither rule is applied, i.e. all possible ways one can arrange the elements of the array.
+The term \(E_R(p_1,p_2,p_3)\) denotes the number of permutations that end in \(R\), which needs to be removed from the total of all permutations so that rule \ref{rule1} is satisfied.
+Having excluded all permutations that end in \(R\) it only remains to leave out permutations that have an \(R\) followed by an \(L\) (rule \ref{rule2}).
+Although, removing all permutations ending in \(R\) was relatively straight forward, removing all permutations that follow rule \ref{rule2} is not that easy.
+This is because equation \(E_R(p_1,p_2,p_3)\) already considers some cases where there is an \(R\) followed by an \(L\).
+Therefore, in order to consider only new cases, permutations of rule \ref{rule2} are split into three new terms; \(E_D\), \(E_L\) and \(E_{RL}\).
+These terms denote the permutations that have an \(R\) followed by an \(L\) AND do not end in \(R\).
+The term \(E_D\) considers all permutations that end in \(D\) while \(E_L\) the ones that end in \(L\).
+Finally, the last term (\(E_{RL}\)) denotes all permutations that end in \(R\), \(L\) where there is no other \(R\) followed by an \(L\) in any other position apart from the last two. 
+This term is used because in the \(E_L\) term, such cases (where \(R\) and \(L\) are in the last two positions) are only considered when there is another \(R\) followed by an \(L\) somewhere.
+Thus, the term \(E_{RL}\) is a particular set of permutations that the formula of \(E_L\) fails to include by itself.
+
+\begin{align}
+    T(p_1, p_2, p_3) &= \frac{(p_1 + p_2 + p_3)!}{p_1! \times p_2! \times p_3!} \\
+    E_R(p_1, p_2, p_3) &= \frac{(p_1 + p_2 + p_3 - 1)!}{p_1! \times (p_2-1)! \times p_3!} \\
+    E_D(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} \frac{(p_1, p_2, p_3 - i - 1)!}{(p_1 - 1)! \times (p_2 - i)! \times (p_3 - i)! \times (i)!} \\
+    E_L(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L-1)} (-1)^{i+1} \frac{(p_1, p_2, p_3 - i - 1)!}{p_1! \times (p_2 - i)! \times (p_3 - i - 1)! \times (i)!} \\
+    E_{RL}(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} \frac{(p_1, p_2, p_3 - i - 1)!}{p_1! \times (p_2 - i)! \times (p_3 - i)! \times (i - 1)!} 
+\end{align}
+
+
+

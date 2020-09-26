@@ -8,4 +8,5 @@ src/ambulance_game.egg-info/
 *.fls
 *.log
 *synctex.gz
+*.toc
 *__pycache__

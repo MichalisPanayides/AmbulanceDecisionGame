@@ -1,4 +1,5 @@
 import numpy as np
+import functools
 
 from ambulance_game.markov.graphical import (
     reset_L_and_R_in_array,
@@ -377,3 +378,27 @@ def test_get_coefficient_known_scenarios(D, R, L):
     assert get_coefficient(0, 0, L) == 1
     assert get_coefficient(D, 1, 0) == D
     assert get_coefficient(D, 0, 1) == D + 1
+
+
+def test_get_coefficient_using_matrix_tree_theorem():
+    """Tests that the sum of all coefficients of given number of states satisfies the matrix-tree theorem  
+    """
+    @functools.lru_cache(maxsize=None)
+    def spanning_trees_based_on_matrix_tree_theorem(n):
+        if n >= 2: 
+            return 3*spanning_trees_based_on_matrix_tree_theorem(n-1) - spanning_trees_based_on_matrix_tree_theorem(n-2)
+        else:
+            return 1
+
+    def spanning_trees_generated_from_permutation_algorithm(number_of_states):
+        total_number_of_spanning_trees = 0
+        for p1 in range(1, number_of_states + 1):
+            for p2 in range(0, (number_of_states - p1 + 1)):
+                p3 = number_of_states - p1 - p2
+                total_number_of_spanning_trees += get_coefficient(p1,p2,p3)
+        total_number_of_spanning_trees += get_coefficient(0,0,number_of_states)
+        return total_number_of_spanning_trees
+    
+    for i in range(1, 20):
+        assert spanning_trees_based_on_matrix_tree_theorem(i+1) == spanning_trees_generated_from_permutation_algorithm(i)
+

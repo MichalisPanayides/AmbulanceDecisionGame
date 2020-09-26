@@ -3,11 +3,16 @@
 This section aims to investigate the connection between Markov chains and graph theory by exploring alternative ways of calculating the state probabilities and considering the problem from different perspectives.
 
 \subsubsection{Parameters}
-The inputs of the formula are the number of servers \(C\), the threshold \(T\), the system capacity \(N\) and the parking capacity \(M\). Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate, but for the purpose of this section these will remain unknown (\(\lambda^A, \lambda^o, \mu\)). More specifically, the way these parameters are translated into the model are:
+The inputs of the formula are the number of servers \(C\), the threshold \(T\), the system capacity \(N\) and the parking capacity \(M\). 
+Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate, but for the purpose of this section these will remain unknown (\(\lambda^A, \lambda^o, \mu\)). 
+More specifically, the way these parameters are translated into the model are:
 
 \begin{itemize}
-    \item \textbf{Number of servers (\(C\)):} All service rates \(\mu\) in the Markov chain are multiplied by a coefficient equal to \(v\) for a state \((u,v)\) that stops increasing at \(v=C\). Thus, the coefficients of the service rate have a lower bound of \(0\) and an upper bound of \(C\).
-    \item \textbf{Threshold (\(T\)):} Determines the length of the left \textit{arm} of the model. In essence the threshold acts as a breakpoint between states where \(u=0\) and states where \(0 \leq u \leq M\). Increasing \(T\) results in having more set of states where \(u\) can only be \(0\).
+    \item \textbf{Number of servers (\(C\)):} All service rates \(\mu\) in the Markov chain are multiplied by a coefficient equal to \(v\) for a state \((u,v)\) that stops increasing at \(v=C\). 
+    Thus, the coefficients of the service rate have a lower bound of \(0\) and an upper bound of \(C\).
+    \item \textbf{Threshold (\(T\)):} Determines the length of the left \textit{arm} of the model. 
+    In essence the threshold acts as a breakpoint between states where \(u=0\) and states where \(0 \leq u \leq M\). 
+    Increasing \(T\) results in having more set of states where \(u\) can only be \(0\).
     \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all states \((u,v)\).
     \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all states \((u,v)\) such that \(u \geq T\).
 \end{itemize}
@@ -26,9 +31,12 @@ In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such Marko
 
 \subsubsection{Transforming the Markov chain model into graph theoretic model}
 
-An additional approach that one may consider to get the state probabilities is the graph theoretical approach for state probabilities. Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M\) where every edge has a weight that corresponds to the rate of the edges of the Markov chain. 
+An additional approach that one may consider to get the state probabilities is the graph theoretical approach for state probabilities.
+Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M\) where every edge has a weight that corresponds to the rate of the edges of the Markov chain. 
 
-A \textit{directed spanning tree} of a directed graph is defined as a subset of the graph that visits all the vertices of the graph and does not include any cycles. Unlike undirected spanning trees, directed ones also have a root which means that a directed spanning tree that is rooted at a vertex \(v\) has to have a path from any other vertex to vertex \(v\). For example, consider the graph shown in figure \ref{fig:example_spanning_tree}. The graph points out a spanning tree that is rooted at vertex 3.
+A \textit{directed spanning tree} of a directed graph is defined as a subset of the graph that visits all the vertices of the graph and does not include any cycles. 
+Unlike undirected spanning trees, directed ones also have a root which means that a directed spanning tree that is rooted at a vertex \(v\) has to have a path from any other vertex to vertex \(v\). 
+For example, consider the graph shown in figure \ref{fig:example_spanning_tree}. The graph points out a spanning tree that is rooted at vertex 3.
 
 
 \begin{figure}[h]
@@ -52,26 +60,31 @@ A \textit{directed spanning tree} of a directed graph is defined as a subset of 
     \label{fig:example_spanning_tree}
 \end{figure}
 
-Additionally, let us denote the set of all spanning trees of \(G\) as \(T(G)\) and the subset of \(T(G)\) that includes only the spanning trees that are rooted at vertex \(v\) as \(T_v(G)\). The weight of a spanning tree \(t\) can be defined as the product of the weights of the edges it contains: 
+Additionally, let us denote the set of all spanning trees of \(G\) as \(T(G)\) and the subset of \(T(G)\) that includes only the spanning trees that are rooted at vertex \(v\) as \(T_v(G)\). 
+The weight of a spanning tree \(t\) can be defined as the product of the weights of the edges it contains: 
 \[w(t)=\prod_{e \in t} w(e)\]
 
 
 
 \textbf{Theorem: Markov chain tree theorem} \cite{markov-chain-tree-theorem} \newline
-\textit{Let M be an irreducible Markov chain on n states with stationary distribution \(\pi_1, \pi_2, \dots, \pi_n\). Let \(G_M\) be the directed graph associated with \(M\). Then the probability of being at state \(u\) is given by:}
+\textit{Let M be an irreducible Markov chain on n states with stationary distribution \(\pi_1, \pi_2, \dots, \pi_n\). 
+Let \(G_M\) be the directed graph associated with \(M\). 
+Then the probability of being at state \(u\) is given by:}
 
 \begin{equation}\label{markov-chain-tree-theorem}
     \pi_i = \frac{\sum_{t \in T_i(G_M)} w(t)}{\sum_{t \in T(G_M)}w(t)}
 \end{equation}
 
-Equation \ref{markov-chain-tree-theorem} states that the probability of being at state \(u\) can be found by dividing the sum of the weights of all spanning trees rooted at \(u\) by the sum of the weights of all spanning trees of the graph. Let us ignore the denominator of that fraction for now and focus only on the numerator denoted as \(\tilde{\pi}_i=\sum_{t \in T_i(G_M)} w(t)\)
+Equation \ref{markov-chain-tree-theorem} states that the probability of being at state \(u\) can be found by dividing the sum of the weights of all spanning trees rooted at \(u\) by the sum of the weights of all spanning trees of the graph. 
+Let us ignore the denominator of that fraction for now and focus only on the numerator denoted as \(\tilde{\pi}_i=\sum_{t \in T_i(G_M)} w(t)\)
 
  
 
 \newpage
 \subsubsection{Spanning Trees rooted at \((0,0)\)}
 
-Let us now consider some examples of spanning trees that are rooted at \((0,0)\). For each of the following examples the complete model is shown, then all possible spanning trees rooted at \((0,0)\) along with the weight associated with each spanning tree and finally the value of \(\tilde{\pi}_{(0,0)}\) which is the sum of all the weights of the spanning trees.
+Let us now consider some examples of spanning trees that are rooted at \((0,0)\). 
+For each of the following examples the complete model is shown, then all possible spanning trees rooted at \((0,0)\) along with the weight associated with each spanning tree and finally the value of \(\tilde{\pi}_{(0,0)}\) which is the sum of all the weights of the spanning trees.
 
 \begin{figure}[h]
     \centering
@@ -268,13 +281,16 @@ By increasing the parking capacity of the model it can be easily observed that t
     &= \mu^5 (\mu + \lambda^A) ^ 3 \label{eq:rows-conjecture-3}
 \end{align}
 
-It can be observed from equations (\ref{eq:rows-conjecture-1}),( \ref{eq:rows-conjecture-2}) and (\ref{eq:rows-conjecture-3}), that there is a noticeable relationship between them. Thus, a generalised formula for the value of \(\tilde{\pi}_{(0,0)}\) when \(C=1, T=1 \text{ and } N=1\) is given by:
+It can be observed from equations (\ref{eq:rows-conjecture-1}),( \ref{eq:rows-conjecture-2}) and (\ref{eq:rows-conjecture-3}), that there is a noticeable relationship between them. 
+Thus, a generalised formula for the value of \(\tilde{\pi}_{(0,0)}\) when \(C=1, T=1 \text{ and } N=1\) is given by:
 
 \begin{equation}\label{eq:rows-conjecture-general}
     \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (\mu + \lambda^A)^M
 \end{equation}
 
-It is important to note here that the above property holds when the system capacity is greater than one as well (\(N \geq 1\)). For instance let us consider a Markov model with \(C\) number of servers, a threshold of \(T\), a system capacity of \(N\) and a parking capacity of \(M\). The equivalent values of \(\tilde{\pi}_{(0,0)}\) can be expressed in terms of an unknown function \(k(C,T,N)\) as:
+It is important to note here that the above property holds when the system capacity is greater than one as well (\(N \geq 1\)). 
+For instance let us consider a Markov model with \(C\) number of servers, a threshold of \(T\), a system capacity of \(N\) and a parking capacity of \(M\). 
+The equivalent values of \(\tilde{\pi}_{(0,0)}\) can be expressed in terms of an unknown function \(k(C,T,N)\) as:
 
 \begin{equation}
     \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M
@@ -286,7 +302,8 @@ It is important to note here that the above property holds when the system capac
 
 
 \subsubsection{Conjecture of adding columns (combinatorics attempt for closed form formula)}
-Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the function \(k(C,T,N)\) that is independent of the value of the parking capacity. Thus, in this section only models with a parking capacity of \(M=1\) will be considered and will be referred to as the base cases. 
+Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the function \(k(C,T,N)\) that is independent of the value of the parking capacity. 
+Thus, in this section only models with a parking capacity of \(M=1\) will be considered and will be referred to as the base cases. 
 
 \begin{multicols}{2}
     \begin{figure}[H]
@@ -323,14 +340,18 @@ Having equation (\ref{eq:rows-conjecture-general}) it only remains to get the fu
 \end{align}
 
 \newpage
-As explained in equation \ref{eq:rows-conjecture-general} the expressions defined above can boil down to a general form equation of the form \(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). The only thing missing is an expression for \(k(C,T,N)\). An initial attempt to get such an expression can be seen below:
+As explained in equation \ref{eq:rows-conjecture-general} the expressions defined above can boil down to a general form equation of the form \(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). 
+The only thing missing is an expression for \(k(C,T,N)\). 
+An initial attempt to get such an expression can be seen below:
 
 \begin{align}\label{eq:columns-conjecture-general}
     k(C,T,N) &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} \sum_{p_3=C - p_1 - p_2 - 1}^{C - p_1 - p_2 - 1} G(p_1, p_2, p_3) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3} \nonumber \\ 
     &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} G(p_1, p_2, C-p_1-p_2-1) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} 
 \end{align}
 
-In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of \(\lambda^A, \lambda^o \text{ and } \mu\). Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). For the starting coefficients of the model the function \(G(p_1,p_2,p_3)\) gives the values of the coefficients and is defined as:
+In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of \(\lambda^A, \lambda^o \text{ and } \mu\). 
+Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). 
+For the starting coefficients of the model the function \(G(p_1,p_2,p_3)\) gives the values of the coefficients and is defined as:
 
 \begin{equation} \label{eq:coefficient-function}
     G(p_1,p_2,p_3) = 
@@ -346,7 +367,9 @@ In equation \ref{eq:columns-conjecture-general} the coefficient function \(G(p_1
     \end{cases}
 \end{equation}
 
-Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. In essence function \(G()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given Markov model and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms from the equations above:
+Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. 
+In essence function \(G()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given Markov model and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. 
+For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms from the equations above:
 
 \begin{multicols}{2}
     \begin{itemize}
@@ -372,7 +395,9 @@ Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients t
 
 \subsubsection{Unknown terms}
 
-The terms that remain unknown are the terms where \(p_1, p_2, p_3 \geq 2\). For small models these terms are very few but as the model grows the number of these terms increase exponentially. Here are some of these values with the corresponding values of the \(G(p_1,p_2,p_3)\) function.
+The terms that remain unknown are the terms where \(p_1, p_2, p_3 \geq 2\). 
+For small models these terms are very few but as the model grows the number of these terms increase exponentially. 
+Here are some of these values with the corresponding values of the \(G(p_1,p_2,p_3)\) function.
 
 \begin{multicols}{2}
     \begin{itemize}
@@ -391,7 +416,8 @@ The terms that remain unknown are the terms where \(p_1, p_2, p_3 \geq 2\). For 
 
 \subsubsection{Transforming the spanning tree problem into a permutation problem}
 
-Given the nature of the spanning tree problem and the properties that the specific Markov chain model holds, this problem can be further reduced to another problem that may be slightly easier to solve. Consider the following Markov model and the spanning trees rooted at state \((0,0)\) that are associated with it. 
+Given the nature of the spanning tree problem and the properties that the specific Markov chain model holds, this problem can be further reduced to another problem that may be slightly easier to solve. 
+Consider the following Markov model and the spanning trees rooted at state \((0,0)\) that are associated with it. 
 
 \begin{figure}[h]
     \centering
@@ -414,7 +440,8 @@ Looking at these spanning trees from a different perspective it can be observed 
     \end{itemize}
 \end{multicols}
 
-These edges are the ones on the bottom row of the model, on the \textit{threshold column} and on the \textit{arm} of the model. In general the set of edges that are present on all spanning trees can be denoted by:
+These edges are the ones on the bottom row of the model, on the \textit{threshold column} and on the \textit{arm} of the model. 
+In general the set of edges that are present on all spanning trees can be denoted by:
 \begin{align} \label{eq:common_edges_set}
     S &= S_1 \cup S_2 \cup S_3 \nonumber\\
     S_2 &= \{(M,v) \rightarrow (M,v-1) \; | \; T < v \leq N\} \nonumber \\
@@ -422,13 +449,17 @@ These edges are the ones on the bottom row of the model, on the \textit{threshol
     S_3 &= \{(0,v) \rightarrow (0,v-1) \; | \; 0 < v \leq T\} \nonumber \\
 \end{align}
 
-In addition, these edges that are common to every spanning tree (for a threshold of \(T=1\)) have the same weight of \(\mu\). In this specified model there are four of these edges, each with a weight of \(\mu\). Thus, since these edges exist on all spanning trees, the weight of every spanning tree must have include a term \(\mu^4\). Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov model:
+In addition, these edges that are common to every spanning tree (for a threshold of \(T=1\)) have the same weight of \(\mu\). 
+In this specified model there are four of these edges, each with a weight of \(\mu\). 
+Thus, since these edges exist on all spanning trees, the weight of every spanning tree must have include a term \(\mu^4\). 
+Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov model:
 
 \begin{equation}\label{eq:pi_00_rate_example}
     \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A \mu + \mu^2] 
 \end{equation}
 
-It can be seen that there is a \(\mu^4\) term that is a common factor of all the terms. This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying about all these edges that belong in \(S\) the problem can be slightly simplified.
+It can be seen that there is a \(\mu^4\) term that is a common factor of all the terms. 
+This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying about all these edges that belong in \(S\) the problem can be slightly simplified.
 
 \begin{figure}[h]
     \centering
@@ -451,16 +482,22 @@ It can be seen that there is a \(\mu^4\) term that is a common factor of all the
     }
 \end{figure}
 
-The specific problem has now been reduced to finding all possible combinations of two edges where one starts from \((0,2)\) and the other from \((0,3)\). The possible edges that can be utilised here may have a direction of either left, right, or down. Thus, the objective of the problem can be transformed into finding all possible permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\) and obey certain rules so that the permutation corresponds to a valid spanning tree. These rules are:
+The specific problem has now been reduced to finding all possible combinations of two edges where one starts from \((0,2)\) and the other from \((0,3)\). 
+The possible edges that can be utilised here may have a direction of either left, right, or down. 
+Thus, the objective of the problem can be transformed into finding all possible permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\) and obey certain rules so that the permutation corresponds to a valid spanning tree. These rules are:
 
 \begin{enumerate}
     \item Permutations ending with an \(R\) are not valid. \label{rule1}
     \item Permutations that have an \(R\) followed by an \(L\) are not valid. \label{rule2}
 \end{enumerate}
 
-If any of these two rules does not hold then the permutation is immediately invalid. Rule \ref{rule1} points to the cases where the final state has an edge pointing to the right of it, which cannot occur since that state is the right-most state of the first row. Rule \ref{rule2} makes sure that there are no neighbour states that point to each other since that would create a cycle and would not generate a valid spanning tree.
+If any of these two rules does not hold then the permutation is immediately invalid. 
+Rule \ref{rule1} points to the cases where the final state has an edge pointing to the right of it, which cannot occur since that state is the right-most state of the first row. 
+Rule \ref{rule2} makes sure that there are no neighbour states that point to each other since that would create a cycle and would not generate a valid spanning tree.
 
-For instance, consider the model above. Shown below, are all possible permutations of the array along with the excluded cases. The valid permutations (on the left) are shown in the same order with their corresponding spanning trees from the above figure and the invalid permutations (on the right) are followed by the rule that determines them invalid.
+For instance, consider the model above. 
+Shown below, are all possible permutations of the array along with the excluded cases. 
+The valid permutations (on the left) are shown in the same order with their corresponding spanning trees from the above figure and the invalid permutations (on the right) are followed by the rule that determines them invalid.
 
 \begin{multicols}{2}
     \begin{itemize}

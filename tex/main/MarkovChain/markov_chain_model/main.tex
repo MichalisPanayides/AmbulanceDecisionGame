@@ -1,5 +1,14 @@
 \section{Hospital Markov chain model}
-The following Markov chain represents the transition between states of a hospital while capturing the EMS interaction with it. The hospital accepts both ambulance and other patients normally until a certain threshold \(T\) is reached. When it is reached all ambulances that arrive will be marked as \textit{``parked outside''} until the number of people in the system is reduced below \(T\). Additionally, if the patients in the hospital keep rising, they may exceed the number of servers \(C\) available, which will in turn mean that every new patient will have to wait for a server to become free. The states of the Markov chain are denoted by \((u,v)\) where:
+The following Markov chain represents the transition between states of a hospital 
+while capturing the EMS interaction with it. 
+The hospital accepts both ambulance and other patients normally until a certain 
+threshold \(T\) is reached. When it is reached all ambulances that arrive will be 
+marked as \textit{``parked outside''} until the number of people in the system is 
+reduced below \(T\). 
+Additionally, if the patients in the hospital keep rising, they may exceed the number 
+of servers \(C\) available, which will in turn mean that every new patient will 
+have to wait for a server to become free. 
+The states of the Markov chain are denoted by \((u,v)\) where:
 
 \begin{itemize}
     \item \(u\) = number of ambulances parked outside of the hospital
@@ -40,41 +49,57 @@ The following Markov chain represents the transition between states of a hospita
         % Rectangle for S1
         \draw[ultra thin, dashed] (\leftOne, \downOne) -- (\leftOne, \upOne);
         \draw[ultra thin, dashed] (\leftOne, \upOne) -- (\rightOne, \upOne);
-        \draw[ultra thin, dashed] (\rightOne, \upOne) -- node {\Huge{\( \quad S_1 \)}}(\rightOne, \downOne);
+        \draw[ultra thin, dashed] (\rightOne, \upOne) -- node 
+        {\Huge{\( \quad S_1 \)}}(\rightOne, \downOne);
         \draw[ultra thin, dashed] (\rightOne, \downOne) -- (\leftOne, \downOne);
 
         % Rectangle for S2
-        \draw[ultra thin, dashed] (\leftTwo, \downTwo) -- node {\Huge{\( S_2 \quad \)}}(\leftTwo, \upTwo);
+        \draw[ultra thin, dashed] (\leftTwo, \downTwo) -- node 
+        {\Huge{\( S_2 \quad \)}}(\leftTwo, \upTwo);
         \draw[ultra thin, dashed] (\leftTwo, \upTwo) -- (\rightTwo, \upTwo);
         \draw[ultra thin, dashed] (\rightTwo, \upTwo) -- (\rightTwo, \downTwo);
         \draw[ultra thin, dashed] (\rightTwo, \downTwo) -- (\leftTwo, \downTwo);
 
         % Small square of general case
-        \draw [thick] (\GCsmallx, \GCsmally) -- node {} (\GCsmallx + 0.4, \GCsmally);
-        \draw [thick] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCsmallx + 0.4, \GCsmally - 0.4);
-        \draw [thick] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCsmallx, \GCsmally - 0.4);
-        \draw [thick] (\GCsmallx, \GCsmally - 0.4) -- node {} (\GCsmallx, \GCsmally);
+        \draw [thick] (\GCsmallx, \GCsmally) -- node {} 
+        (\GCsmallx + 0.4, \GCsmally);
+        \draw [thick] (\GCsmallx + 0.4, \GCsmally) -- node {} 
+        (\GCsmallx + 0.4, \GCsmally - 0.4);
+        \draw [thick] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} 
+        (\GCsmallx, \GCsmally - 0.4);
+        \draw [thick] (\GCsmallx, \GCsmally - 0.4) -- node {} 
+        (\GCsmallx, \GCsmally);
 
 
         % Dashed lines to from small square to big one 
-        \draw [ultra thin] (\GCsmallx, \GCsmally) -- node {} (\GCbigx, \GCbigy);
-        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCbigx + 4, \GCbigy);
+        \draw [ultra thin] (\GCsmallx, \GCsmally) -- node {} 
+        (\GCbigx, \GCbigy);
+        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally) -- node {} 
+        (\GCbigx + 4, \GCbigy);
         \draw [ultra thin] (\GCsmallx, \GCsmally - 0.4) -- node {} (7, \GCbigy);
-        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCbigx + 4, \GCbigy - 4);
+        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} 
+        (\GCbigx + 4, \GCbigy - 4);
         
         % Big Square of general case
         \draw [ultra thick] (\GCbigx, \GCbigy) -- node {} (\GCbigx + 4, \GCbigy);
-        \draw [ultra thick] (\GCbigx + 4, \GCbigy) -- node {} (\GCbigx + 4, \GCbigy - 4);
-        \draw [ultra thick] (\GCbigx + 4, \GCbigy - 4) -- node {General Case} (\GCbigx, \GCbigy - 4);
+        \draw [ultra thick] (\GCbigx + 4, \GCbigy) -- node {} 
+        (\GCbigx + 4, \GCbigy - 4);
+        \draw [ultra thick] (\GCbigx + 4, \GCbigy - 4) -- node {General Case} 
+        (\GCbigx, \GCbigy - 4);
         \draw [ultra thick] (\GCbigx, \GCbigy - 4) -- node {} (\GCbigx, \GCbigy);
 
         % First Line
         \node[state, minimum size=1.5cm] (zero) {(0,0)};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] (one) {(0,1)};
-        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] (two) {\textbf{\( \ddots \)}};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] (three) {(0,T)};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] (five) {\textbf{\dots}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] 
+        (one) {(0,1)};
+        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] 
+        (two) {\textbf{\( \ddots \)}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] 
+        (three) {(0,T)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] 
+        (four) {(0,T+1)};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] 
+        (five) {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of five] (six) {(0,C)};
         \node[draw=none, minimum size=\minsz, right=of six] (seven) {\textbf{\dots}};
 
@@ -88,24 +113,36 @@ The following Markov chain represents the transition between states of a hospita
         % Third Line
         \node[state, minimum size=\minsz, below=of three_one] (three_two) {(2,T)};
         \node[state, minimum size=\minsz, below=of four_one] (four_two) {(2,T+1)};
-        \node[draw=none, minimum size=\minsz, below=of five_one] (five_two) {\textbf{\dots}};
+        \node[draw=none, minimum size=\minsz, below=of five_one] (five_two) 
+        {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of five_two] (six_two) {(2,C)};
-        \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) {\textbf{\dots}};
+        \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) 
+        {\textbf{\dots}};
 
         % Fourth line
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] (three_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] (four_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = 2cm, minimum size=\minsz, below=of five_two] (five_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] (six_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] 
+        (three_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] 
+        (four_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = 2cm, minimum size=\minsz, below=of five_two] 
+        (five_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] 
+        (six_three) {\textbf{\vdots}};
 
         % Fifth line
-        % \node[state, node distance = \altdist, minimum size=\minsz, below=of five_three] (general_case_mid) {\( (u_i, v_i) \)};
-        \node[draw=none, node distance = 0.3cm, minimum size=\minsz, below=of four_three] (general_case_up) {};
-        \node[state, node distance = \altdist, minimum size=\minsz, below=of general_case_up] (general_case_mid) {\( (u_i, v_i) \)};
+        % \node[state, node distance = \altdist, minimum size=\minsz, below=of five_three] 
+        % (general_case_mid) {\( (u_i, v_i) \)};
+        \node[draw=none, node distance = 0.3cm, minimum size=\minsz, below=of four_three] 
+        (general_case_up) {};
+        \node[state, node distance = \altdist, minimum size=\minsz, below=of general_case_up] 
+        (general_case_mid) {\( (u_i, v_i) \)};
 
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of general_case_mid] (general_case_down) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, left=of general_case_mid] (general_case_left) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of general_case_mid] (general_case_right) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of general_case_mid] 
+        (general_case_down) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, left=of general_case_mid] 
+        (general_case_left) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of general_case_mid] 
+        (general_case_right) {};
 
         \draw[every loop]
             % First Horizontal Edges
@@ -178,7 +215,9 @@ The following Markov chain represents the transition between states of a hospita
 
 
 \subsection{Markov-chain state mapping function}
-The transition matrix of the Markov-chain representation described above can be denoted by a state mapping function. The state space of this function is defined as:
+The transition matrix of the Markov-chain representation described above can be 
+denoted by a state mapping function. 
+The state space of this function is defined as:
 
 
 
@@ -188,23 +227,38 @@ The transition matrix of the Markov-chain representation described above can be 
     S_2(T) =& \{(u, v)\in\mathbb{N}_0^2 \; | \; v \geq T \} \nonumber
 \end{align}
 
-Therefore, the entries of the transition matrix \(Q\), can be given by \( q_{i,j} = q_{(u_i, v_i),(u_j, v_j)} \) which is the transition rate from state \( i = (u_i, v_i) \) to state \( j = (u_j , v_j) \) for all \( (u_i, v_i), (u_j, v_j) \in S \).
+Therefore, the entries of the transition matrix \(Q\), can be given by 
+\( q_{i,j} = q_{(u_i, v_i),(u_j, v_j)} \) which is the transition rate from state 
+\( i = (u_i, v_i) \) to state \( j = (u_j , v_j) \) for all 
+\( (u_i, v_i), (u_j, v_j) \in S \).
 
 \begin{equation} \label{eq:markov_transition_rate}
     q_{i, j} = 
     \begin{cases}
-        \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\
-        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i \geq \text{t} \\
+        \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } 
+        v_i < \text{t} \\
+        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } 
+        v_i \geq \text{t} \\
         \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
-        v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i \leq C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = T \leq C \\
-        C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = T > C\\
-        % T \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } v_i = \text{t} \\
+        v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } 
+        v_i \leq C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) 
+        \textbf{ and } v_i = T \leq C \\
+        C \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } v_i > C 
+        \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) \textbf{ and } 
+        v_i = T > C\\
         -\sum_{j=1}^{|Q|}{q_{i,j}} & \textbf{if } i = j \\
         0, & \textbf{otherwise}
     \end{cases}
 \end{equation}
 
-In order to acquire an exact solution of the problem a slight adjustment needs to be considered. The problem defined above assumes no upper boundary to the number of people that can wait for service or the number of ambulances that can be parked outside. Therefore, a different state space \( \tilde S \) needs to be constructed where \( \tilde S \subseteq S \) and there is a maximum allowed number of people \( N \) that can be in the system and a maximum allowed number of ambulances \( M \) parked outside:
+In order to acquire an exact solution of the problem a slight adjustment needs to 
+be considered. 
+The problem defined above assumes no upper boundary to the number of people that 
+can wait for service or the number of ambulances that can be parked outside. 
+Therefore, a different state space \( \tilde S \) needs to be constructed where 
+\( \tilde S \subseteq S \) and there is a maximum allowed number of people \( N \) 
+that can be in the system and a maximum allowed number of ambulances \( M \) 
+parked outside:
 
 \begin{equation}
     \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N \right\}
@@ -212,23 +266,42 @@ In order to acquire an exact solution of the problem a slight adjustment needs t
 
 
 \subsection{Steady State}
-Having calculated the transition matrix \( Q \) for a given set of parameters the probability vector \( \pi \) needs to be considered. The vector \( \pi \) is commonly used to study such stochastic systems and it's main purpose is to keep track of the probability of being at any given state of the system. The term \textit{steady state} refers to the instance of the vector \( \pi \) where the probabilities of being at any state become stable over time. Thus, by considering the steady state vector \( \pi \) the relationship between it and \(Q \) is given by:
+Having calculated the transition matrix \( Q \) for a given set of parameters the 
+probability vector \( \pi \) needs to be considered. 
+The vector \( \pi \) is commonly used to study such stochastic systems and it's 
+main purpose is to keep track of the probability of being at any given state of 
+the system. 
+The term \textit{steady state} refers to the instance of the vector \( \pi \) where 
+the probabilities of being at any state become stable over time. 
+Thus, by considering the steady state vector \( \pi \) the relationship between 
+it and \(Q \) is given by:
 
 \[
 \frac{d\pi}{dt} = \pi Q = 0
 \]
 
-There are numerous methods that can be used to solve problems of such kind. In this paper only numeric and algebraic approaches will be considered. 
+There are numerous methods that can be used to solve problems of such kind. 
+In this paper only numeric and algebraic approaches will be considered. 
 
 \subsubsection{Numeric integration}
-The first approach to be considered is to solve the differential equation numerically by observing the behaviour of the model over time. The solution is obtained via python's SciPy library. The functions odeint and solve\textunderscore ivp have been used in order to find a solution to the problem. Both of these functions can be used to solve any system of first order ODEs.
+The first approach to be considered is to solve the differential equation numerically 
+by observing the behaviour of the model over time. 
+The solution is obtained via python's SciPy library. 
+The functions odeint and solve\textunderscore ivp have been used in order to find 
+a solution to the problem. 
+Both of these functions can be used to solve any system of first order ODEs.
 
 \subsubsection{Linear algebraic approach}
-Another approach to be considered is the linear algebraic method. The steady state vector can be found algebraically by satisfying the following set of equations:
+Another approach to be considered is the linear algebraic method. 
+The steady state vector can be found algebraically by satisfying the following set 
+of equations:
 \[ \pi Q = 0 \]
 \[ \sum_{i} \pi_i = 1 \]
 
-These equations can be solved by slightly altering \( Q \) such that the final column is replaced by a vector of ones. Thus, the resultant solution occurs from solving the equation \( \tilde{Q}^T \pi = b \) where \( \tilde{Q} \) and \( b \) are defined as:
+These equations can be solved by slightly altering \( Q \) such that the final column 
+is replaced by a vector of ones. 
+Thus, the resultant solution occurs from solving the equation \( \tilde{Q}^T \pi = b \) 
+where \( \tilde{Q} \) and \( b \) are defined as:
 
 \[
 \tilde{q_{i, j}} = 
@@ -250,7 +323,11 @@ b =
 
 
 \subsubsection{Least Squares approach}
-Finally, the last approach to be considered is the least squares method. This approach is considered because while the problem becomes more complex (in terms of input parameters) the computational time required to solve it increases exponentially. Thus, one may obtain the steady state vector \( \pi \) by solving the following equation.
+Finally, the last approach to be considered is the least squares method. 
+This approach is considered because while the problem becomes more complex (in terms 
+of input parameters) the computational time required to solve it increases exponentially. 
+Thus, one may obtain the steady state vector \( \pi \) by solving the following 
+equation.
 
 \[
 \pi = \text{argmin}_{x\in\mathbb{R}^{d}}\|Mx-b\|_2^2

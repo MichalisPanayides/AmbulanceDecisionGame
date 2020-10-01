@@ -1,7 +1,9 @@
 \subsection{Graph Theoretical Approach}
 % TODO: Generalise notation in entire section 
 
-This section aims to investigate the connection between Markov chains and graph theory by exploring alternative ways of calculating the steady state probabilities and considering the problem from different perspectives.
+This section aims to investigate the connection between Markov chains and graph 
+theory by exploring alternative ways of calculating the steady state probabilities 
+and considering the problem from different perspectives.
 
 \subsubsection{Parameters}
 The parameters considered as inputs are:
@@ -16,21 +18,30 @@ The parameters considered as inputs are:
 \end{multicols}
 
 % TODO: Generalise notation - change ambulance patients and other patients into class 1 and 2 patients
-Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate (\(\lambda^A, \lambda^o, \mu\)). 
+Additional parameters of the model are the ambulance arrival rate, the others' 
+arrival rate and the service rate (\(\lambda^A, \lambda^o, \mu\)). 
 More specifically, the way these parameters are translated into the model are:
 
 \begin{itemize}
-    \item \textbf{Number of servers (\(C\)):} Affects the weight of all edges \((v_i, v_j) \in E\) in the Markov chain that correspond to a service rate. These edges have a weight of: 
+    \item \textbf{Number of servers (\(C\)):} Affects the weight of all edges 
+    \((v_i, v_j) \in E\) in the Markov chain that correspond to a service rate. 
+    These edges have a weight of: 
     \begin{equation*}
         w_{(v_i, v_j)} = q_{v_i, v_j}
     \end{equation*}
     where \(q_{i,j}\) is defined in equation \ref{eq:markov_transition_rate}.
-    Thus, the coefficients of the service rate have a lower bound of \(1\) and an upper bound of \(C\).
-    \item \textbf{Threshold (\(T\)):} Determines the length of the left \textit{arm} of the model. 
-    In essence the threshold acts as a breakpoint between states where \(u=0\) and states where \(0 \leq u \leq M\). 
-    Increasing \(T\) results in having more set of states where \(u\) can only be \(0\).
-    \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all states \((u,v)\).
-    \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all states \((u,v)\) such that \(u \geq T\).
+    Thus, the coefficients of the service rate have a lower bound of \(1\) and 
+    an upper bound of \(C\).
+    \item \textbf{Threshold (\(T\)):} Determines the length of the left 
+    \textit{arm} of the model. 
+    In essence the threshold acts as a breakpoint between states where \(u=0\) 
+    and states where \(0 \leq u \leq M\). 
+    Increasing \(T\) results in having more set of states where \(u\) can only 
+    be \(0\).
+    \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all 
+    states \((u,v)\).
+    \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all 
+    states \((u,v)\) such that \(u \geq T\).
 \end{itemize}
 
 
@@ -38,24 +49,39 @@ More specifically, the way these parameters are translated into the model are:
 
 \begin{figure}[h]
     \centering
-    \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/example_model_1352/main.tex}}
+    \scalebox{0.7}{
+        \input{MarkovChain/closed_form_state_probs/example_model_1352/main.tex}
+        }
     \caption{\(C=1, T=3, N=5, M=2\)}
     \label{fig:Markov_1352_example_for_closed_form}
 \end{figure}
 
-In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such a Markov model is shown where \(C=1\), \(T=3\) which means that the \textit{left arm} of the model has a length of \(3\), \(N=5\) that indicates that the right-most states \((u,v)\) are of the form \((u,5)\) and \(M=2\) that equivalently shows that the bottom states are of the form \((2,v)\).
+In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such a 
+Markov model is shown where \(C=1\), \(T=3\) which means that the \textit{left 
+arm} 
+of the model has a length of \(3\), \(N=5\) that indicates that the right-most 
+states \((u,v)\) are of the form \((u,5)\) and \(M=2\) that equivalently shows 
+that the bottom states are of the form \((2,v)\).
 
 \subsubsection{A graph theoretic model underling the Markov chain}
 
-An additional approach that one may consider to get the state probabilities is the graph theoretical approach for state probabilities.
-Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M = (V, E)\) where \(V=S\) from equation \ref{eq:state_space} and \((v_i, v_j)\in E\) if and only if \(q_{v_i, v_j}>0\). Furthermore, the weights are given by:
+An additional approach that one may consider to get the state probabilities is 
+the graph theoretical approach for state probabilities.
+Thus, it can be assumed that a Markov chain model \(M\) can be translated as a 
+weighted directed graph \(G_M = (V, E)\) where \(V=S\) from equation 
+\ref{eq:state_space} and \((v_i, v_j)\in E\) if and only if \(q_{v_i, v_j}>0\). 
+Furthermore, the weights are given by:
 \[
     w(v_i, v_j) = q_{v_i, v_j}
 \]
 
-A \textit{directed spanning tree} of a directed graph is defined as a subset of the graph that visits all the vertices of the graph and does not include any cycles. 
-Unlike undirected spanning trees, directed ones also have a root which means that a directed spanning tree that is rooted at a vertex \(v\) has to have a path from any other vertex to vertex \(v\). 
-For example, consider the graph shown in figure \ref{fig:example_spanning_tree}. The graph points out a spanning tree that is rooted at vertex 3.
+A \textit{directed spanning tree} of a directed graph is defined as a subset of 
+the graph that visits all the vertices of the graph and does not include any cycles. 
+Unlike undirected spanning trees, directed ones also have a root which means 
+that a directed spanning tree that is rooted at a vertex \(v\) has to have a 
+path from any other vertex to vertex \(v\). 
+For example, consider the graph shown in figure \ref{fig:example_spanning_tree}.
+The graph points out a spanning tree that is rooted at vertex 3.
 
 
 \begin{figure}[h]
@@ -79,15 +105,19 @@ For example, consider the graph shown in figure \ref{fig:example_spanning_tree}.
     \label{fig:example_spanning_tree}
 \end{figure}
 
-Additionally, let us denote the set of all spanning trees of \(G\) as \(T(G)\) and the subset of \(T(G)\) that includes only the spanning trees that are rooted at vertex \(v\) as \(T_v(G)\). 
-The weight of a spanning tree \(t\) can be defined as the product of the weights of the edges it contains: 
+Additionally, let us denote the set of all spanning trees of \(G\) as \(T(G)\) 
+and the subset of \(T(G)\) that includes only the spanning trees that are rooted 
+at vertex \(v\) as \(T_v(G)\). 
+The weight of a spanning tree \(t\) can be defined as the product of the weights 
+of the edges it contains: 
 
 \[w(t)=\prod_{e \in t} w(e)\]
 
 
 
 \textbf{Theorem: Markov chain tree theorem} \cite{markov-chain-tree-theorem} \newline
-\textit{Let M be an irreducible Markov chain on n states with stationary distribution \(\pi_1, \pi_2, \dots, \pi_n\). 
+\textit{Let M be an irreducible Markov chain on n states with stationary 
+distribution \(\pi_1, \pi_2, \dots, \pi_n\). 
 Let \(G_M\) be the directed graph associated with \(M\). 
 Then the probability of being at state \(u\) is given by:}
 
@@ -95,8 +125,11 @@ Then the probability of being at state \(u\) is given by:}
     \pi_i = \frac{\sum_{t \in T_i(G_M)} w(t)}{\sum_{t \in T(G_M)}w(t)}
 \end{equation}
 
-Equation \ref{markov-chain-tree-theorem} states that the probability of being at state \(u\) can be found by dividing the sum of the weights of all trees in \(T_u(G)\) by the sum of the weights of all tress in \(T(G)\). 
-Let us ignore the denominator of that fraction for now and focus only on the numerator denoted as \(\tilde{\pi}_i=\sum_{t \in T_i(G_M)} w(t)\)
+Equation \ref{markov-chain-tree-theorem} states that the probability of being at
+state \(u\) can be found by dividing the sum of the weights of all trees in 
+\(T_u(G)\) by the sum of the weights of all tress in \(T(G)\). 
+Let us ignore the denominator of that fraction for now and focus only on the 
+numerator denoted as \(\tilde{\pi}_i=\sum_{t \in T_i(G_M)} w(t)\)
 
  
 
@@ -104,8 +137,11 @@ Let us ignore the denominator of that fraction for now and focus only on the num
 \subsubsection{Spanning Trees rooted at \((0,0)\)}
 
 Let us now consider some examples of spanning trees that are rooted at \((0,0)\). 
-For each of the following examples the complete graph \(G\) is shown, then all possible trees of \(T_{(0,0)}(G)\) along with the weight associated with each spanning tree.
-As well as this, the sum of all the weights of the spanning trees denoted by \(\tilde{\pi}_{(0,0)}\) is also included.
+For each of the following examples the complete graph \(G\) is shown, then all 
+possible trees of \(T_{(0,0)}(G)\) along with the weight associated with each 
+spanning tree.
+As well as this, the sum of all the weights of the spanning trees denoted by 
+\(\tilde{\pi}_{(0,0)}\) is also included.
 
 \begin{figure}[h]
     \centering
@@ -149,7 +185,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}}
+        \scalebox{0.7}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -160,7 +197,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}}
+        \scalebox{0.7}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -171,7 +209,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}}
+        \scalebox{0.7}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -182,7 +221,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}
+        \scalebox{0.7}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -193,7 +233,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
+        \scalebox{0.7}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -202,7 +243,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \end{multicols}
 
 \begin{equation*}
-    \tilde{\pi}_{(0,0)} = (\lambda^A)^2 \mu^4 + 2 \lambda^A \mu^5 + \lambda^A \lambda^o \mu^4 + \mu^6
+    \tilde{\pi}_{(0,0)} = (\lambda^A)^2 \mu^4 + 2 \lambda^A \mu^5 + 
+    \lambda^A \lambda^o \mu^4 + \mu^6
 \end{equation*}
 
 
@@ -215,7 +257,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{4}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_0.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_0.tex}}
     \end{figure}
     \vspace*{\fill}
     \columnbreak
@@ -227,7 +270,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
     \columnbreak
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_1.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_1.tex}}
     \end{figure}
     \vspace*{\fill}
     \columnbreak
@@ -240,7 +284,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \begin{multicols}{4}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_2.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_2.tex}}
     \end{figure}
     \vspace*{\fill}
     \columnbreak
@@ -252,7 +297,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
     \columnbreak
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_3.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1122/main_3.tex}}
     \end{figure}
     \vspace*{\fill}
     \columnbreak
@@ -270,142 +316,204 @@ As well as this, the sum of all the weights of the spanning trees denoted by \(\
 \newpage
 \subsubsection{Conjecture of adding rows}
 
-Let us consider three Markov models with the same number of servers \(C=1\), the same threshold \(T=1\), the same system capacity \(N=2\) but \(M\in\{1, 2, 3\}\).
+Let us consider three Markov models with the same number of servers \(C=1\), 
+the same threshold \(T=1\), the same system capacity \(N=2\) but 
+\(M\in\{1, 2, 3\}\).
 
 
 \begin{multicols}{3}
     \begin{figure}[H]
         \centering
-        \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1121/main.tex}}
+        \scalebox{0.8}{
+            \input{MarkovChain/closed_form_state_probs/example_model_1121/main.tex}}
         \caption{\(M=1\)}
     \end{figure}
     \columnbreak
     \begin{figure}[H]
         \centering
-        \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1122/main.tex}}
+        \scalebox{0.8}{
+            \input{MarkovChain/closed_form_state_probs/example_model_1122/main.tex}}
         \caption{\(M=2\)}
     \end{figure}
     \begin{figure}[H]
         \centering
-        \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1123/main.tex}}
+        \scalebox{0.8}{
+            \input{MarkovChain/closed_form_state_probs/example_model_1123/main.tex}}
         \caption{\(M=3\)}
     \end{figure}
 \end{multicols}
 
-By increasing the parking capacity of the system it can be observed that \(|T_{(0,0)}(G)|\) increases as well since more combinations of paths can be generated using the new edges and vertices. 
+By increasing the parking capacity of the system it can be observed that 
+\(|T_{(0,0)}(G)|\) increases as well since more combinations of paths can be 
+generated using the new edges and vertices. 
 The corresponding values of \(\tilde{\pi}_{(0,0)}\) of the three systems are:
 
 \begin{align}
-    M = 1: \tilde{\pi}_{(0,0)} &= \mu^4 + \mu^3 \lambda_A = \mu^3 (\mu + \lambda^A) \label{eq:rows-conjecture-1}\\
-    M = 2: \tilde{\pi}_{(0,0)} &= \mu^6 + 2\mu^5 \lambda_A + \mu^4 (\lambda^A)^2 = \mu^4(\mu^2 + 2\mu \lambda_A + (\lambda^A)^2) = \mu^4 (\mu + \lambda^A) ^ 2 \label{eq:rows-conjecture-2}\\
-    M = 3: \tilde{\pi}_{(0,0)} &= \mu^8 + 3 \mu^7 \lambda^A + 3 \mu^6 (\lambda^A)^2 + \mu^5(\lambda^A)^3 \nonumber \\
-    &= \mu^5 (\mu^3 + 3 \mu ^2 \lambda^A + 3 \mu (\lambda^A)^2 + (\lambda^A)^3) \nonumber \\
+    M = 1: \tilde{\pi}_{(0,0)} &= \mu^4 + \mu^3 \lambda_A = 
+    \mu^3 (\mu + \lambda^A) \label{eq:rows-conjecture-1}\\
+    M = 2: \tilde{\pi}_{(0,0)} &= \mu^6 + 2\mu^5 \lambda_A + \mu^4 (\lambda^A)^2 
+    = \mu^4(\mu^2 + 2\mu \lambda_A + (\lambda^A)^2) 
+    = \mu^4 (\mu + \lambda^A) ^ 2 \label{eq:rows-conjecture-2}\\
+    M = 3: \tilde{\pi}_{(0,0)} &= \mu^8 + 3 \mu^7 \lambda^A + 
+    3 \mu^6 (\lambda^A)^2 + \mu^5(\lambda^A)^3 \nonumber \\
+    &= \mu^5 (\mu^3 + 3 \mu ^2 \lambda^A + 3 \mu (\lambda^A)^2 + (\lambda^A)^3) 
+    \nonumber \\
     &= \mu^5 (\mu + \lambda^A) ^ 3 \label{eq:rows-conjecture-3}
 \end{align}
 
-Note that in equations (\ref{eq:rows-conjecture-1}),(\ref{eq:rows-conjecture-2}) and (\ref{eq:rows-conjecture-3}), the following equation holds: 
+Note that in equations (\ref{eq:rows-conjecture-1}),(\ref{eq:rows-conjecture-2}) 
+and (\ref{eq:rows-conjecture-3}), the following equation holds: 
 
 \begin{equation}\label{eq:rows-conjecture-general}
     \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (\mu + \lambda^A)^M
 \end{equation}
 
 % TODO: Perform experiments to validate this
-This relationship has been verified experimentally for ... and the data set is archived at ... 
-A generalisation of equation \ref{eq:rows-conjecture-general}, where \(N \geq 1\), is given in terms of an unknown function \(k(C,T,N)\) as:
+This relationship has been verified experimentally for ... and the data set is 
+archived at ... 
+A generalisation of equation \ref{eq:rows-conjecture-general}, where \(N \geq 1\), 
+is given in terms of an unknown function \(k(C,T,N)\) as:
 
 \begin{equation}
     \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M
 \end{equation}
 
-Thus, having investigated the effect of adding rows (increasing \(M\)) it remains to investigate the effect of adding columns (increasing \(N\)) and finding an expression for \(k(C,T,N)\).
+Thus, having investigated the effect of adding rows (increasing \(M\)) it remains 
+to investigate the effect of adding columns (increasing \(N\)) and finding an 
+expression for \(k(C,T,N)\).
 
 \subsubsection{The effect of increasing \(N\) (Incomplete section)}
-In this section we will consider a parking capacity of \(M=1\) and see the effect of modifying other parameters on \(k(C, T, N)\).
+In this section we will consider a parking capacity of \(M=1\) and see the effect 
+of modifying other parameters on \(k(C, T, N)\).
 
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.9}{\input{MarkovChain/closed_form_state_probs/example_model_1121/main.tex}}
+        \scalebox{0.9}{
+            \input{MarkovChain/closed_form_state_probs/example_model_1121/main.tex}}
     \end{figure}
     \columnbreak
     \begin{figure}[H]
         \centering
-        \scalebox{0.9}{\input{MarkovChain/closed_form_state_probs/example_model_1131/main.tex}}
+        \scalebox{0.9}{
+            \input{MarkovChain/closed_form_state_probs/example_model_1131/main.tex}}
     \end{figure}
 \end{multicols}
 \vspace{-0.5cm}
 \begin{alignat}{2} \label{eq:00_rate_1131}
-    \hspace{4em} & \tilde{\pi}_{(0,0)} = \mu^3[\lambda^a + \mu] \hspace{8em} & \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A \mu + \mu^2] 
+    \hspace{4em} & \tilde{\pi}_{(0,0)} = \mu^3[\lambda^a + \mu] \hspace{8em} & 
+    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A 
+    \mu + \mu^2] 
 \end{alignat}
 
 
 \begin{figure}[h]
     \centering
-    \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1141/main.tex}}
+    \scalebox{0.8}{
+        \input{MarkovChain/closed_form_state_probs/example_model_1141/main.tex}}
 \end{figure}
 \begin{equation}\label{eq:00_rate_1141}
-    \tilde{\pi}_{(0,0)} = \mu^5[(\lambda^A)^3 + 2(\lambda^A)^2 \lambda^o + 3(\lambda^A)^2 \mu + \lambda^A (\lambda^o)^2 + 2\lambda^A \lambda^o \mu + 3\lambda^A \mu^2 + \mu^3]
+    \tilde{\pi}_{(0,0)} = \mu^5[(\lambda^A)^3 + 2(\lambda^A)^2 \lambda^o + 
+    3(\lambda^A)^2 \mu + \lambda^A (\lambda^o)^2 + 2\lambda^A \lambda^o \mu + 
+    3\lambda^A \mu^2 + \mu^3]
 \end{equation}
 
 \begin{figure}[h]
     \centering
-    \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1151/main.tex}}
+    \scalebox{0.8}{
+        \input{MarkovChain/closed_form_state_probs/example_model_1151/main.tex}}
 \end{figure}
 \begin{align}\label{eq:00_rate_1151}
-    \tilde{\pi}_{(0,0)} =& \mu^6[(\lambda^A)^4 + 3(\lambda^A)^3 \lambda^o + 4(\lambda^A)^3 \mu + 3(\lambda^A)^2 (\lambda^o)^2 + 6(\lambda^A)^2 \lambda^o \mu \\
-    & + 6(\lambda^A)^2 \mu^2 + \lambda^A (\lambda^o)^3 + 2\lambda^A (\lambda^o)^2 \mu + 3\lambda^A \lambda^o \mu^2 + 4\lambda^A \mu^3 + \mu^4] \nonumber
+    \tilde{\pi}_{(0,0)} =& \mu^6[(\lambda^A)^4 + 3(\lambda^A)^3 \lambda^o + 
+    4(\lambda^A)^3 \mu + 3(\lambda^A)^2 (\lambda^o)^2 + 
+    6(\lambda^A)^2 \lambda^o \mu \\
+    & + 6(\lambda^A)^2 \mu^2 + \lambda^A (\lambda^o)^3 + 
+    2\lambda^A (\lambda^o)^2 \mu + 3\lambda^A \lambda^o \mu^2 + 
+    4\lambda^A \mu^3 + \mu^4] \nonumber
 \end{align}
 
 \newpage
-As explained in equation \ref{eq:rows-conjecture-general} the expressions defined above can boil down to a general form equation of the form \(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). 
+As explained in equation \ref{eq:rows-conjecture-general} the expressions defined 
+above can boil down to a general form equation of the form 
+\(\tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M\). 
 The only thing missing is an expression for \(k(C,T,N)\). 
 An initial attempt to get such an expression can be seen below:
 
 \begin{align}\label{eq:columns-conjecture-general}
-    k(C,T,N) &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} \sum_{p_3=C - p_1 - p_2 - 1}^{C - p_1 - p_2 - 1} R(p_1, p_2, p_3) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3} \nonumber \\ 
-    &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} R(p_1, p_2, C-p_1-p_2-1) (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} 
+    k(C,T,N) &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} 
+    \sum_{p_3=C - p_1 - p_2 - 1}^{C - p_1 - p_2 - 1} R(p_1, p_2, p_3) 
+    (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3} \nonumber \\ 
+    &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} R(p_1, p_2, C-p_1-p_2-1) 
+    (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} 
 \end{align}
 
-In equation \ref{eq:columns-conjecture-general} the coefficient function \(R(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of \(\lambda^A, \lambda^o \text{ and } \mu\). 
-Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). 
-For the starting coefficients of the model the function \(R(p_1,p_2,p_3)\) gives the values of the coefficients and is defined as:
+In equation \ref{eq:columns-conjecture-general} the coefficient function 
+\(R(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of 
+\(\lambda^A, \lambda^o \text{ and } \mu\). 
+Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) 
+since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). 
+For the starting coefficients of the model the function \(R(p_1,p_2,p_3)\) gives 
+the values of the coefficients and is defined as:
 
 \begin{equation} \label{eq:coefficient-function}
     R(p_1,p_2,p_3) = 
     \begin{cases}
         0 & \text{if } p_1 = 0 \text{ and } p_2 > 0 \vspace{0.1cm} \\
         1 & \text{if } p_1, p_2 = 0 \text{ and } p_3 > 0 \vspace{0.2cm} \\
-        \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 0 \text{ and } p_1 > 0 \vspace{0.2cm} \\
-        \binom{p_1 + p_2 - 1}{p_2} & \text{if } p_3 = 0 \text{ and } p_1, p_2 > 0 \vspace{0.2cm} \\
+        \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 0 
+        \text{ and } p_1 > 0 \vspace{0.2cm} \\
+        \binom{p_1 + p_2 - 1}{p_2} & \text{if } p_3 = 0 
+        \text{ and } p_1, p_2 > 0 \vspace{0.2cm} \\
         p_3 + 1 & \text{if } p_1 = 1 \vspace{0.2cm} \\
-        \binom{p_1 + p_3 + 1}{p_1} + p_3 \binom{p_1 + p_3}{p_3+1} - \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 1 \text{ and } p_1 > 1 \vspace{0.2cm} \\
-        \binom{p_1 + p_2 + 1}{p_1} - \binom{p_1 + p_2 - 1}{p_2-1} + \sum_{i=p_2}^{p_1 + p_2 - 2} i \binom{i-1}{p_2 - 1} & \text{if } p_3 = 1 \text{ and } p_1,p_2 > 1 \vspace{0.2cm} \\
+        \binom{p_1 + p_3 + 1}{p_1} + p_3 \binom{p_1 + p_3}{p_3+1} - 
+        \binom{p_1 + p_3}{p_3} & \text{if } p_2 = 1 
+        \text{ and } p_1 > 1 \vspace{0.2cm} \\
+        \binom{p_1 + p_2 + 1}{p_1} - \binom{p_1 + p_2 - 1}{p_2-1} + 
+        \sum_{i=p_2}^{p_1 + p_2 - 2} i \binom{i-1}{p_2 - 1} & \text{if } p_3 = 1 
+        \text{ and } p_1,p_2 > 1 \vspace{0.2cm} \\
         U_{p_1,p_2,p_3} & \text{otherwise}
     \end{cases}
 \end{equation}
 
-Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. 
-The function \(R\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given system and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. 
-For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms from the equations above:
+Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients 
+that are unknown and are currently investigated. 
+The function \(R\) takes as arguments a possible combination of numbers of 
+\(\lambda^A, \lambda^o \text{ and } \mu \) for a given system and outputs the 
+coefficient of that term which in turn represents how many spanning trees exist 
+in the graph with that specific combination. 
+For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms 
+from the equations above:
 
 \begin{multicols}{2}
     \begin{itemize}
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): \(R(2,0,0) = \binom{2+0}{0} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): \(R(1,1,0) = \binom{1+1-1}{1} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): \(R(1,0,1) = \binom{1+1}{1} = 2\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): 
+        \(R(2,0,0) = \binom{2+0}{0} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): 
+        \(R(1,1,0) = \binom{1+1-1}{1} = 1\)
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): 
+        \(R(1,0,1) = \binom{1+1}{1} = 2\)
         \item (\ref{eq:00_rate_1131}) \( \Rightarrow \mu^2\): \(R(0,0,2) = 1\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): \(R(2,1,0) = \binom{2+1-1}{1} = 2\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): \(R(2,0,1) = \binom{2+1}{1} = 3\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): \(R(1,0,2) = \binom{1+2}{2} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): \(R(3,1,0) = \binom{3+1-1}{1} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): \(R(2,2,0) = \binom{3}{2} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): \(R(2,0,2) = \binom{2+2}{2} = 6\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): 
+        \(R(2,1,0) = \binom{2+1-1}{1} = 2\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): 
+        \(R(2,0,1) = \binom{2+1}{1} = 3\)
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): 
+        \(R(1,0,2) = \binom{1+2}{2} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): 
+        \(R(3,1,0) = \binom{3+1-1}{1} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): 
+        \(R(2,2,0) = \binom{3}{2} = 3\)
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): 
+        \(R(2,0,2) = \binom{2+2}{2} = 6\)
     \end{itemize}
 \end{multicols}
 
 \begin{itemize}
-    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): \(R(2,1,1) = \binom{2+1+1}{2} + 1\binom{2+1}{1+1} - \binom{2+1}{1} = 6 + 3 - 3 = 6\)
-    \item \small{(e.g)} \( \Rightarrow (\lambda^A)^2 (\lambda^o)^2 \mu\): \(R(2,2,1) = \binom{2+2+1}{2} - \binom{2+2-1}{2-1} + \sum_{i=2}^{2+2-2} i\binom{i-1}{2-1} = 10 - 3 + (2 \times 1) = 9\)
+    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): 
+    \(R(2,1,1) = \binom{2+1+1}{2} + 1\binom{2+1}{1+1} - \binom{2+1}{1} = 6 + 3 - 3 = 6\)
+    \item \small{(e.g)} \( \Rightarrow (\lambda^A)^2 (\lambda^o)^2 \mu\): 
+    \(R(2,2,1) = \binom{2+2+1}{2} - \binom{2+2-1}{2-1} + \sum_{i=2}^{2+2-2} 
+    i\binom{i-1}{2-1} = 10 - 3 + (2 \times 1) = 9\)
 \end{itemize}
 
 
@@ -413,7 +521,8 @@ For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms fr
 \subsubsection{Unknown terms}
 
 The terms that remain unknown are the terms where \(p_1, p_2, p_3 \geq 2\). 
-Here are some of these values with the corresponding values of the \(R(p_1,p_2,p_3)\) function.
+Here are some of these values with the corresponding values of the 
+\(R(p_1,p_2,p_3)\) function.
 
 \begin{multicols}{2}
     \begin{itemize}
@@ -433,21 +542,36 @@ Here are some of these values with the corresponding values of the \(R(p_1,p_2,p
 \subsubsection{DRL arrays}
 
 In this section a new combinatorial object is defined: DRL arrays. 
-It will be shown that there is a bijection between DRL arrays and the spanning trees in \(G_M\).
-DRL arrays will then be enumerated which in turn enumerates the trees of \(T_{(0,0)}(G_M)\).
-Consider the following Markov model and the spanning trees rooted at state \((0,0)\) that are associated with it. 
+It will be shown that there is a bijection between DRL arrays and the spanning 
+trees in \(G_M\).
+DRL arrays will then be enumerated which in turn enumerates the trees of 
+\(T_{(0,0)}(G_M)\).
+Consider the following Markov model and the spanning trees rooted at state 
+\((0,0)\) that are associated with it. 
 
 \begin{figure}[h]
     \centering
-    \scalebox{0.8}{\input{MarkovChain/closed_form_state_probs/example_model_1131/main.tex}} \vspace{0.8cm} \\
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}} \hspace{0.7cm}
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}} \vspace{0.4cm} \\
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}} \hspace{0.7cm}
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}\vspace{0.4cm} \\
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
+    \scalebox{0.8}{
+        \input{MarkovChain/closed_form_state_probs/example_model_1131/main.tex}} 
+        \vspace{0.8cm} \\
+    \scalebox{0.6}{
+        \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}} 
+        \hspace{0.7cm}
+    \scalebox{0.6}{
+        \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}} 
+        \vspace{0.4cm} \\
+    \scalebox{0.6}{
+        \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}} 
+        \hspace{0.7cm}
+    \scalebox{0.6}{
+        \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}
+        \vspace{0.4cm} \\
+    \scalebox{0.6}{
+        \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
 \end{figure}
 
-Looking at these spanning trees from a different perspective it can be observed that all spanning trees of the specific model have some edges in common. 
+Looking at these spanning trees from a different perspective it can be observed 
+that all spanning trees of the specific model have some edges in common. 
 
 \begin{multicols}{4}
     \begin{itemize}
@@ -458,8 +582,10 @@ Looking at these spanning trees from a different perspective it can be observed 
     \end{itemize}
 \end{multicols}
 
-These edges are the ones on the bottom row of the model, on the \textit{threshold column} and on the \textit{arm} of the model. 
-In general the set of edges that are present on all spanning trees can be denoted by:
+These edges are the ones on the bottom row of the model, on the 
+\textit{threshold column} and on the \textit{arm} of the model. 
+In general the set of edges that are present on all spanning trees can be 
+denoted by:
 \begin{align} \label{eq:common_edges_set}
     S &= S_1 \cup S_2 \cup S_3 \nonumber\\
     S_2 &= \{(M,v) \rightarrow (M,v-1) \; | \; T < v \leq N\} \nonumber \\
@@ -467,17 +593,24 @@ In general the set of edges that are present on all spanning trees can be denote
     S_3 &= \{(0,v) \rightarrow (0,v-1) \; | \; 0 < v \leq T\} \nonumber \\
 \end{align}
 
-In addition, these edges that are common to every spanning tree (for a threshold of \(T=1\)) have the same weight of \(\mu\). 
-In this specified model there are four of these edges, each with a weight of \(\mu\). 
-Thus, since these edges exist on all spanning trees, the weight of every spanning tree must have include a term \(\mu^4\). 
-Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov model:
+In addition, these edges that are common to every spanning tree (for a threshold 
+of \(T=1\)) have the same weight of \(\mu\). 
+In this specified model there are four of these edges, each with a weight of 
+\(\mu\). 
+Thus, since these edges exist on all spanning trees, the weight of every spanning 
+tree must have include a term \(\mu^4\). 
+Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov 
+model:
 
 \begin{equation}\label{eq:pi_00_rate_example}
-    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A \mu + \mu^2] 
+    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o 
+    + 2\lambda^A \mu + \mu^2] 
 \end{equation}
 
-It can be seen that there is a \(\mu^4\) term that is a common factor of all the terms. 
-This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying about all these edges that belong in \(S\) the problem can be slightly simplified.
+It can be seen that there is a \(\mu^4\) term that is a common factor of all the
+ terms. 
+This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying 
+about all these edges that belong in \(S\) the problem can be slightly simplified.
 
 \begin{figure}[h]
     \centering
@@ -498,9 +631,15 @@ This term can be more generally calculated as \(\mu^{M+N}\) and by not worrying 
     }
 \end{figure}
 
-The specific problem has now been reduced to finding all possible combinations of two edges where one starts from \((0,2)\) and the other from \((0,3)\). 
-The possible edges that can be utilised here may have a direction of either left, right, or down. 
-Thus, the objective of the problem can be transformed into finding all possible permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\) and obey certain rules so that the permutation corresponds to a valid spanning tree. These rules are:
+The specific problem has now been reduced to finding all possible combinations 
+of two edges where one starts from \((0,2)\) and the other from \((0,3)\). 
+The possible edges that can be utilised here may have a direction of either 
+left, right, or down. 
+Thus, the objective of the problem can be transformed into finding all possible 
+permutations of an array of size \(2\) where elements can be \(L, R \text{ or } D\)
+and obey certain rules so that the permutation corresponds to a valid spanning 
+ tree. 
+ These rules are:
 
 \begin{enumerate}
     \item Permutations ending with an \(R\) are not valid. \label{rule1}
@@ -508,12 +647,19 @@ Thus, the objective of the problem can be transformed into finding all possible 
 \end{enumerate}
 
 If any of these two rules does not hold then the permutation is immediately invalid. 
-Rule \ref{rule1} points to the cases where the final state has an edge pointing to the right of it, which cannot occur since that state is the right-most state of the first row. 
-Rule \ref{rule2} makes sure that there are no neighbour states that point to each other since that would create a cycle and would not generate a valid spanning tree.
+Rule \ref{rule1} points to the cases where the final state has an edge pointing 
+to the right of it, which cannot occur since that state is the right-most state 
+of the first row. 
+Rule \ref{rule2} makes sure that there are no neighbour states that point to 
+each other since that would create a cycle and would not generate a valid 
+spanning tree.
 
 For instance, consider the model above. 
-Shown below, are all possible permutations of the array along with the excluded cases. 
-The valid permutations (on the left) are shown in the same order with their corresponding spanning trees from the above figure and the invalid permutations (on the right) are followed by the rule that determines them invalid.
+Shown below, are all possible permutations of the array along with the excluded 
+cases. 
+The valid permutations (on the left) are shown in the same order with their 
+corresponding spanning trees from the above figure and the invalid permutations 
+(on the right) are followed by the rule that determines them invalid.
 
 \begin{multicols}{2}
     \begin{itemize}
@@ -529,12 +675,14 @@ The valid permutations (on the left) are shown in the same order with their corr
     \end{itemize}
 \end{multicols}
 
-\subsubsection{Examples of mappings of directed spanning trees to permutation arrays}
+\subsubsection{
+    Examples of mappings of directed spanning trees to permutation arrays}
 
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_0.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -545,7 +693,8 @@ The valid permutations (on the left) are shown in the same order with their corr
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_1.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -556,7 +705,8 @@ The valid permutations (on the left) are shown in the same order with their corr
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_2.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -567,7 +717,8 @@ The valid permutations (on the left) are shown in the same order with their corr
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_3.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -578,7 +729,8 @@ The valid permutations (on the left) are shown in the same order with their corr
 \begin{multicols}{2}
     \begin{figure}[H]
         \centering
-        \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
+        \scalebox{0.6}{
+            \input{MarkovChain/closed_form_state_probs/spanning_trees_1131/main_4.tex}}
     \end{figure}
 
     \begin{flalign*}
@@ -587,50 +739,91 @@ The valid permutations (on the left) are shown in the same order with their corr
 \end{multicols}
 
 \subsubsection{Closed-form formula}
-A general formula for finding all such permutations can be found, where the inputs are \( p_1\), \(p_2\) and \(p_3\) that correspond to the number of \(D\), \(R\) and \(L\) respectively and the output would be the coefficient of the term \((\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}\). 
-For instance, by applying such a formula to the example in equation \ref{eq:pi_00_rate_example}, the desired output should be:
+A general formula for finding all such permutations can be found, where the 
+inputs are \( p_1\), \(p_2\) and \(p_3\) that correspond to the number of \(D\),
+\(R\) and \(L\) respectively and the output would be the coefficient of the term 
+\((\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}\). 
+For instance, by applying such a formula to the example in equation 
+\ref{eq:pi_00_rate_example}, the desired output should be:
 
 \begin{itemize}
-    \item \((\lambda^A)^2 \hspace{0.95cm} \rightarrow \hspace{1cm} p_1 = 2, p_2=0, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
-    \item \(\lambda^A \lambda^o \hspace{1cm} \rightarrow \hspace{1cm} p_1 = 1, p_2=1, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
-    \item \(2 \lambda^A \mu \hspace{1cm} \rightarrow \hspace{1cm} p_1 = 1, p_2=0, p_3=1 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 2\)
-    \item \(\mu^2 \hspace{1.45cm} \rightarrow \hspace{1cm} p_1=0, p_2=0, p_3=2 \hspace{1cm} \rightarrow \hspace{1cm} \text{coefficient } = 1\)
+    \item \((\lambda^A)^2 \hspace{0.95cm} \rightarrow \hspace{1cm} 
+    p_1 = 2, p_2=0, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} 
+    \text{coefficient } = 1\)
+    \item \(\lambda^A \lambda^o \hspace{1cm} \rightarrow \hspace{1cm} 
+    p_1 = 1, p_2=1, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} 
+    \text{coefficient } = 1\)
+    \item \(2 \lambda^A \mu \hspace{1cm} \rightarrow \hspace{1cm}
+     p_1 = 1, p_2=0, p_3=1 \hspace{1cm} \rightarrow \hspace{1cm} 
+     \text{coefficient } = 2\)
+    \item \(\mu^2 \hspace{1.45cm} \rightarrow \hspace{1cm} 
+    p_1=0, p_2=0, p_3=2 \hspace{1cm} \rightarrow \hspace{1cm} 
+    \text{coefficient } = 1\)
 \end{itemize}
 
-Thus, given all possible and valid combinations of powers among \(\lambda^A, \lambda^o \text{ and } \mu\) (i.e. \(p_1,p_2,p_3\)) generated by equation \ref{eq:columns-conjecture-general}, an alternative and improved form of the value of \(R(p_1, p_2, p_3)\) described in equation \ref{eq:coefficient-function} is given by:
+Thus, given all possible and valid combinations of powers among \(\lambda^A, 
+\lambda^o \text{ and } \mu\) (i.e. \(p_1,p_2,p_3\)) generated by equation 
+\ref{eq:columns-conjecture-general}, an alternative and improved form of the 
+value of \(R(p_1, p_2, p_3)\) described in equation \ref{eq:coefficient-function} 
+is given by:
 
 \begin{equation} \label{eq:permutation formula}
-    R(p_1, p_2, p_3) = T(p_1, p_2, p_3) - E_R(p_1, p_2, p_3) - E_D(p_1, p_2, p_3) - E_L(p_1, p_2, p_3) - E_{RL}(p_1, p_2, p_3)
+    R(p_1, p_2, p_3) = T(p_1, p_2, p_3) - E_R(p_1, p_2, p_3) - E_D(p_1, p_2, p_3) 
+    - E_L(p_1, p_2, p_3) - E_{RL}(p_1, p_2, p_3)
 \end{equation}
 
 Consider the above undefined equations. 
-The term \(T(p_1,p_2,p_3)\) denotes the number of all permutations where neither rule is applied, i.e. all possible ways one can arrange the elements of the array.
-The term \(E_R(p_1,p_2,p_3)\) denotes the number of permutations that end in \(R\), which needs to be removed from the total of all permutations so that rule \ref{rule1} is satisfied.
-Having excluded all permutations that end in \(R\) it only remains to leave out permutations that have an \(R\) followed by an \(L\) (rule \ref{rule2}).
-Although, removing all permutations ending in \(R\) was relatively straight forward, removing all permutations that follow rule \ref{rule2} is not that easy.
-This is because equation \(E_R(p_1,p_2,p_3)\) already considers some cases where there is an \(R\) followed by an \(L\).
-Therefore, in order to consider only new cases, permutations of rule \ref{rule2} are split into three new terms; \(E_D\), \(E_L\) and \(E_{RL}\).
-These terms denote the permutations that have an \(R\) followed by an \(L\) AND do not end in \(R\).
-The term \(E_D\) considers all permutations that end in \(D\) while \(E_L\) the ones that end in \(L\).
-Finally, the last term (\(E_{RL}\)) denotes all permutations that end in \(R\), \(L\) where there is no other \(R\) followed by an \(L\) in any other position apart from the last two. 
-This term is used because in the \(E_L\) term, such cases (where \(R\) and \(L\) are in the last two positions) are only considered when there is another \(R\) followed by an \(L\) somewhere.
-Thus, the term \(E_{RL}\) is a particular set of permutations that the formula of \(E_L\) fails to include by itself.
+The term \(T(p_1,p_2,p_3)\) denotes the number of all permutations where neither 
+rule is applied, i.e. all possible ways one can arrange the elements of the array.
+The term \(E_R(p_1,p_2,p_3)\) denotes the number of permutations that end in \(R\), 
+which needs to be removed from the total of all permutations so that rule \ref{rule1} 
+is satisfied.
+Having excluded all permutations that end in \(R\) it only remains to leave out 
+permutations that have an \(R\) followed by an \(L\) (rule \ref{rule2}).
+Although, removing all permutations ending in \(R\) was relatively straight forward,
+removing all permutations that follow rule \ref{rule2} is not that easy.
+This is because equation \(E_R(p_1,p_2,p_3)\) already considers some cases where 
+there is an \(R\) followed by an \(L\).
+Therefore, in order to consider only new cases, permutations of rule \ref{rule2} 
+are split into three new terms; \(E_D\), \(E_L\) and \(E_{RL}\).
+These terms denote the permutations that have an \(R\) followed by an \(L\) AND 
+do not end in \(R\).
+The term \(E_D\) considers all permutations that end in \(D\) while \(E_L\) the 
+ones that end in \(L\).
+Finally, the last term (\(E_{RL}\)) denotes all permutations that end in \(R\), 
+\(L\) where there is no other \(R\) followed by an \(L\) in any other position apart 
+from the last two. 
+This term is used because in the \(E_L\) term, such cases (where \(R\) and \(L\) 
+are in the last two positions) are only considered when there is another \(R\) followed 
+by an \(L\) somewhere.
+Thus, the term \(E_{RL}\) is a particular set of permutations that the formula of 
+\(E_L\) fails to include by itself.
 
 \begin{align}
     T(p_1, p_2, p_3) &= \frac{(p_1 + p_2 + p_3)!}{p_1! \times p_2! \times p_3!} \\
-    E_R(p_1, p_2, p_3) &= \frac{(p_1 + p_2 + p_3 - 1)!}{p_1! \times (p_2-1)! \times p_3!} \\
-    E_D(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} \frac{(p_1 + p_2 + p_3 - i - 1)!}{(p_1 - 1)! \times (p_2 - i)! \times (p_3 - i)! \times (i)!} \\
-    E_L(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L-1)} (-1)^{i+1} \frac{(p_1 + p_2 + p_3 - i - 1)!}{p_1! \times (p_2 - i)! \times (p_3 - i - 1)! \times (i)!} \\
-    E_{RL}(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} \frac{(p_1 + p_2 + p_3 - i - 1)!}{p_1! \times (p_2 - i)! \times (p_3 - i)! \times (i - 1)!} 
+    E_R(p_1, p_2, p_3) &= \frac{(p_1 + p_2 + p_3 - 1)!}
+    {p_1! \times (p_2-1)! \times p_3!} \\
+    E_D(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} 
+    \frac{(p_1 + p_2 + p_3 - i - 1)!}
+    {(p_1 - 1)! \times (p_2 - i)! \times (p_3 - i)! \times (i)!} \\
+    E_L(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L-1)} (-1)^{i+1} 
+    \frac{(p_1 + p_2 + p_3 - i - 1)!}
+    {p_1! \times (p_2 - i)! \times (p_3 - i - 1)! \times (i)!} \\
+    E_{RL}(p_1, p_2, p_3) &= \sum_{i=1}^{\min(R,L)} (-1)^{i+1} 
+    \frac{(p_1 + p_2 + p_3 - i - 1)!}
+    {p_1! \times (p_2 - i)! \times (p_3 - i)! \times (i - 1)!} 
 \end{align}
 
 \begin{equation*}
-    R(p_1, p_2, p_3) = T(p_1, p_2, p_3) - E_R(p_1, p_2, p_3) - E_D(p_1, p_2, p_3) - E_L(p_1, p_2, p_3) - E_{RL}(p_1, p_2, p_3)
+    R(p_1, p_2, p_3) = T(p_1, p_2, p_3) - E_R(p_1, p_2, p_3) - E_D(p_1, p_2, p_3) 
+    - E_L(p_1, p_2, p_3) - E_{RL}(p_1, p_2, p_3)
 \end{equation*}
 
 \subsubsection{Example of the permutation algorithm}
 Consider the term \((\lambda^A) (\lambda^o) \mu^2\) and the above expressions.
-In order to get the coefficient of that term the permutation algorithm needs to be applied with an input of \(p_1=1, p_2=1, p_3=2\), i.e. 1 \(D\), 1 \(R\) and 2 \(L\)s in the array.
+In order to get the coefficient of that term the permutation algorithm needs to 
+be applied with an input of \(p_1=1, p_2=1, p_3=2\), i.e. 1 \(D\), 1 \(R\) and 2 
+\(L\)s in the array.
 The permutations that correspond to each expression can be seen below:
 
 \begin{equation*}
@@ -638,8 +831,10 @@ The permutations that correspond to each expression can be seen below:
 \end{equation*}
 
 \begin{align*}
-    & [D, R, L, L] \quad [R, D, L, L] \quad [D, L, R, L] \quad [R, L, D, L] \quad [D, L, L, R] \quad [R, L, L, D] \\
-    & [L, D, R, L] \quad [L, R, D, L] \quad [L, D, L, R] \quad [L, R, L, D] \quad [L, L, D, R] \quad [L, L, R, D]
+    & [D, R, L, L] \quad [R, D, L, L] \quad [D, L, R, L] \quad 
+    [R, L, D, L] \quad [D, L, L, R] \quad [R, L, L, D] \\
+    & [L, D, R, L] \quad [L, R, D, L] \quad [L, D, L, R] \quad 
+    [L, R, L, D] \quad [L, L, D, R] \quad [L, L, R, D]
 \end{align*}
 
 \begin{equation*}
@@ -652,7 +847,8 @@ The permutations that correspond to each expression can be seen below:
 
 
 \begin{equation*}
-    E_D(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} \frac{(1+1+2-i-1)!}{0! \; (1-i)! \; (2-i)! \; (i)!} = 1 \times \frac{2}{0! \; 0! \; 1! \; 1!} = 2
+    E_D(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} \frac{(1+1+2-i-1)!}{0! \; 
+    (1-i)! \; (2-i)! \; (i)!} = 1 \times \frac{2}{0! \; 0! \; 1! \; 1!} = 2
 \end{equation*}
 
 \begin{align*}
@@ -661,7 +857,9 @@ The permutations that correspond to each expression can be seen below:
 
 
 \begin{equation*}
-    E_L(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} \frac{(1+1+2-i-1)!}{1! \; (1-i)! \; (2-i-1)! \; (i)!} = 1 \times \frac{2}{1! \; 0! \; 0! \; 1!} = 2
+    E_L(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} 
+    \frac{(1+1+2-i-1)!}{1! \; (1-i)! \; (2-i-1)! \; (i)!} 
+    = 1 \times \frac{2}{1! \; 0! \; 0! \; 1!} = 2
 \end{equation*}
 
 \begin{align*}
@@ -670,7 +868,9 @@ The permutations that correspond to each expression can be seen below:
 
 
 \begin{equation*}
-    E_{RL}(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} \frac{(1+1+2-i-1)!}{1! \; (1-i)! \; (2-i)! \; (i_1)!} = 1 \times \frac{2}{1! \; 0! \; 1! \; 0!} = 2
+    E_{RL}(p_1, p_2, p_3) = \sum_{i=1}^{1} (-1)^{i+1} 
+    \frac{(1+1+2-i-1)!}{1! \; (1-i)! \; (2-i)! \; (i_1)!} 
+    = 1 \times \frac{2}{1! \; 0! \; 1! \; 0!} = 2
 \end{equation*}
 
 \begin{align*}
@@ -679,5 +879,8 @@ The permutations that correspond to each expression can be seen below:
 
 
 
-\subsubsection{Possibly useful theorem: Matrix-tree theorem for directed graphs (Kirchhoff's theorem) \cite{matrix-tree-theorem}: }
-\textit{The number of directed spanning trees rooted at a state \(i\) can be found by calculating the determinant of the Laplacian matrix \(Q\) of the directed graph and removing row \(i\) and column \(i\).}
+\subsubsection{Possibly useful theorem: Matrix-tree theorem for directed graphs 
+(Kirchhoff's theorem) \cite{matrix-tree-theorem}: }
+\textit{The number of directed spanning trees rooted at a state \(i\) can be found 
+by calculating the determinant of the Laplacian matrix \(Q\) of the directed graph 
+and removing row \(i\) and column \(i\).}

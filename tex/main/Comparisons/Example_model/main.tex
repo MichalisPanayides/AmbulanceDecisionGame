@@ -1,7 +1,12 @@
 \section{Markov chain VS Simulation}
 
 \subsection{Example model}
-Consider the Markov chain paradigm in figure \ref{Model_mini}. The illustrated model represents the unrealistically small system of a hospital with a system capacity of five and an ambulance parking capacity of three. The hospital in this particular example also has four servers and a threshold of three; meaning that every ambulance that arrives in a time that there are three or more individuals in the hospital, will proceed to the parking space.
+Consider the Markov chain paradigm in figure \ref{Model_mini}. 
+The illustrated model represents the unrealistically small system of a hospital 
+with a system capacity of five and an ambulance parking capacity of three. 
+The hospital in this particular example also has four servers and a threshold of 
+three; meaning that every ambulance that arrives in a time that there are three or 
+more individuals in the hospital, will proceed to the parking space.
 
 \begin{figure}[h]
     \centering
@@ -10,11 +15,21 @@ Consider the Markov chain paradigm in figure \ref{Model_mini}. The illustrated m
     \label{Model_mini}
 \end{figure}
 
-In addition to the Markov chain model a simulation model has also been built based on the same parameters. Comparing the results of the Markov model and the equivalent simulation model the resultant plots arose.
+In addition to the Markov chain model a simulation model has also been built based 
+on the same parameters. 
+Comparing the results of the Markov model and the equivalent simulation model the 
+resultant plots arose.
 
-The heatmaps in figure \ref{Heatmap_mini} represent the state probabilities for the Markov chain model, the simulation model and the difference between the two. Each pixel of the heatmap corresponds to the equivalent state of figure \ref{Model_mini} and represents the probability of being at that state in any particular moment of time.
+The heatmaps in figure \ref{Heatmap_mini} represent the state probabilities for 
+the Markov chain model, the simulation model and the difference between the two. 
+Each pixel of the heatmap corresponds to the equivalent state of figure \ref{Model_mini} 
+and represents the probability of being at that state in any particular moment of time.
 
-It can be observed that both Markov chain and simulation models' state probabilities vary from 5\% to 25\% and that states \( (0, 1) \) and \( (0, 2) \) are the most visited ones. Looking at the differences' heatmap, one may identify that the differences between the two are minimal.
+It can be observed that both Markov chain and simulation models' state probabilities 
+vary from 5\% to 25\% and that states \( (0, 1) \) and \( (0, 2) \) are the most 
+visited ones. 
+Looking at the differences' heatmap, one may identify that the differences between 
+the two are minimal.
 
 \newpage
 

@@ -4,24 +4,27 @@
 This section aims to investigate the connection between Markov chains and graph theory by exploring alternative ways of calculating the steady state probabilities and considering the problem from different perspectives.
 
 \subsubsection{Parameters}
-\begin{itemize}
-    \item the number of servers \(C\),
-    \item the threshold \(T\), 
-    \item the system capacity \(N\),
-    \item the parking capacity \(M\). 
-\end{itemize}
+The parameters considered as inputs are:
+\begin{multicols}{2}
+    % TODO: Generalise notation - number of servers, system capacity and parking capacity
+    \begin{itemize}
+        \item the number of servers \(C\),
+        \item the threshold \(T\), 
+        \item the system capacity \(N\),
+        \item the parking capacity \(M\). 
+    \end{itemize}
+\end{multicols}
+
+% TODO: Generalise notation - change ambulance patients and other patients into class 1 and 2 patients
 Additional parameters of the model are the ambulance arrival rate, the others' arrival rate and the service rate (\(\lambda^A, \lambda^o, \mu\)). 
 More specifically, the way these parameters are translated into the model are:
 
 \begin{itemize}
-    \item \textbf{Number of servers (\(C\)):} All edges in the Markov chain that correspond to a service rate have a weight of: 
+    \item \textbf{Number of servers (\(C\)):} Affects the weight of all edges \((v_i, v_j) \in E\) in the Markov chain that correspond to a service rate. These edges have a weight of: 
     \begin{equation*}
-        w_{i, j} = 
-        \begin{cases}
-            v_i \mu, & \textbf{if } v_i \leq C \textbf{ or } v_i = T \leq C \\
-            C \mu, & \textbf{if } v_i > C \textbf{ or } v_i = T > C\\
-        \end{cases}
+        w_{(v_i, v_j)} = q_{v_i, v_j}
     \end{equation*}
+    where \(q_{i,j}\) is defined in equation \ref{eq:markov_transition_rate}.
     Thus, the coefficients of the service rate have a lower bound of \(1\) and an upper bound of \(C\).
     \item \textbf{Threshold (\(T\)):} Determines the length of the left \textit{arm} of the model. 
     In essence the threshold acts as a breakpoint between states where \(u=0\) and states where \(0 \leq u \leq M\). 
@@ -35,17 +38,20 @@ More specifically, the way these parameters are translated into the model are:
 
 \begin{figure}[h]
     \centering
-    \scalebox{0.6}{\input{MarkovChain/closed_form_state_probs/example_model_1352/main.tex}}
+    \scalebox{0.7}{\input{MarkovChain/closed_form_state_probs/example_model_1352/main.tex}}
     \caption{\(C=1, T=3, N=5, M=2\)}
     \label{fig:Markov_1352_example_for_closed_form}
 \end{figure}
 
-In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such Markov model is shown where \(C=1\), \(T=3\) which means that the \textit{left arm} of the model has a length of \(3\), \(N=5\) that indicates that the right-most states \((u,v)\) are of the form \((u,5)\) and \(M=2\) that equivalently shows that the bottom states are of the form \((2,v)\).
+In figure \ref{fig:Markov_1352_example_for_closed_form} an example of such a Markov model is shown where \(C=1\), \(T=3\) which means that the \textit{left arm} of the model has a length of \(3\), \(N=5\) that indicates that the right-most states \((u,v)\) are of the form \((u,5)\) and \(M=2\) that equivalently shows that the bottom states are of the form \((2,v)\).
 
 \subsubsection{A graph theoretic model underling the Markov chain}
 
 An additional approach that one may consider to get the state probabilities is the graph theoretical approach for state probabilities.
-Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M\) where every edge has a weight that corresponds to the rate between the states of a given edge.
+Thus, it can be assumed that a Markov chain model \(M\) can be translated as a weighted directed graph \(G_M = (V, E)\) where \(V=S\) from equation \ref{eq:state_space} and \((v_i, v_j)\in E\) if and only if \(q_{v_i, v_j}>0\). Furthermore, the weights are given by:
+\[
+    w(v_i, v_j) = q_{v_i, v_j}
+\]
 
 A \textit{directed spanning tree} of a directed graph is defined as a subset of the graph that visits all the vertices of the graph and does not include any cycles. 
 Unlike undirected spanning trees, directed ones also have a root which means that a directed spanning tree that is rooted at a vertex \(v\) has to have a path from any other vertex to vertex \(v\). 
@@ -311,9 +317,9 @@ A generalisation of equation \ref{eq:rows-conjecture-general}, where \(N \geq 1\
     \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (k(C,T,N))^M
 \end{equation}
 
-Thus, having investigated the effect of adding rows it remains to investigate the effect of increasing \(N\) and finding an expression for \(k(C,T,N)\).
+Thus, having investigated the effect of adding rows (increasing \(M\)) it remains to investigate the effect of adding columns (increasing \(N\)) and finding an expression for \(k(C,T,N)\).
 
-\subsubsection{The effect of increasing \(N\)}
+\subsubsection{The effect of increasing \(N\) (Incomplete section)}
 In this section we will consider a parking capacity of \(M=1\) and see the effect of modifying other parameters on \(k(C, T, N)\).
 
 \begin{multicols}{2}
@@ -379,7 +385,7 @@ For the starting coefficients of the model the function \(R(p_1,p_2,p_3)\) gives
 \end{equation}
 
 Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients that are unknown and are currently investigated. 
-The function \(R()\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given system and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. 
+The function \(R\) takes as arguments a possible combination of numbers of \(\lambda^A, \lambda^o \text{ and } \mu \) for a given system and outputs the coefficient of that term which in turn represents how many spanning trees exist in the graph with that specific combination. 
 For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms from the equations above:
 
 \begin{multicols}{2}

@@ -184,13 +184,13 @@ The transition matrix of the Markov-chain representation described above can be 
 
 \begin{align}
     S(T) =& S_1(T) \cup S_2(T) \text{ where:} \nonumber \\
-    S_1(T) =& \left\{(0, v)\in\mathbb{N}_0^2 \; | \; v < T \right\} \\
+    S_1(T) =& \left\{(0, v)\in\mathbb{N}_0^2 \; | \; v < T \right\} \label{eq:state_space} \\
     S_2(T) =& \{(u, v)\in\mathbb{N}_0^2 \; | \; v \geq T \} \nonumber
 \end{align}
 
 Therefore, the entries of the transition matrix \(Q\), can be given by \( q_{i,j} = q_{(u_i, v_i),(u_j, v_j)} \) which is the transition rate from state \( i = (u_i, v_i) \) to state \( j = (u_j , v_j) \) for all \( (u_i, v_i), (u_j, v_j) \in S \).
 
-\begin{equation}
+\begin{equation} \label{eq:markov_transition_rate}
     q_{i, j} = 
     \begin{cases}
         \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } v_i < \text{t} \\

@@ -1,5 +1,5 @@
 \section{Figures that might be useful}
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}[>=latex]
         % the rectangle with vertical rules (Queue 1)
@@ -34,8 +34,11 @@
     \end{tikzpicture}
 \end{figure}
 
-\input{Miscellaneous/Useful_tikz/Example-with-python/main.tex}
+\begin{figure}[ht]
+    \input{Miscellaneous/Useful_tikz/Example-with-python/main.tex}
+\end{figure}
 
+\newpage
 \begin{figure}
     \centering
     \begin{tikzpicture}[-, node distance = 1cm, auto, every node/.style={scale=0.5}]
@@ -51,30 +54,36 @@
         \node[state, minimum size=1.5cm,  right=of zero] (one) {(0,1)};
         \node[draw=none, minimum size=1.5cm, right=of one] (two) {\dots};
         \node[state, minimum size=1.5cm, right=of two] (three) {(0,T)};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] (five) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of five] (six) {(0,C)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] 
+        (four) {(0,T+1)};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] 
+        (five) {\dots};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of five] 
+        (six) {(0,C)};
         \node[draw=none, minimum size=\minsz, right=of six] (seven) {\dots};
 
         % Second Line
         \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
         \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] (six_one) {(1,C)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] 
+        (six_one) {(1,C)};
         \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\dots};
 
         % Third Line
         \node[state, minimum size=\minsz, below=of three_one] (three_two) {(2,T)};
         \node[state, minimum size=\minsz, below=of four_one] (four_two) {(2,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five_one] (five_two) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_two] (six_two) {(2,C)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_two] 
+        (six_two) {(2,C)};
         \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) {\dots};
 
         % Fourth line
         \node[draw=none, minimum size=\minsz, below=of three_two] (three_three) {\vdots};
         \node[draw=none, minimum size=\minsz, below=of four_two] (four_three) {\vdots};
         \node[draw=none, minimum size=\minsz, below=of five_two] (five_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_three] (six_three) {\vdots};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_three] 
+        (six_three) {\vdots};
 
         \draw[every loop]
             % First Horizontal Edges
@@ -136,9 +145,8 @@
     \label{Markov_2}
 \end{figure}
 
-
-
-\begin{figure}
+\newpage
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}[-, node distance = 1cm, auto, every node/.style={scale=0.4}]
 
@@ -153,7 +161,8 @@
         \node[state, minimum size=1.5cm,  right=of zero] (one) {(0,1)};
         \node[draw=none, minimum size=1.5cm, right=of one] (two) {\dots};
         \node[state, minimum size=1.5cm, right=of two] (three) {(0,T)};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] 
+        (four) {(0,T+1)};
         \node[draw=none, minimum size=\minsz, right=of four] (five) {\dots};
         \node[draw=none, minimum size=\minsz, right=of five] (six) {\vdots};
         \node[draw=none, minimum size=\minsz, right=of six] (seven) {\dots};
@@ -165,9 +174,11 @@
         \node[state, minimum size=\minsz, below=of three] (three_one) {(1,T)};
         \node[state, minimum size=\minsz, below=of four] (four_one) {(1,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five] (five_one) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] (six_one) {\( (u_i, v_i) \)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of five_one] 
+        (six_one) {\( (u_i, v_i) \)};
         \node[draw=none, minimum size=\minsz, right=of six_one] (seven_one) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of seven_one] (eight_one) {(1,C)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of seven_one] 
+        (eight_one) {(1,C)};
         \node[draw=none, minimum size=\minsz, right=of eight_one] (nine_one) {\dots};
         
 
@@ -175,17 +186,21 @@
         \node[state, minimum size=\minsz, below=of three_one] (three_two) {(2,T)};
         \node[state, minimum size=\minsz, below=of four_one] (four_two) {(2,T+1)};
         \node[draw=none, minimum size=\minsz, below=of five_one] (five_two) {\dots};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_two] (six_two) {\vdots};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_two] 
+        (six_two) {\vdots};
         \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) {\dots};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of seven_two] (eight_two) {(2,C)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of seven_two] 
+        (eight_two) {(2,C)};
         \node[draw=none, minimum size=\minsz, right=of eight_two] (nine_two) {\dots};
 
         % Fourth line
         \node[draw=none, minimum size=\minsz, below=of three_two] (three_three) {\vdots};
         \node[draw=none, minimum size=\minsz, below=of four_two] (four_three) {\vdots};
         \node[draw=none, minimum size=\minsz, below=of five_two] (five_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_three] (six_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of eight_two] (eight_three) {\vdots};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of five_three] 
+        (six_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of eight_two] 
+        (eight_three) {\vdots};
 
 
         \draw[every loop]
@@ -265,8 +280,8 @@
     \label{Markov_3}
 \end{figure}
 
-
-\begin{figure}
+\newpage
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}[-, node distance = 0.9cm, auto, every node/.style={scale=0.5}]
 
@@ -299,11 +314,16 @@
 
         % First Line
         \node[state, minimum size=1.5cm] (zero) {(0,0)};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] (one) {(0,1)};
-        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] (two) {\textbf{\( \ddots \)}};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] (three) {(0,T)};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] (five) {\textbf{\dots}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] 
+        (one) {(0,1)};
+        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] 
+        (two) {\textbf{\( \ddots \)}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] 
+        (three) {(0,T)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] 
+        (four) {(0,T+1)};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] 
+        (five) {\textbf{\dots}};
         \node[draw=none, minimum size=\minsz, right=of five] (six) {\textbf{\vdots}};
         \node[draw=none, minimum size=\minsz, right=of six] (seven) {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of seven] (eight) {(0,C)};
@@ -330,11 +350,16 @@
         \node[draw=none, minimum size=\minsz, right=of eight_two] (nine_two) {\textbf{\dots}};
 
         % Fourth line
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] (three_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] (four_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of five_two] (five_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] (six_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of eight_two] (eight_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] 
+        (three_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] 
+        (four_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of five_two] 
+        (five_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] 
+        (six_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of eight_two] 
+        (eight_three) {\textbf{\vdots}};
 
 
         \draw[every loop]
@@ -415,9 +440,8 @@
 \end{figure}
 
 
-
-
-\begin{figure}
+\newpage
+\begin{figure}[h!]
     \centering
     \begin{tikzpicture}[-, node distance = 0.9cm, auto, every node/.style={scale=0.7}]
 
@@ -462,16 +486,20 @@
 
         % Small square of general case
         \draw [thick] (\GCsmallx, \GCsmally) -- node {} (\GCsmallx + 0.4, \GCsmally);
-        \draw [thick] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCsmallx + 0.4, \GCsmally - 0.4);
-        \draw [thick] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCsmallx, \GCsmally - 0.4);
+        \draw [thick] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCsmallx + 0.4, 
+        \GCsmally - 0.4);
+        \draw [thick] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCsmallx, 
+        \GCsmally - 0.4);
         \draw [thick] (\GCsmallx, \GCsmally - 0.4) -- node {} (\GCsmallx, \GCsmally);
 
 
         % Dashed lines to from small square to big one 
         \draw [ultra thin] (\GCsmallx, \GCsmally) -- node {} (\GCbigx, \GCbigy);
-        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCbigx + 4, \GCbigy);
+        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally) -- node {} (\GCbigx + 4, 
+        \GCbigy);
         \draw [ultra thin] (\GCsmallx, \GCsmally - 0.4) -- node {} (7, \GCbigy);
-        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCbigx + 4, \GCbigy - 4);
+        \draw [ultra thin] (\GCsmallx + 0.4, \GCsmally - 0.4) -- node {} (\GCbigx + 4, 
+        \GCbigy - 4);
         
         % Big Square of general case
         \draw [ultra thick] (\GCbigx, \GCbigy) -- node {} (\GCbigx + 4, \GCbigy);
@@ -481,11 +509,16 @@
 
         % First Line
         \node[state, minimum size=1.5cm] (zero) {(0,0)};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] (one) {(0,1)};
-        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] (two) {\textbf{\( \ddots \)}};
-        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] (three) {(0,T)};
-        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] (four) {(0,T+1)};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] (five) {\textbf{\dots}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of zero] 
+        (one) {(0,1)};
+        \node[draw=none, node distance = \initdist, minimum size=\minsz, below right=of one] 
+        (two) {\textbf{\( \ddots \)}};
+        \node[state, node distance = \initdist, minimum size=\minsz, below right=of two] 
+        (three) {(0,T)};
+        \node[state, node distance = \altdist, minimum size=\minsz, right=of three] 
+        (four) {(0,T+1)};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of four] 
+        (five) {\textbf{\dots}};
         \node[state, minimum size=\minsz, right=of five] (six) {(0,C)};
         \node[draw=none, minimum size=\minsz, right=of six] (seven) {\textbf{\dots}};
 
@@ -504,19 +537,28 @@
         \node[draw=none, minimum size=\minsz, right=of six_two] (seven_two) {\textbf{\dots}};
 
         % Fourth line
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] (three_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] (four_three) {\textbf{\vdots}};
-        \node[draw=none, node distance = 2cm, minimum size=\minsz, below=of five_two] (five_three) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] (six_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of three_two] 
+        (three_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of four_two] 
+        (four_three) {\textbf{\vdots}};
+        \node[draw=none, node distance = 2cm, minimum size=\minsz, below=of five_two] 
+        (five_three) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of six_two] 
+        (six_three) {\textbf{\vdots}};
 
         % Fifth line
         % \node[state, node distance = \altdist, minimum size=\minsz, below=of five_three] (general_case_mid) {\( (u_i, v_i) \)};
-        \node[draw=none, node distance = 0.3cm, minimum size=\minsz, below=of four_three] (general_case_up) {};
-        \node[state, node distance = \altdist, minimum size=\minsz, below=of general_case_up] (general_case_mid) {\( (u_i, v_i) \)};
+        \node[draw=none, node distance = 0.3cm, minimum size=\minsz, below=of four_three] 
+        (general_case_up) {};
+        \node[state, node distance = \altdist, minimum size=\minsz, below=of general_case_up] 
+        (general_case_mid) {\( (u_i, v_i) \)};
 
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of general_case_mid] (general_case_down) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, left=of general_case_mid] (general_case_left) {};
-        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of general_case_mid] (general_case_right) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, below=of general_case_mid] 
+        (general_case_down) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, left=of general_case_mid] 
+        (general_case_left) {};
+        \node[draw=none, node distance = \altdist, minimum size=\minsz, right=of general_case_mid] 
+        (general_case_right) {};
 
         \draw[every loop]
             % First Horizontal Edges

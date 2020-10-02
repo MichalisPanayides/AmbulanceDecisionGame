@@ -4,11 +4,14 @@
 \usepackage{mathtools}
 \usepackage{amsfonts} 
 \usepackage{geometry}
+\usepackage{float}
 \usepackage{graphicx}
 \usepackage{soul}
 \usepackage{indentfirst}
 \usepackage{multicol}
 \usepackage{tikz}
+\usepackage{cancel}
+
 \usetikzlibrary{calc, automata, chains, arrows.meta, math}
 
 
@@ -22,18 +25,15 @@
 
 \input{Abstract/main.tex}
 \newpage
+\tableofcontents
+\newpage
 
 % Introduction of the project
 \input{Introduction/main.tex}
 
-% Queueing Theory Component
-\input{Components/Queueing_Theory/main.tex}
-
 % Game Theoretic Component
-\input{Components/Game_Theory/main.tex}
+\input{Game_theory_component/main.tex}
 
-% Formulas used
-\input{Miscellaneous/Formulas/main.tex}
 
 \newpage
 % Quick representation of the steps of methodology
@@ -44,7 +44,11 @@
 \input{Methodology/Proper/main.tex}
 
 % Markov Chains
-\input{MarkovChain/main.tex}
+\input{MarkovChain/markov_chain_model/main.tex}
+\newpage
+\input{MarkovChain/closed_form_state_probs/main.tex}
+\newpage
+\input{MarkovChain/expressions_from_pi/main.tex}
 
 \newpage
 % Heatmap comparisons
@@ -53,5 +57,13 @@
 
 \newpage
 \input{Miscellaneous/Useful_tikz/main.tex}
+
+
+% Formulas used
+\newpage
+\input{Miscellaneous/Formulas/main.tex}
+
+\newpage
+\input{bibliography.tex}
 
 \end{document}

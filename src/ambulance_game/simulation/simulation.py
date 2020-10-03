@@ -13,7 +13,16 @@ def build_model(
     system_capacity=float("inf"),
     parking_capacity=float("inf"),
 ):
-    """Builds the required ciw network
+    """Builds a ciw object that represents a model of a queuing network with two
+    service centres; the hospital and the parking space. Patients arrive at the 
+    hospital and at the parking space with rates that follow the exponential 
+    distribution of λ_ο and λ_α respectively. The service distribution follows 
+    a constant distribution of 0 for the parking space and an exponential 
+    distribution with a rate of μ for the hospital. The variables "num_of_servers" 
+    and "parking_capacity" indicate the capacities of the two centres. Finally, 
+    the queue capacity is set to the difference between the number of servers and
+    the system capacity for the hospital centre and for the parking space it is
+    set to zero, as there should not occur any waiting there, just blockage.
 
     Parameters
     ----------
@@ -41,12 +50,16 @@ def build_model(
 
 
 def build_custom_node(threshold=float("inf")):
-    """Build a custome node to replace the default ciw.Node
+    """Build a custom node to replace the default ciw.Node. Inherits from the original
+    ciw.Node class and replaces methods release_blocked_individual and finish_service.
+    The methods are modified in such a way such that all individuals that are in
+    the parking space node (node 1) remain blocked as long as the number of individuals
+    in the hospital node (node 2) exceeds the threshold. 
 
     Parameters
     ----------
     threshold : int, optional
-        The capacity threshold to be used by the method, by default 7
+        The capacity threshold to be used by the method
 
     Returns
     -------
@@ -101,7 +114,7 @@ def build_custom_node(threshold=float("inf")):
               - release the individual if there is capacity at destination,
                 otherwise cause blockage
               - note that blockage also occurs when we are at node 1 and the
-                number of individuals on node 2 are more than the 'thershold'
+                number of individuals on node 2 are more than the 'threshold'
             """
             next_individual, next_individual_index = self.find_next_individual()
             self.change_customer_class(next_individual)
@@ -134,9 +147,13 @@ def simulate_model(
     parking_capacity=float("inf"),
     tracker=ciw.trackers.NodePopulation(),
 ):
-    """Simulating the model by using the custom node and returning the simulation object.
+    """Simulate the model by using the custom node and returning the simulation object.
 
-    It is important to note that when the threshold is greater than the system capacity the parking capacity is forced to be 1 because otherwise, when the hospital gets full ambulance patients will flood the parking spaces which is not what should happen in this particular scenario.
+    It is important to note that when the threshold is greater than the system capacity 
+    the parking capacity is forced to be 1 because otherwise, when the hospital gets 
+    full, ambulance patients will flood the parking spaces which is not what should 
+    happen in this particular scenario.
+    TODO: use different approach to handle this scenario
 
     Additionally, the parking capacity should always be greater or equal to 1
 
@@ -158,6 +175,7 @@ def simulate_model(
 
     if threshold > system_capacity:
         parking_capacity = 1
+        # TODO: Different approach to handle this situation
 
     if seed_num == None:
         seed_num = random.random()
@@ -174,7 +192,11 @@ def simulate_model(
 def get_simulated_state_probabilities(
     simulation_object, output=np.ndarray, system_capacity=None, parking_capacity=None
 ):
-    """Calculates the vector pi in a dictionary format or an array format. For the dictionary format the keys are the states (i,j) and the values are the probabilities that the system is in a curent state. For the 2-dimensional array format the probability of being in state (i,j) is placed in the equivalent (i,j) position in the numpy array.
+    """Calculates the vector pi in a dictionary format or an array format. For the 
+    dictionary format the keys are the states (i,j) and the values are the probabilities 
+    that the system is in a current state. For the 2-dimensional array format the 
+    probability of being in state (i,j) is placed in the equivalent (i,j) position 
+    in the numpy array.
 
     Parameters
     ----------
@@ -186,8 +208,8 @@ def get_simulated_state_probabilities(
     Returns
     -------
     dictionary OR np.ndarray
-        - A dictionary with the markov states as keys and the equivalent probabilities as values
-        - A numpy.ndarray Π where: Π(i,j) = probabilitiy of being in state (i,j)
+        - A dictionary with the Markov states as keys and the equivalent probabilities as values
+        - A numpy.ndarray Π where: Π(i,j) = probability of being in state (i,j)
     """
     state_probabilities_dictionary = (
         simulation_object.statetracker.state_probabilities()
@@ -226,12 +248,13 @@ def get_average_simulated_state_probabilities(
     output=np.ndarray,
 ):
     """
-    This function runs the get_simulated_state_proabilities() for multiple iterations to eliminate any stochasticity of the results
+    This function runs the get_simulated_state_probabilities() for multiple iterations 
+    to eliminate any stochasticity from the results
 
     Parameters
     ----------
     output : type, optional
-        The format of the output state probablites, by default np.ndarray
+        The format of the output state probabilities, by default np.ndarray
     """
     if seed_num == None:
         seed_num = random.random()
@@ -285,7 +308,10 @@ def get_average_simulated_state_probabilities(
 
 
 def extract_times_from_records(simulation_records, warm_up_time):
-    """Get the required times that we are interested in out of ciw's records
+    """Get the required times (waiting, service, blocking) out of ciw's records
+    where all individuals are treated the same way. This function can't distinguish 
+    between ambulance patients and other patients. It returns the aggregated waiting
+    time, service times BUT only blocking times of ambulance patients.
 
     Parameters
     ----------
@@ -321,10 +347,10 @@ def extract_times_from_individuals(
     individuals, warm_up_time, first_node_to_visit, total_node_visits
 ):
     """
-    For all individuals' records
-        if not still in the system and after warm_up_time
-
-        if finished only dummy service
+    Extract waiting times and service times for all individuals and proceed to extract
+    blocking times for just ambulance patients. The function uses individual's records 
+    and determines the type of patient that each individual is, based on the number 
+    of nodes visited.
     """
     waiting_times = []
     serving_times = []
@@ -348,7 +374,8 @@ def extract_times_from_individuals(
 
 
 def get_list_of_results(results):
-    """Modify the outputs even further so that it is output in a different more convenient format for some graphs
+    """Modify the outputs so that they are returned in a list format where it is
+    sometimes easier to be used by other functions.
 
     Parameters
     ----------
@@ -381,7 +408,9 @@ def get_multiple_runs_results(
     parking_capacity=float("inf"),
     patient_type="both",
 ):
-    """Get waiting, service and blocking times for multiple runs
+    """Get the waiting times, service times and blocking times for multiple runs 
+    of the simulation. The function may return the times for ambulance patients, 
+    other patients or the aggregated total of the two. 
 
     Parameters
     ----------
@@ -397,7 +426,9 @@ def get_multiple_runs_results(
     Returns
     -------
     list
-        A list of records where each record consists of the waiting, service and blocking times of one trial. Alternatively if the output_type = "list" then returns theree lists with all waiting, service and blocking times
+        A list of records where each record consists of the waiting, service and 
+        blocking times of one trial. Alternatively if the output_type = "list" then 
+        returns three lists with all waiting, service and blocking times
 
     """
     if seed_num == None:
@@ -472,7 +503,10 @@ def get_mean_blocking_difference_between_two_hospitals(
     warm_up_time,
     runtime,
 ):
-    """Given a predefined proportion of the ambulance's arrival rate calculate the mean difference between blocking times of two hospitals with given set of parameters. Note that all parameters that end in "_1" correspond to the first hospital while "_2" to the second.
+    """Given a predefined proportion of the ambulance's arrival rate calculate the 
+    mean difference between blocking times of two hospitals with given set of parameters. 
+    Note that all parameters that end in "_1" correspond to the first hospital while "_2" 
+    to the second.
 
     Parameters
     ----------
@@ -541,9 +575,15 @@ def calculate_ambulance_best_response(
     warm_up_time,
     runtime,
 ):
-    """Obtains the optimal distribution of ambulances such that the blocking times of the ambulances in the two hospitals are identical and thus optimal(minimised).
+    """Obtains the optimal distribution of ambulances such that the blocking times 
+    of the ambulances in the two hospitals are identical and thus optimal(minimised).
 
-    The brentq function is used which is an algorithm created to find the root of a function that combines root bracketing, bisection, and inverse quadratic interpolation. In this specific example the root to be found is the difference between the blocking times of two hospitals. In essence the brentq algorith atempts to find the value of "prop_1" where the "diff" is zero (see function: get_mean_blocking_difference_between_two_hospitals).
+    The brentq function is used which is an algorithm created to find the root of 
+    a function that combines root bracketing, bisection, and inverse quadratic 
+    interpolation. In this specific example the root to be found is the difference 
+    between the blocking times of two hospitals. In essence the brentq algorithm 
+    attempts to find the value of "prop_1" where the "diff" is zero 
+    (see function: get_mean_blocking_difference_between_two_hospitals).
 
     Returns
     -------

@@ -59,7 +59,7 @@ Therefore the set of all such states that an arrival may occur are defined as
 \textit{accepting states} and are denoted as:
 
 \begin{equation}\label{accepting_states_others}
-    S_A^{(o)} = \{(u, v) \in S \; | \; u < N \}
+    S_A^{(o)} = \{(u, v) \in S \; | \; v < N \}
 \end{equation}
 
 
@@ -189,7 +189,7 @@ in the set of accepting states.
 \begin{equation}\label{accepting_states_ambulance}
     S_A^{(a)}=
     \begin{cases}
-        \{(u, v) \in S \; | \; v < M \} & \textbf{if } T \leq N\\
+        \{(u, v) \in S \; | \; u < M \} & \textbf{if } T \leq N\\
         \{(u, v) \in S \; | \; v < N \} & \textbf{otherwise}
     \end{cases}
 \end{equation}

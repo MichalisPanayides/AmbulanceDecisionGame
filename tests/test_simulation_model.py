@@ -59,7 +59,9 @@ def test_example_model():
     assert sum(blocks) == 0
 
 
-@given(num_of_servers=integers(min_value=1, max_value=20),)
+@given(
+    num_of_servers=integers(min_value=1, max_value=20),
+)
 def test_build_custom_node(num_of_servers):
     """
     Test to ensure blocking works as expected for extreme cases where the threshold is set to infinity and -1
@@ -116,7 +118,7 @@ def test_example_build_custom_node():
 
 def test_simulate_model_unconstrained():
     """
-    Test that the correct values are output given specific values and when the system 
+    Test that the correct values are output given specific values and when the system
     capacity and the parking capacity are infinite
     """
     sim_results = []

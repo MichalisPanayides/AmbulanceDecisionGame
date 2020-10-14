@@ -14,12 +14,12 @@ def build_model(
     parking_capacity=float("inf"),
 ):
     """Builds a ciw object that represents a model of a queuing network with two
-    service centres; the hospital and the parking space. Patients arrive at the 
-    hospital and at the parking space with rates that follow the exponential 
-    distribution of λ_ο and λ_α respectively. The service distribution follows 
-    a constant distribution of 0 for the parking space and an exponential 
-    distribution with a rate of μ for the hospital. The variables "num_of_servers" 
-    and "parking_capacity" indicate the capacities of the two centres. Finally, 
+    service centres; the hospital and the parking space. Patients arrive at the
+    hospital and at the parking space with rates that follow the exponential
+    distribution of λ_ο and λ_α respectively. The service distribution follows
+    a constant distribution of 0 for the parking space and an exponential
+    distribution with a rate of μ for the hospital. The variables "num_of_servers"
+    and "parking_capacity" indicate the capacities of the two centres. Finally,
     the queue capacity is set to the difference between the number of servers and
     the system capacity for the hospital centre and for the parking space it is
     set to zero, as there should not occur any waiting there, just blockage.
@@ -54,7 +54,7 @@ def build_custom_node(threshold=float("inf")):
     ciw.Node class and replaces methods release_blocked_individual and finish_service.
     The methods are modified in such a way such that all individuals that are in
     the parking space node (node 1) remain blocked as long as the number of individuals
-    in the hospital node (node 2) exceeds the threshold. 
+    in the hospital node (node 2) exceeds the threshold.
 
     Parameters
     ----------
@@ -149,9 +149,9 @@ def simulate_model(
 ):
     """Simulate the model by using the custom node and returning the simulation object.
 
-    It is important to note that when the threshold is greater than the system capacity 
-    the parking capacity is forced to be 1 because otherwise, when the hospital gets 
-    full, ambulance patients will flood the parking spaces which is not what should 
+    It is important to note that when the threshold is greater than the system capacity
+    the parking capacity is forced to be 1 because otherwise, when the hospital gets
+    full, ambulance patients will flood the parking spaces which is not what should
     happen in this particular scenario.
     TODO: use different approach to handle this scenario
 
@@ -192,10 +192,10 @@ def simulate_model(
 def get_simulated_state_probabilities(
     simulation_object, output=np.ndarray, system_capacity=None, parking_capacity=None
 ):
-    """Calculates the vector pi in a dictionary format or an array format. For the 
-    dictionary format the keys are the states (i,j) and the values are the probabilities 
-    that the system is in a current state. For the 2-dimensional array format the 
-    probability of being in state (i,j) is placed in the equivalent (i,j) position 
+    """Calculates the vector pi in a dictionary format or an array format. For the
+    dictionary format the keys are the states (i,j) and the values are the probabilities
+    that the system is in a current state. For the 2-dimensional array format the
+    probability of being in state (i,j) is placed in the equivalent (i,j) position
     in the numpy array.
 
     Parameters
@@ -248,7 +248,7 @@ def get_average_simulated_state_probabilities(
     output=np.ndarray,
 ):
     """
-    This function runs the get_simulated_state_probabilities() for multiple iterations 
+    This function runs the get_simulated_state_probabilities() for multiple iterations
     to eliminate any stochasticity from the results
 
     Parameters
@@ -309,7 +309,7 @@ def get_average_simulated_state_probabilities(
 
 def extract_times_from_records(simulation_records, warm_up_time):
     """Get the required times (waiting, service, blocking) out of ciw's records
-    where all individuals are treated the same way. This function can't distinguish 
+    where all individuals are treated the same way. This function can't distinguish
     between ambulance patients and other patients. It returns the aggregated waiting
     time, service times BUT only blocking times of ambulance patients.
 
@@ -348,8 +348,8 @@ def extract_times_from_individuals(
 ):
     """
     Extract waiting times and service times for all individuals and proceed to extract
-    blocking times for just ambulance patients. The function uses individual's records 
-    and determines the type of patient that each individual is, based on the number 
+    blocking times for just ambulance patients. The function uses individual's records
+    and determines the type of patient that each individual is, based on the number
     of nodes visited.
     """
     waiting_times = []
@@ -408,9 +408,9 @@ def get_multiple_runs_results(
     parking_capacity=float("inf"),
     patient_type="both",
 ):
-    """Get the waiting times, service times and blocking times for multiple runs 
-    of the simulation. The function may return the times for ambulance patients, 
-    other patients or the aggregated total of the two. 
+    """Get the waiting times, service times and blocking times for multiple runs
+    of the simulation. The function may return the times for ambulance patients,
+    other patients or the aggregated total of the two.
 
     Parameters
     ----------
@@ -426,8 +426,8 @@ def get_multiple_runs_results(
     Returns
     -------
     list
-        A list of records where each record consists of the waiting, service and 
-        blocking times of one trial. Alternatively if the output_type = "list" then 
+        A list of records where each record consists of the waiting, service and
+        blocking times of one trial. Alternatively if the output_type = "list" then
         returns three lists with all waiting, service and blocking times
 
     """
@@ -503,9 +503,9 @@ def get_mean_blocking_difference_between_two_hospitals(
     warm_up_time,
     runtime,
 ):
-    """Given a predefined proportion of the ambulance's arrival rate calculate the 
-    mean difference between blocking times of two hospitals with given set of parameters. 
-    Note that all parameters that end in "_1" correspond to the first hospital while "_2" 
+    """Given a predefined proportion of the ambulance's arrival rate calculate the
+    mean difference between blocking times of two hospitals with given set of parameters.
+    Note that all parameters that end in "_1" correspond to the first hospital while "_2"
     to the second.
 
     Parameters
@@ -575,14 +575,14 @@ def calculate_ambulance_best_response(
     warm_up_time,
     runtime,
 ):
-    """Obtains the optimal distribution of ambulances such that the blocking times 
+    """Obtains the optimal distribution of ambulances such that the blocking times
     of the ambulances in the two hospitals are identical and thus optimal(minimised).
 
-    The brentq function is used which is an algorithm created to find the root of 
-    a function that combines root bracketing, bisection, and inverse quadratic 
-    interpolation. In this specific example the root to be found is the difference 
-    between the blocking times of two hospitals. In essence the brentq algorithm 
-    attempts to find the value of "prop_1" where the "diff" is zero 
+    The brentq function is used which is an algorithm created to find the root of
+    a function that combines root bracketing, bisection, and inverse quadratic
+    interpolation. In this specific example the root to be found is the difference
+    between the blocking times of two hospitals. In essence the brentq algorithm
+    attempts to find the value of "prop_1" where the "diff" is zero
     (see function: get_mean_blocking_difference_between_two_hospitals).
 
     Returns

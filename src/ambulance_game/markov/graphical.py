@@ -515,14 +515,14 @@ def get_coefficient(D, R, L):
     """
     all_permutations = get_all_permutations(D, R, L)
     permutations_ending_in_R = get_permutations_ending_in_R(D, R, L)
-    permutations_ending_in_D_where_any_RL_exists = get_permutations_ending_in_D_where_any_RL_exists(
-        D, R, L
+    permutations_ending_in_D_where_any_RL_exists = (
+        get_permutations_ending_in_D_where_any_RL_exists(D, R, L)
     )
-    permutations_ending_in_L_where_any_RL_exists = get_permutations_ending_in_L_where_any_RL_exists(
-        D, R, L
+    permutations_ending_in_L_where_any_RL_exists = (
+        get_permutations_ending_in_L_where_any_RL_exists(D, R, L)
     )
-    permutations_ending_in_RL_where_RL_exists_only_at_the_end = get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
-        D, R, L
+    permutations_ending_in_RL_where_RL_exists_only_at_the_end = (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L)
     )
 
     coefficient = all_permutations

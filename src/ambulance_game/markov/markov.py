@@ -574,11 +574,7 @@ def is_accepting_state(
 
 
 def expected_time_in_markov_state_ignoring_arrivals(
-    state,
-    patient_type,
-    num_of_servers,
-    mu,
-    threshold,
+    state, patient_type, num_of_servers, mu, threshold,
 ):
     """Get the expected waiting time in a Markov state when ignoring any subsequent 
     arrivals.When considering ambulance patients waiting time and the patients are 

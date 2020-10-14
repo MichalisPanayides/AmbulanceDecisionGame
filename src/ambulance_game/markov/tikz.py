@@ -11,12 +11,15 @@ from .graphical import (
 def generate_code_for_tikz_figure(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Builds a string of latex code that generates the tikz picture of the Markov chain with the given parameters: number of servers (C), threshold (T), system capacity (N) and parking capacity (M).
+    """Builds a string of latex code that generates the tikz picture of the Markov 
+    chain with the given parameters: number of servers (C), threshold (T), 
+    system capacity (N) and parking capacity (M).
 
     The function works using three loops:
         - First loop to build nodes and edges of states (0,0) - (0,T)
         - Second loop to build nodes and edges of states (0,T) - (M,T)
-        - Third loop to build nodes and edges of the remaining states (the remainig rectangle of states)
+        - Third loop to build nodes and edges of the remaining states 
+          (the remaining rectangle of states)
 
     Parameters
     ----------
@@ -28,7 +31,8 @@ def generate_code_for_tikz_figure(
     Returns
     -------
     string
-        A string containing the full latex code to build a tikz figure of the Markov chain
+        A string containing the full latex code to build a tikz figure of the Markov 
+        chain
     """
     tikz_code = (
         "\\begin{tikzpicture}[-, node distance = 1cm, auto]"
@@ -308,7 +312,10 @@ def build_body_of_tikz_spanning_tree(
 def get_tikz_code_for_permutation(
     edges, num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Given a specific valid permutation of edges that corresponds to a spanning tree of a Markov chain, generate tikz code to build that spanning tree. The function generates the appropriate string based on the elements of the edges array."""
+    """Given a specific valid permutation of edges that corresponds to a spanning 
+    tree of a Markov chain, generate tikz code to build that spanning tree. 
+    The function generates the appropriate string based on the elements of the 
+    edges array."""
 
     tikz_code = ""
 
@@ -371,13 +378,16 @@ def get_tikz_code_for_permutation(
 def generate_code_for_tikz_spanning_trees_rooted_at_00(
     num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Builds a string of latex code that generates tikz pictures of all spaning trees of the Markov chain that are rooted at node (0,0). The function considers the markov chain with the given paramaters and performs the following steps:
+    """Builds a string of latex code that generates tikz pictures of all spanning 
+    trees of the Markov chain that are rooted at node (0,0). The function considers 
+    the Markov chain with the given parameters and performs the following steps:
         - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
             - Initialise an array with the corresponding values i.e. ["L","L","R","R","R","D","D"]
             - WHILE more trees exist with these specific values:
                 - if the array can be translated into a valid spanning tree (no cycles):
                     - Generate tikz code for that array
-                - Generate the next permutation i.e. ["L","L","R","R","R","D","D"] -> ["L","R","L","R","R","D","D"]
+                - Generate the next permutation 
+                  i.e. ["L","L","R","R","R","D","D"] -> ["L","R","L","R","R","D","D"]
                 - if no more permutations can be generated exit the while loop
             - Move to next combination of edges until all combinations are considered
         - Add a permutation with only left_edges ["L", "L", ..., "L"]
@@ -459,11 +469,7 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
         num_of_servers, threshold, system_capacity, parking_capacity
     )
     tikz_code += get_tikz_code_for_permutation(
-        edges_index,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        edges_index, num_of_servers, threshold, system_capacity, parking_capacity,
     )
     tikz_code += "\\end{tikzpicture}"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")

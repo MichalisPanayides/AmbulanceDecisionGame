@@ -32,7 +32,10 @@ def get_heatmaps(
     num_of_trials=10,
     linear_positioning=False,
 ):
-    """Get heatmaps plot that compare the state probabilities of the simulation and markov state probabilities. In total three heatmaps are generated; one for the simulation state probabilities, one for the markov state probabilities and one for the difference between the two
+    """Get heatmaps plot that compare the state probabilities of the simulation 
+    and Markov state probabilities. In total three heatmaps are generated; one for 
+    the simulation state probabilities, one for the Markov state probabilities and 
+    one for the difference between the two.
 
     Parameters
     ----------
@@ -46,7 +49,7 @@ def get_heatmaps(
     seed_num : float, optional
     runtime : int, optional
     num_of_trials : int, optional
-    linear_positioning : boolean, optional
+    linear_positioning : Boolean, optional
         To distinguish between the two position formats of the heatmaps, by default False
     """
     all_states = build_states(threshold, system_capacity, parking_capacity)
@@ -137,7 +140,9 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     num_of_trials=10,
     output="both",
 ):
-    """An alternative approach to obtaining the mean waiting time from the simulation. This function gets the mean waiting time from the simulation state probabilities. This is mainly used in comparing the simulation results with the markov ones.
+    """An alternative approach to obtaining the mean waiting time from the simulation. 
+    This function gets the mean waiting time from the simulation state probabilities. 
+    This is mainly used in comparing the simulation results with the Markov ones.
 
     Parameters
     ----------
@@ -151,7 +156,8 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num : float
     num_of_trials : int
     output : str, optional
-        A string to identify wheteher to get the waiting time of other patients, ambulance patients or the overall of both, by default "both"
+        A string to identify whether to get the waiting time of other patients, 
+        ambulance patients or the overall of both, by default "both"
 
     Returns
     -------
@@ -266,7 +272,8 @@ def get_plot_comparing_times(
     max_parameter_value=1,
     accuracy=None,
 ):
-    """Get a plot to compare the simulated waiting times and the markov chain mean waiting times for different values of a given parameter.
+    """Get a plot to compare the simulated waiting times and the Markov chain mean 
+    waiting times for different values of a given parameter.
 
     Parameters
     ----------
@@ -281,7 +288,8 @@ def get_plot_comparing_times(
     system_capacity : int
     parking_capacity : int
     output : str, optional
-        A string to identify wheteher to get the waiting time of other patients, ambulance patients or the overall of both, by default "both"
+        A string to identify whether to get the waiting time of other patients, 
+        ambulance patients or the overall of both, by default "both"
     plot_over : str, optional
         A string with the name of the variable to plot over, by default "lambda_a"
     max_parameter_value : float, optional
@@ -292,7 +300,9 @@ def get_plot_comparing_times(
     Plots
     -------
     matplotlib object
-        A plot of the mean waiting time from markov and simualtion state probabiliteis as well as the distributions of the waiting time from the simulation over different values of the given parameter.
+        A plot of the mean waiting time from Markov and simulation state probabilities 
+        as well as the distributions of the waiting time from the simulation over 
+        different values of the given parameter.
 
     Returns
     -------
@@ -301,9 +311,10 @@ def get_plot_comparing_times(
     list
         A list of all mean waiting times of the simulation (from state probabilities)
     list
-        A list of all mean waiting times of the markov model
+        A list of all mean waiting times of the Markov model
     list
-        A list of lists of all mean waiting times of the simulation (simulated) for all trials
+        A list of lists of all mean waiting times of the simulation (simulated) 
+        for all trials
     """
     all_times_sim = []
     all_mean_times_sim = []
@@ -346,20 +357,18 @@ def get_plot_comparing_times(
             patient_type=output,
         )
         simulation_waiting_times = [np.mean(w.waiting_times) for w in times]
-        mean_waiting_time_sim = (
-            get_mean_waiting_time_from_simulation_state_probabilities(
-                lambda_a,
-                lambda_o,
-                mu,
-                num_of_servers,
-                threshold,
-                system_capacity,
-                parking_capacity,
-                seed_num=seed_num,
-                runtime=runtime,
-                num_of_trials=num_of_trials,
-                output=output,
-            )
+        mean_waiting_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
+            lambda_a,
+            lambda_o,
+            mu,
+            num_of_servers,
+            threshold,
+            system_capacity,
+            parking_capacity,
+            seed_num=seed_num,
+            runtime=runtime,
+            num_of_trials=num_of_trials,
+            output=output,
         )
         mean_waiting_time_markov = get_mean_waiting_time_markov(
             lambda_a,

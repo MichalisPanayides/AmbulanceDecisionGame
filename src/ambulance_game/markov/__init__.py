@@ -14,6 +14,16 @@ from .markov import (
     is_accepting_state,
     mean_waiting_time_formula,
     get_mean_waiting_time_markov,
+    is_blocking_state,
+    expected_sojourn_time_in_markov_state,
+    prob_service,
+    prob_other_arrival,
+    get_coefficients_row_of_array_associated_with_state,
+    get_blocking_times_array_of_coefficients,
+    convert_solution_to_correct_array_format,
+    get_blocking_times_of_all_states,
+    mean_blocking_time_formula,
+    get_mean_blocking_time_markov,
 )
 
 from .graphical import (

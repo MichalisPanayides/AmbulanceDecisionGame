@@ -17,7 +17,7 @@ from .markov.markov import (
     mean_waiting_time_formula,
     get_mean_waiting_time_markov,
     mean_blocking_time_formula,
-    get_mean_blocking_time_markov
+    get_mean_blocking_time_markov,
 )
 
 
@@ -267,7 +267,7 @@ def get_mean_blocking_time_simulation(
     parking_capacity,
     seed_num=None,
     num_of_trials=10,
-    runtime=2000
+    runtime=2000,
 ):
     """An alternative approach to obtaining the mean blocking time from the simulation.
     This function gets the mean blocking time from the simulation's state probabilities.
@@ -301,7 +301,7 @@ def get_mean_blocking_time_simulation(
         parking_capacity,
         seed_num=seed_num,
         num_of_trials=num_of_trials,
-        runtime=runtime
+        runtime=runtime,
     )
     all_states = [
         (u, v)
@@ -309,7 +309,16 @@ def get_mean_blocking_time_simulation(
         for u in range(state_probabilities.shape[0])
         if state_probabilities[u, v] > 0
     ]
-    mean_blocking_time = mean_blocking_time_formula(all_states, state_probabilities, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity)
+    mean_blocking_time = mean_blocking_time_formula(
+        all_states,
+        state_probabilities,
+        lambda_o,
+        mu,
+        num_of_servers,
+        threshold,
+        system_capacity,
+        parking_capacity,
+    )
     return mean_blocking_time
 
 
@@ -331,7 +340,7 @@ def get_plot_comparing_times(
     max_parameter_value=1,
     accuracy=None,
 ):
-    """Get a plot to compare the simulated waiting or blocking times and the Markov 
+    """Get a plot to compare the simulated waiting or blocking times and the Markov
     chain mean waiting or blocking times for different values of a given parameter.
 
     Parameters
@@ -417,20 +426,18 @@ def get_plot_comparing_times(
         )
         if times_to_compare == "waiting":
             simulation_times = [np.mean(w.waiting_times) for w in times]
-            mean_time_sim = (
-                get_mean_waiting_time_from_simulation_state_probabilities(
-                    lambda_a,
-                    lambda_o,
-                    mu,
-                    num_of_servers,
-                    threshold,
-                    system_capacity,
-                    parking_capacity,
-                    seed_num=seed_num,
-                    runtime=runtime,
-                    num_of_trials=num_of_trials,
-                    output=output,
-                )
+            mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
+                lambda_a,
+                lambda_o,
+                mu,
+                num_of_servers,
+                threshold,
+                system_capacity,
+                parking_capacity,
+                seed_num=seed_num,
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                output=output,
             )
             mean_time_markov = get_mean_waiting_time_markov(
                 lambda_a,
@@ -454,7 +461,7 @@ def get_plot_comparing_times(
                 parking_capacity=parking_capacity,
                 num_of_trials=num_of_trials,
                 seed_num=seed_num,
-                runtime=runtime
+                runtime=runtime,
             )
             mean_time_markov = get_mean_blocking_time_markov(
                 lambda_a=lambda_a,
@@ -463,7 +470,7 @@ def get_plot_comparing_times(
                 num_of_servers=num_of_servers,
                 threshold=threshold,
                 system_capacity=system_capacity,
-                parking_capacity=parking_capacity
+                parking_capacity=parking_capacity,
             )
 
         all_times_sim.append(simulation_times)

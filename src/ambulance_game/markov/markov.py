@@ -320,7 +320,7 @@ def is_steady_state(state, Q):
 def get_steady_state_numerically(
     Q, max_t=100, number_of_timepoints=1000, integration_function=sci.integrate.odeint
 ):
-    """Finds the steady state of the Markov chain numerically using either scipy's
+    """Finds the steady state of the Markov chain numerically using either scipy
     odeint() or solve_ivp() functions. For each method used a certain set of steps
     occur:
         - Get an initial state vector (1/n, 1/n, 1/n, ..., 1/n) where n is the
@@ -968,30 +968,29 @@ def prob_service(state, lambda_o, mu, num_of_servers):
 
 
 def prob_other_arrival(state, lambda_o, mu, num_of_servers):
-    """Gets the probability of an "other" patient arriving
-    """
+    """Gets the probability of an "other" patient arriving"""
     return lambda_o / (lambda_o + (mu * min(state[1], num_of_servers)))
-    
+
 
 def get_coefficients_row_of_array_associated_with_state(
     state, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
 ):
     """Constructs a row of the coefficients matrix. The row to be constructed corresponds
-    to the blocking time equation for a given state (u,v) where: 
-    
+    to the blocking time equation for a given state (u,v) where:
+
     b(u,v) = c(u,v) + p_s(u,v) * b(u,v−1) + p_o(u,v) * b(u,v+1)
 
-    i.e. the blocking time for state (u,v) is equal to: 
+    i.e. the blocking time for state (u,v) is equal to:
         -> the sojourn time of that state PLUS
-        -> the probability of service multiplied by the blocking time of 
+        -> the probability of service multiplied by the blocking time of
         state (u, v-1) (i.e. the state to end up when a service occurs) PLUS
-        -> the probability of other arrivals multiplied by the blocking time of 
+        -> the probability of other arrivals multiplied by the blocking time of
         state (u, v+1)
 
     Some other cases of this formula:
         -> when (u,v) not a blocking state: b(u,v) = 0
         -> when v = T: b(u,v) =  c(u,v) + p_s(u,v) * b(u-1,v) + p_o(u,v) * b(u,v+1)
-        -> when v = N: (p_s = 1 AND p_o = 0) 
+        -> when v = N: (p_s = 1 AND p_o = 0)
                 -> if v=T:      b(u,v) = c(u,v) + b(u-1, v)
                 -> otherwise:   b(u,v) = c(u,v) + b(u, v-1)
 
@@ -1000,7 +999,7 @@ def get_coefficients_row_of_array_associated_with_state(
     where all b(u,v) are considered as unknown variables and
         X = [b(1,T), ... ,b(1,N), b(2,T), ... ,b(2,N), ... , b(M,T), ... , b(M,N)]
 
-    The outputs of this function are: 
+    The outputs of this function are:
         - the vector M_{(u,v)} s.t. M_{(u,v)} * X = -c(u,v)
         - The value of -c(u,v)
 
@@ -1018,7 +1017,7 @@ def get_coefficients_row_of_array_associated_with_state(
     -------
     tuple, float
         the row of the matrix that corresponds to the equation b(u,v) where (u,v)
-        is the given state  
+        is the given state
     """
     if not is_blocking_state(state):
         return 0
@@ -1055,12 +1054,12 @@ def get_coefficients_row_of_array_associated_with_state(
 def get_blocking_times_array_of_coefficients(
     lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Formulate (but don't solve) the problem M*X = b by finding the array M and 
-    the column vector b that are required. Here M is denoted as "all_coefficients_array" 
-    and b as "constant_column". 
-    
-    The function stacks the outputs of get_coefficients_row_of_array_associated_with_state() 
-    for all blocking states (i.e. those where u>0) together. In essence all outputs 
+    """Formulate (but don't solve) the problem M*X = b by finding the array M and
+    the column vector b that are required. Here M is denoted as "all_coefficients_array"
+    and b as "constant_column".
+
+    The function stacks the outputs of get_coefficients_row_of_array_associated_with_state()
+    for all blocking states (i.e. those where u>0) together. In essence all outputs
     are stacked together to form a square matrix (M) and equivalently a column
     vector (b) that will be used to find X s.t. M*X=b
 
@@ -1076,8 +1075,8 @@ def get_blocking_times_array_of_coefficients(
     Returns
     -------
     numpy.array, list
-        The numpy array (M) and the vector (b) such that M*X = b where X is the 
-        vector with the variables of blocking times per state to be calculated 
+        The numpy array (M) and the vector (b) such that M*X = b where X is the
+        vector with the variables of blocking times per state to be calculated
     """
     all_coefficients_array = np.array([])
     for state in build_states(
@@ -1121,7 +1120,7 @@ def convert_solution_to_correct_array_format(
                                   .   .         .
                                   .      .      .
                                   .         .   .
-                               b(M,T), ... , b(M,N) 
+                               b(M,T), ... , b(M,N)
 
     Parameters
     ----------
@@ -1134,7 +1133,7 @@ def convert_solution_to_correct_array_format(
     Returns
     -------
     numpy.array
-        Converted array with dimensions N x M 
+        Converted array with dimensions N x M
     """
     new_array = np.reshape(array, (parking_capacity, system_capacity - threshold + 1))
     top_row = [0 for _ in range(system_capacity - threshold + 1)]
@@ -1150,7 +1149,7 @@ def get_blocking_times_of_all_states(
     """Solve M*X = b using numpy.linalg.solve() where:
         M = The array containing the coefficients of all b(u,v) equations
         b = Vector of constants of equations
-        X = All b(u,v) variables of the equations 
+        X = All b(u,v) variables of the equations
 
     Parameters
     ----------
@@ -1188,7 +1187,7 @@ def mean_blocking_time_formula(
     formula="algebraic",
 ):
     """Performs the blocking time formula for the Markov chain model. The formula
-    calculates all  blocking times for accepting states and multiplies them with the 
+    calculates all  blocking times for accepting states and multiplies them with the
     probability of being at that state.
 
     [Σ b(u,v) * π(u,v)] / [Σ π(u,v)]
@@ -1239,7 +1238,7 @@ def get_mean_blocking_time_markov(
     parking_capacity,
     formula="algebraic",
 ):
-    """Calculates the mean blocking time of the Markov model. 
+    """Calculates the mean blocking time of the Markov model.
 
     Parameters
     ----------

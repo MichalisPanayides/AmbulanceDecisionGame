@@ -86,7 +86,8 @@ def test_get_tikz_code_for_permutation_example_3():
 
 
 def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_1():
-    """Test that a given example of a markov chain model (1121) returns the correct tikz code for two spanning trees"""
+    """Test that a given example of a Markov chain model (1121) returns the correct
+    tikz code for two spanning trees"""
     latex_code = [
         i for i in generate_code_for_tikz_spanning_trees_rooted_at_00(1, 1, 2, 1)
     ]
@@ -103,7 +104,9 @@ def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_1():
 
 
 def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_2():
-    """Test that for a fixed parking_capacity (here is set to 2) and a fixed difference between the system_capacity and the threhold, the number of spanning trees generated remain the same (here is 169 = 13^2 because parking capacity is set to 2)"""
+    """Test that for a fixed parking_capacity (here is set to 2) and a fixed difference
+    between the system_capacity and the threshold, the number of spanning trees
+    generated remain the same (here is 169 = 13^2 because parking capacity is set to 2)"""
     num_of_trees = 169
     for system_capacity in range(4, 7):
         latex_code = [
@@ -119,9 +122,11 @@ def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_2():
 
 
 def test_generate_code_for_tikz_spanning_trees_rooted_at_00_example_3():
-    """Test that for a fixed threshold (set to 1) the number of spanning trees when altering the system capacity and parking capacity is correct.
+    """Test that for a fixed threshold (set to 1) the number of spanning trees when
+    altering the system capacity and parking capacity is correct.
 
-    Note that: number_of_trees = (number_of_trees when parking_capacity is 1) ^ parking_cpacity
+    Note that:
+        number_of_trees = (number_of_trees when parking_capacity is 1) ^ parking_capacity
     """
     num_of_trees = [2, 5, 13, 34, 89]
     for system_capacity in range(2, 5):

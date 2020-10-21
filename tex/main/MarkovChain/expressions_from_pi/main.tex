@@ -332,17 +332,16 @@ and the closed-form formula.
 
 \subsubsection{Algebraic formula for mean blocking time}
 
-Unlike the waiting time, the blocking time is only calculated for ambulance patients.
+Unlike the waiting time, the blocking time is only calculated for ambulance patients.  % TODO Modify this to no longer refer to ambulance/patients etc...
 That is because other patients cannot be blocked. Thus, one only needs to consider 
-the pathway of ambulance patients to get the mean blocking time of the system. For 
-the studied format of Markov chain models such blocking occurs in states \((u,v)\) 
+the pathway of ambulance patients to get the mean blocking time of the system. Blocking occurs at states \((u,v)\) 
 where \(u > 0 \). Thus, the set of blocking states can be defined as:
 
 \begin{equation*}
     S_b = \{(u,v) \in S \; | \; u > 0\}
 \end{equation*}
  
-In order to not consider patients that will be lost to the system, the set of accepting
+In order to not consider patients that will be lost to the system, the set of accepting  % TODO patients -> generic vocabulary
 states needs to be taken into account. As defined in section \ref{recursive-waiting-time-ambulance},
 the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
 
@@ -355,10 +354,10 @@ the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
 \end{equation*}
 
 For the waiting time formula the mean sojourn time for each state was considered,
-ignoring any arrivals. Here, the same approach is used but ignoring only ambulance
-arrivals. That is because for the waiting time formula, once a patient enters the
+ignoring any arrivals. Here, the same approach is used but ignoring only ambulance  % TODO ambulance -> generic term
+arrivals. That is because for the waiting time formula, once a patient enters the  % TODO patient/hospital -> generic term
 hospital (i.e. starts waiting) any patient arriving after them will not affect their
-pathway. That is not the case for blocking time. When an ambulance patient is blocked,
+pathway. That is not the case for blocking time. When an ambulance patient is blocked,  % TODO patient -> generic term
 any \textit{other} patient that arrives will cause the blocked patient to remain 
 blocked for more time. Therefore, \textit{other} arrivals are considered here:
 
@@ -372,10 +371,14 @@ blocked for more time. Therefore, \textit{other} arrivals are considered here:
  
 In equation \ref{eq:time_in_state_blocking_time}, both service completions and 
 \textit{other} patient arrivals are considered. 
-Thus, from a blocked patient's perspective whenever the system moves from one state 
-to another it can either be because of a service being completed or from an arrival 
-of \textit{other} patient. 
-The following two expressions give the probabilities of these two scenarios:
+Thus, from a blocked patient's perspective whenever the system moves from one state \(u\)
+to another state \(v\) it can either:
+
+\begin{itemize}
+    \item be because of a service being completed: we will denote the probability of this happening by \(p_s(u,v)\). 
+    \item be because of an arrival of another individual of the first class denoted by \(p_o(u,v)\).  % TODO Align "first class" with whatever generic terms are used.
+\end{itemize}
+The probabilities are given by:
 
 \begin{equation*}
     p_s(u,v) = \frac{\min(v,C)\mu}{\lambda^o + \min(v,C)\mu}, \qquad
@@ -383,7 +386,7 @@ The following two expressions give the probabilities of these two scenarios:
 \end{equation*}
 
 
-Having defined \( c(u,v) \) and \(S_b\) a formula for the blocking time that is
+Having defined \(c(u,v)\) and \(S_b\) a formula for the blocking time that is
 expected to occur at each state can be given by:
 
 \begin{equation}\label{eq:blocking-time-at-each-state}
@@ -401,11 +404,11 @@ Unlike equations (\ref{eq:waiting-time-at-each-state-other}) and
 (\ref{eq:waiting-time-at-each-state-ambulance}), equation 
 (\ref{eq:blocking-time-at-each-state}) cannot be solved recursively. 
 An algebraic approach will be used to solve this equation here. 
-By finding all equations \(b(u,v)\) for all states \((u,v)\) that belong in \(S_b\) 
+By enumerating all equations of (\ref{eq:blocking-time-at-each-state}) for all states \((u,v)\) that belong in \(S_b\) 
 a system of linear equations arises where the unknown variables are all the \(b(u,v)\)
 terms.
 For instance, let us consider a Markov model where \(C=2, T=3, N=6, M=2\). 
-The Markov model and the equivalent equations are shown below. 
+The Markov model is shown in Figure ... and the equivalent equations are (\ref{eq:first_equation_of_example})-(eq:last_equation_of_example).
 The equations considered here are only the ones that correspond to the blocking 
 states.
 
@@ -413,19 +416,21 @@ states.
     \scalebox{0.68}{\input{MarkovChain/expressions_from_pi/example_model_2362/main.tex}}
     \columnbreak
     \vspace*{0cm} 
-    \begin{align*}
-        b(1,2) &= c(1,2) + p_o b(1,3) \\
+    \begin{align}
+        b(1,2) &= c(1,2) + p_o b(1,3) \label{eq:first_equation_of_example}
+\\
         b(1,3) &= c(1,3) + p_s b(1,2) + p_o b(1,4) \\
         b(1,4) &= c(1,4) + b(1,3) \\
         b(2,2) &= c(2,2) + p_s b(1,2) + p_o b(2,3) \\
         b(2,3) &= c(2,3) + p_s b(2,2) + p_o b(1,4) \\
-        b(2,4) &= c(2,4) + b(2,3)
-    \end{align*}
+        b(2,4) &= c(2,4) + b(2,3)\label{eq:last_equation_of_example}
+    \end{align}
 \end{multicols*}
 
-Additionally, the above equations can be transformed into the following linear system.
+Additionally, the above equations can be transformed into a linear system of the form \(Mx=y\) with:
 
 \begin{equation}\label{eq:example-algebaric-approach-blocking-time}
+    M=
     \begin{pmatrix}
         -1 & p_o & 0 & 0 & 0 & 0 \\ %(1,2)
         p_s & -1 & p_o & 0 & 0 & 0 \\ %(1,3)
@@ -434,6 +439,7 @@ Additionally, the above equations can be transformed into the following linear s
         0 & 0 & 0 & p_s & -1 & p_o \\ %(2,3)
         0 & 0 & 0 & 0 & 1 & -1 \\ %(2,4)
     \end{pmatrix}
+    x=
     \begin{pmatrix}
         b(1,2) \\
         b(1,3) \\
@@ -443,6 +449,7 @@ Additionally, the above equations can be transformed into the following linear s
         b(2,4) \\
     \end{pmatrix}
     = 
+    y=
     \begin{pmatrix}
         -c(1,2) \\
         -c(1,3) \\

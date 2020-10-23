@@ -37,15 +37,15 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
                 3. Replace that "L" with "D"
                 4. Turn (the same amount as in (1)) elements after it into "L"
 
-        - If the array conssists only of elements "R" and "D" (direction="R"):
+        - If the array consists only of elements "R" and "D" (direction="R"):
             - Same as case of "L" and "D"
 
-        - If the array conssists of elements "L", "R" and "D" (direction="LR"):
+        - If the array consists of elements "L", "R" and "D" (direction="LR"):
             - Treats all "L" and "R" values as the same element
-            - Performs the same opperations as above with (L+R vs D)
+            - Performs the same operations as above with (L+R vs D)
 
-        - If the array conssists only of elements "L" and "R" (direction="L", permute_over="R"):
-            - Performs the same opperations as above with (L vs R)
+        - If the array consists only of elements "L" and "R" (direction="L", permute_over="R"):
+            - Performs the same operations as above with (L vs R)
 
     Example 1 (direction = "L")
     ----------

@@ -37,8 +37,9 @@ scenarios of what state the system can be in when an individual arrives.
 Furthermore, a different recursive formula arises for \textit{ambulance patients} 
 and a different one for \textit{other patients}.
 
-\subsection{Mean waiting time}
+\subsection{Mean waiting time} 
 \subsubsection{Recursive formula for mean waiting time of \textit{other patients}}
+\label{sec:recursive-waiting-time-others}
 
 To calculate the mean waiting time of \textit{other patients} one must first identify 
 the set of states \((u, v)\) that will imply that a wait will occur. 
@@ -169,13 +170,14 @@ waiting times of accepting states multiplied by the probability of being at that
 state and dividing by the probability of being in any accepting state.
 
 \begin{equation} \label{eq:recursive-waiting-time-others}
-    W^{(o)} = \frac{\sum_{(u,v) \in S_A^{(o)}} w^{(o)}(u,v) \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(o)}} \pi_{(u,v)}}
+    W^{(o)} = \frac{\sum_{(u,v) \in S_A^{(o)}} w^{(o)}(u,v) 
+    \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(o)}} \pi_{(u,v)}}
 \end{equation}
 
 
 
 \subsubsection{Recursive formula for mean waiting time of 
-\textit{ambulance patients}} \label{recursive-waiting-time-ambulance}
+\textit{ambulance patients}} \label{sec:recursive-waiting-time-ambulance}
 
 Equivalently the mean waiting time for \textit{ambulance patients} can be calculated 
 in a similar manner. 
@@ -256,7 +258,8 @@ The formulas are given by:
 \end{equation}
 
 Note here that the summation, in both equations \ref{eq:closed_form_waiting_others} 
-and \ref{eq:closed_form_waiting_ambulance}, goes through all states in the set of accepting 
+and \ref{eq:closed_form_waiting_ambulance}, goes through all states in the set of 
+accepting 
 states of either \textit{ambulance or other patients} respectively, where a wait 
 incurs. 
 In equation \ref{eq:closed_form_waiting_others} that includes all states \((u,v)\) 
@@ -267,7 +270,8 @@ Consequently, for the states that are included in the summation  the expression
 \( v-C+1 \) indicates the amount of people in service one would have to wait for 
 upon arrival at the hospital.
 
-Additionally, the minimisation function in equation \ref{eq:closed_form_waiting_ambulance} 
+Additionally, the minimisation function in equation 
+\ref{eq:closed_form_waiting_ambulance} 
 (\textit{ambulance patients}) ensures that when an ambulance arrives at any state 
 that is greater than the predetermined threshold, the wait that the individual will 
 have to endure remains the same. 
@@ -293,7 +297,8 @@ rates of each patient type but in practise if the hospital or the parking space
 is full, some patients may be lost to the system. 
 Thus, one should account for the probability that a patient is lost to the system. 
 This probability can be easily calculated by using the two sets of accepting states 
-\(S_A^{(a)}\) and \(S_A^{(o)}\) defined earlier in equations \ref{eq:accepting_states_others} 
+\(S_A^{(a)}\) and \(S_A^{(o)}\) defined earlier in equations 
+\ref{eq:accepting_states_others} 
 and \ref{eq:accepting_states_ambulance}. 
 Let us define here the probability, for either patient type, that an individual 
 is not lost in the system by:
@@ -306,7 +311,8 @@ is not lost in the system by:
 Having defined these probabilities one may combine them with the arrival rates of 
 each patient type in such a way to get the expected proportions of ambulance and 
 other patients in the model. 
-Thus, by using these values as the coefficient of equation \ref{overall_waiting_time_coeff} 
+Thus, by using these values as the coefficient of equation 
+\ref{overall_waiting_time_coeff} 
 the resultant equation can be used to get the overall waiting time. 
 Note here that the equation below gets the overall waiting time for both the recursive 
 and the closed-form formula.
@@ -330,19 +336,23 @@ and the closed-form formula.
 
 \subsection{Mean blocking time}
 
-\subsubsection{Algebraic formula for mean blocking time}
+\subsubsection{Linear algebraic formula for mean blocking time}
 
-Unlike the waiting time, the blocking time is only calculated for ambulance patients.  % TODO Modify this to no longer refer to ambulance/patients etc...
+Unlike the waiting time, the blocking time is only calculated for ambulance patients.  
+% TODO Modify this to no longer refer to ambulance/patients etc...
 That is because other patients cannot be blocked. Thus, one only needs to consider 
-the pathway of ambulance patients to get the mean blocking time of the system. Blocking occurs at states \((u,v)\) 
+the pathway of ambulance patients to get the mean blocking time of the system. 
+Blocking occurs at states \((u,v)\) 
 where \(u > 0 \). Thus, the set of blocking states can be defined as:
 
 \begin{equation*}
     S_b = \{(u,v) \in S \; | \; u > 0\}
 \end{equation*}
  
-In order to not consider patients that will be lost to the system, the set of accepting  % TODO patients -> generic vocabulary
-states needs to be taken into account. As defined in section \ref{recursive-waiting-time-ambulance},
+In order to not consider patients that will be lost to the system, the set of accepting
+% TODO patients -> generic vocabulary
+states needs to be taken into account. As defined in section 
+\ref{sec:recursive-waiting-time-ambulance},
 the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
 
 \begin{equation*}
@@ -353,11 +363,16 @@ the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
     \end{cases}
 \end{equation*}
 
-For the waiting time formula the mean sojourn time for each state was considered,
-ignoring any arrivals. Here, the same approach is used but ignoring only ambulance  % TODO ambulance -> generic term
-arrivals. That is because for the waiting time formula, once a patient enters the  % TODO patient/hospital -> generic term
+For the waiting time formula in sections \ref{sec:recursive-waiting-time-others}
+and \ref{sec:recursive-waiting-time-ambulance}
+the mean sojourn time for each state was considered,
+ignoring any arrivals. Here, the same approach is used but ignoring only ambulance  
+% TODO ambulance -> generic term
+arrivals. That is because for the waiting time formula, once a patient enters the  
+% TODO patient/hospital -> generic term
 hospital (i.e. starts waiting) any patient arriving after them will not affect their
-pathway. That is not the case for blocking time. When an ambulance patient is blocked,  % TODO patient -> generic term
+pathway. That is not the case for blocking time. When an ambulance patient is blocked, 
+% TODO patient -> generic term
 any \textit{other} patient that arrives will cause the blocked patient to remain 
 blocked for more time. Therefore, \textit{other} arrivals are considered here:
 
@@ -375,8 +390,10 @@ Thus, from a blocked patient's perspective whenever the system moves from one st
 to another state \(v\) it can either:
 
 \begin{itemize}
-    \item be because of a service being completed: we will denote the probability of this happening by \(p_s(u,v)\). 
-    \item be because of an arrival of another individual of the first class denoted by \(p_o(u,v)\).  % TODO Align "first class" with whatever generic terms are used.
+    \item be because of a service being completed: we will denote the probability 
+    of this happening by \(p_s(u,v)\). 
+    \item be because of an arrival of another individual of the first class denoted 
+    by \(p_o(u,v)\).  % TODO Align "first class" with whatever generic terms are used.
 \end{itemize}
 The probabilities are given by:
 
@@ -395,42 +412,49 @@ expected to occur at each state can be given by:
         0, & \textbf{if } (u,v) \notin S_b \\
         c(u,v) + b(u - 1, v), & \textbf{if } v = N = T\\
         c(u,v) + b(u, v-1), & \textbf{if } v = N \neq T \\
-        c(u,v) + p_s(u,v) b(u-1, v) + p_o(u,v) b(u, v+1), & \textbf{if } u > 0 \textbf{ and } v = T \\
+        c(u,v) + p_s(u,v) b(u-1, v) + p_o(u,v) b(u, v+1), & \textbf{if } u > 0 
+        \textbf{ and } v = T \\
         c(u,v) + p_s(u,v) b(u, v-1) + p_o(u,v) b(u, v+1), & \textbf{otherwise} \\
     \end{cases}
 \end{equation}
 
 Unlike equations (\ref{eq:waiting-time-at-each-state-other}) and 
 (\ref{eq:waiting-time-at-each-state-ambulance}), equation 
-(\ref{eq:blocking-time-at-each-state}) cannot be solved recursively. 
-An algebraic approach will be used to solve this equation here. 
-By enumerating all equations of (\ref{eq:blocking-time-at-each-state}) for all states \((u,v)\) that belong in \(S_b\) 
+(\ref{eq:blocking-time-at-each-state}) will not be solved recursively. 
+A linear algebraic approach will be used to solve this equation here. 
+By enumerating all equations of (\ref{eq:blocking-time-at-each-state}) for all 
+states \((u,v)\) that belong in \(S_b\) 
 a system of linear equations arises where the unknown variables are all the \(b(u,v)\)
 terms.
 For instance, let us consider a Markov model where \(C=2, T=3, N=6, M=2\). 
-The Markov model is shown in Figure ... and the equivalent equations are (\ref{eq:first_equation_of_example})-(eq:last_equation_of_example).
+The Markov model is shown in Figure \ref{fig:example-algeb-blocking}
+and the equivalent equations are 
+(\ref{eq:first_eq_of_blocking_example})-(\ref{eq:last_eq_of_blocking_example}).
 The equations considered here are only the ones that correspond to the blocking 
 states.
 
 \begin{multicols*}{2}
-    \scalebox{0.68}{\input{MarkovChain/expressions_from_pi/example_model_2362/main.tex}}
+    \begin{figure}[H]
+        \scalebox{0.65}{\input{MarkovChain/expressions_from_pi/example_model_2362/main.tex}}
+        \caption{Example of Markov chain}
+        \label{fig:example-algeb-blocking}
+    \end{figure}
     \columnbreak
-    \vspace*{0cm} 
     \begin{align}
-        b(1,2) &= c(1,2) + p_o b(1,3) \label{eq:first_equation_of_example}
-\\
+        b(1,2) &= c(1,2) + p_o b(1,3) \label{eq:first_eq_of_blocking_example} \\
         b(1,3) &= c(1,3) + p_s b(1,2) + p_o b(1,4) \\
         b(1,4) &= c(1,4) + b(1,3) \\
         b(2,2) &= c(2,2) + p_s b(1,2) + p_o b(2,3) \\
         b(2,3) &= c(2,3) + p_s b(2,2) + p_o b(1,4) \\
-        b(2,4) &= c(2,4) + b(2,3)\label{eq:last_equation_of_example}
+        b(2,4) &= c(2,4) + b(2,3)\label{eq:last_eq_of_blocking_example}
     \end{align}
 \end{multicols*}
 
-Additionally, the above equations can be transformed into a linear system of the form \(Mx=y\) with:
+Additionally, the above equations can be transformed into a linear system of the 
+form \(Zx=y\) where:
 
 \begin{equation}\label{eq:example-algebaric-approach-blocking-time}
-    M=
+    Z=
     \begin{pmatrix}
         -1 & p_o & 0 & 0 & 0 & 0 \\ %(1,2)
         p_s & -1 & p_o & 0 & 0 & 0 \\ %(1,3)
@@ -438,7 +462,7 @@ Additionally, the above equations can be transformed into a linear system of the
         p_s & 0 & 0 & -1 & p_o & 0\\ %(2,2)
         0 & 0 & 0 & p_s & -1 & p_o \\ %(2,3)
         0 & 0 & 0 & 0 & 1 & -1 \\ %(2,4)
-    \end{pmatrix}
+    \end{pmatrix},
     x=
     \begin{pmatrix}
         b(1,2) \\
@@ -447,8 +471,7 @@ Additionally, the above equations can be transformed into a linear system of the
         b(2,2) \\
         b(2,3) \\
         b(2,4) \\
-    \end{pmatrix}
-    = 
+    \end{pmatrix}, 
     y=
     \begin{pmatrix}
         -c(1,2) \\
@@ -460,46 +483,68 @@ Additionally, the above equations can be transformed into a linear system of the
     \end{pmatrix}
 \end{equation}
 
-A more generalised form of equation \ref{eq:example-algebaric-approach-blocking-time}
+A more generalised form of the equations in 
+(\ref{eq:example-algebaric-approach-blocking-time})
 can thus be given for any value of \(C,T,N,M\) by:
 
+\begin{align}
+    b(1,T) =& c(1, T) + p_o b(1, T + 1) \label{eq:first_eq_of_blocking_general}\\
+    b(1,T + 1) =& c(1, T + 1) + p_s(1, T) + p_o b(1, T + 1) \\
+    b(1,T + 2) =& c(1, T + 2) + p_s(1, T + 1) + p_o b(1, T + 3) \\
+    & \vdots \nonumber \\
+    b(1, N) =& c(1, N) + b(1, N - 1) \\
+    b(2, T) =& c(2, T) + p_s b(1, T) + p_o b(2, T + 1) \\
+    b(2, T + 1) =& c(2, T + 1) + p_s b(2, T) + p_o b(2, T + 2) \\
+    & \vdots \nonumber \\
+    b(M, T) =& c(M, T) + b(M, T-1) \label{eq:last_eq_of_blocking_general}
+\end{align}
+
+The equivalent matrix form of the linear system of equations 
+(\ref{eq:first_eq_of_blocking_general}) - (\ref{eq:last_eq_of_blocking_general})
+is given by \(Zx=y\), where:
 \begin{equation}\label{eq:general-algebaric-approach-blocking-time}
-    \begin{pmatrix}
-        -1 & p_o & 0 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T)
-        p_s & -1 & p_o & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T+1)
-        0 & p_s & -1 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T+2)
-        \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & 
-        \vdots & \ddots & \vdots & \vdots \\ 
-        0 & 0 & 0 & \dots & 1 & -1 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,N)
-        p_s & 0 & 0 & \dots & 0 & 0 & -1 & p_o & 0 & \dots & 0 & 0 \\ %(2,T)
-        0 & 0 & 0 & \dots & 0 & 0 & p_s & -1 & p_o & \dots & 0 & 0 \\ %(2,T+1)
-        \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & 
-        \vdots & \ddots & \vdots & \vdots \\ 
-        0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 1 & -1 \\ %(M,T)
-    \end{pmatrix}
-    \begin{pmatrix}
-        b(1,T) \\
-        b(1,T+1) \\
-        b(1,T+2) \\
-        \vdots \\
-        b(1,N) \\
-        b(2,T) \\
-        b(2,T+1) \\
-        \vdots \\
-        b(M,T) \\
-    \end{pmatrix}
-    = 
-    \begin{pmatrix}
-        -c(1,T) \\
-        -c(1,T+1) \\
-        -c(1,T+2) \\
-        \vdots \\
-        -c(1,N) \\
-        -c(2,T) \\
-        -c(2,T+1) \\
-        \vdots \\
-        -c(M,T) \\
-    \end{pmatrix}
+    \scalebox{0.9}{
+        \(
+        Z = 
+        \begin{pmatrix}
+            -1 & p_o & 0 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T)
+            p_s & -1 & p_o & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T+1)
+            0 & p_s & -1 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,T+2)
+            \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & 
+            \vdots & \ddots & \vdots & \vdots \\ 
+            0 & 0 & 0 & \dots & 1 & -1 & 0 & 0 & 0 & \dots & 0 & 0 \\ %(1,N)
+            p_s & 0 & 0 & \dots & 0 & 0 & -1 & p_o & 0 & \dots & 0 & 0 \\ %(2,T)
+            0 & 0 & 0 & \dots & 0 & 0 & p_s & -1 & p_o & \dots & 0 & 0 \\ %(2,T+1)
+            \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & 
+            \vdots & \ddots & \vdots & \vdots \\ 
+            0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & \dots & 1 & -1 \\ %(M,T)
+        \end{pmatrix},
+        x = 
+        \begin{pmatrix}
+            b(1,T) \\
+            b(1,T+1) \\
+            b(1,T+2) \\
+            \vdots \\
+            b(1,N) \\
+            b(2,T) \\
+            b(2,T+1) \\
+            \vdots \\
+            b(M,T) \\
+        \end{pmatrix}, 
+        y= 
+        \begin{pmatrix}
+            -c(1,T) \\
+            -c(1,T+1) \\
+            -c(1,T+2) \\
+            \vdots \\
+            -c(1,N) \\
+            -c(2,T) \\
+            -c(2,T+1) \\
+            \vdots \\
+            -c(M,T) \\
+        \end{pmatrix}
+        \)
+    }
 \end{equation}
 
 Thus, having calculated the mean blocking time for all blocking states \(b(u,v)\), 
@@ -508,5 +553,6 @@ it only remains to put them together in a formula just like in equations
 The resultant blocking time formula is given by:
 
 \begin{equation}\label{eq:algebraic-blocking-time}
-    B = \frac{\sum_{(u,v) \in S_A} \pi_{(u,v)} \; b(u,v)}{\sum_{(u,v) \in S_A} \pi_{(u,v)}}
+    B = \frac{\sum_{(u,v) \in S_A} \pi_{(u,v)} \; b(u,v)}{\sum_{(u,v) \in S_A} 
+    \pi_{(u,v)}}
 \end{equation}

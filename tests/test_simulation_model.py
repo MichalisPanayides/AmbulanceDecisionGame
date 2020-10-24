@@ -64,7 +64,8 @@ def test_example_model():
 )
 def test_build_custom_node(num_of_servers):
     """
-    Test to ensure blocking works as expected for extreme cases where the threshold is set to infinity and -1
+    Test to ensure blocking works as expected for extreme cases where the threshold 
+    is set to infinity and -1
     """
     ciw.seed(5)
     model_1 = ciw.Simulation(
@@ -159,7 +160,8 @@ def test_simulate_model_unconstrained():
 
 def test_simulate_model_constrained():
     """
-    Test that correct amount of patients flow through the system given specific values with a specified capacity of the hospital and the parking space
+    Test that correct amount of patients flow through the system given specific 
+    values with a specified capacity of the hospital and the parking space
     """
     sim_results = []
     blocks = 0
@@ -471,9 +473,18 @@ def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
     lambda_a, lambda_o
 ):
     """
-    Test that ensures that the function that finds the optimal distribution of ambulance patients in two identical hospitals returns a solution that corresponds to 50% of patients going to one hospital and 50% going to another. That means that the difference in the number of patients must be 0, and that is precisely what the function checks. This test runs the function with a proportion variable of 0.5 (meaning equally distributing the ambulances between the two hospitals) and ensures that the difference is 0, given any values of λ^α and λ^ο_1 = λ^ο_2 = λ^ο
+    Test that ensures that the function that finds the optimal distribution of 
+    ambulance patients in two identical hospitals returns a solution that 
+    corresponds to 50% of patients going to one hospital and 50% going to another. 
+    That means that the difference in the number of patients must be 0, and that 
+    is precisely what the function checks. This test runs the function with a 
+    proportion variable of 0.5 (meaning equally distributing the ambulances 
+    between the two hospitals) and ensures that the difference is 0, given any 
+    values of λ^α and λ^ο_1 = λ^ο_2 = λ^ο
 
-    Note here that due to the ciw.seed() function it was possible to eliminate any randomness and make both hospitals identical, in terms of arrivals, services and any other stochasticity that the simulation models incorporates.
+    Note here that due to the ciw.seed() function it was possible to eliminate any 
+    randomness and make both hospitals identical, in terms of arrivals, services 
+    and any other stochasticity that the simulation models incorporates.
     """
     diff = get_mean_blocking_difference_between_two_hospitals(
         prop_1=0.5,
@@ -527,9 +538,13 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
 
 #  TODO Investigate making it a property based test
 def test_calculate_ambulance_best_response_equal_split():
-    """Make sure that the brenq() function that is used suggests that when two identical hospitals are considered the patients will be split equally between them (50% - 50%)
+    """Make sure that the brentq() function that is used suggests that when two 
+    identical hospitals are considered the patients will be split equally between 
+    them (50% - 50%)
 
-    Note here that due to the ciw.seed() function it was possible to eliminate any randomness and make both hospitals identical, in terms of arrivals, services and any other stochasticity that the simulation models incorporates.
+    Note here that due to the ciw.seed() function it was possible to eliminate any 
+    randomness and make both hospitals identical, in terms of arrivals, services 
+    and any other stochasticity that the simulation models incorporates.
     """
     lambda_a = 0.3
     equal_split = calculate_ambulance_best_response(

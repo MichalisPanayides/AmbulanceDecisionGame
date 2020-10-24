@@ -13,12 +13,19 @@ from .markov.markov import (
     get_transition_matrix,
     get_steady_state_algebraically,
     get_markov_state_probabilities,
-    is_accepting_state,
+)
+
+from .markov.waiting import (
     mean_waiting_time_formula,
     get_mean_waiting_time_markov,
+)
+
+from .markov.blocking import (
     mean_blocking_time_formula,
     get_mean_blocking_time_markov,
 )
+
+from .markov.utils import is_accepting_state
 
 
 def get_heatmaps(

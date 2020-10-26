@@ -17,7 +17,7 @@ from .markov.markov import (
 
 from .markov.waiting import (
     mean_waiting_time_formula,
-    get_mean_waiting_time_markov,
+    get_mean_waiting_time_using_markov_state_probabilities,
 )
 
 from .markov.blocking import (
@@ -63,26 +63,26 @@ def get_heatmaps(
     """
     all_states = build_states(threshold, system_capacity, parking_capacity)
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        lambda_a=lambda_a,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
     )
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.lstsq
     )
 
     sim_state_probabilities_array = get_average_simulated_state_probabilities(
-        lambda_a,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        lambda_a=lambda_a,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
         seed_num=seed_num,
         runtime=runtime,
         num_of_trials=num_of_trials,
@@ -147,7 +147,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num,
     runtime=1440,
     num_of_trials=10,
-    output="both",
+    patient_type="both",
 ):
     """An alternative approach to obtaining the mean waiting time from the simulation.
     This function gets the mean waiting time from the simulation state probabilities.
@@ -164,7 +164,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     parking_capacity : int
     seed_num : float
     num_of_trials : int
-    output : str, optional
+    patient_type : str, optional
         A string to identify whether to get the waiting time of other patients,
         ambulance patients or the overall of both, by default "both"
 
@@ -192,30 +192,30 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         if state_probabilities[u, v] > 0
     ]
 
-    if output == "both":
+    if patient_type == "both":
         mean_waiting_time_other = mean_waiting_time_formula(
-            all_states,
-            state_probabilities,
-            "others",
-            lambda_a,
-            lambda_o,
-            mu,
-            num_of_servers,
-            threshold,
-            system_capacity,
-            parking_capacity,
+            all_states=all_states,
+            pi=state_probabilities,
+            patient_type="others",
+            lambda_a=lambda_a,
+            lambda_o=lambda_o,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            parking_capacity=parking_capacity,
         )
         mean_waiting_time_ambulance = mean_waiting_time_formula(
-            all_states,
-            state_probabilities,
-            "ambulance",
-            lambda_a,
-            lambda_o,
-            mu,
-            num_of_servers,
-            threshold,
-            system_capacity,
-            parking_capacity,
+            all_states=all_states,
+            pi=state_probabilities,
+            patient_type="ambulance",
+            lambda_a=lambda_a,
+            lambda_o=lambda_o,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            parking_capacity=parking_capacity,
         )
 
         prob_accept_others = np.sum(
@@ -250,16 +250,16 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         )
 
     mean_waiting_time = mean_waiting_time_formula(
-        all_states,
-        state_probabilities,
-        output,
-        lambda_a,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        all_states=all_states,
+        pi=state_probabilities,
+        patient_type=patient_type,
+        lambda_a=lambda_a,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
     )
     return mean_waiting_time
 
@@ -299,13 +299,13 @@ def get_mean_blocking_time_simulation(
         The mean blocking time
     """
     state_probabilities = get_average_simulated_state_probabilities(
-        lambda_a,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        lambda_a=lambda_a,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
         seed_num=seed_num,
         num_of_trials=num_of_trials,
         runtime=runtime,
@@ -317,14 +317,14 @@ def get_mean_blocking_time_simulation(
         if state_probabilities[u, v] > 0
     ]
     mean_blocking_time = mean_blocking_time_formula(
-        all_states,
-        state_probabilities,
-        lambda_o,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        parking_capacity,
+        all_states=all_states,
+        pi=state_probabilities,
+        lambda_o=lambda_o,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        parking_capacity=parking_capacity,
     )
     return mean_blocking_time
 
@@ -342,7 +342,7 @@ def get_plot_comparing_times(
     parking_capacity,
     times_to_compare,
     warm_up_time=0,
-    output="both",
+    patient_type="both",
     plot_over="lambda_a",
     max_parameter_value=1,
     accuracy=None,
@@ -363,7 +363,7 @@ def get_plot_comparing_times(
     system_capacity : int
     parking_capacity : int
     times_to_compare : str
-    output : str, optional
+    patient_type : str, optional
         A string to identify whether to get the waiting time of other patients,
         ambulance patients or the overall of both, by default "both"
     plot_over : str, optional
@@ -429,7 +429,7 @@ def get_plot_comparing_times(
             warm_up_time=warm_up_time,
             system_capacity=system_capacity,
             parking_capacity=parking_capacity,
-            patient_type=output,
+            patient_type=patient_type,
         )
         if times_to_compare == "waiting":
             simulation_times = [np.mean(w.waiting_times) for w in times]
@@ -444,9 +444,9 @@ def get_plot_comparing_times(
                 seed_num=seed_num,
                 runtime=runtime,
                 num_of_trials=num_of_trials,
-                output=output,
+                patient_type=patient_type,
             )
-            mean_time_markov = get_mean_waiting_time_markov(
+            mean_time_markov = get_mean_waiting_time_using_markov_state_probabilities(
                 lambda_a,
                 lambda_o,
                 mu,
@@ -454,7 +454,7 @@ def get_plot_comparing_times(
                 threshold,
                 system_capacity,
                 parking_capacity,
-                output=output,
+                patient_type=patient_type,
             )
         elif times_to_compare == "blocking":
             simulation_times = [np.mean(b.blocking_times) for b in times]

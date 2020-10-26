@@ -1,5 +1,5 @@
 from ambulance_game.markov.waiting import (
-    get_mean_waiting_time_markov,
+    get_mean_waiting_time_using_markov_state_probabilities,
 )
 
 number_of_digits_to_round = 8
@@ -9,7 +9,7 @@ def test_get_mean_waiting_time_recursively_markov_example_1():
     """
     Example on getting the mean waiting time recursively from the Markov chain
     """
-    mean_waiting_time = get_mean_waiting_time_markov(
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -27,7 +27,7 @@ def test_get_mean_waiting_time_recursively_markov_example_2():
     """
     Example on getting the mean waiting time recursively from the Markov chain
     """
-    mean_waiting_time = get_mean_waiting_time_markov(
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -45,7 +45,7 @@ def test_get_mean_waiting_time_recursively_markov_example_3():
     """
     Example on getting the mean waiting time recursively from the Markov chain
     """
-    mean_waiting_time = get_mean_waiting_time_markov(
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -63,7 +63,7 @@ def test_get_mean_waiting_time_recursively_markov_example_4():
     """
     Example on getting the mean waiting time recursively from the Markov chain
     """
-    mean_waiting_time = get_mean_waiting_time_markov(
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -79,11 +79,11 @@ def test_get_mean_waiting_time_recursively_markov_example_4():
     )
 
 
-def test_get_mean_waiting_time_from_closed_form_markov():
+def test_get_mean_waiting_time_from_closed_form_markov_example_1():
     """
-    Examples on getting the mean waiting time from a closed form formula
+    Example on getting the mean waiting time from a closed form formula
     """
-    mean_waiting_time = get_mean_waiting_time_markov(
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -96,7 +96,12 @@ def test_get_mean_waiting_time_from_closed_form_markov():
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
 
-    mean_waiting_time = get_mean_waiting_time_markov(
+
+def test_get_mean_waiting_time_from_closed_form_markov_example_2():
+    """
+    Example on getting the mean waiting time from a closed form formula
+    """
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -109,7 +114,12 @@ def test_get_mean_waiting_time_from_closed_form_markov():
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
 
-    mean_waiting_time = get_mean_waiting_time_markov(
+
+def test_get_mean_waiting_time_from_closed_form_markov_example_3():
+    """
+    Example on getting the mean waiting time from a closed form formula
+    """
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,
@@ -122,7 +132,12 @@ def test_get_mean_waiting_time_from_closed_form_markov():
     )
     assert mean_waiting_time == 0
 
-    mean_waiting_time = get_mean_waiting_time_markov(
+
+def test_get_mean_waiting_time_from_closed_form_markov_example_4():
+    """
+    Example on getting the mean waiting time from a closed form formula
+    """
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
         lambda_a=0.2,
         lambda_o=0.2,
         mu=0.2,

@@ -106,7 +106,6 @@ def mean_waiting_time_formula(
     """Get the mean waiting time by using the recursive formula or a closed-form
     formula
 
-    Recursive Formula:
         W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] ,
 
         where:  - both summations occur over all accepting states (u,v)
@@ -228,7 +227,7 @@ def get_mean_waiting_time_markov(
     threshold,
     system_capacity,
     parking_capacity,
-    output="both",
+    patient_type="both",
     formula="closed_form",
 ):
     """Gets the mean waiting time for a Markov chain model
@@ -242,7 +241,7 @@ def get_mean_waiting_time_markov(
     threshold : int
     system_capacity : int
     parking_capacity : int
-    output : str, optional
+    patient_type : str, optional
     formula : str, optional
 
     Returns
@@ -265,7 +264,7 @@ def get_mean_waiting_time_markov(
         transition_matrix, algebraic_function=np.linalg.solve
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
-    if output == "both":
+    if patient_type == "both":
         mean_waiting_time_other = mean_waiting_time_formula(
             all_states,
             pi,
@@ -327,7 +326,7 @@ def get_mean_waiting_time_markov(
     mean_waiting_time = mean_waiting_time_formula(
         all_states,
         pi,
-        output,
+        patient_type,
         lambda_a,
         lambda_o,
         mu,

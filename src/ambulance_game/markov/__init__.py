@@ -20,7 +20,7 @@ from .waiting import (
 
 from .blocking import (
     get_coefficients_row_of_array_associated_with_state,
-    get_blocking_times_array_of_coefficients,
+    get_blocking_time_linear_system,
     convert_solution_to_correct_array_format,
     get_blocking_times_of_all_states,
     mean_blocking_time_formula,

@@ -95,10 +95,11 @@ def get_coefficients_row_of_array_associated_with_state(
     return lhs_coefficient_row, rhs_value
 
 
-def get_blocking_times_array_of_coefficients(
+def get_blocking_time_linear_system(
     lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
 ):
-    """Formulate (but don't solve) the problem M*X = b by finding the array M and
+    """
+    Obtain the linear system M X = b by finding the array M and
     the column vector b that are required. Here M is denoted as "all_coefficients_array"
     and b as "constant_column".
 
@@ -209,7 +210,7 @@ def get_blocking_times_of_all_states(
     numpy.array
         An MxN array that contains the blocking time for each state
     """
-    M, b = get_blocking_times_array_of_coefficients(
+    M, b = get_blocking_time_linear_system(
         lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
     )
     state_blocking_times = np.linalg.solve(M, b)
@@ -269,7 +270,8 @@ def mean_blocking_time_formula(
                 prob_accept_ambulance += pi[u, v]
         return mean_blocking_time / prob_accept_ambulance
     elif formula == "closed-form":
-        return "TBA"
+        # Build closed-form formula
+        raise NotImplementedError("To be implemented")
 
 
 def get_mean_blocking_time_markov(

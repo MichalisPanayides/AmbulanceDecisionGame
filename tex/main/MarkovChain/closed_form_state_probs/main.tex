@@ -1,5 +1,4 @@
 \subsection{Graph Theoretical Approach}
-% TODO: Generalise notation in entire section 
 
 This section aims to investigate the connection between Markov chains and graph 
 theory by exploring alternative ways of calculating the steady state probabilities 
@@ -8,17 +7,16 @@ and considering the problem from different perspectives.
 \subsubsection{Parameters}
 The parameters considered as inputs are:
 \begin{multicols}{2}
-    % TODO: Generalise notation - number of servers, system capacity and parking capacity
     \begin{itemize}
         \item the number of servers \(C\),
         \item the threshold \(T\), 
-        \item the system capacity \(N\),
-        \item the parking capacity \(M\). 
+        \item the capacity of the service centre \(N\),
+        \item the capacity of the buffer centre \(M\). 
     \end{itemize}
 \end{multicols}
 
-% TODO: Generalise notation - change ambulance patients and other patients into class 1 and 2 patients
-Additional parameters of the model are the ambulance arrival rate, the others' 
+Additional parameters of the model are the class 1 individuals arrival rate, 
+the class 2 individuals
 arrival rate and the service rate (\(\lambda^A, \lambda^o, \mu\)). 
 More specifically, the way these parameters are translated into the model are:
 
@@ -38,10 +36,10 @@ More specifically, the way these parameters are translated into the model are:
     and states where \(0 \leq u \leq M\). 
     Increasing \(T\) results in having more set of states where \(u\) can only 
     be \(0\).
-    \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all 
+    \item \textbf{Service centre capacity (\(N\)):} Is the upper bound of \(v\) for all 
     states \((u,v)\).
-    \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all 
-    states \((u,v)\) such that \(u \geq T\).
+    \item \textbf{Buffer centre capacity (\(M\)):} Is the upper bound of \(u\) for all 
+    states \((u,v)\) such that \(v \geq T\).
 \end{itemize}
 
 
@@ -317,7 +315,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
 \subsubsection{Conjecture of adding rows}
 
 Let us consider three Markov models with the same number of servers \(C=1\), 
-the same threshold \(T=1\), the same system capacity \(N=2\) but 
+the same threshold \(T=1\), the same service centre capacity \(N=2\) but 
 \(M\in\{1, 2, 3\}\).
 
 
@@ -343,7 +341,7 @@ the same threshold \(T=1\), the same system capacity \(N=2\) but
     \end{figure}
 \end{multicols}
 
-By increasing the parking capacity of the system it can be observed that 
+By increasing the buffer centre capacity of the system it can be observed that 
 \(|T_{(0,0)}(G)|\) increases as well since more combinations of paths can be 
 generated using the new edges and vertices. 
 The corresponding values of \(\tilde{\pi}_{(0,0)}\) of the three systems are:
@@ -383,7 +381,8 @@ to investigate the effect of adding columns (increasing \(N\)) and finding an
 expression for \(k(C,T,N)\).
 
 \subsubsection{The effect of increasing \(N\) (Incomplete section)}
-In this section we will consider a parking capacity of \(M=1\) and see the effect 
+In this section we will consider a buffer centre capacity of \(M=1\) and see the 
+effect 
 of modifying other parameters on \(k(C, T, N)\).
 
 \begin{multicols}{2}

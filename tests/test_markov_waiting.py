@@ -22,6 +22,7 @@ def test_get_mean_waiting_time_recursively_markov_example_1():
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
 
+
 def test_get_mean_waiting_time_recursively_markov_example_2():
     """
     Example on getting the mean waiting time recursively from the Markov chain
@@ -38,6 +39,7 @@ def test_get_mean_waiting_time_recursively_markov_example_2():
         formula="recursive",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
+
 
 def test_get_mean_waiting_time_recursively_markov_example_3():
     """

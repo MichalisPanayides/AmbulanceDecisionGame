@@ -5,9 +5,9 @@ from ambulance_game.markov.waiting import (
 number_of_digits_to_round = 8
 
 
-def test_get_mean_waiting_time_recursively_markov():
+def test_get_mean_waiting_time_recursively_markov_example_1():
     """
-    Examples on getting the mean waiting time recursively from the Markov chain
+    Example on getting the mean waiting time recursively from the Markov chain
     """
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
@@ -17,11 +17,15 @@ def test_get_mean_waiting_time_recursively_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="others",
+        patient_type="others",
         formula="recursive",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
 
+def test_get_mean_waiting_time_recursively_markov_example_2():
+    """
+    Example on getting the mean waiting time recursively from the Markov chain
+    """
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
         lambda_o=0.2,
@@ -30,11 +34,15 @@ def test_get_mean_waiting_time_recursively_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="ambulance",
+        patient_type="ambulance",
         formula="recursive",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
 
+def test_get_mean_waiting_time_recursively_markov_example_3():
+    """
+    Example on getting the mean waiting time recursively from the Markov chain
+    """
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
         lambda_o=0.2,
@@ -43,11 +51,16 @@ def test_get_mean_waiting_time_recursively_markov():
         threshold=3,
         system_capacity=10,
         parking_capacity=10,
-        output="ambulance",
+        patient_type="ambulance",
         formula="recursive",
     )
     assert mean_waiting_time == 0
 
+
+def test_get_mean_waiting_time_recursively_markov_example_4():
+    """
+    Example on getting the mean waiting time recursively from the Markov chain
+    """
     mean_waiting_time = get_mean_waiting_time_markov(
         lambda_a=0.2,
         lambda_o=0.2,
@@ -56,7 +69,7 @@ def test_get_mean_waiting_time_recursively_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="both",
+        patient_type="both",
         formula="recursive",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == round(
@@ -76,7 +89,7 @@ def test_get_mean_waiting_time_from_closed_form_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="others",
+        patient_type="others",
         formula="closed_form",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
@@ -89,7 +102,7 @@ def test_get_mean_waiting_time_from_closed_form_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="ambulance",
+        patient_type="ambulance",
         formula="closed_form",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
@@ -102,7 +115,7 @@ def test_get_mean_waiting_time_from_closed_form_markov():
         threshold=3,
         system_capacity=10,
         parking_capacity=10,
-        output="ambulance",
+        patient_type="ambulance",
         formula="closed_form",
     )
     assert mean_waiting_time == 0
@@ -115,7 +128,7 @@ def test_get_mean_waiting_time_from_closed_form_markov():
         threshold=4,
         system_capacity=10,
         parking_capacity=10,
-        output="both",
+        patient_type="both",
         formula="closed_form",
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == round(

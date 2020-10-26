@@ -3,7 +3,7 @@ import pytest
 
 from ambulance_game.markov.blocking import (
     get_coefficients_row_of_array_associated_with_state,
-    get_blocking_times_array_of_coefficients,
+    get_blocking_time_linear_system,
     convert_solution_to_correct_array_format,
     get_blocking_times_of_all_states,
     mean_blocking_time_formula,
@@ -97,8 +97,8 @@ def test_get_coefficients_row_of_array_associated_with_state_example_3():
         )
 
 
-def test_get_blocking_times_array_of_coefficients_example_1():
-    M, b = get_blocking_times_array_of_coefficients(
+def test_get_blocking_time_linear_system_example_1():
+    M, b = get_blocking_time_linear_system(
         lambda_o=2,
         mu=3,
         num_of_servers=1,
@@ -120,8 +120,8 @@ def test_get_blocking_times_array_of_coefficients_example_1():
     assert np.alltrue(b == [-0.2, -0.2, -0.3333333333333333, -0.3333333333333333])
 
 
-def test_get_blocking_times_array_of_coefficients_example_2():
-    M, b = get_blocking_times_array_of_coefficients(
+def test_get_blocking_time_linear_system_example_2():
+    M, b = get_blocking_time_linear_system(
         lambda_o=2,
         mu=1,
         num_of_servers=3,
@@ -147,8 +147,8 @@ def test_get_blocking_times_array_of_coefficients_example_2():
     )
 
 
-def test_get_blocking_times_array_of_coefficients_example_3():
-    M, b = get_blocking_times_array_of_coefficients(
+def test_get_blocking_time_linear_system_example_3():
+    M, b = get_blocking_time_linear_system(
         lambda_o=0.4,
         mu=0.1,
         num_of_servers=6,
@@ -387,9 +387,7 @@ def test_get_mean_blocking_time_markov_example_2():
 
 def test_mean_blocking_time_formula_closed_form():
     # TODO: Make test once closed form formula is found
-    assert (
+    with pytest.raises(NotImplementedError):
         mean_blocking_time_formula(
             None, None, None, None, None, None, None, None, formula="closed-form"
         )
-        == "TBA"
-    )

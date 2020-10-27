@@ -325,8 +325,8 @@ Note here that the equation below gets the overall waiting time for both the rec
 and the closed-form formula.
 
 \begin{equation}\label{overall_waiting_time}
-    W = \frac{\lambda_o P(L'_1)}{\lambda_a P(L'_2) + \lambda_o P(L'_1)} W^{(1)} + 
-    \frac{\lambda_a P(L'_2)}{\lambda_a P(L'_2) + \lambda_o P(L'_1)} W^{(2)}
+    W = \frac{\lambda_1 P(L'_1)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(1)} + 
+    \frac{\lambda_2 P(L'_2)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(2)}
 \end{equation}
 
 
@@ -385,7 +385,7 @@ blocked for more time. Therefore, class 1 arrivals are considered here:
     c(u,v) = 
     \begin{cases}
         \frac{1}{\min(v,C) \mu}, & \text{if } v = C\\
-        \frac{1}{\min(v,C) \mu + \lambda^o}, & \text{otherwise}
+        \frac{1}{\min(v,C) \mu + \lambda_1}, & \text{otherwise}
     \end{cases}
 \end{equation}
  
@@ -404,8 +404,8 @@ to another state it can either:
 The probabilities are given by:
 
 \begin{equation*}
-    p_s(u,v) = \frac{\min(v,C)\mu}{\lambda^o + \min(v,C)\mu}, \qquad
-    p_o(u,v) = \frac{\lambda^o}{\lambda^o + \min(v,C)\mu}
+    p_s(u,v) = \frac{\min(v,C)\mu}{\lambda_1 + \min(v,C)\mu}, \qquad
+    p_o(u,v) = \frac{\lambda_1}{\lambda_1 + \min(v,C)\mu}
 \end{equation*}
 
 

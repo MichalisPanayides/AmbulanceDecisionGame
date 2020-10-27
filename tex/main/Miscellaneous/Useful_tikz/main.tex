@@ -20,14 +20,14 @@
 
         % the arrows and labels (Queue 1+2)
         \draw[-] (3.5,-0.75) -- +(20pt,0);
-        \draw[<-] (0,-0.75) -- +(-50pt,0) node[left] {\( \lambda^a \)};
+        \draw[<-] (0,-0.75) -- +(-50pt,0) node[left] {\( \lambda_2 \)};
         \draw[->] (8.5,0.525) -- +(20pt,0);
-        \node[align=center] at (1cm,-2cm) {Parking \\ Area};
+        \node[align=center] at (1cm,-2cm) {Buffer \\ Area};
         \node[align=center] at (2.75cm,-2cm) {Dummy \\ Service};
         \node[align=center] at (6cm,-0.75cm) {Waiting \\ Area};
         \node[align=center] at (7.8cm,-0.75cm) {Treatment \\ };
         
-        \draw (4.2, 1.8) -- +(-169.5pt,0) node[left] {\( \lambda^o \)};
+        \draw (4.2, 1.8) -- +(-169.5pt,0) node[left] {\( \lambda_1 \)};
         \draw (4.2, 1.8) -- (4.2, -0.75);
         \draw[->] (4.2, 0.525) -- (5, 0.525);
 
@@ -93,52 +93,52 @@
             (two) edge[bend left] node [above] {\( 2 \mu \)} (one)
             (two) edge[bend left] node {\( \Lambda \)} (three)
             (three) edge[bend left] node [above] {\( T \mu \)} (two)
-            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (three) edge[bend left] node {\( \lambda_1 \)} (four)
             (four) edge[bend left] node [above] {\( (T+1) \mu \)} (three)
-            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (four) edge[bend left] node {\( \lambda_1 \)} (five)
             (five) edge[bend left] node [above] {\( (T+2) \mu \)} (four)
-            (five) edge[bend left] node {\( \lambda^o \)} (six)
+            (five) edge[bend left] node {\( \lambda_1 \)} (six)
             (six) edge[bend left] node [above] {\( C\mu \)} (five)
-            (six) edge[bend left] node {\( \lambda^o \)} (seven)
+            (six) edge[bend left] node {\( \lambda_1 \)} (seven)
             (seven) edge[bend left] node [above] {\( C\mu \)} (six)
 
             % Second Horizontal Edges
-            (three_one) edge[bend left] node {\( \lambda^o \)} (four_one)
+            (three_one) edge[bend left] node {\( \lambda_1 \)} (four_one)
             (four_one) edge[bend left] node [above] {\( (T+1) \mu \)} (three_one)
-            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (four_one) edge[bend left] node {\( \lambda_1 \)} (five_one)
             (five_one) edge[bend left] node [above] {\( (T+2) \mu \)} (four_one)
-            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (five_one) edge[bend left] node {\( \lambda_1 \)} (six_one)
             (six_one) edge[bend left] node [above] {\( C\mu \)} (five_one)
-            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (six_one) edge[bend left] node {\( \lambda_1 \)} (seven_one)
             (seven_one) edge[bend left] node [above] {\( C\mu \)} (six_one)
 
             % Third Horizontal Edges
-            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (three_two) edge[bend left] node {\( \lambda_1 \)} (four_two)
             (four_two) edge[bend left] node [above] {\( (T+1) \mu \)} (three_two)
-            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (four_two) edge[bend left] node {\( \lambda_1 \)} (five_two)
             (five_two) edge[bend left] node [above] {\( (T+2) \mu \)} (four_two)
-            (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            (five_two) edge[bend left] node {\( \lambda_1 \)} (six_two)
             (six_two) edge[bend left] node [above] {\( C\mu \)} (five_two)
-            (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            (six_two) edge[bend left] node {\( \lambda_1 \)} (seven_two)
             (seven_two) edge[bend left] node [above] {\( C\mu \)} (six_two)
 
             % First Vertical Edges
-            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three) edge[bend left] node {\( \lambda_2 \)} (three_one)
             (three_one) edge[bend left] node {\( T \mu \)} (three)
-            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_one) edge[bend left] node {\( \lambda_2 \)} (three_two)
             (three_two) edge[bend left] node {\( T\mu \)} (three_one)
-            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_two) edge[bend left] node {\( \lambda_2 \)} (three_three)
             (three_three) edge[bend left] node {\( T\mu \)} (three_two)
 
             % Second Vertical Edges
-            (four) edge node {\( \lambda^A \)} (four_one)
-            (four_one) edge node {\( \lambda^A \)} (four_two)
-            (four_two) edge node {\( \lambda^A \)} (four_three)
+            (four) edge node {\( \lambda_2 \)} (four_one)
+            (four_one) edge node {\( \lambda_2 \)} (four_two)
+            (four_two) edge node {\( \lambda_2 \)} (four_three)
 
             %Third Vertical Edges
-            (six) edge node {\( \lambda^A \)} (six_one)
-            (six_one) edge node {\( \lambda^A \)} (six_two)
-            (six_two) edge node {\( \lambda^A \)} (six_three)
+            (six) edge node {\( \lambda_2 \)} (six_one)
+            (six_one) edge node {\( \lambda_2 \)} (six_two)
+            (six_two) edge node {\( \lambda_2 \)} (six_three)
             ;       
     \end{tikzpicture}
     \caption{Markov chains} 
@@ -211,69 +211,69 @@
             (two) edge[bend left] node {\( 2 \mu \)} (one)
             (two) edge[bend left] node {\( \Lambda \)} (three)
             (three) edge[bend left] node {\( T \mu \)} (two)
-            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (three) edge[bend left] node {\( \lambda_1 \)} (four)
             (four) edge[bend left] node {\( (T+1) \mu \)} (three)
-            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (four) edge[bend left] node {\( \lambda_1 \)} (five)
             (five) edge[bend left] node {\( (T+2) \mu \)} (four)
-            % (five) edge[bend left] node {\( \lambda^o \)} (six)
+            % (five) edge[bend left] node {\( \lambda_1 \)} (six)
             % (six) edge[bend left] node [above] {\( C\mu \)} (five)
-            % (six) edge[bend left] node {\( \lambda^o \)} (seven)
+            % (six) edge[bend left] node {\( \lambda_1 \)} (seven)
             % (seven) edge[bend left] node [above] {\( C\mu \)} (six)
-            (seven) edge[bend left] node {\( \lambda^o \)} (eight)
+            (seven) edge[bend left] node {\( \lambda_1 \)} (eight)
             (eight) edge[bend left] node {\( C\mu \)} (seven)
-            (eight) edge[bend left] node {\( \lambda^o \)} (nine)
+            (eight) edge[bend left] node {\( \lambda_1 \)} (nine)
             (nine) edge[bend left] node {\( C\mu \)} (eight)
 
             % Second Horizontal Edges
-            (three_one) edge[bend left] node {\(\lambda^o\)} (four_one)
+            (three_one) edge[bend left] node {\(\lambda_1\)} (four_one)
             (four_one) edge[bend left] node {\( (T+1) \mu \)} (three_one)
-            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (four_one) edge[bend left] node {\( \lambda_1 \)} (five_one)
             (five_one) edge[bend left] node {\( (T+2) \mu \)} (four_one)
-            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (five_one) edge[bend left] node {\( \lambda_1 \)} (six_one)
             (six_one) edge[bend left] node {\( v_i\mu \)} (five_one)
-            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (six_one) edge[bend left] node {\( \lambda_1 \)} (seven_one)
             (seven_one) edge[bend left] node {\( (v_i+1)\mu \)} (six_one)
-            (seven_one) edge[bend left] node {\( \lambda^o \)} (eight_one)
+            (seven_one) edge[bend left] node {\( \lambda_1 \)} (eight_one)
             (eight_one) edge[bend left] node {\( C\mu \)} (seven_one)
-            (eight_one) edge[bend left] node {\( \lambda^o \)} (nine_one)
+            (eight_one) edge[bend left] node {\( \lambda_1 \)} (nine_one)
             (nine_one) edge[bend left] node {\( C\mu \)} (eight_one)
 
             % Third Horizontal Edges
-            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (three_two) edge[bend left] node {\( \lambda_1 \)} (four_two)
             (four_two) edge[bend left] node {\( (T+1) \mu \)} (three_two)
-            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (four_two) edge[bend left] node {\( \lambda_1 \)} (five_two)
             (five_two) edge[bend left] node {\( (T+2) \mu \)} (four_two)
-            % (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            % (five_two) edge[bend left] node {\( \lambda_1 \)} (six_two)
             % (six_two) edge[bend left] node [above] {\( C\mu \)} (five_two)
-            % (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            % (six_two) edge[bend left] node {\( \lambda_1 \)} (seven_two)
             % (seven_two) edge[bend left] node [above] {\( C\mu \)} (six_two)
-            (seven_two) edge[bend left] node {\( \lambda^o \)} (eight_two)
+            (seven_two) edge[bend left] node {\( \lambda_1 \)} (eight_two)
             (eight_two) edge[bend left] node {\( C\mu \)} (seven_two)
-            (eight_two) edge[bend left] node {\( \lambda^o \)} (nine_two)
+            (eight_two) edge[bend left] node {\( \lambda_1 \)} (nine_two)
             (nine_two) edge[bend left] node {\( C\mu \)} (eight_two)
 
             % First Vertical Edges
-            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three) edge[bend left] node {\( \lambda_2 \)} (three_one)
             (three_one) edge[bend left] node {\( T \mu \)} (three)
-            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_one) edge[bend left] node {\( \lambda_2 \)} (three_two)
             (three_two) edge[bend left] node {\( T\mu \)} (three_one)
-            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_two) edge[bend left] node {\( \lambda_2 \)} (three_three)
             (three_three) edge[bend left] node {\( T\mu \)} (three_two)
 
             % Second Vertical Edges
-            (four) edge node {\( \lambda^A \)} (four_one)
-            (four_one) edge node {\( \lambda^A \)} (four_two)
-            (four_two) edge node {\( \lambda^A \)} (four_three)
+            (four) edge node {\( \lambda_2 \)} (four_one)
+            (four_one) edge node {\( \lambda_2 \)} (four_two)
+            (four_two) edge node {\( \lambda_2 \)} (four_three)
 
             % Third Vertical Edges
-            (six) edge node {\( \lambda^A \)} (six_one)
-            (six_one) edge node {\( \lambda^A \)} (six_two)
-            % (six_two) edge node {\( \lambda^A \)} (six_three)
+            (six) edge node {\( \lambda_2 \)} (six_one)
+            (six_one) edge node {\( \lambda_2 \)} (six_two)
+            % (six_two) edge node {\( \lambda_2 \)} (six_three)
 
             % Fourth Vertical Edges
-            (eight) edge node {\( \lambda^A \)} (eight_one)
-            (eight_one) edge node {\( \lambda^A \)} (eight_two)
-            (eight_two) edge node {\( \lambda^A \)} (eight_three)
+            (eight) edge node {\( \lambda_2 \)} (eight_one)
+            (eight_one) edge node {\( \lambda_2 \)} (eight_two)
+            (eight_two) edge node {\( \lambda_2 \)} (eight_three)
             ;       
     \end{tikzpicture}
     \caption{Markov chains} 
@@ -370,69 +370,69 @@
             (two) edge[bend left] node {\( 2 \mu \)} (one)
             (two) edge[bend left] node {\( \Lambda \)} (three)
             (three) edge[bend left] node {\( T \mu \)} (two)
-            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (three) edge[bend left] node {\( \lambda_1 \)} (four)
             (four) edge[bend left] node {\( (T+1) \mu \)} (three)
-            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (four) edge[bend left] node {\( \lambda_1 \)} (five)
             (five) edge[bend left] node {\( (T+2) \mu \)} (four)
-            % (five) edge[bend left] node {\( \lambda^o \)} (six)
+            % (five) edge[bend left] node {\( \lambda_1 \)} (six)
             % (six) edge[bend left] node [above] {\( C\mu \)} (five)
-            % (six) edge[bend left] node {\( \lambda^o \)} (seven)
+            % (six) edge[bend left] node {\( \lambda_1 \)} (seven)
             % (seven) edge[bend left] node [above] {\( C\mu \)} (six)
-            (seven) edge[bend left] node {\( \lambda^o \)} (eight)
+            (seven) edge[bend left] node {\( \lambda_1 \)} (eight)
             (eight) edge[bend left] node {\( C\mu \)} (seven)
-            (eight) edge[bend left] node {\( \lambda^o \)} (nine)
+            (eight) edge[bend left] node {\( \lambda_1 \)} (nine)
             (nine) edge[bend left] node {\( C\mu \)} (eight)
 
             % Second Horizontal Edges
-            (three_one) edge[bend left] node {\( \lambda^o \)} (four_one)
+            (three_one) edge[bend left] node {\( \lambda_1 \)} (four_one)
             (four_one) edge[bend left] node {\( (T+1) \mu \)} (three_one)
-            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (four_one) edge[bend left] node {\( \lambda_1 \)} (five_one)
             (five_one) edge[bend left] node {\( (T+2) \mu \)} (four_one)
-            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (five_one) edge[bend left] node {\( \lambda_1 \)} (six_one)
             (six_one) edge[bend left] node {\( v_i\mu \)} (five_one)
-            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (six_one) edge[bend left] node {\( \lambda_1 \)} (seven_one)
             (seven_one) edge[bend left] node {\( (v_i+1)\mu \)} (six_one)
-            (seven_one) edge[bend left] node {\( \lambda^o \)} (eight_one)
+            (seven_one) edge[bend left] node {\( \lambda_1 \)} (eight_one)
             (eight_one) edge[bend left] node {\( C\mu \)} (seven_one)
-            (eight_one) edge[bend left] node {\( \lambda^o \)} (nine_one)
+            (eight_one) edge[bend left] node {\( \lambda_1 \)} (nine_one)
             (nine_one) edge[bend left] node {\( C\mu \)} (eight_one)
 
             % Third Horizontal Edges
-            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (three_two) edge[bend left] node {\( \lambda_1 \)} (four_two)
             (four_two) edge[bend left] node [below] {\( (T+1) \mu \)} (three_two)
-            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (four_two) edge[bend left] node {\( \lambda_1 \)} (five_two)
             (five_two) edge[bend left] node {\( (T+2) \mu \)} (four_two)
-            % (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            % (five_two) edge[bend left] node {\( \lambda_1 \)} (six_two)
             % (six_two) edge[bend left] node [above] {\( C\mu \)} (five_two)
-            % (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            % (six_two) edge[bend left] node {\( \lambda_1 \)} (seven_two)
             % (seven_two) edge[bend left] node [above] {\( C\mu \)} (six_two)
-            (seven_two) edge[bend left] node {\( \lambda^o \)} (eight_two)
+            (seven_two) edge[bend left] node {\( \lambda_1 \)} (eight_two)
             (eight_two) edge[bend left] node {\( C\mu \)} (seven_two)
-            (eight_two) edge[bend left] node {\( \lambda^o \)} (nine_two)
+            (eight_two) edge[bend left] node {\( \lambda_1 \)} (nine_two)
             (nine_two) edge[bend left] node {\( C\mu \)} (eight_two)
 
             % First Vertical Edges
-            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three) edge[bend left] node {\( \lambda_2 \)} (three_one)
             (three_one) edge[bend left] node {\( T \mu \)} (three)
-            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_one) edge[bend left] node {\( \lambda_2 \)} (three_two)
             (three_two) edge[bend left] node {\( T\mu \)} (three_one)
-            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_two) edge[bend left] node {\( \lambda_2 \)} (three_three)
             (three_three) edge[bend left] node {\( T\mu \)} (three_two)
 
             % Second Vertical Edges
-            (four) edge node {\( \lambda^A \)} (four_one)
-            (four_one) edge node {\( \lambda^A \)} (four_two)
-            (four_two) edge node {\( \lambda^A \)} (four_three)
+            (four) edge node {\( \lambda_2 \)} (four_one)
+            (four_one) edge node {\( \lambda_2 \)} (four_two)
+            (four_two) edge node {\( \lambda_2 \)} (four_three)
 
             % Third Vertical Edges
-            (six) edge node {\( \lambda^A \)} (six_one)
-            (six_one) edge node {\( \lambda^A \)} (six_two)
-            % (six_two) edge node {\( \lambda^A \)} (six_three)
+            (six) edge node {\( \lambda_2 \)} (six_one)
+            (six_one) edge node {\( \lambda_2 \)} (six_two)
+            % (six_two) edge node {\( \lambda_2 \)} (six_three)
 
             % Fourth Vertical Edges
-            (eight) edge node {\( \lambda^A \)} (eight_one)
-            (eight_one) edge node {\( \lambda^A \)} (eight_two)
-            (eight_two) edge node {\( \lambda^A \)} (eight_three)
+            (eight) edge node {\( \lambda_2 \)} (eight_one)
+            (eight_one) edge node {\( \lambda_2 \)} (eight_two)
+            (eight_two) edge node {\( \lambda_2 \)} (eight_three)
             ;       
     \end{tikzpicture}
     \caption{Markov chains} 
@@ -568,61 +568,61 @@
             (two) edge[bend left] node {\( 2 \mu \)} (one)
             (two) edge[bend left] node {\( \Lambda \)} (three)
             (three) edge[bend left] node {\( T \mu \)} (two)
-            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (three) edge[bend left] node {\( \lambda_1 \)} (four)
             (four) edge[bend left] node {\( (T+1) \mu \)} (three)
-            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (four) edge[bend left] node {\( \lambda_1 \)} (five)
             (five) edge[bend left] node {\( (T+2) \mu \)} (four)
-            (five) edge[bend left] node {\( \lambda^o \)} (six)
+            (five) edge[bend left] node {\( \lambda_1 \)} (six)
             (six) edge[bend left] node {\( C\mu \)} (five)
-            (six) edge[bend left] node {\( \lambda^o \)} (seven)
+            (six) edge[bend left] node {\( \lambda_1 \)} (seven)
             (seven) edge[bend left] node {\( C\mu \)} (six)
 
             % Second Horizontal Edges
-            (three_one) edge[bend left] node {\( \lambda^o \)} (four_one)
+            (three_one) edge[bend left] node {\( \lambda_1 \)} (four_one)
             (four_one) edge[bend left] node {\( (T+1) \mu \)} (three_one)
-            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (four_one) edge[bend left] node {\( \lambda_1 \)} (five_one)
             (five_one) edge[bend left] node {\( (T+2) \mu \)} (four_one)
-            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (five_one) edge[bend left] node {\( \lambda_1 \)} (six_one)
             (six_one) edge[bend left] node {\( C\mu \)} (five_one)
-            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (six_one) edge[bend left] node {\( \lambda_1 \)} (seven_one)
             (seven_one) edge[bend left] node {\( C\mu \)} (six_one)
 
             % Third Horizontal Edges
-            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (three_two) edge[bend left] node {\( \lambda_1 \)} (four_two)
             (four_two) edge[bend left] node [below] {\( (T+1) \mu \)} (three_two)
-            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (four_two) edge[bend left] node {\( \lambda_1 \)} (five_two)
             (five_two) edge[bend left] node {\( (T+2) \mu \)} (four_two)
-            (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            (five_two) edge[bend left] node {\( \lambda_1 \)} (six_two)
             (six_two) edge[bend left] node {\( C\mu \)} (five_two)
-            (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            (six_two) edge[bend left] node {\( \lambda_1 \)} (seven_two)
             (seven_two) edge[bend left] node {\( C\mu \)} (six_two)
 
             % First Vertical Edges
-            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three) edge[bend left] node {\( \lambda_2 \)} (three_one)
             (three_one) edge[bend left] node {\( T \mu \)} (three)
-            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_one) edge[bend left] node {\( \lambda_2 \)} (three_two)
             (three_two) edge[bend left] node {\( T\mu \)} (three_one)
-            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_two) edge[bend left] node {\( \lambda_2 \)} (three_three)
             (three_three) edge[bend left] node {\( T\mu \)} (three_two)
 
             % Second Vertical Edges
-            (four) edge node {\( \lambda^A \)} (four_one)
-            (four_one) edge node {\( \lambda^A \)} (four_two)
-            (four_two) edge node {\( \lambda^A \)} (four_three)
+            (four) edge node {\( \lambda_2 \)} (four_one)
+            (four_one) edge node {\( \lambda_2 \)} (four_two)
+            (four_two) edge node {\( \lambda_2 \)} (four_three)
 
             % Fourth Vertical Edges
-            (six) edge node {\( \lambda^A \)} (six_one)
-            (six_one) edge node {\( \lambda^A \)} (six_two)
-            (six_two) edge node {\( \lambda^A \)} (six_three)
+            (six) edge node {\( \lambda_2 \)} (six_one)
+            (six_one) edge node {\( \lambda_2 \)} (six_two)
+            (six_two) edge node {\( \lambda_2 \)} (six_three)
 
             % General Case
-            (general_case_left) edge[bend left] node {\( \lambda^o \)} (general_case_mid)
+            (general_case_left) edge[bend left] node {\( \lambda_1 \)} (general_case_mid)
             (general_case_mid) edge[bend left] node {\( v_i \mu \)} (general_case_left)
             (general_case_right) edge[bend left] node {\( (v_i +1) \mu \)} (general_case_mid)
-            (general_case_mid) edge[bend left] node {\( \lambda_o \)} (general_case_right)
-            % (five_three) edge node {\( \lambda_A \)} (general_case_mid)
-            (general_case_up) edge node {\( \lambda_A \)} (general_case_mid)
-            (general_case_mid) edge node {\( \lambda_A \)} (general_case_down)
+            (general_case_mid) edge[bend left] node {\( \lambda_1 \)} (general_case_right)
+            % (five_three) edge node {\( \lambda_2 \)} (general_case_mid)
+            (general_case_up) edge node {\( \lambda_2 \)} (general_case_mid)
+            (general_case_mid) edge node {\( \lambda_2 \)} (general_case_down)
             ;
     \end{tikzpicture}
     \caption{Markov chain} 

@@ -29,7 +29,7 @@ def is_blocking_state(state):
 
 
 def is_accepting_state(
-    state, patient_type, threshold, system_capacity, parking_capacity
+    state, patient_type, threshold, system_capacity, buffer_capacity
 ):
     """Checks if a state given is an accepting state. Accepting states are defined as the states of the system where patient arrivals may occur. In essence these states are all states apart from the one when the system cannot accept additional arrivals. Because there are two types of patients arrival though, the set of accepting states is different for ambulance and other patients:
 
@@ -44,8 +44,8 @@ def is_accepting_state(
         A string to distinguish between ambulance and other patients
     system_capacity : int
         The capacity of the system (hospital) = N
-    parking_capacity : int
-        The capacity of the parking space = M
+    buffer_capacity : int
+        The capacity of the buffer space = M
 
     Returns
     -------
@@ -54,7 +54,7 @@ def is_accepting_state(
     """
     if patient_type == "ambulance":
         condition = (
-            (state[0] < parking_capacity)
+            (state[0] < buffer_capacity)
             if (threshold <= system_capacity)
             else (state[1] < system_capacity)
         )
@@ -103,7 +103,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
 
 # TODO Modify name to fit generic formulation
 def expected_time_in_markov_state_ignoring_ambulance_arrivals(
-    state, lambda_o, mu, num_of_servers, system_capacity
+    state, lambda_1, mu, num_of_servers, system_capacity
 ):
     """
     The expected time of the Markov chain model at the state given.
@@ -112,18 +112,18 @@ def expected_time_in_markov_state_ignoring_ambulance_arrivals(
     """
     if state[1] == system_capacity:
         return 1 / (min(state[1], num_of_servers) * mu)
-    return 1 / (min(state[1], num_of_servers) * mu + lambda_o)
+    return 1 / (min(state[1], num_of_servers) * mu + lambda_1)
 
 
-def prob_service(state, lambda_o, mu, num_of_servers):
+def prob_service(state, lambda_1, mu, num_of_servers):
     """
     Gets the probability of finishing a service
     """
     return (min(state[1], num_of_servers) * mu) / (
-        lambda_o + (mu * min(state[1], num_of_servers))
+        lambda_1 + (mu * min(state[1], num_of_servers))
     )
 
 
-def prob_other_arrival(state, lambda_o, mu, num_of_servers):
+def prob_other_arrival(state, lambda_1, mu, num_of_servers):
     """Gets the probability of an "other" patient arriving"""
-    return lambda_o / (lambda_o + (mu * min(state[1], num_of_servers)))
+    return lambda_1 / (lambda_1 + (mu * min(state[1], num_of_servers)))

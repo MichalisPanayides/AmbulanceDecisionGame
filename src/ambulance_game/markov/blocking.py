@@ -17,7 +17,7 @@ from .markov import (
 
 
 def get_coefficients_row_of_array_associated_with_state(
-    state, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    state, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Constructs a row of the coefficients matrix. The row to be constructed corresponds
     to the blocking time equation for a given state (u,v) where:
@@ -50,12 +50,12 @@ def get_coefficients_row_of_array_associated_with_state(
     Parameters
     ----------
     state : tuple
-    lambda_o : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -72,31 +72,31 @@ def get_coefficients_row_of_array_associated_with_state(
         service_state = (state[0], state[1] - 1)
     others_arrival_state = (state[0], state[1] + 1)
 
-    lhs_coefficient_row = np.zeros([parking_capacity, system_capacity - threshold + 1])
+    lhs_coefficient_row = np.zeros([buffer_capacity, system_capacity - threshold + 1])
     lhs_coefficient_row[state[0] - 1, state[1] - threshold] = -1
     if service_state[0] > 0:
         if state[1] < system_capacity:
-            entry = prob_service(state, lambda_o, mu, num_of_servers)
+            entry = prob_service(state, lambda_1, mu, num_of_servers)
         else:
             entry = 1
         lhs_coefficient_row[service_state[0] - 1, service_state[1] - threshold] = entry
     if others_arrival_state[1] <= system_capacity:
         lhs_coefficient_row[
             others_arrival_state[0] - 1, others_arrival_state[1] - threshold
-        ] = prob_other_arrival(state, lambda_o, mu, num_of_servers)
+        ] = prob_other_arrival(state, lambda_1, mu, num_of_servers)
     lhs_coefficient_row = np.reshape(
         lhs_coefficient_row, (1, len(lhs_coefficient_row) * len(lhs_coefficient_row[0]))
     )[0]
 
     rhs_value = -expected_time_in_markov_state_ignoring_ambulance_arrivals(
-        state, lambda_o, mu, num_of_servers, system_capacity
+        state, lambda_1, mu, num_of_servers, system_capacity
     )
 
     return lhs_coefficient_row, rhs_value
 
 
 def get_blocking_time_linear_system(
-    lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
     Obtain the linear system M X = b by finding the array M and
@@ -110,12 +110,12 @@ def get_blocking_time_linear_system(
 
     Parameters
     ----------
-    lambda_o : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -127,17 +127,17 @@ def get_blocking_time_linear_system(
     for state in build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     ):
         if is_blocking_state(state):
             system_coefficients = get_coefficients_row_of_array_associated_with_state(
                 state,
-                lambda_o,
+                lambda_1,
                 mu,
                 num_of_servers,
                 threshold,
                 system_capacity,
-                parking_capacity,
+                buffer_capacity,
             )
             if len(all_coefficients_array) == 0:
                 all_coefficients_array = system_coefficients[0]
@@ -151,7 +151,7 @@ def get_blocking_time_linear_system(
 
 
 def convert_solution_to_correct_array_format(
-    array, threshold, system_capacity, parking_capacity
+    array, threshold, system_capacity, buffer_capacity
 ):
     """Convert the solution into a format that matches the state probabilities array.
     The given array is a one-dimensional array with the blocking times of each state
@@ -173,23 +173,23 @@ def convert_solution_to_correct_array_format(
         array M to be converted
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
     numpy.array
         Converted array with dimensions N x M
     """
-    new_array = np.reshape(array, (parking_capacity, system_capacity - threshold + 1))
+    new_array = np.reshape(array, (buffer_capacity, system_capacity - threshold + 1))
     top_row = [0 for _ in range(system_capacity - threshold + 1)]
     new_array = np.vstack([top_row, new_array])
-    right_columns = [[0 for _ in range(threshold)] for _ in range(parking_capacity + 1)]
+    right_columns = [[0 for _ in range(threshold)] for _ in range(buffer_capacity + 1)]
     new_array = np.hstack([right_columns, new_array])
     return new_array
 
 
 def get_blocking_times_of_all_states(
-    lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Solve M*X = b using numpy.linalg.solve() where:
         M = The array containing the coefficients of all b(u,v) equations
@@ -198,12 +198,12 @@ def get_blocking_times_of_all_states(
 
     Parameters
     ----------
-    lambda_o : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -211,11 +211,11 @@ def get_blocking_times_of_all_states(
         An MxN array that contains the blocking time for each state
     """
     M, b = get_blocking_time_linear_system(
-        lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+        lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
     )
     state_blocking_times = np.linalg.solve(M, b)
     state_blocking_times = convert_solution_to_correct_array_format(
-        state_blocking_times, threshold, system_capacity, parking_capacity
+        state_blocking_times, threshold, system_capacity, buffer_capacity
     )
     return state_blocking_times
 
@@ -223,12 +223,12 @@ def get_blocking_times_of_all_states(
 def mean_blocking_time_formula(
     all_states,
     pi,
-    lambda_o,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     formula="algebraic",
 ):
     """Performs the blocking time formula for the Markov chain model. The formula
@@ -241,12 +241,12 @@ def mean_blocking_time_formula(
     ----------
     all_states : tuple
     pi : numpy.array
-    lambda_o : float
+    lambda_1 : float
     mu : float
     num_of_servers : float
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
     formula : str
         indicates whether to use the "algebraic" approach or "closed_form"
 
@@ -259,11 +259,11 @@ def mean_blocking_time_formula(
         mean_blocking_time = 0
         prob_accept_ambulance = 0
         blocking_times = get_blocking_times_of_all_states(
-            lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+            lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
         )
         for u, v in all_states:
             if is_accepting_state(
-                (u, v), "ambulance", threshold, system_capacity, parking_capacity
+                (u, v), "ambulance", threshold, system_capacity, buffer_capacity
             ):
                 arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
                 mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
@@ -275,26 +275,26 @@ def mean_blocking_time_formula(
 
 
 def get_mean_blocking_time_markov(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     formula="algebraic",
 ):
     """Calculates the mean blocking time of the Markov model.
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
     formula : str, optional, by default "algebraic"
 
     Returns
@@ -303,18 +303,18 @@ def get_mean_blocking_time_markov(
         the mean blocking time of the Markov model
     """
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
     all_states = build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.solve
@@ -323,12 +323,12 @@ def get_mean_blocking_time_markov(
     mean_blocking_time = mean_blocking_time_formula(
         all_states,
         pi,
-        lambda_o,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
         formula,
     )
     return mean_blocking_time

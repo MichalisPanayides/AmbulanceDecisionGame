@@ -12,7 +12,7 @@ import seaborn as sbr
 
 
 def get_trial_duration(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, trials, repeat_trial
+    lambda_2, lambda_1, mu, num_of_servers, threshold, trials, repeat_trial
 ):
     """
     Use the timeit library to get the duration of a trial for a specified
@@ -31,7 +31,7 @@ def get_trial_duration(
         A list of floats that represent the time required for the specified
         number of trials to for each repetition
     """
-    parameters = [lambda_a, lambda_o, mu, num_of_servers, threshold]
+    parameters = [lambda_2, lambda_1, mu, num_of_servers, threshold]
     timeit_string = "simulate_model("
     for par in range(len(parameters)):
         timeit_string += str(parameters[par]) + ","
@@ -60,8 +60,8 @@ def save_to_file(duration, filename):
 
 
 def time_for_different_number_of_trials(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -100,7 +100,7 @@ def time_for_different_number_of_trials(
         times = []
         for trials in range(num_of_trials):
             duration = get_trial_duration(
-                lambda_a, lambda_o, mu, num_of_servers, threshold, trials, repeat_trial
+                lambda_2, lambda_1, mu, num_of_servers, threshold, trials, repeat_trial
             )
             times.append(duration)
             if write_to_file:

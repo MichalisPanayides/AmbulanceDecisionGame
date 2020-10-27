@@ -19,13 +19,13 @@ from .markov import (
 def get_waiting_time_for_each_state_recursively(
     state,
     patient_type,
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
 ):
     """Performs a recursive algorithm to get the expected waiting time of patients
     when they enter the model at a given state. Given an arriving state the algorithm
@@ -51,13 +51,13 @@ def get_waiting_time_for_each_state_recursively(
     ----------
     state : tuple
     patient_type : string
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -78,13 +78,13 @@ def get_waiting_time_for_each_state_recursively(
     wait += get_waiting_time_for_each_state_recursively(
         next_state,
         patient_type,
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
     return wait
 
@@ -93,13 +93,13 @@ def mean_waiting_time_formula_using_recursive_approach(
     all_states,
     pi,
     patient_type,
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     *args
 ):
     """
@@ -120,13 +120,13 @@ def mean_waiting_time_formula_using_recursive_approach(
     all_states : list
     pi : array
     patient_type : str
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -136,7 +136,7 @@ def mean_waiting_time_formula_using_recursive_approach(
     probability_of_accepting = 0
     for u, v in all_states:
         if is_accepting_state(
-            (u, v), patient_type, threshold, system_capacity, parking_capacity
+            (u, v), patient_type, threshold, system_capacity, buffer_capacity
         ):
             arriving_state = (u, v + 1)
             if patient_type == "ambulance" and v >= threshold:
@@ -145,13 +145,13 @@ def mean_waiting_time_formula_using_recursive_approach(
             current_state_wait = get_waiting_time_for_each_state_recursively(
                 arriving_state,
                 patient_type,
-                lambda_a,
-                lambda_o,
+                lambda_2,
+                lambda_1,
                 mu,
                 num_of_servers,
                 threshold,
                 system_capacity,
-                parking_capacity,
+                buffer_capacity,
             )
             mean_waiting_time += current_state_wait * pi[u, v]
             probability_of_accepting += pi[u, v]
@@ -162,13 +162,13 @@ def mean_waiting_time_formula_using_algebraic_approach(
     all_states,
     pi,
     patient_type,
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     *args
 ):
     raise NotImplementedError("To be implemented")
@@ -182,7 +182,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     **kwargs
 ):
     """
@@ -197,7 +197,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -214,7 +214,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                     patient_type,
                     threshold,
                     system_capacity,
-                    parking_capacity,
+                    buffer_capacity,
                 )
                 and state[1] >= num_of_servers
             ]
@@ -227,7 +227,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                     patient_type,
                     threshold,
                     system_capacity,
-                    parking_capacity,
+                    buffer_capacity,
                 )
             ]
         )
@@ -244,7 +244,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                     patient_type,
                     threshold,
                     system_capacity,
-                    parking_capacity,
+                    buffer_capacity,
                 )
                 and min(state[1], threshold) >= num_of_servers
             ]
@@ -257,7 +257,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                     patient_type,
                     threshold,
                     system_capacity,
-                    parking_capacity,
+                    buffer_capacity,
                 )
             ]
         )
@@ -268,13 +268,13 @@ def mean_waiting_time_formula(
     all_states,
     pi,
     patient_type,
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     formula="closed_form",
 ):
     """
@@ -296,13 +296,13 @@ def mean_waiting_time_formula(
     all_states : list
     pi : array
     patient_type : str
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
     formula : str, optional
 
     Returns
@@ -315,13 +315,13 @@ def mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type=patient_type,
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
             system_capacity=system_capacity,
-            parking_capacity=parking_capacity,
+            buffer_capacity=buffer_capacity,
         )
 
     if formula == "algebraic":
@@ -329,13 +329,13 @@ def mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type=patient_type,
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
             system_capacity=system_capacity,
-            parking_capacity=parking_capacity,
+            buffer_capacity=buffer_capacity,
         )
 
     if formula == "closed_form":
@@ -343,26 +343,26 @@ def mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type=patient_type,
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
             system_capacity=system_capacity,
-            parking_capacity=parking_capacity,
+            buffer_capacity=buffer_capacity,
         )
 
     return mean_waiting_time
 
 
 def get_mean_waiting_time_using_markov_state_probabilities(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     patient_type="both",
     formula="closed_form",
 ):
@@ -370,13 +370,13 @@ def get_mean_waiting_time_using_markov_state_probabilities(
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
     patient_type : str, optional
     formula : str, optional
 
@@ -387,15 +387,15 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         other patients or the overall of both
     """
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.solve
     )
@@ -405,26 +405,26 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             all_states=all_states,
             pi=pi,
             patient_type="others",
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
             system_capacity=system_capacity,
-            parking_capacity=parking_capacity,
+            buffer_capacity=buffer_capacity,
             formula=formula,
         )
         mean_waiting_time_ambulance = mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type="ambulance",
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
             system_capacity=system_capacity,
-            parking_capacity=parking_capacity,
+            buffer_capacity=buffer_capacity,
             formula=formula,
         )
 
@@ -433,7 +433,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "others", threshold, system_capacity, parking_capacity
+                    state, "others", threshold, system_capacity, buffer_capacity
                 )
             ]
         )
@@ -442,16 +442,16 @@ def get_mean_waiting_time_using_markov_state_probabilities(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "ambulance", threshold, system_capacity, parking_capacity
+                    state, "ambulance", threshold, system_capacity, buffer_capacity
                 )
             ]
         )
 
-        ambulance_rate = (lambda_a * prob_accept_ambulance) / (
-            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        ambulance_rate = (lambda_2 * prob_accept_ambulance) / (
+            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
         )
-        others_rate = (lambda_o * prob_accept_others) / (
-            (lambda_a * prob_accept_ambulance) + (lambda_o * prob_accept_others)
+        others_rate = (lambda_1 * prob_accept_others) / (
+            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
         )
 
         return (
@@ -463,13 +463,13 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         all_states,
         pi,
         patient_type,
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
         formula=formula,
     )
     return mean_waiting_time

@@ -38,17 +38,17 @@ number_of_digits_to_round = 8
 @given(
     threshold=integers(min_value=0, max_value=100),
     system_capacity=integers(min_value=1, max_value=100),
-    parking_capacity=integers(min_value=1, max_value=100),
+    buffer_capacity=integers(min_value=1, max_value=100),
 )
-def test_build_states(threshold, system_capacity, parking_capacity):
+def test_build_states(threshold, system_capacity, buffer_capacity):
     """
     Test to ensure that the build_states function returns the correct number of
-    states, for different integer values of the threshold, system and parking capacities
+    states, for different integer values of the threshold, system and buffer capacities
     """
     states = build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     if threshold > system_capacity:
@@ -56,19 +56,19 @@ def test_build_states(threshold, system_capacity, parking_capacity):
     else:
         states_after_threshold = system_capacity - threshold + 1
         size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
-        all_states_size = size_of_S2 * (parking_capacity + 1) + threshold
+        all_states_size = size_of_S2 * (buffer_capacity + 1) + threshold
         assert len(states) == all_states_size
 
 
 @given(
     num_of_servers=integers(min_value=2, max_value=10),
     threshold=integers(min_value=2, max_value=10),
-    parking_capacity=integers(min_value=2, max_value=10),
+    buffer_capacity=integers(min_value=2, max_value=10),
     system_capacity=integers(min_value=2, max_value=10),
 )
 @settings(deadline=None)
 def test_visualise_ambulance_markov_chain(
-    num_of_servers, threshold, system_capacity, parking_capacity
+    num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
     Test that checks if a neworkx MultiDiGraph object is returned and that the set
@@ -78,7 +78,7 @@ def test_visualise_ambulance_markov_chain(
     all_states = build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     set_of_all_states = set(all_states)
 
@@ -86,7 +86,7 @@ def test_visualise_ambulance_markov_chain(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     set_of_nodes = set(markov_chain_plot.nodes)
 
@@ -98,8 +98,8 @@ def test_visualise_ambulance_markov_chain(
 @given(
     ambulance_state=integers(min_value=0),
     hospital_state=integers(min_value=0),
-    lambda_a=floats(min_value=0, allow_nan=False, allow_infinity=False),
-    lambda_o=floats(min_value=0, allow_nan=False, allow_infinity=False),
+    lambda_2=floats(min_value=0, allow_nan=False, allow_infinity=False),
+    lambda_1=floats(min_value=0, allow_nan=False, allow_infinity=False),
     mu=floats(min_value=0, allow_nan=False, allow_infinity=False),
     num_of_servers=integers(min_value=1),
     threshold=integers(min_value=0),
@@ -108,8 +108,8 @@ def test_visualise_ambulance_markov_chain(
 def test_get_transition_matrix_entry(
     ambulance_state,
     hospital_state,
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -123,12 +123,12 @@ def test_get_transition_matrix_entry(
     with a Boolean variable (symbolic) to indicate whether to test the symbolic
     version of the function or the numeric one.
     """
-    Lambda = lambda_a + lambda_o
+    Lambda = lambda_2 + lambda_1
 
     if symbolic:
         Lambda = sym.symbols("Lambda")
-        lambda_o = sym.symbols("lambda") ** sym.symbols("o")
-        lambda_a = sym.symbols("lambda") ** sym.symbols("A")
+        lambda_1 = sym.symbols("lambda") ** sym.symbols("o")
+        lambda_2 = sym.symbols("lambda") ** sym.symbols("A")
         mu = sym.symbols("mu")
 
     origin_state = (ambulance_state, hospital_state)
@@ -141,8 +141,8 @@ def test_get_transition_matrix_entry(
         origin_state,
         destination_state_1,
         threshold=threshold,
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         Lambda=Lambda,
         mu=mu,
         num_of_servers=num_of_servers,
@@ -151,8 +151,8 @@ def test_get_transition_matrix_entry(
         origin_state,
         destination_state_2,
         threshold=threshold,
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         Lambda=Lambda,
         mu=mu,
         num_of_servers=num_of_servers,
@@ -161,8 +161,8 @@ def test_get_transition_matrix_entry(
         origin_state,
         destination_state_3,
         threshold=threshold,
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         Lambda=Lambda,
         mu=mu,
         num_of_servers=num_of_servers,
@@ -171,15 +171,15 @@ def test_get_transition_matrix_entry(
         origin_state,
         destination_state_4,
         threshold=threshold,
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         Lambda=Lambda,
         mu=mu,
         num_of_servers=num_of_servers,
     )
 
-    assert entry_1 == (Lambda if hospital_state < threshold else lambda_o)
-    assert entry_2 == lambda_a
+    assert entry_1 == (Lambda if hospital_state < threshold else lambda_1)
+    assert entry_2 == lambda_2
     assert entry_3 == (
         mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
     )
@@ -191,23 +191,23 @@ def test_get_transition_matrix_entry(
     num_of_servers=integers(min_value=1, max_value=5),
     threshold=integers(min_value=0, max_value=5),
     system_capacity=integers(min_value=5, max_value=10),
-    parking_capacity=integers(min_value=1, max_value=5),
+    buffer_capacity=integers(min_value=1, max_value=5),
 )
 @settings(deadline=None, max_examples=20)
 def test_get_symbolic_transition_matrix(
-    num_of_servers, threshold, system_capacity, parking_capacity
+    num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
     Test that ensures the symbolic matrix function outputs the correct size matrix
     """
     states_after_threshold = system_capacity - threshold + 1
     S_2_size = states_after_threshold if states_after_threshold >= 0 else 0
-    matrix_size = S_2_size * (parking_capacity + 1) + threshold
+    matrix_size = S_2_size * (buffer_capacity + 1) + threshold
     result = get_symbolic_transition_matrix(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     assert result.shape == (matrix_size, matrix_size)
@@ -215,18 +215,18 @@ def test_get_symbolic_transition_matrix(
 
 @given(
     system_capacity=integers(min_value=10, max_value=20),
-    parking_capacity=integers(min_value=1, max_value=20),
-    lambda_a=floats(
+    buffer_capacity=integers(min_value=1, max_value=20),
+    lambda_2=floats(
         min_value=0.05, max_value=100, allow_nan=False, allow_infinity=False
     ),
-    lambda_o=floats(
+    lambda_1=floats(
         min_value=0.05, max_value=100, allow_nan=False, allow_infinity=False
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
 @settings(deadline=None)
 def test_get_transition_matrix(
-    system_capacity, parking_capacity, lambda_a, lambda_o, mu
+    system_capacity, buffer_capacity, lambda_2, lambda_1, mu
 ):
     """
     Test that ensures numeric transition matrix's shape is as expected and that
@@ -239,16 +239,16 @@ def test_get_transition_matrix(
 
     states_after_threshold = system_capacity - threshold + 1
     S_2_size = states_after_threshold if states_after_threshold >= 0 else 0
-    matrix_size = S_2_size * (parking_capacity + 1) + threshold
+    matrix_size = S_2_size * (buffer_capacity + 1) + threshold
 
     transition_matrix = get_transition_matrix(
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         mu=mu,
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     assert matrix_size == np.shape(transition_matrix)[0]
@@ -270,31 +270,31 @@ def test_convert_symbolic_transition_matrix(threshold):
     the function that converts the symbolic matrix into a numeric one gives the
     same results as the get_transition_matrix function.
     """
-    lambda_a = 0.3
-    lambda_o = 0.2
+    lambda_2 = 0.3
+    lambda_1 = 0.2
     mu = 0.05
     num_of_servers = 10
     system_capacity = 8
-    parking_capacity = 2
+    buffer_capacity = 2
 
     transition_matrix = get_transition_matrix(
-        lambda_a=lambda_a,
-        lambda_o=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         mu=mu,
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     sym_transition_matrix = get_symbolic_transition_matrix(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     converted_matrix = convert_symbolic_transition_matrix(
-        sym_transition_matrix, lambda_a, lambda_o, mu
+        sym_transition_matrix, lambda_2, lambda_1, mu
     )
 
     assert np.allclose(converted_matrix, transition_matrix)
@@ -413,23 +413,23 @@ def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
     """
-    lambda_a = 0.1
-    lambda_o = 0.2
+    lambda_2 = 0.1
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4
+    buffer_capacity = 4
 
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.lstsq
@@ -445,23 +445,23 @@ def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
     """
-    lambda_a = 0.1
-    lambda_o = 0.2
+    lambda_2 = 0.1
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4
+    buffer_capacity = 4
 
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.lstsq
@@ -477,23 +477,23 @@ def test_get_mean_number_of_patients_examples():
     """
     Some examples to ensure that the correct mean number of patients are output
     """
-    lambda_a = 0.2
-    lambda_o = 0.2
+    lambda_2 = 0.2
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 4
     system_capacity = 20
-    parking_capacity = 20
+    buffer_capacity = 20
 
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     transition_matrix = get_transition_matrix(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
     )
     pi = get_steady_state_algebraically(
         transition_matrix, algebraic_function=np.linalg.lstsq

@@ -198,7 +198,7 @@ def generate_next_permutation_of_edges(edges, downs, lefts, rights):
     return edges
 
 
-def check_permutation_is_valid(edges, parking_capacity):
+def check_permutation_is_valid(edges, buffer_capacity):
     """Check that the given array is a valid spanning tree of the graph.
     Specifically, a given array is not a valid spanning tree if:
         - Any element that corresponds to a node of the final column is "R"
@@ -206,8 +206,8 @@ def check_permutation_is_valid(edges, parking_capacity):
         - If there exist an "L" value exactly after an "R" value
         (would make a cycle between two nodes)"""
 
-    start = (len(edges) / parking_capacity) - 1
-    for pos in np.linspace(start, len(edges) - 1, parking_capacity, dtype=int):
+    start = (len(edges) / buffer_capacity) - 1
+    for pos in np.linspace(start, len(edges) - 1, buffer_capacity, dtype=int):
         if edges[pos] == "R":
             return False
 
@@ -219,7 +219,7 @@ def check_permutation_is_valid(edges, parking_capacity):
 
 
 def get_rate_of_state_00_graphically(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    lambda_2, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Calculates the unnormalized rate of state (0,0) using the same permutation
     algorithm used in function generate_code_for_tikz_spanning_trees_rooted_at_00().
@@ -238,8 +238,8 @@ def get_rate_of_state_00_graphically(
                 - if no more permutations can be generated exit the while loop
                 - Add to the total P00_rate the term with the number of all
                 possible spanning
-                    trees multiplied by lambda_a raised to the power of the down
-                    edges, multiplied by lambda_o raised to the power of the right
+                    trees multiplied by lambda_2 raised to the power of the down
+                    edges, multiplied by lambda_1 raised to the power of the right
                     edges, multiplied by mu raised to the power of the left edges:
                     e.g num_of_spanning_trees * (λ_α^2) * (λ_ο^3) * (μ^2)
             - Move to next combination of edges until all combinations are considered
@@ -250,13 +250,13 @@ def get_rate_of_state_00_graphically(
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
@@ -268,23 +268,23 @@ def get_rate_of_state_00_graphically(
 
     P00_rate = 0
     for down_edges in np.linspace(
-        parking_capacity * (system_capacity - threshold),
+        buffer_capacity * (system_capacity - threshold),
         1,
-        parking_capacity * (system_capacity - threshold),
+        buffer_capacity * (system_capacity - threshold),
         dtype=int,
     ):
         for right_edges in range(
-            parking_capacity * (system_capacity - threshold) - down_edges + 1
+            buffer_capacity * (system_capacity - threshold) - down_edges + 1
         ):
             spanning_tree_counter = 0
             edges_index = [
                 "D"
-                if (i >= parking_capacity * (system_capacity - threshold) - down_edges)
+                if (i >= buffer_capacity * (system_capacity - threshold) - down_edges)
                 else "N"
-                for i in range(parking_capacity * (system_capacity - threshold))
+                for i in range(buffer_capacity * (system_capacity - threshold))
             ]
             left_edges = (
-                parking_capacity * (system_capacity - threshold)
+                buffer_capacity * (system_capacity - threshold)
                 - down_edges
                 - right_edges
             )
@@ -297,7 +297,7 @@ def get_rate_of_state_00_graphically(
 
             more_trees_exist = True
             while more_trees_exist:
-                is_valid = check_permutation_is_valid(edges_index, parking_capacity)
+                is_valid = check_permutation_is_valid(edges_index, buffer_capacity)
                 if is_valid:
                     spanning_tree_counter += 1
                 edges_index = generate_next_permutation_of_edges(
@@ -311,13 +311,13 @@ def get_rate_of_state_00_graphically(
 
             P00_rate += (
                 spanning_tree_counter
-                * lambda_a ** down_edges
-                * lambda_o ** right_edges
+                * lambda_2 ** down_edges
+                * lambda_1 ** right_edges
                 * mu ** left_edges
             )
 
     P00_rate += mu ** (system_capacity - threshold)
-    P00_rate *= mu ** (system_capacity * parking_capacity)
+    P00_rate *= mu ** (system_capacity * buffer_capacity)
 
     return P00_rate
 
@@ -514,7 +514,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
 
 
 def get_coefficient(D, R, L):
-    """Get the coefficient of the term (lambda_a ^ D) * (lambda_o ^ R) * (mu ^ L)
+    """Get the coefficient of the term (lambda_2 ^ D) * (lambda_1 ^ R) * (mu ^ L)
     by using only the values of D, R and L. The function finds all valid spanning
     trees by permuting around the number of D's, R's and L's. The function finds
     all permutations where there is no "R" at the end and there is no "R" followed
@@ -537,7 +537,7 @@ def get_coefficient(D, R, L):
     Returns
     -------
     int
-        The coefficient of the term: (lambda_a ^ D) * (lambda_o ^ R) * (mu ^ L)
+        The coefficient of the term: (lambda_2 ^ D) * (lambda_1 ^ R) * (mu ^ L)
     """
     all_permutations = get_all_permutations(D, R, L)
     permutations_ending_in_R = get_permutations_ending_in_R(D, R, L)

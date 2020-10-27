@@ -16,12 +16,12 @@ number_of_digits_to_round = 8
 def test_get_coefficients_row_of_array_associated_with_state_example_1():
     M_row, b_element = get_coefficients_row_of_array_associated_with_state(
         state=(2, 1),
-        lambda_o=0.3,
+        lambda_1=0.3,
         mu=0.5,
         num_of_servers=1,
         threshold=1,
         system_capacity=5,
-        parking_capacity=3,
+        buffer_capacity=3,
     )
     assert np.allclose(
         M_row, np.array([0.625, 0, 0, 0, 0, -1, 0.375, 0, 0, 0, 0, 0, 0, 0, 0])
@@ -32,12 +32,12 @@ def test_get_coefficients_row_of_array_associated_with_state_example_1():
 def test_get_coefficients_row_of_array_associated_with_state_example_2():
     M_row, b_element = get_coefficients_row_of_array_associated_with_state(
         state=(4, 7),
-        lambda_o=2,
+        lambda_1=2,
         mu=1,
         num_of_servers=3,
         threshold=4,
         system_capacity=10,
-        parking_capacity=5,
+        buffer_capacity=5,
     )
     assert np.allclose(
         M_row,
@@ -88,23 +88,23 @@ def test_get_coefficients_row_of_array_associated_with_state_example_3():
     with pytest.raises(IndexError):
         get_coefficients_row_of_array_associated_with_state(
             state=(4, 7),
-            lambda_o=2,
+            lambda_1=2,
             mu=1,
             num_of_servers=3,
             threshold=10,
             system_capacity=10,
-            parking_capacity=5,
+            buffer_capacity=5,
         )
 
 
 def test_get_blocking_time_linear_system_example_1():
     M, b = get_blocking_time_linear_system(
-        lambda_o=2,
+        lambda_1=2,
         mu=3,
         num_of_servers=1,
         threshold=3,
         system_capacity=4,
-        parking_capacity=2,
+        buffer_capacity=2,
     )
     assert np.alltrue(
         M
@@ -122,12 +122,12 @@ def test_get_blocking_time_linear_system_example_1():
 
 def test_get_blocking_time_linear_system_example_2():
     M, b = get_blocking_time_linear_system(
-        lambda_o=2,
+        lambda_1=2,
         mu=1,
         num_of_servers=3,
         threshold=3,
         system_capacity=5,
-        parking_capacity=2,
+        buffer_capacity=2,
     )
     assert np.alltrue(
         M
@@ -149,12 +149,12 @@ def test_get_blocking_time_linear_system_example_2():
 
 def test_get_blocking_time_linear_system_example_3():
     M, b = get_blocking_time_linear_system(
-        lambda_o=0.4,
+        lambda_1=0.4,
         mu=0.1,
         num_of_servers=6,
         threshold=4,
         system_capacity=4,
-        parking_capacity=7,
+        buffer_capacity=7,
     )
     assert np.alltrue(
         M
@@ -202,12 +202,12 @@ def test_get_blocking_times_of_all_states_example_1():
     the system capacity (T = N)
     """
     blocking_times = get_blocking_times_of_all_states(
-        lambda_o=2,
+        lambda_1=2,
         mu=3,
         num_of_servers=1,
         threshold=3,
         system_capacity=3,
-        parking_capacity=4,
+        buffer_capacity=4,
     )
     assert np.allclose(
         blocking_times,
@@ -226,12 +226,12 @@ def test_get_blocking_times_of_all_states_example_1():
 def test_get_blocking_times_of_all_states_example_2():
     """[summary]"""
     blocking_times = get_blocking_times_of_all_states(
-        lambda_o=2,
+        lambda_1=2,
         mu=1,
         num_of_servers=3,
         threshold=1,
         system_capacity=4,
-        parking_capacity=5,
+        buffer_capacity=5,
     )
     assert np.allclose(
         blocking_times,
@@ -250,12 +250,12 @@ def test_get_blocking_times_of_all_states_example_2():
 
 def test_get_blocking_times_of_all_states_example_3():
     blocking_times = get_blocking_times_of_all_states(
-        lambda_o=4,
+        lambda_1=4,
         mu=1,
         num_of_servers=5,
         threshold=3,
         system_capacity=6,
-        parking_capacity=8,
+        buffer_capacity=8,
     )
     assert np.allclose(
         blocking_times,
@@ -337,12 +337,12 @@ def test_mean_blocking_time_formula_algebraic():
     blocking_time = mean_blocking_time_formula(
         all_states=all_states,
         pi=state_probabilities,
-        lambda_o=3,
+        lambda_1=3,
         mu=2,
         num_of_servers=3,
         threshold=4,
         system_capacity=8,
-        parking_capacity=2,
+        buffer_capacity=2,
     )
     assert round(blocking_time, number_of_digits_to_round) == 0.23047954
 
@@ -351,13 +351,13 @@ def test_get_mean_blocking_time_markov_example_1():
     assert (
         round(
             get_mean_blocking_time_markov(
-                lambda_a=2,
-                lambda_o=3,
+                lambda_2=2,
+                lambda_1=3,
                 mu=2,
                 num_of_servers=3,
                 threshold=4,
                 system_capacity=8,
-                parking_capacity=2,
+                buffer_capacity=2,
                 formula="algebraic",
             ),
             number_of_digits_to_round,
@@ -370,13 +370,13 @@ def test_get_mean_blocking_time_markov_example_2():
     assert (
         round(
             get_mean_blocking_time_markov(
-                lambda_a=5,
-                lambda_o=6,
+                lambda_2=5,
+                lambda_1=6,
                 mu=2,
                 num_of_servers=7,
                 threshold=5,
                 system_capacity=15,
-                parking_capacity=7,
+                buffer_capacity=7,
                 formula="algebraic",
             ),
             number_of_digits_to_round,

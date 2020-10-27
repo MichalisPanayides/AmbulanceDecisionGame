@@ -35,14 +35,14 @@ def test_expected_time_in_markov_state_ignoring_ambulance_arrivals():
     assert (
         round(
             expected_time_in_markov_state_ignoring_ambulance_arrivals(
-                state=(1, 3), lambda_o=0.4, mu=1.2, num_of_servers=4, system_capacity=5
+                state=(1, 3), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
             number_of_digits_to_round,
         )
         == round(
             expected_time_in_markov_state_ignoring_ambulance_arrivals(
                 state=(100, 3),
-                lambda_o=0.4,
+                lambda_1=0.4,
                 mu=1.2,
                 num_of_servers=4,
                 system_capacity=5,
@@ -55,14 +55,14 @@ def test_expected_time_in_markov_state_ignoring_ambulance_arrivals():
     assert (
         round(
             expected_time_in_markov_state_ignoring_ambulance_arrivals(
-                state=(1, 5), lambda_o=0.4, mu=1.2, num_of_servers=4, system_capacity=5
+                state=(1, 5), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
             number_of_digits_to_round,
         )
         == round(
             expected_time_in_markov_state_ignoring_ambulance_arrivals(
                 state=(100, 5),
-                lambda_o=0.4,
+                lambda_1=0.4,
                 mu=1.2,
                 num_of_servers=4,
                 system_capacity=5,
@@ -80,9 +80,9 @@ def test_prob_service():
     for v in range(1, 100):
         u = random.randint(1, 100)
         mu = random.randint(1, 100)
-        lambda_o = random.random()
-        prob = prob_service(state=(u, v), lambda_o=lambda_o, mu=mu, num_of_servers=1)
-        assert prob == mu / (lambda_o + mu)
+        lambda_1 = random.random()
+        prob = prob_service(state=(u, v), lambda_1=lambda_1, mu=mu, num_of_servers=1)
+        assert prob == mu / (lambda_1 + mu)
 
 
 def test_prob_other_arrival():
@@ -92,8 +92,8 @@ def test_prob_other_arrival():
     for v in range(1, 100):
         u = random.randint(1, 100)
         mu = random.randint(1, 100)
-        lambda_o = random.random()
+        lambda_1 = random.random()
         prob = prob_other_arrival(
-            state=(u, v), lambda_o=lambda_o, mu=mu, num_of_servers=1
+            state=(u, v), lambda_1=lambda_1, mu=mu, num_of_servers=1
         )
-        assert prob == lambda_o / (lambda_o + mu)
+        assert prob == lambda_1 / (lambda_1 + mu)

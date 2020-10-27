@@ -27,16 +27,16 @@ number_of_digits_to_round = 8
 
 
 @given(
-    lambda_a=floats(min_value=0.1, max_value=10),
-    lambda_o=floats(min_value=0.1, max_value=10),
+    lambda_2=floats(min_value=0.1, max_value=10),
+    lambda_1=floats(min_value=0.1, max_value=10),
     mu=floats(min_value=0.1, max_value=10),
     c=integers(min_value=1, max_value=20),
 )
-def test_build_model(lambda_a, lambda_o, mu, c):
+def test_build_model(lambda_2, lambda_1, mu, c):
     """
     Test to ensure consistent outcome type
     """
-    result = build_model(lambda_a, lambda_o, mu, c)
+    result = build_model(lambda_2, lambda_1, mu, c)
 
     assert type(result) == ciw.network.Network
 
@@ -46,7 +46,7 @@ def test_example_model():
     Test to ensure that the correct results are output to a specific problem
     """
     ciw.seed(5)
-    Q = ciw.Simulation(build_model(lambda_a=1, lambda_o=1, mu=2, num_of_servers=1))
+    Q = ciw.Simulation(build_model(lambda_2=1, lambda_1=1, mu=2, num_of_servers=1))
     Q.simulate_until_max_time(max_simulation_time=100)
     records = Q.get_all_records()
     wait = [r.waiting_time for r in records]
@@ -70,7 +70,7 @@ def test_build_custom_node(num_of_servers):
     ciw.seed(5)
     model_1 = ciw.Simulation(
         build_model(
-            lambda_a=0.2, lambda_o=0.15, mu=0.05, num_of_servers=num_of_servers
+            lambda_2=0.2, lambda_1=0.15, mu=0.05, num_of_servers=num_of_servers
         ),
         node_class=build_custom_node(np.inf),
     )
@@ -81,7 +81,7 @@ def test_build_custom_node(num_of_servers):
 
     model_2 = ciw.Simulation(
         build_model(
-            lambda_a=0.2, lambda_o=0.15, mu=0.05, num_of_servers=num_of_servers
+            lambda_2=0.2, lambda_1=0.15, mu=0.05, num_of_servers=num_of_servers
         ),
         node_class=build_custom_node(-1),
     )
@@ -100,7 +100,7 @@ def test_example_build_custom_node():
     """
     ciw.seed(5)
     Q = ciw.Simulation(
-        build_model(lambda_a=1, lambda_o=1, mu=2, num_of_servers=1),
+        build_model(lambda_2=1, lambda_1=1, mu=2, num_of_servers=1),
         node_class=build_custom_node(7),
     )
     Q.simulate_until_max_time(max_simulation_time=100)
@@ -120,7 +120,7 @@ def test_example_build_custom_node():
 def test_simulate_model_unconstrained():
     """
     Test that the correct values are output given specific values and when the system
-    capacity and the parking capacity are infinite
+    capacity and the buffer capacity are infinite
     """
     sim_results = []
     blocks = 0
@@ -128,8 +128,8 @@ def test_simulate_model_unconstrained():
     services = 0
     for seed in range(5):
         simulation = simulate_model(
-            lambda_a=0.15,
-            lambda_o=0.2,
+            lambda_2=0.15,
+            lambda_1=0.2,
             mu=0.05,
             num_of_servers=8,
             threshold=4,
@@ -161,7 +161,7 @@ def test_simulate_model_unconstrained():
 def test_simulate_model_constrained():
     """
     Test that correct amount of patients flow through the system given specific
-    values with a specified capacity of the hospital and the parking space
+    values with a specified capacity of the hospital and the buffer space
     """
     sim_results = []
     blocks = 0
@@ -169,14 +169,14 @@ def test_simulate_model_constrained():
     services = 0
     for seed in range(5):
         simulation = simulate_model(
-            lambda_a=0.15,
-            lambda_o=0.2,
+            lambda_2=0.15,
+            lambda_1=0.2,
             mu=0.05,
             num_of_servers=8,
             threshold=4,
             seed_num=seed,
             system_capacity=10,
-            parking_capacity=5,
+            buffer_capacity=5,
         )
         rec = simulation.get_all_records()
         sim_results.append(rec)
@@ -204,36 +204,36 @@ def test_simulate_model_constrained():
 def test_simulate_model_invalid_arguements():
     """
     Tests the following scenarios where specific cases occur:
-        - when parking_capacity is less than 1 -> an error is raised
+        - when buffer_capacity is less than 1 -> an error is raised
         - when threshold is greater than system capacity the
-          model forces threshold=system_capacity and parking_capacity=1
+          model forces threshold=system_capacity and buffer_capacity=1
     """
     sim_results_normal = []
     sim_results_forced = []
     for seed in range(5):
         simulation = simulate_model(
-            lambda_a=0.15,
-            lambda_o=0.2,
+            lambda_2=0.15,
+            lambda_1=0.2,
             mu=0.05,
             num_of_servers=8,
             threshold=10,
             seed_num=seed,
             system_capacity=10,
-            parking_capacity=1,
+            buffer_capacity=1,
         )
         rec = simulation.get_all_records()
         sim_results_normal.append(rec)
 
     for seed in range(5):
         simulation = simulate_model(
-            lambda_a=0.15,
-            lambda_o=0.2,
+            lambda_2=0.15,
+            lambda_1=0.2,
             mu=0.05,
             num_of_servers=8,
             threshold=12,
             seed_num=seed,
             system_capacity=10,
-            parking_capacity=5,
+            buffer_capacity=5,
         )
         rec = simulation.get_all_records()
         sim_results_forced.append(rec)
@@ -241,14 +241,14 @@ def test_simulate_model_invalid_arguements():
     assert sim_results_normal == sim_results_forced
     with pytest.raises(ValueError):
         simulate_model(
-            lambda_a=0.15,
-            lambda_o=0.2,
+            lambda_2=0.15,
+            lambda_1=0.2,
             mu=0.05,
             num_of_servers=8,
             threshold=4,
             seed_num=0,
             system_capacity=10,
-            parking_capacity=0,
+            buffer_capacity=0,
         )
 
 
@@ -256,27 +256,27 @@ def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
     """
-    lambda_a = 0.1
-    lambda_o = 0.2
+    lambda_2 = 0.1
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4
+    buffer_capacity = 4
     seed_num = None
     runtime = 2000
     tracker = ciw.trackers.NodePopulation()
 
     Q = simulate_model(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         seed_num,
         runtime,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
         tracker=tracker,
     )
     pi_dictionary = get_simulated_state_probabilities(simulation_object=Q, output=dict)
@@ -287,27 +287,27 @@ def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
     """
-    lambda_a = 0.1
-    lambda_o = 0.2
+    lambda_2 = 0.1
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4
+    buffer_capacity = 4
     seed_num = None
     runtime = 2000
     tracker = ciw.trackers.NodePopulation()
 
     Q = simulate_model(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         seed_num,
         runtime,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
         tracker=tracker,
     )
     pi_array = get_simulated_state_probabilities(simulation_object=Q, output=np.ndarray)
@@ -318,25 +318,25 @@ def test_get_average_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the average pi array equate to 1
     """
-    lambda_a = 0.1
-    lambda_o = 0.2
+    lambda_2 = 0.1
+    lambda_1 = 0.2
     mu = 0.2
     num_of_servers = 3
     threshold = 3
     system_capacity = 5
-    parking_capacity = 4
+    buffer_capacity = 4
     seed_num = None
     runtime = 2000
     num_of_trials = 5
 
     pi_array = get_average_simulated_state_probabilities(
-        lambda_a,
-        lambda_o,
+        lambda_2,
+        lambda_1,
         mu,
         num_of_servers,
         threshold,
         system_capacity,
-        parking_capacity,
+        buffer_capacity,
         seed_num,
         runtime,
         num_of_trials,
@@ -348,8 +348,8 @@ def test_get_average_state_probabilities_array():
 
 def test_get_multiple_results():
     mult_results_1 = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -357,8 +357,8 @@ def test_get_multiple_results():
         seed_num=1,
     )
     mult_results_2 = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -384,8 +384,8 @@ def test_example_get_multiple_results():
     Test that multiple results function works with specific values
     """
     mult_results = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -413,8 +413,8 @@ def test_example_get_multiple_results_for_different_patient_types():
     """
 
     mult_results = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -427,8 +427,8 @@ def test_example_get_multiple_results_for_different_patient_types():
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
 
     mult_results = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -442,8 +442,8 @@ def test_example_get_multiple_results_for_different_patient_types():
     all_blocks_ambulance = [np.mean(b.blocking_times) for b in mult_results]
 
     mult_results = get_multiple_runs_results(
-        lambda_a=0.15,
-        lambda_o=0.2,
+        lambda_2=0.15,
+        lambda_1=0.2,
         mu=0.05,
         num_of_servers=8,
         threshold=4,
@@ -465,12 +465,12 @@ def test_example_get_multiple_results_for_different_patient_types():
 
 
 @given(
-    lambda_a=floats(min_value=0.1, max_value=0.4),
-    lambda_o=floats(min_value=0.1, max_value=0.4),
+    lambda_2=floats(min_value=0.1, max_value=0.4),
+    lambda_1=floats(min_value=0.1, max_value=0.4),
 )
 @settings(deadline=None)
 def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
-    lambda_a, lambda_o
+    lambda_2, lambda_1
 ):
     """
     Test that ensures that the function that finds the optimal distribution of
@@ -488,9 +488,9 @@ def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
     """
     diff = get_mean_blocking_difference_between_two_hospitals(
         prop_1=0.5,
-        lambda_a=lambda_a,
-        lambda_o_1=lambda_o,
-        lambda_o_2=lambda_o,
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1,
+        lambda_1_2=lambda_1,
         mu_1=0.2,
         mu_2=0.2,
         num_of_servers_1=4,
@@ -515,9 +515,9 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
         diff_list.append(
             get_mean_blocking_difference_between_two_hospitals(
                 prop_1=prop,
-                lambda_a=0.15,
-                lambda_o_1=0.08,
-                lambda_o_2=0.08,
+                lambda_2=0.15,
+                lambda_1_1=0.08,
+                lambda_1_2=0.08,
                 mu_1=0.05,
                 mu_2=0.05,
                 num_of_servers_1=6,
@@ -546,11 +546,11 @@ def test_calculate_ambulance_best_response_equal_split():
     randomness and make both hospitals identical, in terms of arrivals, services
     and any other stochasticity that the simulation models incorporates.
     """
-    lambda_a = 0.3
+    lambda_2 = 0.3
     equal_split = calculate_ambulance_best_response(
-        lambda_a=lambda_a,
-        lambda_o_1=0.3,
-        lambda_o_2=0.3,
+        lambda_2=lambda_2,
+        lambda_1_1=0.3,
+        lambda_1_2=0.3,
         mu_1=0.2,
         mu_2=0.2,
         num_of_servers_1=4,

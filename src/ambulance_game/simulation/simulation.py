@@ -6,29 +6,29 @@ import scipy.optimize
 
 
 def build_model(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     system_capacity=float("inf"),
-    parking_capacity=float("inf"),
+    buffer_capacity=float("inf"),
 ):
     """Builds a ciw object that represents a model of a queuing network with two
-    service centres; the hospital and the parking space. Patients arrive at the
-    hospital and at the parking space with rates that follow the exponential
+    service centres; the hospital and the buffer space. Patients arrive at the
+    hospital and at the buffer space with rates that follow the exponential
     distribution of λ_ο and λ_α respectively. The service distribution follows
-    a constant distribution of 0 for the parking space and an exponential
+    a constant distribution of 0 for the buffer space and an exponential
     distribution with a rate of μ for the hospital. The variables "num_of_servers"
-    and "parking_capacity" indicate the capacities of the two centres. Finally,
+    and "buffer_capacity" indicate the capacities of the two centres. Finally,
     the queue capacity is set to the difference between the number of servers and
-    the system capacity for the hospital centre and for the parking space it is
+    the system capacity for the hospital centre and for the buffer space it is
     set to zero, as there should not occur any waiting there, just blockage.
 
     Parameters
     ----------
-    lambda_a : float
+    lambda_2 : float
         Arrival rate of ambulance patients
-    lambda_o : float
+    lambda_1 : float
         Arrival rate of other patients
     mu : float
         Service rate of hospital
@@ -38,12 +38,12 @@ def build_model(
 
     model = ciw.create_network(
         arrival_distributions=[
-            ciw.dists.Exponential(lambda_a),
-            ciw.dists.Exponential(lambda_o),
+            ciw.dists.Exponential(lambda_2),
+            ciw.dists.Exponential(lambda_1),
         ],
         service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
         routing=[[0.0, 1.0], [0.0, 0.0]],
-        number_of_servers=[parking_capacity, num_of_servers],
+        number_of_servers=[buffer_capacity, num_of_servers],
         queue_capacities=[0, system_capacity - num_of_servers],
     )
     return model
@@ -53,7 +53,7 @@ def build_custom_node(threshold=float("inf")):
     """Build a custom node to replace the default ciw.Node. Inherits from the original
     ciw.Node class and replaces methods release_blocked_individual and finish_service.
     The methods are modified in such a way such that all individuals that are in
-    the parking space node (node 1) remain blocked as long as the number of individuals
+    the buffer space node (node 1) remain blocked as long as the number of individuals
     in the hospital node (node 2) exceeds the threshold.
 
     Parameters
@@ -136,26 +136,26 @@ def build_custom_node(threshold=float("inf")):
 
 
 def simulate_model(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     seed_num=None,
     runtime=1440,
     system_capacity=float("inf"),
-    parking_capacity=float("inf"),
+    buffer_capacity=float("inf"),
     tracker=ciw.trackers.NodePopulation(),
 ):
     """Simulate the model by using the custom node and returning the simulation object.
 
     It is important to note that when the threshold is greater than the system capacity
-    the parking capacity is forced to be 1 because otherwise, when the hospital gets
-    full, ambulance patients will flood the parking spaces which is not what should
+    the buffer capacity is forced to be 1 because otherwise, when the hospital gets
+    full, ambulance patients will flood the buffer spaces which is not what should
     happen in this particular scenario.
     TODO: use different approach to handle this scenario
 
-    Additionally, the parking capacity should always be greater or equal to 1
+    Additionally, the buffer capacity should always be greater or equal to 1
 
     Parameters
     ----------
@@ -168,19 +168,19 @@ def simulate_model(
         An object that contains all simulation records
     """
 
-    if parking_capacity < 1:
+    if buffer_capacity < 1:
         raise ValueError(
-            "Simulation only implemented for parking_capacity >= 1"
-        )  # TODO Add an option to ciw model to all for no parking capacity.
+            "Simulation only implemented for buffer_capacity >= 1"
+        )  # TODO Add an option to ciw model to all for no buffer capacity.
 
     if threshold > system_capacity:
-        parking_capacity = 1
+        buffer_capacity = 1
         # TODO: Different approach to handle this situation
 
     if seed_num == None:
         seed_num = random.random()
     model = build_model(
-        lambda_a, lambda_o, mu, num_of_servers, system_capacity, parking_capacity
+        lambda_2, lambda_1, mu, num_of_servers, system_capacity, buffer_capacity
     )
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
@@ -190,7 +190,7 @@ def simulate_model(
 
 
 def get_simulated_state_probabilities(
-    simulation_object, output=np.ndarray, system_capacity=None, parking_capacity=None
+    simulation_object, output=np.ndarray, system_capacity=None, buffer_capacity=None
 ):
     """Calculates the vector pi in a dictionary format or an array format. For the
     dictionary format the keys are the states (i,j) and the values are the probabilities
@@ -217,8 +217,8 @@ def get_simulated_state_probabilities(
     if output == dict:
         return state_probabilities_dictionary
     elif output == np.ndarray:
-        if parking_capacity == None:
-            parking_capacity = max(
+        if buffer_capacity == None:
+            buffer_capacity = max(
                 [state[0] for state in state_probabilities_dictionary.keys()]
             )
         if system_capacity == None:
@@ -226,7 +226,7 @@ def get_simulated_state_probabilities(
                 [state[1] for state in state_probabilities_dictionary.keys()]
             )
         state_probabilities_array = np.full(
-            (parking_capacity + 1, system_capacity + 1), np.NaN
+            (buffer_capacity + 1, system_capacity + 1), np.NaN
         )
         for key, value in state_probabilities_dictionary.items():
             if value > 0:
@@ -235,13 +235,13 @@ def get_simulated_state_probabilities(
 
 
 def get_average_simulated_state_probabilities(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     seed_num=None,
     runtime=1440,
     num_of_trials=10,
@@ -263,22 +263,22 @@ def get_average_simulated_state_probabilities(
         average_state_probabilities = {}
     else:
         average_state_probabilities = np.full(
-            (parking_capacity + 1, system_capacity + 1), np.NaN
+            (buffer_capacity + 1, system_capacity + 1), np.NaN
         )
     for trial in range(num_of_trials):
         simulation_object = simulate_model(
-            lambda_a,
-            lambda_o,
+            lambda_2,
+            lambda_1,
             mu,
             num_of_servers,
             threshold,
             seed_num + trial,
             runtime,
             system_capacity,
-            parking_capacity,
+            buffer_capacity,
         )
         state_probabilities = get_simulated_state_probabilities(
-            simulation_object, output, system_capacity, parking_capacity
+            simulation_object, output, system_capacity, buffer_capacity
         )
         if output == dict:
             if len(average_state_probabilities) == 0:
@@ -287,7 +287,7 @@ def get_average_simulated_state_probabilities(
                 for key in average_state_probabilities.keys():
                     average_state_probabilities[key] += state_probabilities[key]
         else:
-            for row in range(parking_capacity + 1):
+            for row in range(buffer_capacity + 1):
                 for col in range(system_capacity + 1):
                     updated_entry = np.nansum(
                         [
@@ -394,8 +394,8 @@ def get_list_of_results(results):
 
 
 def get_multiple_runs_results(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -405,7 +405,7 @@ def get_multiple_runs_results(
     runtime=1440,
     output_type="tuple",
     system_capacity=float("inf"),
-    parking_capacity=float("inf"),
+    buffer_capacity=float("inf"),
     patient_type="both",
 ):
     """Get the waiting times, service times and blocking times for multiple runs
@@ -439,15 +439,15 @@ def get_multiple_runs_results(
     results = []
     for trial in range(num_of_trials):
         simulation = simulate_model(
-            lambda_a,
-            lambda_o,
+            lambda_2,
+            lambda_1,
             mu,
             num_of_servers,
             threshold,
             seed_num + trial,
             runtime,
             system_capacity,
-            parking_capacity,
+            buffer_capacity,
         )
 
         if patient_type == "both":
@@ -488,9 +488,9 @@ def get_multiple_runs_results(
 
 def get_mean_blocking_difference_between_two_hospitals(
     prop_1,
-    lambda_a,
-    lambda_o_1,
-    lambda_o_2,
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
     mu_1,
     mu_2,
     num_of_servers_1,
@@ -512,7 +512,7 @@ def get_mean_blocking_difference_between_two_hospitals(
     ----------
     prop_1 : float
         Proportion of ambulance's arrival rate that will be distributed to hospital 1
-    lambda_a : float
+    lambda_2 : float
         Total ambulance arrival rate
 
     Returns
@@ -520,12 +520,12 @@ def get_mean_blocking_difference_between_two_hospitals(
     float
         The difference between the mean blocking time of the two hospitals
     """
-    lambda_a_1 = prop_1 * lambda_a
-    lambda_a_2 = (1 - prop_1) * lambda_a
+    lambda_2_1 = prop_1 * lambda_2
+    lambda_2_2 = (1 - prop_1) * lambda_2
 
     res_1 = get_multiple_runs_results(
-        lambda_a=lambda_a_1,
-        lambda_o=lambda_o_1,
+        lambda_2=lambda_2_1,
+        lambda_1=lambda_1_1,
         mu=mu_1,
         num_of_servers=num_of_servers_1,
         threshold=threshold_1,
@@ -536,8 +536,8 @@ def get_mean_blocking_difference_between_two_hospitals(
         runtime=runtime,
     )
     res_2 = get_multiple_runs_results(
-        lambda_a=lambda_a_2,
-        lambda_o=lambda_o_2,
+        lambda_2=lambda_2_2,
+        lambda_1=lambda_1_2,
         mu=mu_2,
         num_of_servers=num_of_servers_2,
         threshold=threshold_2,
@@ -560,9 +560,9 @@ def get_mean_blocking_difference_between_two_hospitals(
 
 
 def calculate_ambulance_best_response(
-    lambda_a,
-    lambda_o_1,
-    lambda_o_2,
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
     mu_1,
     mu_2,
     num_of_servers_1,
@@ -595,9 +595,9 @@ def calculate_ambulance_best_response(
         a=0.01,
         b=0.99,
         args=(
-            lambda_a,
-            lambda_o_1,
-            lambda_o_2,
+            lambda_2,
+            lambda_1_1,
+            lambda_1_2,
             mu_1,
             mu_2,
             num_of_servers_1,

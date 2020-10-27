@@ -7,7 +7,7 @@ import scipy as sci
 import scipy.integrate
 
 
-def build_states(threshold, system_capacity, parking_capacity):
+def build_states(threshold, system_capacity, buffer_capacity):
     """Builds the set of states in a list format by combine two sets of states where:
         - states_1 consists of all states before reaching the threshold
             (0, 0), (0, 1), ..., (0, T-1) where T is the threshold
@@ -31,8 +31,8 @@ def build_states(threshold, system_capacity, parking_capacity):
         are not allowed.
     system_capacity : int
         The maximum capacity of the hospital (i.e. number of servers + queue size)
-    parking_capacity : int
-        The number of parking spaces
+    buffer_capacity : int
+        The number of buffer spaces
 
     Returns
     -------
@@ -41,10 +41,10 @@ def build_states(threshold, system_capacity, parking_capacity):
 
     TODO: turn into a generator
     """
-    if parking_capacity < 1:
+    if buffer_capacity < 1:
         raise ValueError(
-            "Simulation only implemented for parking_capacity >= 1"
-        )  # TODO Add an option to ciw model to all for no parking capacity.
+            "Simulation only implemented for buffer_capacity >= 1"
+        )  # TODO Add an option to ciw model to all for no buffer capacity.
 
     if threshold > system_capacity:
         return [(0, v) for v in range(0, system_capacity + 1)]
@@ -56,7 +56,7 @@ def build_states(threshold, system_capacity, parking_capacity):
     states_2 = [
         (u, v)
         for v in range(threshold, system_capacity + 1)
-        for u in range(parking_capacity + 1)
+        for u in range(buffer_capacity + 1)
     ]
     all_states = states_1 + states_2
 
@@ -67,7 +67,7 @@ def visualise_ambulance_markov_chain(
     num_of_servers,
     threshold,
     system_capacity,
-    parking_capacity,
+    buffer_capacity,
     nodesize=2000,
     fontsize=12,
 ):
@@ -82,7 +82,7 @@ def visualise_ambulance_markov_chain(
         the point that the system has no free servers
     threshold : int
         The number where v=threshold that indicates the split of the two sets
-    parking_capacity : int
+    buffer_capacity : int
         The maximum number of u in all states (u,v)
     system_capacity : int
         The maximum number of v in all states (u,v)
@@ -93,7 +93,7 @@ def visualise_ambulance_markov_chain(
         a networkx object that consists of the Markov chain
     """
 
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     G = nx.DiGraph()
     for _, origin_state in enumerate(all_states):
         for _, destination_state in enumerate(all_states):
@@ -108,7 +108,7 @@ def visualise_ambulance_markov_chain(
             if row_adjacent or column_adjacent:
                 G.add_edge(origin_state, destination_state, color="blue")
 
-    plt.figure(figsize=((system_capacity + 1) * 1.5, (parking_capacity + 1) * 1.5))
+    plt.figure(figsize=((system_capacity + 1) * 1.5, (buffer_capacity + 1) * 1.5))
     pos = {state: [state[1], -state[0]] for state in all_states}
     nx.draw_networkx_nodes(
         G,
@@ -132,7 +132,7 @@ def visualise_ambulance_markov_chain(
 
 
 def get_transition_matrix_entry(
-    origin, destination, threshold, lambda_a, lambda_o, Lambda, mu, num_of_servers
+    origin, destination, threshold, lambda_2, lambda_1, Lambda, mu, num_of_servers
 ):
     """Obtains the entry of the transition matrix based on the state mapping function.
     For a given entry of the transition matrix, the function uses the difference
@@ -150,11 +150,11 @@ def get_transition_matrix_entry(
         The destination state (u_j,v_j)
     threshold : int
         Indication of when to stop using Lambda as the arrival rate and split it
-        into lambda_a and lambda_o
-    lambda_a : float or sympy.Symbol object
-    lambda_o : float or sympy.Symbol object
+        into lambda_2 and lambda_1
+    lambda_2 : float or sympy.Symbol object
+    lambda_1 : float or sympy.Symbol object
     Lambda : float or sympy.Symbol object
-        The sum of lambda_a and lambda_o OR the symbol Λ
+        The sum of lambda_2 and lambda_1 OR the symbol Λ
     mu : float or sympy.Symbol object
     num_of_servers : int
         Indication of when to stabilise the service rate
@@ -168,19 +168,19 @@ def get_transition_matrix_entry(
     if np.all(delta == (0, -1)):
         if origin[1] < threshold:
             return Lambda
-        return lambda_o
+        return lambda_1
     if np.all(delta == (-1, 0)):
-        return lambda_a
+        return lambda_2
     if np.all(delta == (0, 1)) or (np.all(delta == (1, 0)) and origin[1] == threshold):
         return min(origin[1], num_of_servers) * mu
     return 0
 
 
 def get_symbolic_transition_matrix(
-    num_of_servers, threshold, system_capacity, parking_capacity
+    num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Obtain the transition matrix with symbols instead of the actual values of
-    lambda_a, lambda_o and mu.
+    lambda_2, lambda_1 and mu.
 
     Returns
     -------
@@ -188,11 +188,11 @@ def get_symbolic_transition_matrix(
         The symbolic transition matrix
     """
     Lambda = sym.symbols("Lambda")
-    lambda_o = sym.symbols("lambda^o")
-    lambda_a = sym.symbols("lambda^A")
+    lambda_1 = sym.symbols("lambda_1")
+    lambda_2 = sym.symbols("lambda_2")
     mu = sym.symbols("mu")
 
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     Q = sym.zeros(len(all_states))
     # if threshold > system_capacity:
     #     threshold = system_capacity
@@ -203,8 +203,8 @@ def get_symbolic_transition_matrix(
             origin=origin_state,
             destination=destination_state,
             threshold=threshold,
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
             Lambda=Lambda,
             mu=mu,
             num_of_servers=num_of_servers,
@@ -217,7 +217,7 @@ def get_symbolic_transition_matrix(
 
 
 def get_transition_matrix(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    lambda_2, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Obtain the numerical transition matrix that consists of all rates between
     any two states.
@@ -230,15 +230,15 @@ def get_transition_matrix(
         The threshold that indicates when to start blocking ambulances
     system_capacity : int
         The total capacity of the system
-    parking_capacity : int
-        The parking capacity
+    buffer_capacity : int
+        The buffer capacity
 
     Returns
     -------
     numpy.ndarray
         The transition matrix Q
     """
-    all_states = build_states(threshold, system_capacity, parking_capacity)
+    all_states = build_states(threshold, system_capacity, buffer_capacity)
     size = len(all_states)
     Q = np.zeros((size, size))
     # if threshold > system_capacity:
@@ -250,9 +250,9 @@ def get_transition_matrix(
             origin=origin_state,
             destination=destination_state,
             threshold=threshold,
-            lambda_a=lambda_a,
-            lambda_o=lambda_o,
-            Lambda=lambda_a + lambda_o,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            Lambda=lambda_2 + lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
         )
@@ -261,7 +261,7 @@ def get_transition_matrix(
     return Q
 
 
-def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
+def convert_symbolic_transition_matrix(Q_sym, lambda_2, lambda_1, mu):
     """Converts the symbolic matrix obtained from the get_symbolic_transition_matrix()
     function to the corresponding numerical matrix. The output of this function
     should be the same as the output of get_transition_matrix()
@@ -279,16 +279,16 @@ def convert_symbolic_transition_matrix(Q_sym, lambda_a, lambda_o, mu):
     TODO: get rid of first four lines somehow
     """
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda^o")
-    sym_lambda_a = sym.symbols("lambda^A")
+    sym_lambda_1 = sym.symbols("lambda_1")
+    sym_lambda_2 = sym.symbols("lambda_2")
     sym_mu = sym.symbols("mu")
 
     Q = np.array(
         Q_sym.subs(
             {
-                sym_Lambda: lambda_a + lambda_o,
-                sym_lambda_o: lambda_o,
-                sym_lambda_a: lambda_a,
+                sym_Lambda: lambda_2 + lambda_1,
+                sym_lambda_1: lambda_1,
+                sym_lambda_2: lambda_2,
                 sym_mu: mu,
             }
         )
@@ -428,7 +428,7 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
 
 
 def get_markov_state_probabilities(
-    pi, all_states, output=np.ndarray, system_capacity=None, parking_capacity=None
+    pi, all_states, output=np.ndarray, system_capacity=None, buffer_capacity=None
 ):
     """Calculates the vector pi in a dictionary format where the values are the
     probabilities that the system is in a current state (listed as key of the dictionary).
@@ -445,12 +445,12 @@ def get_markov_state_probabilities(
             states_probabilities_dictionary[all_states[i]] = pi[i]
         return states_probabilities_dictionary
     elif output == np.ndarray:
-        if parking_capacity == None:
-            parking_capacity = max([state[0] for state in all_states])
+        if buffer_capacity == None:
+            buffer_capacity = max([state[0] for state in all_states])
         if system_capacity == None:
             system_capacity = max([state[1] for state in all_states])
         states_probabilities_array = np.full(
-            (parking_capacity + 1, system_capacity + 1), np.NaN
+            (buffer_capacity + 1, system_capacity + 1), np.NaN
         )
         for index in range(len(all_states)):
             states_probabilities_array[all_states[index]] = pi[index]

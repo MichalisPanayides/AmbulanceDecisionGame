@@ -111,8 +111,8 @@ def get_both_times(individuals):
 
 
 def get_times_for_patients(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -124,8 +124,8 @@ def get_times_for_patients(
 
     Parameters
     ----------
-    lambda_a : [float]
-    lambda_o : [float]
+    lambda_2 : [float]
+    lambda_1 : [float]
     mu : [float]
     num_of_servers : [int]
     threshold : [int]
@@ -140,7 +140,7 @@ def get_times_for_patients(
         patients and patients still in system
     """
     individuals = simulate_model(
-        lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, runtime
+        lambda_2, lambda_1, mu, num_of_servers, threshold, seed_num, runtime
     ).get_all_individuals()
 
     if measurement_type == "w":
@@ -170,8 +170,8 @@ def get_plot_for_different_thresholds_labels(measurement_type):
 
 
 def make_plot_for_different_thresholds(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     num_of_trials,
@@ -184,8 +184,8 @@ def make_plot_for_different_thresholds(
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     seed_num : float, optional
@@ -212,8 +212,8 @@ def make_plot_for_different_thresholds(
         current_total_mean_times = []
         for _ in range(num_of_trials):
             times = get_times_for_patients(
-                lambda_a,
-                lambda_o,
+                lambda_2,
+                lambda_1,
                 mu,
                 num_of_servers,
                 threshold,
@@ -299,8 +299,8 @@ def get_target_proportions_of_current_trial(individuals, target):
 
 
 def get_mean_waits_of_current_threshold(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -328,7 +328,7 @@ def get_mean_waits_of_current_threshold(
 
     for trial in range(num_of_trials):
         individuals = simulate_model(
-            lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num + trial, runtime
+            lambda_2, lambda_1, mu, num_of_servers, threshold, seed_num + trial, runtime
         ).get_all_individuals()
         (
             ambulance_waits,
@@ -358,8 +358,8 @@ def get_mean_waits_of_current_threshold(
 
 
 def make_plot_for_proportion_within_target(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     num_of_trials,
@@ -395,8 +395,8 @@ def make_plot_for_proportion_within_target(
         max_threshold = num_of_servers
     for threshold in range(max_threshold + 1):
         mean_ambulance, mean_other, mean_combined = get_mean_waits_of_current_threshold(
-            lambda_a,
-            lambda_o,
+            lambda_2,
+            lambda_1,
             mu,
             num_of_servers,
             threshold,
@@ -482,9 +482,9 @@ def get_two_hospital_plot_labels(measurement_type):
 
 
 def make_plot_two_hospitals_arrival_split(
-    lambda_a,
-    lambda_o_1,
-    lambda_o_2,
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
     mu_1,
     mu_2,
     num_of_servers_1,
@@ -506,9 +506,9 @@ def make_plot_two_hospitals_arrival_split(
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o_1 : float
-    lambda_o_2 : float
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
     mu_1 : float
     mu_2 : float
     num_of_servers_1 : int
@@ -529,12 +529,12 @@ def make_plot_two_hospitals_arrival_split(
     """
     hospital_times_1 = []
     hospital_times_2 = []
-    all_arrival_rates = np.linspace(0, lambda_a, accuracy + 1)
+    all_arrival_rates = np.linspace(0, lambda_2, accuracy + 1)
     for arrival_rate_1 in all_arrival_rates[1:-1]:
-        arrival_rate_2 = lambda_a - arrival_rate_1
+        arrival_rate_2 = lambda_2 - arrival_rate_1
         times_1 = get_multiple_runs_results(
             arrival_rate_1,
-            lambda_o_1,
+            lambda_1_1,
             mu_1,
             num_of_servers_1,
             threshold_1,
@@ -545,7 +545,7 @@ def make_plot_two_hospitals_arrival_split(
         )
         times_2 = get_multiple_runs_results(
             arrival_rate_2,
-            lambda_o_2,
+            lambda_1_2,
             mu_2,
             num_of_servers_2,
             threshold_2,
@@ -607,8 +607,8 @@ def get_times_and_labels(records, measurement_type):
 
 
 def make_plot_of_confidence_intervals_over_warm_up_time(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -644,8 +644,8 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
     warm_up_range = np.linspace(min_w, max_w, 20)
     for warm_up_time in warm_up_range:
         res = get_multiple_runs_results(
-            lambda_a,
-            lambda_o,
+            lambda_2,
+            lambda_1,
             mu,
             num_of_servers,
             threshold,
@@ -673,8 +673,8 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
 
 
 def make_plot_of_confidence_intervals_over_runtime(
-    lambda_a,
-    lambda_o,
+    lambda_2,
+    lambda_1,
     mu,
     num_of_servers,
     threshold,
@@ -710,8 +710,8 @@ def make_plot_of_confidence_intervals_over_runtime(
     runtime_range = np.linspace(min_r, max_r, 20)
     for runtime in runtime_range:
         res = get_multiple_runs_results(
-            lambda_a,
-            lambda_o,
+            lambda_2,
+            lambda_1,
             mu,
             num_of_servers,
             threshold,

@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sbr
 import random
 
-from .simulation.simulation import (
+from ambulance_game.simulation import (
     simulate_model,
     get_multiple_runs_results,
 )
@@ -19,13 +19,14 @@ def get_waiting_times(individuals):
 
     Parameters
     ----------
-    individuals : [object]
-        [An object with all indivduals that enetered the system]
+    individuals : object
+        An object with all individuals that entered the system
 
     Returns
     -------
-    [list, list, list]
-        [Three lists that store the waiting times of patients from the ambulance, other patients and patients still in system]]
+    list, list, list
+        Three lists that store the waiting times of patients from the ambulance,
+        other patients and patients still in system
     """
     ambulance_patients_times = []
     other_patients_times = []
@@ -48,13 +49,14 @@ def get_blocking_times(individuals):
 
     Parameters
     ----------
-    individuals : [object]
-        [An object with all indivduals that enetered the system]
+    individuals : object
+        An object with all individuals that entered the system
 
     Returns
     -------
-    [list, list, list]
-        [Three lists that store the blocking times of patients from the ambulance, other patients and patients still in system]]
+    list, list, list
+        Three lists that store the blocking times of patients from the ambulance,
+        other patients and patients still in system
     """
     ambulance_patients_times = []
     other_patients_times = []
@@ -73,17 +75,19 @@ def get_blocking_times(individuals):
 
 
 def get_both_times(individuals):
-    """Extracts waiting times and blocking times from results to be used for the plot
+    """
+    Extracts waiting times and blocking times from results to be used for the plot
 
     Parameters
     ----------
     individuals : object
-        An object with all indivduals that enetered the system
+        An object with all individuals that entered the system
 
     Returns
     -------
     list, list, list
-        Three lists that store the waiting and blocking times of patients from the ambulance, other patients and patients still in system
+        Three lists that store the waiting and blocking times of patients from
+        the ambulance, other patients and patients still in system
     """
     ambulance_patients_times = []
     other_patients_times = []
@@ -131,8 +135,9 @@ def get_times_for_patients(
 
     Returns
     -------
-    [list, list, list]
-        [Three lists that store the times of patients from the ambulance, other patients and patients still in system]
+    list, list, list
+        Three lists that store the times of patients from the ambulance, other
+        patients and patients still in system
     """
     individuals = simulate_model(
         lambda_a, lambda_o, mu, num_of_servers, threshold, seed_num, runtime
@@ -179,21 +184,22 @@ def make_plot_for_different_thresholds(
 
     Parameters
     ----------
-    lambda_a : [float]
-    lambda_o : [float]
-    mu : [float]
-    num_of_servers : [int]
-    seed_num : [float], optional
-        [The ciw.seed value to be used by ciw], by default None
-    measurement_type : [string], optional
-        [Defines whether to use blocking, waiting time or both], by default None
-    plot_function : [function], optional
-        [The function to be used for the plot i.e either plot of the means or sums of times], by default np.mean
+    lambda_a : float
+    lambda_o : float
+    mu : float
+    num_of_servers : int
+    seed_num : float, optional
+        The ciw.seed value to be used by ciw, by default None
+    measurement_type : string, optional
+        Defines whether to use blocking, waiting time or both, by default None
+    plot_function : function, optional
+        The function to be used for the plot i.e either plot of the means or
+        sums of times, by default np.mean
 
     Returns
     -------
-    [matplotlib object]
-        [The plot of mean waiting/blocking time for different thresholds]
+    matplotlib object
+        The plot of mean waiting/blocking time for different thresholds
     """
     all_ambulance_patients_mean_times = []
     all_other_patients_mean_times = []
@@ -256,7 +262,8 @@ def make_plot_for_different_thresholds(
 
 
 def get_target_proportions_of_current_trial(individuals, target):
-    """Get the proportion waiting times within the target for a given trial of a threshold
+    """Get the proportion waiting times within the target for a given trial of
+    a threshold
 
     Parameters
     ----------
@@ -302,12 +309,15 @@ def get_mean_waits_of_current_threshold(
     runtime,
     target,
 ):
-    """Calculates the mean proportion of times that satisfy the target of all trials for the current threshold iteration
+    """
+    Calculates the mean proportion of times that satisfy the target of all trials
+    for the current threshold iteration
 
     Returns
     -------
     float, float, float
-        The mean waiting times for ambulance patients, other patients and all patients for a given threshold
+        The mean waiting times for ambulance patients, other patients and all
+        patients for a given threshold
     """
     current_ambulance_proportions = []
     current_other_proportions = []
@@ -358,14 +368,18 @@ def make_plot_for_proportion_within_target(
     runtime=1440,
     max_threshold=None,
 ):
-    """Builds a plot that shows the proportion of individuals that satisfy the desired waiting time target. The plot shows the proportions of ambulance patients, other patients and the combined proportion of the two, that satisfy the target.
+    """Builds a plot that shows the proportion of individuals that satisfy the
+    desired waiting time target. The plot shows the proportions of ambulance
+    patients, other patients and the combined proportion of the two, that
+    satisfy the target.
 
     Parameters
     ----------
     num_of_trials : int
         The number of trials to run the simulation to average out uncertainty
     target : int
-        The target time to compare the waiting times with (Proprtion found based on this target)
+        The target time to compare the waiting times with (Proportion found
+        based on this target)
     runtime : int, optional
         The runtime to run the simulation, by default 1440
 
@@ -421,20 +435,20 @@ def update_hospitals_lists(
 
     Parameters
     ----------
-    hospital_times_1 : [list]
-        [Times of the first hospital that we want to update]
-    hospital_times_2 : [list]
-        [Times of the second hospital that we want to update]
-    times_1 : [list]
-        [A list of named tuples that holds the records of hospital 1]
-    times_2 : [list]
-        [A list of named tuples that holds the records of hospital 2]
-    measurement_type : [string]
+    hospital_times_1 : list
+        Times of the first hospital that we want to update
+    hospital_times_2 : list
+        Times of the second hospital that we want to update
+    times_1 : list
+        A list of named tuples that holds the records of hospital 1
+    times_2 : list
+        A list of named tuples that holds the records of hospital 2
+    measurement_type : string
 
     Returns
     -------
-    [list, list]
-        [description]
+    list, list
+        description
     """
     if measurement_type == "w":
         hospital_times_1.append(
@@ -485,30 +499,33 @@ def make_plot_two_hospitals_arrival_split(
     accuracy=10,
     runtime=1440,
 ):
-    """Make a plot of the waiting/blocking time between two hospitals that have a joint arrival rate of ambulance patients. In other words plots the waiting/blocking times of patients based on how the ambulance patients are distributed among hospitals
+    """Make a plot of the waiting/blocking time between two hospitals that have
+    a joint arrival rate of ambulance patients. In other words plots the
+    waiting / blocking times of patients based on how the ambulance patients are
+    distributed among hospitals
 
     Parameters
     ----------
-    lambda_a : [float]
-    lambda_o_1 : [float]
-    lambda_o_2 : [float]
-    mu_1 : [float]
-    mu_2 : [float]
-    num_of_servers_1 : [int]
-    num_of_servers_2 : [int]
-    threshold_1 : [int]
-    threshold_2 : [int]
-    measurement_type : [string], optional, by default "b"
-    seed_num_1 : [float], optional, by default None
-    seed_num_2 : [float], optional, by default None
+    lambda_a : float
+    lambda_o_1 : float
+    lambda_o_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    measurement_type : string, optional, by default "b"
+    seed_num_1 : float, optional, by default None
+    seed_num_2 : float, optional, by default None
     warm_up_time : int, optional
     trials : int, optional
-        [The number of trials to get results from], by default 1
+        The number of trials to get results from, by default 1
 
     Returns
     -------
-    [matplotlib object]
-        [proportion of arrivals to hospital 1 vs waiting times for both hospitals]
+    matplotlib object
+        proportion of arrivals to hospital 1 vs waiting times for both hospitals
     """
     hospital_times_1 = []
     hospital_times_2 = []
@@ -558,12 +575,14 @@ def make_plot_two_hospitals_arrival_split(
 
 
 def get_times_and_labels(records, measurement_type):
-    """Identifies the required times (waiting or blocking) and plot lebels (Function is used in Plot 5 as well)
+    """Identifies the required times (waiting or blocking) and plot labels
+    (Function is used in Plot 5 as well)
 
     Parameters
     ----------
     records : list
-        A list of named tuples that contains the results of multiple runs of the simulation
+        A list of named tuples that contains the results of multiple runs of the
+        simulation
     measurement_type : string
         A string to distinguish between times to be used
 
@@ -600,14 +619,18 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
     measurement_type=None,
     runtime=1440,
 ):
-    """Make a plot of the distributions of times (waiting or blocking) over values of warm-up times
+    """
+    Make a plot of the distributions of times (waiting or blocking) over values
+    of warm-up times
 
     Parameters
     ----------
     min_w : int, optional
-        The minimum value of warm-up time of the range to be included, by default 720(12 hours)
+        The minimum value of warm-up time of the range to be included,
+        by default 0
     max_w : int, optional
-        The maximum value of warm-up time of the range to be included, by default 2880(2 Days)
+        The maximum value of warm-up time of the range to be included,
+        by default 500
     measurement_type : string, optional
         A string to distinguish between times to be plotted, by default None
 
@@ -646,7 +669,7 @@ def make_plot_of_confidence_intervals_over_warm_up_time(
     return plot
 
 
-# Plot 5: Waiting/Blocking time confidence interavls VS runtime
+# Plot 5: Waiting/Blocking time confidence intervals VS runtime
 
 
 def make_plot_of_confidence_intervals_over_runtime(
@@ -662,21 +685,25 @@ def make_plot_of_confidence_intervals_over_runtime(
     seed_num=None,
     measurement_type=None,
 ):
-    """Make a plot of the distributions of times (waiting or blocking) over values of runtime
+    """Make a plot of the distributions of times (waiting or blocking) over
+    values of runtime
 
     Parameters
     ----------
     min_r : int, optional
-        The minimum value of runtime of the range to be included, by default 720(12 hours)
+        The minimum value of runtime of the range to be included,
+        by default 720(12 hours)
     max_r : int, optional
-        The maximum value of runtime of the range to be included, by default 2880(2 Days)
+        The maximum value of runtime of the range to be included,
+        by default 2880(2 Days)
     measurement_type : string, optional
         A string to distinguish between times to be plotted, by default None
 
     Returns
     -------
     matplotlib object
-        A plot of the distributions of waiting/blocking times for different values of the Simulation's runtime
+        A plot of the distributions of waiting/blocking times for different
+        values of the Simulation's runtime
     """
     mean_time = []
     x_axis = []

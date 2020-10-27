@@ -14,7 +14,9 @@ import seaborn as sbr
 def get_trial_duration(
     lambda_a, lambda_o, mu, num_of_servers, threshold, trials, repeat_trial
 ):
-    """Use the timeit library to get the duration of a trial for a specified amount of repetitions
+    """
+    Use the timeit library to get the duration of a trial for a specified
+    amount of repetitions
 
     Parameters
     ----------
@@ -26,7 +28,8 @@ def get_trial_duration(
     Returns
     -------
     list
-        A list of floats that represent the time required for the specified number of trials to for each repetition
+        A list of floats that represent the time required for the specified
+        number of trials to for each repetition
     """
     parameters = [lambda_a, lambda_o, mu, num_of_servers, threshold]
     timeit_string = "simulate_model("
@@ -41,7 +44,8 @@ def get_trial_duration(
 
 
 def save_to_file(duration, filename):
-    """Takes the repetitions of durations of one trial and saves them to a file
+    """
+    Takes the repetitions of durations of one trial and saves them to a file
 
     Parameters
     ----------
@@ -66,23 +70,28 @@ def time_for_different_number_of_trials(
     method="Simulation",
     filename=None,
 ):
-    """A function to claculate the duration of the simualtion for given queueing parameters, number of trials and repetitions (to be edited to accepet an analytical solution as well instead of simulation)
+    """A function to calculate the duration of the simulation for given queueing
+    parameters, number of trials and repetitions (to be edited to accept an
+    analytical solution as well instead of simulation)
 
     Parameters
     ----------
     num_of_trials : int
         The number of trials to run the duration on
     repeat_trial : int, optional
-        A number to indicate how many repetitions to make for each trial, by default 1
+        A number to indicate how many repetitions to make for each trial,
+        by default 1
     method : str, optional
-        An arguement to identify which approach to use (currently only supports 'Simulation'), by default 'Simulation'
+        An argument to identify which approach to use (currently only supports
+        'Simulation'), by default 'Simulation'
     filename : str, optional
-        A string that contains the filename that the recorded times will be saved to, dy default None
+        A string that contains the filename that the recorded times will be
+        saved to, by default None
 
     Returns
     -------
-    [list]
-        [A list that includes all durations and repetitions]
+    list
+        A list that includes all durations and repetitions
     """
     if method == "Simulation":
         write_to_file = filename != None
@@ -112,7 +121,8 @@ def old_import_trials_duration(path):
 
 
 def import_trials_duration(path):
-    """Import some already existing local csv of times
+    """
+    Import some already existing local csv of times
 
     Parameters
     ----------
@@ -131,19 +141,23 @@ def import_trials_duration(path):
 
 
 def get_duration_distribution_plot(times, kind=None):
-    """Produce the distribution of the simulation's duration for different number of trials
+    """
+    Produce the distribution of the simulation's duration for different
+    number of trials
 
     Parameters
     ----------
     times : list
         A list of durations of the simulation
     kind : string, optional
-        A keyword to identify the type of distribution plot ("violin": violinplot, "box": boxplot, otherwise: scatterplot), by default None
+        A keyword to identify the type of distribution plot
+        ("violin": violin plot, "box": boxplot, otherwise: scatterplot),
+        by default None
 
     Returns
     -------
-    [matplotlib object]
-        [A distribution plot of the number of trials vs duration]
+    matplotlib object
+        A distribution plot of the number of trials vs duration
     """
     times_to_plot = []
     step = int(np.ceil(len(times) / 30))
@@ -178,17 +192,14 @@ def get_duration_distribution_plot(times, kind=None):
 
 
 def get_duration_all_lines_plot(times):
-    """Produce a plot of the all repetitions of the duration of the simulation vs the number of trials
+    """
+    Produce a plot of the all repetitions of the duration of the simulation
+    vs the number of trials
 
     Parameters
     ----------
-    times : [list]
-        [A list of durations of the simulation]
-
-    Returns
-    -------
-    [type]
-        [description]
+    times : list
+        A list of durations of the simulation
     """
     plt.figure(figsize=(23, 10))
     time_plot = plt.plot(times)
@@ -202,13 +213,13 @@ def get_duration_mean_plot(times):
 
     Parameters
     ----------
-    times : [list]
-        [A list of durations of the simulation]
+    times : list
+        A list of durations of the simulation
 
     Returns
     -------
-    [matplotlib object]
-        [plot of time (in seconds) vs trials]
+    matplotlib object
+        plot of time (in seconds) vs trials
     """
     plt.figure(figsize=(23, 10))
     time_plot = plt.plot([np.nanmean(t) for t in times])
@@ -223,24 +234,25 @@ def get_duration_mean_plot(times):
 
 
 def update_aggregated_list(times, plot_labels, aggregated_times, mean_times, list_pos):
-    """Update the aggregated list so that it is plotted in the required way
+    """
+    Update the aggregated list so that it is plotted in the required way
 
     Parameters
     ----------
-    times : [int]
-        [The current iteration number]
-    plot_labels : [list]
-        [The x-axis labels to use for plotting]
-    aggregated_times : [list]
-        [Cumulative list of times]
-    mean_times : [list]
-        [List of the current trial's mean wiating/service/blocking times]
-    list_pos : [int]
-        [tracks position of aggregated_times list]
+    times : int
+        The current iteration number
+    plot_labels : list
+        The x-axis labels to use for plotting
+    aggregated_times : list
+        Cumulative list of times
+    mean_times : list
+        List of the current trial's mean waiting/service/blocking times
+    list_pos : int
+        tracks position of aggregated_times list
 
     Returns
     -------
-    [list, list, int]
+    list, list, int
     """
     plot_labels.append(times)
     aggregated_times[list_pos] += mean_times
@@ -249,20 +261,25 @@ def update_aggregated_list(times, plot_labels, aggregated_times, mean_times, lis
 
 
 def get_distributions_over_time(all_times):
-    """Creates a cumulative list to show the distribution of number times as the number of trials increases. Thus a list is created where all values are aggregated in the form of lists. The lists format should look something like:
+    """
+    Creates a cumulative list to show the distribution of number times as the
+    number of trials increases. Thus a list is created where all values are
+    aggregated in the form of lists. The lists format should look something like:
     [[x_1], [x_1, x_2], [x_1, x_2, x_3], [x_1, x_2, x_3, x_4], ... ]
-    where x_i is the mean waiting/service/blocking time of the i_th trial
+    where x_i is the mean waiting/service/blocking time of the i^th trial
 
     Parameters
     ----------
-    all_times : [list]
-        [List of times to be plotted]
+    all_times : list
+        List of times to be plotted
 
     Returns
     -------
-    [list, list]
-        [aggregates_times is a cumulative list where the i_th entry is a list that contains the same elements as the {i-1}_th entry including the mean of times of an additional trial]
-        [plot_labels is a list that stores the x-axis labels to be used in the plot]
+    list, list
+        aggregates_times: is a cumulative list where the i_th entry is a list
+        that contains the same elements as the {i-1}_th entry including the mean
+        of times of an additional trial
+        plot_labels: is a list that stores the x-axis labels to be used in the plot
     """
     mean_times = []
     plot_labels = []
@@ -284,13 +301,14 @@ def get_plot_of_confidence_intervals_labels(time_type):
 
     Parameters
     ----------
-    time_type : [string]
-        [A string to distinguish between times in order to adjust labels]
+    time_type : string
+        A string to distinguish between times in order to adjust labels
 
     Returns
     -------
-    [string, string, string]
-        [three strings that represent the graph's title, x-axis label and y-axis label]
+    string, string, string
+        three strings that represent the graph's title, x-axis label and
+        y-axis label
     """
     if time_type == "w":
         title = "Mean Waiting time over number of iterations"
@@ -312,15 +330,18 @@ def make_plot_of_confidence_intervals_over_iterations(all_times, time_type="b"):
 
     Parameters
     ----------
-    all_times : [list]
-        [The list output from the get_multiple_results() function that contains all time records]
-    time_type : [string], optional
-        [A letter to distinguish between which data to grab and plot (blocking times: "b", service times: "s", waiting times: "w")], by default "b"
+    all_times : list
+        The list output from the get_multiple_results() function that contains
+        all time records
+    time_type : string], optional
+        A letter to distinguish between which data to grab and plot
+        (blocking times: "b", service times: "s", waiting times: "w")],
+        by default "b"
 
     Returns
     -------
-    [matplotlib object]
-        [A plot of confidence intervals of times over number of trials]
+    matplotlib object
+        A plot of confidence intervals of times over number of trials
     """
     if time_type == "w":
         all_times = all_times[0]

@@ -96,13 +96,13 @@ def test_visualise_ambulance_markov_chain(
 
 
 @given(
-    ambulance_state=integers(min_value=0),
-    hospital_state=integers(min_value=0),
-    lambda_2=floats(min_value=0, allow_nan=False, allow_infinity=False),
-    lambda_1=floats(min_value=0, allow_nan=False, allow_infinity=False),
-    mu=floats(min_value=0, allow_nan=False, allow_infinity=False),
-    num_of_servers=integers(min_value=1),
-    threshold=integers(min_value=0),
+    ambulance_state=integers(min_value=0, max_value=1000),
+    hospital_state=integers(min_value=0, max_value=1000),
+    lambda_2=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    lambda_1=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    mu=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    num_of_servers=integers(min_value=1, max_value=100),
+    threshold=integers(min_value=0, max_value=100),
     symbolic=booleans(),
 )
 def test_get_transition_matrix_entry(
@@ -127,8 +127,8 @@ def test_get_transition_matrix_entry(
 
     if symbolic:
         Lambda = sym.symbols("Lambda")
-        lambda_1 = sym.symbols("lambda") ** sym.symbols("o")
-        lambda_2 = sym.symbols("lambda") ** sym.symbols("A")
+        lambda_1 = sym.symbols("lambda_1")
+        lambda_2 = sym.symbols("lambda_2")
         mu = sym.symbols("mu")
 
     origin_state = (ambulance_state, hospital_state)

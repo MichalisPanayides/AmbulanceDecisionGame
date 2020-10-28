@@ -7,6 +7,7 @@ import scipy as sci
 from hypothesis import (
     given,
     settings,
+    HealthCheck,
 )
 from hypothesis.strategies import (
     floats,
@@ -95,6 +96,9 @@ def test_visualise_ambulance_markov_chain(
     plt.close()  # TODO Investigate if it's possible to remove this line
 
 
+# TODO: Change the test so that the Health check does not need to be suppressed.
+# If not suppressed test fails on mac-python 3.7 because data generation is slow
+@settings(suppress_health_check=(HealthCheck.too_slow,))
 @given(
     ambulance_state=integers(min_value=0, max_value=1000),
     hospital_state=integers(min_value=0, max_value=1000),

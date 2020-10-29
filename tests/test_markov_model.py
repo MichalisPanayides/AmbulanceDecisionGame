@@ -18,7 +18,7 @@ from hypothesis.extra.numpy import arrays
 
 from ambulance_game.markov.markov import (
     build_states,
-    visualise_ambulance_markov_chain,
+    visualise_markov_chain,
     get_transition_matrix_entry,
     get_symbolic_transition_matrix,
     get_transition_matrix,
@@ -28,9 +28,9 @@ from ambulance_game.markov.markov import (
     augment_Q,
     get_steady_state_algebraically,
     get_markov_state_probabilities,
-    get_mean_number_of_patients_in_system,
-    get_mean_number_of_patients_in_hospital,
-    get_mean_number_of_ambulances_blocked,
+    get_mean_number_of_individuals_in_system,
+    get_mean_number_of_individuals_in_service_area,
+    get_mean_number_of_individuals_in_buffer_center,
 )
 
 number_of_digits_to_round = 8
@@ -68,7 +68,7 @@ def test_build_states(threshold, system_capacity, buffer_capacity):
     system_capacity=integers(min_value=2, max_value=10),
 )
 @settings(deadline=None)
-def test_visualise_ambulance_markov_chain(
+def test_visualise_markov_chain(
     num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
@@ -83,7 +83,7 @@ def test_visualise_ambulance_markov_chain(
     )
     set_of_all_states = set(all_states)
 
-    markov_chain_plot = visualise_ambulance_markov_chain(
+    markov_chain_plot = visualise_markov_chain(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
@@ -100,8 +100,8 @@ def test_visualise_ambulance_markov_chain(
 # If not suppressed test fails on mac-python 3.7 because data generation is slow
 @settings(suppress_health_check=(HealthCheck.too_slow,))
 @given(
-    ambulance_state=integers(min_value=0, max_value=1000),
-    hospital_state=integers(min_value=0, max_value=1000),
+    u=integers(min_value=0, max_value=1000),
+    v=integers(min_value=0, max_value=1000),
     lambda_2=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
     lambda_1=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
     mu=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
@@ -110,8 +110,8 @@ def test_visualise_ambulance_markov_chain(
     symbolic=booleans(),
 )
 def test_get_transition_matrix_entry(
-    ambulance_state,
-    hospital_state,
+    u,
+    v,
     lambda_2,
     lambda_1,
     mu,
@@ -135,11 +135,11 @@ def test_get_transition_matrix_entry(
         lambda_2 = sym.symbols("lambda_2")
         mu = sym.symbols("mu")
 
-    origin_state = (ambulance_state, hospital_state)
-    destination_state_1 = (ambulance_state, hospital_state + 1)
-    destination_state_2 = (ambulance_state + 1, hospital_state)
-    destination_state_3 = (ambulance_state, hospital_state - 1)
-    destination_state_4 = (ambulance_state - 1, hospital_state)
+    origin_state = (u, v)
+    destination_state_1 = (u, v + 1)
+    destination_state_2 = (u + 1, v)
+    destination_state_3 = (u, v - 1)
+    destination_state_4 = (u - 1, v)
 
     entry_1 = get_transition_matrix_entry(
         origin_state,
@@ -182,13 +182,11 @@ def test_get_transition_matrix_entry(
         num_of_servers=num_of_servers,
     )
 
-    assert entry_1 == (Lambda if hospital_state < threshold else lambda_1)
+    assert entry_1 == (Lambda if v < threshold else lambda_1)
     assert entry_2 == lambda_2
-    assert entry_3 == (
-        mu * hospital_state if hospital_state <= num_of_servers else mu * num_of_servers
-    )
+    assert entry_3 == (mu * v if v <= num_of_servers else mu * num_of_servers)
     service_rate = threshold if threshold <= num_of_servers else num_of_servers
-    assert entry_4 == (service_rate * mu if hospital_state == threshold else 0)
+    assert entry_4 == (service_rate * mu if v == threshold else 0)
 
 
 @given(
@@ -477,9 +475,9 @@ def test_get_state_probabilities_array():
     assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
 
 
-def test_get_mean_number_of_patients_examples():
+def test_get_mean_number_of_individuals_examples():
     """
-    Some examples to ensure that the correct mean number of patients are output
+    Some examples to ensure that the correct mean number of individuals are output
     """
     lambda_2 = 0.2
     lambda_1 = 0.2
@@ -504,21 +502,21 @@ def test_get_mean_number_of_patients_examples():
     )
     assert (
         round(
-            get_mean_number_of_patients_in_system(pi, all_states),
+            get_mean_number_of_individuals_in_system(pi, all_states),
             number_of_digits_to_round,
         )
         == 2.88827497
     )
     assert (
         round(
-            get_mean_number_of_patients_in_hospital(pi, all_states),
+            get_mean_number_of_individuals_in_service_area(pi, all_states),
             number_of_digits_to_round,
         )
         == 2.44439504
     )
     assert (
         round(
-            get_mean_number_of_ambulances_blocked(pi, all_states),
+            get_mean_number_of_individuals_in_buffer_center(pi, all_states),
             number_of_digits_to_round,
         )
         == 0.44387993

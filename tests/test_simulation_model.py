@@ -19,8 +19,8 @@ from ambulance_game.simulation.simulation import (
     get_simulated_state_probabilities,
     get_average_simulated_state_probabilities,
     get_multiple_runs_results,
-    get_mean_blocking_difference_between_two_hospitals,
-    calculate_ambulance_best_response,
+    get_mean_blocking_difference_between_two_systems,
+    calculate_class_2_individuals_best_response,
 )
 
 number_of_digits_to_round = 8
@@ -160,8 +160,8 @@ def test_simulate_model_unconstrained():
 
 def test_simulate_model_constrained():
     """
-    Test that correct amount of patients flow through the system given specific
-    values with a specified capacity of the hospital and the buffer space
+    Test that correct amount of individuals flow through the system given specific
+    values with a specified capacity of the service area and the buffer space
     """
     sim_results = []
     blocks = 0
@@ -407,9 +407,9 @@ def test_example_get_multiple_results():
     )
 
 
-def test_example_get_multiple_results_for_different_patient_types():
+def test_example_get_multiple_results_for_different_individuals_classes():
     """
-    Test that multiple results function works as expected for different patient types
+    Test that multiple results function works as expected for different classes
     """
 
     mult_results = get_multiple_runs_results(
@@ -437,9 +437,9 @@ def test_example_get_multiple_results_for_different_patient_types():
         patient_type="ambulance",
     )
 
-    all_waits_ambulance = [np.mean(w.waiting_times) for w in mult_results]
-    all_servs_ambulance = [np.mean(s.service_times) for s in mult_results]
-    all_blocks_ambulance = [np.mean(b.blocking_times) for b in mult_results]
+    all_waits_class_2 = [np.mean(w.waiting_times) for w in mult_results]
+    all_servs_class_2 = [np.mean(s.service_times) for s in mult_results]
+    all_blocks_class_2 = [np.mean(b.blocking_times) for b in mult_results]
 
     mult_results = get_multiple_runs_results(
         lambda_2=0.15,
@@ -451,17 +451,17 @@ def test_example_get_multiple_results_for_different_patient_types():
         seed_num=1,
         patient_type="others",
     )
-    all_waits_other = [np.mean(w.waiting_times) for w in mult_results]
-    all_servs_other = [np.mean(s.service_times) for s in mult_results]
-    all_blocks_other = [np.mean(b.blocking_times) for b in mult_results]
+    all_waits_class_1 = [np.mean(w.waiting_times) for w in mult_results]
+    all_servs_class_1 = [np.mean(s.service_times) for s in mult_results]
+    all_blocks_class_1 = [np.mean(b.blocking_times) for b in mult_results]
 
-    assert all(w == 0 for w in all_waits_ambulance)
-    assert int(np.mean(all_servs_ambulance)) == int(np.mean(all_servs))
-    assert all_blocks_ambulance == all_blocks
+    assert all(w == 0 for w in all_waits_class_2)
+    assert int(np.mean(all_servs_class_2)) == int(np.mean(all_servs))
+    assert all_blocks_class_2 == all_blocks
 
-    assert round(np.mean(all_waits_other), number_of_digits_to_round) == 0.53027998
-    assert int(np.mean(all_servs_other)) == int(np.mean(all_servs))
-    assert all(np.isnan(b) for b in all_blocks_other)
+    assert round(np.mean(all_waits_class_1), number_of_digits_to_round) == 0.53027998
+    assert int(np.mean(all_servs_class_1)) == int(np.mean(all_servs))
+    assert all(np.isnan(b) for b in all_blocks_class_1)
 
 
 @given(
@@ -469,24 +469,24 @@ def test_example_get_multiple_results_for_different_patient_types():
     lambda_1=floats(min_value=0.1, max_value=0.4),
 )
 @settings(deadline=None)
-def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
+def test_get_mean_blocking_difference_between_two_systems_equal_split(
     lambda_2, lambda_1
 ):
     """
     Test that ensures that the function that finds the optimal distribution of
-    ambulance patients in two identical hospitals returns a solution that
-    corresponds to 50% of patients going to one hospital and 50% going to another.
-    That means that the difference in the number of patients must be 0, and that
+    class 2 individuals in two identical systems returns a solution that
+    corresponds to 50% of individuals going to one system and 50% going to another.
+    That means that the difference in the number of individuals must be 0, and that
     is precisely what the function checks. This test runs the function with a
-    proportion variable of 0.5 (meaning equally distributing the ambulances
-    between the two hospitals) and ensures that the difference is 0, given any
+    proportion variable of 0.5 (meaning equally distributing class 2 individuals
+    between the two systems) and ensures that the difference is 0, given any
     values of λ^α and λ^ο_1 = λ^ο_2 = λ^ο
 
     Note here that due to the ciw.seed() function it was possible to eliminate any
-    randomness and make both hospitals identical, in terms of arrivals, services
+    randomness and make both systems identical, in terms of arrivals, services
     and any other stochasticity that the simulation models incorporates.
     """
-    diff = get_mean_blocking_difference_between_two_hospitals(
+    diff = get_mean_blocking_difference_between_two_systems(
         prop_1=0.5,
         lambda_2=lambda_2,
         lambda_1_1=lambda_1,
@@ -507,13 +507,13 @@ def test_get_mean_blocking_difference_between_two_hospitals_equal_split(
 
 
 # TODO Investigate making this a property based test
-def test_get_mean_blocking_difference_between_two_hospitals_increasing():
+def test_get_mean_blocking_difference_between_two_systems_increasing():
     """Ensuring that the function is increasing for specific inputs"""
     diff_list = []
     proportions = np.linspace(0.1, 0.9, 9)
     for prop in proportions:
         diff_list.append(
-            get_mean_blocking_difference_between_two_hospitals(
+            get_mean_blocking_difference_between_two_systems(
                 prop_1=prop,
                 lambda_2=0.15,
                 lambda_1_1=0.08,
@@ -537,17 +537,17 @@ def test_get_mean_blocking_difference_between_two_hospitals_increasing():
 
 
 #  TODO Investigate making it a property based test
-def test_calculate_ambulance_best_response_equal_split():
+def test_calculate_class_2_individuals_best_response_equal_split():
     """Make sure that the brentq() function that is used suggests that when two
-    identical hospitals are considered the patients will be split equally between
+    identical systems are considered the individuals will be split equally between
     them (50% - 50%)
 
     Note here that due to the ciw.seed() function it was possible to eliminate any
-    randomness and make both hospitals identical, in terms of arrivals, services
+    randomness and make both systems identical, in terms of arrivals, services
     and any other stochasticity that the simulation models incorporates.
     """
     lambda_2 = 0.3
-    equal_split = calculate_ambulance_best_response(
+    equal_split = calculate_class_2_individuals_best_response(
         lambda_2=lambda_2,
         lambda_1_1=0.3,
         lambda_1_2=0.3,

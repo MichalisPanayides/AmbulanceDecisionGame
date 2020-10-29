@@ -16,7 +16,7 @@ from .markov import (
 from .waiting import (
     get_waiting_time_for_each_state_recursively,
     mean_waiting_time_formula_using_recursive_approach,
-    mean_waiting_time_formula_using_algebraic_approach,
+    mean_waiting_time_formula_using_direct_approach,
     mean_waiting_time_formula_using_closed_form_approach,
     overall_waiting_time_formula,
     get_mean_waiting_time_using_markov_state_probabilities,
@@ -26,9 +26,10 @@ from .blocking import (
     get_coefficients_row_of_array_associated_with_state,
     get_blocking_time_linear_system,
     convert_solution_to_correct_array_format,
-    get_blocking_times_of_all_states,
-    mean_blocking_time_formula,
-    get_mean_blocking_time_markov,
+    get_blocking_times_of_all_states_using_direct_approach,
+    mean_blocking_time_formula_using_direct_approach,
+    mean_blocking_time_formula_using_closed_form_approach,
+    get_mean_blocking_time_using_markov_state_probabilities,
 )
 
 from .utils import (

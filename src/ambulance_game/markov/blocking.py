@@ -188,7 +188,7 @@ def convert_solution_to_correct_array_format(
     return new_array
 
 
-def get_blocking_times_of_all_states(
+def get_blocking_times_of_all_states_using_direct_approach(
     lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Solve M*X = b using numpy.linalg.solve() where:
@@ -220,7 +220,7 @@ def get_blocking_times_of_all_states(
     return state_blocking_times
 
 
-def mean_blocking_time_formula(
+def mean_blocking_time_formula_using_direct_approach(
     all_states,
     pi,
     lambda_1,
@@ -229,7 +229,6 @@ def mean_blocking_time_formula(
     threshold,
     system_capacity,
     buffer_capacity,
-    formula="algebraic",
 ):
     """Performs the blocking time formula for the Markov chain model. The formula
     calculates all  blocking times for accepting states and multiplies them with the
@@ -247,34 +246,40 @@ def mean_blocking_time_formula(
     threshold : int
     system_capacity : int
     buffer_capacity : int
-    formula : str
-        indicates whether to use the "algebraic" approach or "closed_form"
 
     Returns
     -------
     float
         the mean blocking time
     """
-    if formula == "algebraic":
-        mean_blocking_time = 0
-        prob_accept_class_2_ind = 0
-        blocking_times = get_blocking_times_of_all_states(
-            lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
-        )
-        for u, v in all_states:
-            if is_accepting_state(
-                (u, v), 2, threshold, system_capacity, buffer_capacity
-            ):
-                arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
-                mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
-                prob_accept_class_2_ind += pi[u, v]
-        return mean_blocking_time / prob_accept_class_2_ind
-    elif formula == "closed-form":
-        # Build closed-form formula
-        raise NotImplementedError("To be implemented")
+    mean_blocking_time = 0
+    prob_accept_class_2_ind = 0
+    blocking_times = get_blocking_times_of_all_states_using_direct_approach(
+        lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+    )
+    for u, v in all_states:
+        if is_accepting_state((u, v), 2, threshold, system_capacity, buffer_capacity):
+            arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
+            mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
+            prob_accept_class_2_ind += pi[u, v]
+    return mean_blocking_time / prob_accept_class_2_ind
 
 
-def get_mean_blocking_time_markov(
+def mean_blocking_time_formula_using_closed_form_approach(
+    all_states,
+    pi,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+):
+    # Build closed-form formula
+    raise NotImplementedError("To be implemented")
+
+
+def get_mean_blocking_time_using_markov_state_probabilities(
     lambda_2,
     lambda_1,
     mu,
@@ -282,7 +287,7 @@ def get_mean_blocking_time_markov(
     threshold,
     system_capacity,
     buffer_capacity,
-    formula="algebraic",
+    blocking_formula=mean_blocking_time_formula_using_direct_approach,
 ):
     """Calculates the mean blocking time of the Markov model.
 
@@ -295,7 +300,7 @@ def get_mean_blocking_time_markov(
     threshold : int
     system_capacity : int
     buffer_capacity : int
-    formula : str, optional, by default "algebraic"
+    blocking_formula : function
 
     Returns
     -------
@@ -320,7 +325,7 @@ def get_mean_blocking_time_markov(
         transition_matrix, algebraic_function=np.linalg.solve
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
-    mean_blocking_time = mean_blocking_time_formula(
+    mean_blocking_time = blocking_formula(
         all_states,
         pi,
         lambda_1,
@@ -329,6 +334,5 @@ def get_mean_blocking_time_markov(
         threshold,
         system_capacity,
         buffer_capacity,
-        formula,
     )
     return mean_blocking_time

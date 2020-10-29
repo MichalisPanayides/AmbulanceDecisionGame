@@ -24,8 +24,8 @@ from .markov.waiting import (
 )
 
 from .markov.blocking import (
-    mean_blocking_time_formula,
-    get_mean_blocking_time_markov,
+    mean_blocking_time_formula_using_direct_approach,
+    get_mean_blocking_time_using_markov_state_probabilities,
 )
 
 from .markov.utils import is_accepting_state
@@ -237,6 +237,7 @@ def get_mean_blocking_time_simulation(
     seed_num=None,
     num_of_trials=10,
     runtime=2000,
+    blocking_formula=mean_blocking_time_formula_using_direct_approach,
 ):
     """An alternative approach to obtaining the mean blocking time from the simulation.
     This function gets the mean blocking time from the simulation's state probabilities.
@@ -278,7 +279,7 @@ def get_mean_blocking_time_simulation(
         for u in range(state_probabilities.shape[0])
         if state_probabilities[u, v] > 0
     ]
-    mean_blocking_time = mean_blocking_time_formula(
+    mean_blocking_time = blocking_formula(
         all_states=all_states,
         pi=state_probabilities,
         lambda_1=lambda_1,
@@ -432,7 +433,7 @@ def get_plot_comparing_times(
                 seed_num=seed_num,
                 runtime=runtime,
             )
-            mean_time_markov = get_mean_blocking_time_markov(
+            mean_time_markov = get_mean_blocking_time_using_markov_state_probabilities(
                 lambda_2=lambda_2,
                 lambda_1=lambda_1,
                 mu=mu,

@@ -5,9 +5,10 @@ from ambulance_game.markov.blocking import (
     get_coefficients_row_of_array_associated_with_state,
     get_blocking_time_linear_system,
     convert_solution_to_correct_array_format,
-    get_blocking_times_of_all_states,
-    mean_blocking_time_formula,
-    get_mean_blocking_time_markov,
+    get_blocking_times_of_all_states_using_direct_approach,
+    mean_blocking_time_formula_using_direct_approach,
+    mean_blocking_time_formula_using_closed_form_approach,
+    get_mean_blocking_time_using_markov_state_probabilities,
 )
 
 number_of_digits_to_round = 8
@@ -197,11 +198,11 @@ def test_convert_solution_to_correct_array_format_examples():
     )
 
 
-def test_get_blocking_times_of_all_states_example_1():
+def test_get_blocking_times_of_all_states_using_direct_approach_example_1():
     """Example of blocking times of all states when the threshold is the same as
     the system capacity (T = N)
     """
-    blocking_times = get_blocking_times_of_all_states(
+    blocking_times = get_blocking_times_of_all_states_using_direct_approach(
         lambda_1=2,
         mu=3,
         num_of_servers=1,
@@ -223,9 +224,9 @@ def test_get_blocking_times_of_all_states_example_1():
     )
 
 
-def test_get_blocking_times_of_all_states_example_2():
+def test_get_blocking_times_of_all_states_using_direct_approach_example_2():
     """[summary]"""
-    blocking_times = get_blocking_times_of_all_states(
+    blocking_times = get_blocking_times_of_all_states_using_direct_approach(
         lambda_1=2,
         mu=1,
         num_of_servers=3,
@@ -248,8 +249,8 @@ def test_get_blocking_times_of_all_states_example_2():
     )
 
 
-def test_get_blocking_times_of_all_states_example_3():
-    blocking_times = get_blocking_times_of_all_states(
+def test_get_blocking_times_of_all_states_using_direct_approach_example_3():
+    blocking_times = get_blocking_times_of_all_states_using_direct_approach(
         lambda_1=4,
         mu=1,
         num_of_servers=5,
@@ -275,7 +276,7 @@ def test_get_blocking_times_of_all_states_example_3():
     )
 
 
-def test_mean_blocking_time_formula_algebraic():
+def test_mean_blocking_time_formula_using_direct_approach():
     all_states = [
         (0, 0),
         (0, 1),
@@ -334,7 +335,7 @@ def test_mean_blocking_time_formula_algebraic():
             ],
         ]
     )
-    blocking_time = mean_blocking_time_formula(
+    blocking_time = mean_blocking_time_formula_using_direct_approach(
         all_states=all_states,
         pi=state_probabilities,
         lambda_1=3,
@@ -347,10 +348,10 @@ def test_mean_blocking_time_formula_algebraic():
     assert round(blocking_time, number_of_digits_to_round) == 0.23047954
 
 
-def test_get_mean_blocking_time_markov_example_1():
+def test_get_mean_blocking_time_using_markov_state_probabilities_example_1():
     assert (
         round(
-            get_mean_blocking_time_markov(
+            get_mean_blocking_time_using_markov_state_probabilities(
                 lambda_2=2,
                 lambda_1=3,
                 mu=2,
@@ -358,7 +359,7 @@ def test_get_mean_blocking_time_markov_example_1():
                 threshold=4,
                 system_capacity=8,
                 buffer_capacity=2,
-                formula="algebraic",
+                blocking_formula=mean_blocking_time_formula_using_direct_approach,
             ),
             number_of_digits_to_round,
         )
@@ -366,10 +367,10 @@ def test_get_mean_blocking_time_markov_example_1():
     )
 
 
-def test_get_mean_blocking_time_markov_example_2():
+def test_get_mean_blocking_time_using_markov_state_probabilities_example_2():
     assert (
         round(
-            get_mean_blocking_time_markov(
+            get_mean_blocking_time_using_markov_state_probabilities(
                 lambda_2=5,
                 lambda_1=6,
                 mu=2,
@@ -377,7 +378,7 @@ def test_get_mean_blocking_time_markov_example_2():
                 threshold=5,
                 system_capacity=15,
                 buffer_capacity=7,
-                formula="algebraic",
+                blocking_formula=mean_blocking_time_formula_using_direct_approach,
             ),
             number_of_digits_to_round,
         )
@@ -385,9 +386,16 @@ def test_get_mean_blocking_time_markov_example_2():
     )
 
 
-def test_mean_blocking_time_formula_closed_form():
+def test_mean_blocking_time_formula_using_direct_approach_closed_form():
     # TODO: Make test once closed form formula is found
     with pytest.raises(NotImplementedError):
-        mean_blocking_time_formula(
-            None, None, None, None, None, None, None, None, formula="closed-form"
+        mean_blocking_time_formula_using_closed_form_approach(
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         )

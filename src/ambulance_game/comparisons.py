@@ -16,7 +16,7 @@ from .markov.markov import (
 )
 
 from .markov.waiting import (
-    mean_waiting_time_formula_using_algebraic_approach,
+    mean_waiting_time_formula_using_direct_approach,
     mean_waiting_time_formula_using_closed_form_approach,
     mean_waiting_time_formula_using_recursive_approach,
     overall_waiting_time_formula,

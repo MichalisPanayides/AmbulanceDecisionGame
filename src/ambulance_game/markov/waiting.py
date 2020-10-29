@@ -159,7 +159,7 @@ def mean_waiting_time_formula_using_recursive_approach(
     return mean_waiting_time / probability_of_accepting
 
 
-def mean_waiting_time_formula_using_algebraic_approach(
+def mean_waiting_time_formula_using_direct_approach(
     all_states,
     pi,
     class_type,
@@ -369,7 +369,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
 ):
     """
     Gets the mean waiting time by using either the recursive formula,
-    closed-form formula or the algebraic formula. This function solves the
+    closed-form formula or the direct approach. This function solves the
     following expression:
 
     W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] ,

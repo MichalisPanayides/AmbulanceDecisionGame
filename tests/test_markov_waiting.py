@@ -1,5 +1,5 @@
 from ambulance_game.markov.waiting import (
-    mean_waiting_time_formula_using_algebraic_approach,
+    mean_waiting_time_formula_using_direct_approach,
     mean_waiting_time_formula_using_closed_form_approach,
     mean_waiting_time_formula_using_recursive_approach,
     get_mean_waiting_time_using_markov_state_probabilities,

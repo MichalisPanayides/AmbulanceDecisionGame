@@ -100,7 +100,8 @@ def mean_waiting_time_formula_using_recursive_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    *args
+    *args,
+    **kwargs,
 ):
     """
     Get the mean waiting time by using a recursive formula.
@@ -169,7 +170,8 @@ def mean_waiting_time_formula_using_algebraic_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    *args
+    *args,
+    **kwargs,
 ):
     raise NotImplementedError("To be implemented")
 
@@ -183,7 +185,8 @@ def mean_waiting_time_formula_using_closed_form_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    **kwargs
+    *args,
+    **kwargs,
 ):
     """
     Get the mean waiting time by using a closed-form formula.
@@ -264,7 +267,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     return mean_waiting_time
 
 
-def mean_waiting_time_formula(
+def overall_waiting_time_formula(
     all_states,
     pi,
     class_type,
@@ -275,21 +278,12 @@ def mean_waiting_time_formula(
     threshold,
     system_capacity,
     buffer_capacity,
-    formula="closed_form",
+    waiting_formula,
 ):
     """
-    Get the mean waiting time by using either the recursive formula,
-    closed-form formula or the algebraic formula. This function solves the
-    following expression:
-
-    W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] ,
-
-    where:  - both summations occur over all accepting states (u,v)
-            - w(u,v) is the recursive waiting time of state (u,v)
-            - π(u,v) is the probability of being at state (u,v)
-
-    All three formulas aim to solve the same expression by using different
-    approaches to calculate the terms w(u,v).
+    Gets the overall waiting time for all individuals by calculating both class 1
+    and class 2 waiting times. Thus, considering the probability that an individual
+    is lost to the system (for both classes) calculates the overall waiting time.
 
     Parameters
     ----------
@@ -303,56 +297,63 @@ def mean_waiting_time_formula(
     threshold : int
     system_capacity : int
     buffer_capacity : int
-    formula : str, optional
+    waiting_formula : function
 
     Returns
     -------
     float
-        The mean waiting time for the specified class
+        The overall mean waiting time by combining class 1 and class 2 individuals
     """
-    if formula == "recursive":
-        mean_waiting_time = mean_waiting_time_formula_using_recursive_approach(
-            all_states=all_states,
-            pi=pi,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
+    mean_waiting_time_class_1 = waiting_formula(
+        all_states=all_states,
+        pi=pi,
+        class_type=1,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    mean_waiting_time_class_2 = waiting_formula(
+        all_states=all_states,
+        pi=pi,
+        class_type=2,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
 
-    if formula == "algebraic":
-        mean_waiting_time = mean_waiting_time_formula_using_algebraic_approach(
-            all_states=all_states,
-            pi=pi,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
+    prob_accept_class_1 = np.sum(
+        [
+            pi[state]
+            for state in all_states
+            if is_accepting_state(state, 1, threshold, system_capacity, buffer_capacity)
+        ]
+    )
+    prob_accept_class_2 = np.sum(
+        [
+            pi[state]
+            for state in all_states
+            if is_accepting_state(state, 2, threshold, system_capacity, buffer_capacity)
+        ]
+    )
+    class_2_rate = (lambda_2 * prob_accept_class_2) / (
+        (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
+    )
+    class_1_rate = (lambda_1 * prob_accept_class_1) / (
+        (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
+    )
 
-    if formula == "closed_form":
-        mean_waiting_time = mean_waiting_time_formula_using_closed_form_approach(
-            all_states=all_states,
-            pi=pi,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-
-    return mean_waiting_time
+    return (
+        mean_waiting_time_class_2 * class_2_rate
+        + mean_waiting_time_class_1 * class_1_rate
+    )
 
 
 def get_mean_waiting_time_using_markov_state_probabilities(
@@ -364,9 +365,21 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     system_capacity,
     buffer_capacity,
     class_type=3,
-    formula="closed_form",
+    waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
 ):
-    """Gets the mean waiting time for a Markov chain model
+    """
+    Gets the mean waiting time by using either the recursive formula,
+    closed-form formula or the algebraic formula. This function solves the
+    following expression:
+
+    W = Σ[w(u,v) * π(u,v)] / Σ[π(u,v)] ,
+
+    where:  - both summations occur over all accepting states (u,v)
+            - w(u,v) is the recursive waiting time of state (u,v)
+            - π(u,v) is the probability of being at state (u,v)
+
+    All three formulas aim to solve the same expression by using different
+    approaches to calculate the terms w(u,v).
 
     Parameters
     ----------
@@ -401,10 +414,10 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
     if class_type == 3:
-        mean_waiting_time_class_1 = mean_waiting_time_formula(
+        mean_waiting_time = overall_waiting_time_formula(
             all_states=all_states,
             pi=pi,
-            class_type=1,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -412,12 +425,13 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             threshold=threshold,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
-            formula=formula,
+            waiting_formula=waiting_formula,
         )
-        mean_waiting_time_class_2 = mean_waiting_time_formula(
+    else:
+        mean_waiting_time = waiting_formula(
             all_states=all_states,
             pi=pi,
-            class_type=2,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -425,51 +439,5 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             threshold=threshold,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
-            formula=formula,
         )
-
-        prob_accept_class_1 = np.sum(
-            [
-                pi[state]
-                for state in all_states
-                if is_accepting_state(
-                    state, 1, threshold, system_capacity, buffer_capacity
-                )
-            ]
-        )
-        prob_accept_class_2 = np.sum(
-            [
-                pi[state]
-                for state in all_states
-                if is_accepting_state(
-                    state, 2, threshold, system_capacity, buffer_capacity
-                )
-            ]
-        )
-
-        class_2_rate = (lambda_2 * prob_accept_class_2) / (
-            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-        )
-        class_1_rate = (lambda_1 * prob_accept_class_1) / (
-            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-        )
-
-        return (
-            mean_waiting_time_class_2 * class_2_rate
-            + mean_waiting_time_class_1 * class_1_rate
-        )
-
-    mean_waiting_time = mean_waiting_time_formula(
-        all_states,
-        pi,
-        class_type,
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
-        formula=formula,
-    )
     return mean_waiting_time

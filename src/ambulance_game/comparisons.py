@@ -16,7 +16,10 @@ from .markov.markov import (
 )
 
 from .markov.waiting import (
-    mean_waiting_time_formula,
+    mean_waiting_time_formula_using_algebraic_approach,
+    mean_waiting_time_formula_using_closed_form_approach,
+    mean_waiting_time_formula_using_recursive_approach,
+    overall_waiting_time_formula,
     get_mean_waiting_time_using_markov_state_probabilities,
 )
 
@@ -148,6 +151,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     runtime=1440,
     num_of_trials=10,
     class_type=3,
+    waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
 ):
     """An alternative approach to obtaining the mean waiting time from the simulation.
     This function gets the mean waiting time from the simulation state probabilities.
@@ -193,7 +197,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     ]
 
     if class_type == 3:
-        mean_waiting_time_class_1 = mean_waiting_time_formula(
+        mean_waiting_time = overall_waiting_time_formula(
             all_states=all_states,
             pi=state_probabilities,
             class_type=1,
@@ -204,11 +208,13 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             threshold=threshold,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
+            waiting_formula=waiting_formula,
         )
-        mean_waiting_time_class_2 = mean_waiting_time_formula(
+    else:
+        mean_waiting_time = waiting_formula(
             all_states=all_states,
             pi=state_probabilities,
-            class_type=2,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -217,51 +223,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
         )
-
-        prob_accept_class_1 = np.sum(
-            [
-                state_probabilities[state]
-                for state in all_states
-                if is_accepting_state(
-                    state, 1, threshold, system_capacity, buffer_capacity
-                )
-            ]
-        )
-        prob_accept_class_2 = np.sum(
-            [
-                state_probabilities[state]
-                for state in all_states
-                if is_accepting_state(
-                    state, 2, threshold, system_capacity, buffer_capacity
-                )
-            ]
-        )
-
-        class_2_rate = (lambda_2 * prob_accept_class_2) / (
-            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-        )
-        class_1_rate = (lambda_1 * prob_accept_class_1) / (
-            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-        )
-
-        return (
-            mean_waiting_time_class_2 * class_2_rate
-            + mean_waiting_time_class_1 * class_1_rate
-        )
-
-    mean_waiting_time = mean_waiting_time_formula(
-        all_states=all_states,
-        pi=state_probabilities,
-        class_type=class_type,
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    return mean_waiting_time
+        return mean_waiting_time
 
 
 def get_mean_blocking_time_simulation(

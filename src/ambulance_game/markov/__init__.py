@@ -18,7 +18,7 @@ from .waiting import (
     mean_waiting_time_formula_using_recursive_approach,
     mean_waiting_time_formula_using_algebraic_approach,
     mean_waiting_time_formula_using_closed_form_approach,
-    mean_waiting_time_formula,
+    overall_waiting_time_formula,
     get_mean_waiting_time_using_markov_state_probabilities,
 )
 

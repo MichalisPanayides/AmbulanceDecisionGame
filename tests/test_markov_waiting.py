@@ -1,4 +1,7 @@
 from ambulance_game.markov.waiting import (
+    mean_waiting_time_formula_using_algebraic_approach,
+    mean_waiting_time_formula_using_closed_form_approach,
+    mean_waiting_time_formula_using_recursive_approach,
     get_mean_waiting_time_using_markov_state_probabilities,
 )
 
@@ -18,7 +21,7 @@ def test_get_mean_waiting_time_recursively_markov_example_1():
         system_capacity=10,
         buffer_capacity=10,
         class_type=1,
-        formula="recursive",
+        waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
 
@@ -36,7 +39,7 @@ def test_get_mean_waiting_time_recursively_markov_example_2():
         system_capacity=10,
         buffer_capacity=10,
         class_type=2,
-        formula="recursive",
+        waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
 
@@ -54,7 +57,7 @@ def test_get_mean_waiting_time_recursively_markov_example_3():
         system_capacity=10,
         buffer_capacity=10,
         class_type=2,
-        formula="recursive",
+        waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
     assert mean_waiting_time == 0
 
@@ -72,7 +75,7 @@ def test_get_mean_waiting_time_recursively_markov_example_4():
         system_capacity=10,
         buffer_capacity=10,
         class_type=3,
-        formula="recursive",
+        waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == round(
         1.1051493390764142, number_of_digits_to_round
@@ -92,7 +95,7 @@ def test_get_mean_waiting_time_from_closed_form_markov_example_1():
         system_capacity=10,
         buffer_capacity=10,
         class_type=1,
-        formula="closed_form",
+        waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 1.47207167
 
@@ -110,7 +113,7 @@ def test_get_mean_waiting_time_from_closed_form_markov_example_2():
         system_capacity=10,
         buffer_capacity=10,
         class_type=2,
-        formula="closed_form",
+        waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == 0.73779145
 
@@ -128,7 +131,7 @@ def test_get_mean_waiting_time_from_closed_form_markov_example_3():
         system_capacity=10,
         buffer_capacity=10,
         class_type=2,
-        formula="closed_form",
+        waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
     assert mean_waiting_time == 0
 
@@ -146,7 +149,7 @@ def test_get_mean_waiting_time_from_closed_form_markov_example_4():
         system_capacity=10,
         buffer_capacity=10,
         class_type=3,
-        formula="closed_form",
+        waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
     assert round(mean_waiting_time, number_of_digits_to_round) == round(
         1.1051493390764142, number_of_digits_to_round

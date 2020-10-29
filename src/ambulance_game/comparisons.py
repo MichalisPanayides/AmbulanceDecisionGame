@@ -147,7 +147,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num,
     runtime=1440,
     num_of_trials=10,
-    patient_type="both",
+    class_type=3,
 ):
     """An alternative approach to obtaining the mean waiting time from the simulation.
     This function gets the mean waiting time from the simulation state probabilities.
@@ -164,9 +164,9 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     buffer_capacity : int
     seed_num : float
     num_of_trials : int
-    patient_type : str, optional
+    class_type : int, optional
         A string to identify whether to get the waiting time of class 1 individuals,
-        class 2 individuals or the overall of both, by default "both"
+        class 2 individuals or the overall of both, by default 3
 
     Returns
     -------
@@ -192,11 +192,11 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         if state_probabilities[u, v] > 0
     ]
 
-    if patient_type == "both":
+    if class_type == 3:
         mean_waiting_time_class_1 = mean_waiting_time_formula(
             all_states=all_states,
             pi=state_probabilities,
-            patient_type="others",
+            class_type=1,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -208,7 +208,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         mean_waiting_time_class_2 = mean_waiting_time_formula(
             all_states=all_states,
             pi=state_probabilities,
-            patient_type="ambulance",
+            class_type=2,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -223,7 +223,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
                 state_probabilities[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "others", threshold, system_capacity, buffer_capacity
+                    state, 1, threshold, system_capacity, buffer_capacity
                 )
             ]
         )
@@ -232,7 +232,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
                 state_probabilities[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "ambulance", threshold, system_capacity, buffer_capacity
+                    state, 2, threshold, system_capacity, buffer_capacity
                 )
             ]
         )
@@ -252,7 +252,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     mean_waiting_time = mean_waiting_time_formula(
         all_states=all_states,
         pi=state_probabilities,
-        patient_type=patient_type,
+        class_type=class_type,
         lambda_2=lambda_2,
         lambda_1=lambda_1,
         mu=mu,
@@ -342,7 +342,7 @@ def get_plot_comparing_times(
     buffer_capacity,
     times_to_compare,
     warm_up_time=0,
-    patient_type="both",
+    class_type=3,
     plot_over="lambda_2",
     max_parameter_value=1,
     accuracy=None,
@@ -363,9 +363,9 @@ def get_plot_comparing_times(
     system_capacity : int
     buffer_capacity : int
     times_to_compare : str
-    patient_type : str, optional
+    class_type : int, optional
         A string to identify whether to get the waiting time of class 1 or
-        class 2 individuals or the overall of both, by default "both"
+        class 2 individuals or the overall of both, by default 3
     plot_over : str, optional
         A string with the name of the variable to plot over, by default "lambda_2"
     max_parameter_value : float, optional
@@ -429,7 +429,7 @@ def get_plot_comparing_times(
             warm_up_time=warm_up_time,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
-            patient_type=patient_type,
+            class_type=class_type,
         )
         if times_to_compare == "waiting":
             simulation_times = [np.mean(w.waiting_times) for w in times]
@@ -444,7 +444,7 @@ def get_plot_comparing_times(
                 seed_num=seed_num,
                 runtime=runtime,
                 num_of_trials=num_of_trials,
-                patient_type=patient_type,
+                class_type=class_type,
             )
             mean_time_markov = get_mean_waiting_time_using_markov_state_probabilities(
                 lambda_2,
@@ -454,7 +454,7 @@ def get_plot_comparing_times(
                 threshold,
                 system_capacity,
                 buffer_capacity,
-                patient_type=patient_type,
+                class_type=class_type,
             )
         elif times_to_compare == "blocking":
             simulation_times = [np.mean(b.blocking_times) for b in times]

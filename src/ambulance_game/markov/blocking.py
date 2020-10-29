@@ -263,7 +263,7 @@ def mean_blocking_time_formula(
         )
         for u, v in all_states:
             if is_accepting_state(
-                (u, v), "ambulance", threshold, system_capacity, buffer_capacity
+                (u, v), 2, threshold, system_capacity, buffer_capacity
             ):
                 arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
                 mean_blocking_time += blocking_times[arriving_state] * pi[u, v]

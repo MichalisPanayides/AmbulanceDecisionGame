@@ -18,7 +18,7 @@ from .markov import (
 @functools.lru_cache(maxsize=None)
 def get_waiting_time_for_each_state_recursively(
     state,
-    patient_type,
+    class_type,
     lambda_2,
     lambda_1,
     mu,
@@ -50,7 +50,7 @@ def get_waiting_time_for_each_state_recursively(
     Parameters
     ----------
     state : tuple
-    patient_type : string
+    class_type : int
     lambda_2 : float
     lambda_1 : float
     mu : float
@@ -73,11 +73,11 @@ def get_waiting_time_for_each_state_recursively(
         next_state = (state[0], state[1] - 1)
 
     wait = expected_time_in_markov_state_ignoring_arrivals(
-        state, patient_type, num_of_servers, mu, threshold
+        state, class_type, num_of_servers, mu, threshold
     )
     wait += get_waiting_time_for_each_state_recursively(
         next_state,
-        patient_type,
+        class_type,
         lambda_2,
         lambda_1,
         mu,
@@ -92,7 +92,7 @@ def get_waiting_time_for_each_state_recursively(
 def mean_waiting_time_formula_using_recursive_approach(
     all_states,
     pi,
-    patient_type,
+    class_type,
     lambda_2,
     lambda_1,
     mu,
@@ -119,7 +119,7 @@ def mean_waiting_time_formula_using_recursive_approach(
     ----------
     all_states : list
     pi : array
-    patient_type : str
+    class_type : int
     lambda_2 : float
     lambda_1 : float
     mu : float
@@ -136,15 +136,15 @@ def mean_waiting_time_formula_using_recursive_approach(
     probability_of_accepting = 0
     for u, v in all_states:
         if is_accepting_state(
-            (u, v), patient_type, threshold, system_capacity, buffer_capacity
+            (u, v), class_type, threshold, system_capacity, buffer_capacity
         ):
             arriving_state = (u, v + 1)
-            if patient_type == "ambulance" and v >= threshold:
+            if class_type == 2 and v >= threshold:
                 arriving_state = (u + 1, v)
 
             current_state_wait = get_waiting_time_for_each_state_recursively(
                 arriving_state,
-                patient_type,
+                class_type,
                 lambda_2,
                 lambda_1,
                 mu,
@@ -161,7 +161,7 @@ def mean_waiting_time_formula_using_recursive_approach(
 def mean_waiting_time_formula_using_algebraic_approach(
     all_states,
     pi,
-    patient_type,
+    class_type,
     lambda_2,
     lambda_1,
     mu,
@@ -177,7 +177,7 @@ def mean_waiting_time_formula_using_algebraic_approach(
 def mean_waiting_time_formula_using_closed_form_approach(
     all_states,
     pi,
-    patient_type,
+    class_type,
     mu,
     num_of_servers,
     threshold,
@@ -192,7 +192,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     ----------
     all_states : list
     pi : array
-    patient_type : str
+    class_type : int
     mu : float
     num_of_servers : int
     threshold : int
@@ -204,14 +204,14 @@ def mean_waiting_time_formula_using_closed_form_approach(
     float
     """
     sojourn_time = 1 / (num_of_servers * mu)
-    if patient_type == "others":
+    if class_type == 1:
         mean_waiting_time = np.sum(
             [
                 (state[1] - num_of_servers + 1) * pi[state] * sojourn_time
                 for state in all_states
                 if is_accepting_state(
                     state,
-                    patient_type,
+                    class_type,
                     threshold,
                     system_capacity,
                     buffer_capacity,
@@ -224,7 +224,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 for state in all_states
                 if is_accepting_state(
                     state,
-                    patient_type,
+                    class_type,
                     threshold,
                     system_capacity,
                     buffer_capacity,
@@ -232,7 +232,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
             ]
         )
     # TODO: Break function into 2 functions
-    if patient_type == "ambulance":
+    if class_type == 2:
         mean_waiting_time = np.sum(
             [
                 (min(state[1] + 1, threshold) - num_of_servers)
@@ -241,7 +241,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 for state in all_states
                 if is_accepting_state(
                     state,
-                    patient_type,
+                    class_type,
                     threshold,
                     system_capacity,
                     buffer_capacity,
@@ -254,7 +254,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 for state in all_states
                 if is_accepting_state(
                     state,
-                    patient_type,
+                    class_type,
                     threshold,
                     system_capacity,
                     buffer_capacity,
@@ -267,7 +267,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
 def mean_waiting_time_formula(
     all_states,
     pi,
-    patient_type,
+    class_type,
     lambda_2,
     lambda_1,
     mu,
@@ -295,7 +295,7 @@ def mean_waiting_time_formula(
     ----------
     all_states : list
     pi : array
-    patient_type : str
+    class_type : int
     lambda_2 : float
     lambda_1 : float
     mu : float
@@ -314,7 +314,7 @@ def mean_waiting_time_formula(
         mean_waiting_time = mean_waiting_time_formula_using_recursive_approach(
             all_states=all_states,
             pi=pi,
-            patient_type=patient_type,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -328,7 +328,7 @@ def mean_waiting_time_formula(
         mean_waiting_time = mean_waiting_time_formula_using_algebraic_approach(
             all_states=all_states,
             pi=pi,
-            patient_type=patient_type,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -342,7 +342,7 @@ def mean_waiting_time_formula(
         mean_waiting_time = mean_waiting_time_formula_using_closed_form_approach(
             all_states=all_states,
             pi=pi,
-            patient_type=patient_type,
+            class_type=class_type,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -363,7 +363,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     threshold,
     system_capacity,
     buffer_capacity,
-    patient_type="both",
+    class_type=3,
     formula="closed_form",
 ):
     """Gets the mean waiting time for a Markov chain model
@@ -377,7 +377,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     threshold : int
     system_capacity : int
     buffer_capacity : int
-    patient_type : str, optional
+    class_type : int, optional
     formula : str, optional
 
     Returns
@@ -400,11 +400,11 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         transition_matrix, algebraic_function=np.linalg.solve
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
-    if patient_type == "both":
+    if class_type == 3:
         mean_waiting_time_class_1 = mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
-            patient_type="others",
+            class_type=1,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -417,7 +417,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         mean_waiting_time_class_2 = mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
-            patient_type="ambulance",
+            class_type=2,
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
@@ -433,7 +433,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "others", threshold, system_capacity, buffer_capacity
+                    state, 1, threshold, system_capacity, buffer_capacity
                 )
             ]
         )
@@ -442,7 +442,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state, "ambulance", threshold, system_capacity, buffer_capacity
+                    state, 2, threshold, system_capacity, buffer_capacity
                 )
             ]
         )
@@ -462,7 +462,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     mean_waiting_time = mean_waiting_time_formula(
         all_states,
         pi,
-        patient_type,
+        class_type,
         lambda_2,
         lambda_1,
         mu,

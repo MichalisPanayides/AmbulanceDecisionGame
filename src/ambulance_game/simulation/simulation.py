@@ -406,7 +406,7 @@ def get_multiple_runs_results(
     output_type="tuple",
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
-    patient_type="both",
+    class_type=3,
 ):
     """Get the waiting times, service times and blocking times for multiple runs
     of the simulation. The function may return the times for class 2 individuals,
@@ -420,8 +420,9 @@ def get_multiple_runs_results(
         Number of trials to run the model, by default 10
     output_type : str, optional
         The results' output type (either tuple or list)], by default "tuple"
-    patients_type : str, optional
-        A string to identify what type of class to get the times for
+    class_type : int, optional
+        An integer to identify what type of class to get the times for, where
+        class_type=1,2,3 to denote class 1, class 2 or both
 
     Returns
     -------
@@ -450,14 +451,14 @@ def get_multiple_runs_results(
             buffer_capacity,
         )
 
-        if patient_type == "both":
+        if class_type == 3:
             sim_results = simulation.get_all_records()
             waiting_times, serving_times, blocking_times = extract_times_from_records(
                 sim_results, warm_up_time
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 
-        if patient_type == "ambulance":
+        if class_type == 2:
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,
@@ -468,7 +469,7 @@ def get_multiple_runs_results(
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 
-        if patient_type == "others":
+        if class_type == 1:
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,

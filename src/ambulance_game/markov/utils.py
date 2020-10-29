@@ -28,9 +28,7 @@ def is_blocking_state(state):
     return state[0] > 0
 
 
-def is_accepting_state(
-    state, patient_type, threshold, system_capacity, buffer_capacity
-):
+def is_accepting_state(state, class_type, threshold, system_capacity, buffer_capacity):
     """
     Checks if a state given is an accepting state. Accepting states are defined
     as the states of the system where arrivals may occur. In essence
@@ -45,7 +43,7 @@ def is_accepting_state(
     ----------
     state : tuple
         a tuples of the form (u,v)
-    patient_type : string
+    class_type : int
         A string to distinguish between class 1 and class 2 individuals
     system_capacity : int
         The capacity of the system (hospital) = N
@@ -56,22 +54,22 @@ def is_accepting_state(
     -------
     Boolean
         An indication of whether or not an arrival of the given type
-        (patient_type) can occur
+        (class_type) can occur
     """
-    if patient_type == "ambulance":
+    if class_type == 2:
         condition = (
             (state[0] < buffer_capacity)
             if (threshold <= system_capacity)
             else (state[1] < system_capacity)
         )
-    if patient_type == "others":
+    if class_type == 1:
         condition = state[1] < system_capacity
     return condition
 
 
 def expected_time_in_markov_state_ignoring_arrivals(
     state,
-    patient_type,
+    class_type,
     num_of_servers,
     mu,
     threshold,
@@ -92,7 +90,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     ----------
     state : tuple
         a tuples of the form (u,v)
-    patient_type : string
+    class_type : int
         A string to distinguish between class 1 and class 2 individuals
     num_of_servers : int
         The number of servers = C
@@ -104,7 +102,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     float
         The expected waiting time in the given state
     """
-    if state[0] > 0 and (state[1] == threshold or patient_type == "ambulance"):
+    if state[0] > 0 and (state[1] == threshold or class_type == 2):
         return 0
     return 1 / (min(state[1], num_of_servers) * mu)
 

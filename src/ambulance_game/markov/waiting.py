@@ -27,23 +27,23 @@ def get_waiting_time_for_each_state_recursively(
     system_capacity,
     buffer_capacity,
 ):
-    """Performs a recursive algorithm to get the expected waiting time of patients
+    """Performs a recursive algorithm to get the expected waiting time of individuals
     when they enter the model at a given state. Given an arriving state the algorithm
     moves down to all subsequent states until it reaches one that is not a waiting
     state.
 
-    Others:
+    Class 1:
         - If (u,v) not a waiting state: return 0
         - Next state s_d = (0, v - 1)
         - w(u,v) = c(u,v) + w(s_d)
 
-    Ambulance:
+    Class 2:
         - If (u,v) not a waiting state: return 0
         - Next state:   s_n = (u-1, v),    if u >= 1 and v=T
                         s_n = (u, v - 1),  otherwise
         - w(u,v) = c(u,v) + w(s_n)
 
-    Note:   For all "others" patients the recursive formula acts in a linear manner
+    Note: For all class 1 individuals the recursive formula acts in a linear manner
     meaning that an individual will have the same waiting time when arriving at
     any state of the same column e.g (2, 3) or (5, 3).
 
@@ -308,7 +308,7 @@ def mean_waiting_time_formula(
     Returns
     -------
     float
-        The mean waiting time for the specified patient type
+        The mean waiting time for the specified class
     """
     if formula == "recursive":
         mean_waiting_time = mean_waiting_time_formula_using_recursive_approach(
@@ -383,8 +383,8 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     Returns
     -------
     float
-        The mean waiting time of the in the system of either ambulance patients,
-        other patients or the overall of both
+        The mean waiting time in the system of either class 1,
+        class 2 individuals or the overall of both
     """
     transition_matrix = get_transition_matrix(
         lambda_2,
@@ -401,7 +401,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
     if patient_type == "both":
-        mean_waiting_time_other = mean_waiting_time_formula(
+        mean_waiting_time_class_1 = mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type="others",
@@ -414,7 +414,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             buffer_capacity=buffer_capacity,
             formula=formula,
         )
-        mean_waiting_time_ambulance = mean_waiting_time_formula(
+        mean_waiting_time_class_2 = mean_waiting_time_formula(
             all_states=all_states,
             pi=pi,
             patient_type="ambulance",
@@ -428,7 +428,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             formula=formula,
         )
 
-        prob_accept_others = np.sum(
+        prob_accept_class_1 = np.sum(
             [
                 pi[state]
                 for state in all_states
@@ -437,7 +437,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
                 )
             ]
         )
-        prob_accept_ambulance = np.sum(
+        prob_accept_class_2 = np.sum(
             [
                 pi[state]
                 for state in all_states
@@ -447,16 +447,16 @@ def get_mean_waiting_time_using_markov_state_probabilities(
             ]
         )
 
-        ambulance_rate = (lambda_2 * prob_accept_ambulance) / (
-            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
+        class_2_rate = (lambda_2 * prob_accept_class_2) / (
+            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
         )
-        others_rate = (lambda_1 * prob_accept_others) / (
-            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
+        class_1_rate = (lambda_1 * prob_accept_class_1) / (
+            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
         )
 
         return (
-            mean_waiting_time_ambulance * ambulance_rate
-            + mean_waiting_time_other * others_rate
+            mean_waiting_time_class_2 * class_2_rate
+            + mean_waiting_time_class_1 * class_1_rate
         )
 
     mean_waiting_time = mean_waiting_time_formula(

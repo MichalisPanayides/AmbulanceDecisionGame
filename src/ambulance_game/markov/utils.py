@@ -31,17 +31,22 @@ def is_blocking_state(state):
 def is_accepting_state(
     state, patient_type, threshold, system_capacity, buffer_capacity
 ):
-    """Checks if a state given is an accepting state. Accepting states are defined as the states of the system where patient arrivals may occur. In essence these states are all states apart from the one when the system cannot accept additional arrivals. Because there are two types of patients arrival though, the set of accepting states is different for ambulance and other patients:
+    """
+    Checks if a state given is an accepting state. Accepting states are defined
+    as the states of the system where arrivals may occur. In essence
+    these states are all states apart from the one when the system cannot accept
+    additional arrivals. Because there are two types of arrivals though, the set
+    of accepting states is different for class 1 and class 2 individuals:
 
-    Ambulance patients: S_A = {(u,v) ∈ S | u < N}
-    Other patients: S_A = {(u,v) ∈ S | v < M}
+    Class 2 individuals: S_A = {(u,v) ∈ S | u < N}
+    Class 1 individuals: S_A = {(u,v) ∈ S | v < M}
 
     Parameters
     ----------
     state : tuple
         a tuples of the form (u,v)
     patient_type : string
-        A string to distinguish between ambulance and other patients
+        A string to distinguish between class 1 and class 2 individuals
     system_capacity : int
         The capacity of the system (hospital) = N
     buffer_capacity : int
@@ -50,7 +55,8 @@ def is_accepting_state(
     Returns
     -------
     Boolean
-        An indication of whether or not an arrival of the given type (patient_type) can occur
+        An indication of whether or not an arrival of the given type
+        (patient_type) can occur
     """
     if patient_type == "ambulance":
         condition = (
@@ -71,11 +77,13 @@ def expected_time_in_markov_state_ignoring_arrivals(
     threshold,
 ):
     """Get the expected waiting time in a Markov state when ignoring any subsequent
-    arrivals.When considering ambulance patients waiting time and the patients are
+    arrivals. When considering the waiting time of class 2 individuals, and when
+    these individuals are
     in a blocked state (v > 0) then by the definition of the problem the waiting
     time in that state is set to 0. Additionally, all states where u > 0 and v = T
-    automatically get a waiting time of 0 because other patients only pass one of
-    the states of that column (only state (0,T) is not zero). Otherwise the function's
+    automatically get a waiting time of 0 because class 1 individuals only pass
+    one of the states of that column (only state (0,T) is not zero).
+    Otherwise the function's
     output is:
         - c(u,v) = 1/vμ   if v < C
         - c(u,v) = 1/Cμ   if v >= C
@@ -85,7 +93,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     state : tuple
         a tuples of the form (u,v)
     patient_type : string
-        A string to distinguish between ambulance and other patients
+        A string to distinguish between class 1 and class 2 individuals
     num_of_servers : int
         The number of servers = C
     mu : float
@@ -102,12 +110,12 @@ def expected_time_in_markov_state_ignoring_arrivals(
 
 
 # TODO Modify name to fit generic formulation
-def expected_time_in_markov_state_ignoring_ambulance_arrivals(
+def expected_time_in_markov_state_ignoring_class_2_arrivals(
     state, lambda_1, mu, num_of_servers, system_capacity
 ):
     """
     The expected time of the Markov chain model at the state given.
-    Note here that for a state (u,v) where v = system capacity (C) no other arrivals
+    Note here that for a state (u,v) where v = system capacity (C) no class 1 arrival
     can occur and thus the rate at which the model leaves that state changes.
     """
     if state[1] == system_capacity:
@@ -124,6 +132,6 @@ def prob_service(state, lambda_1, mu, num_of_servers):
     )
 
 
-def prob_other_arrival(state, lambda_1, mu, num_of_servers):
-    """Gets the probability of an "other" patient arriving"""
+def prob_class_1_arrival(state, lambda_1, mu, num_of_servers):
+    """Gets the probability of a class 1 arrival to occur"""
     return lambda_1 / (lambda_1 + (mu * min(state[1], num_of_servers)))

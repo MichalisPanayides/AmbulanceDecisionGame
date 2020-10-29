@@ -14,26 +14,26 @@ def build_model(
     buffer_capacity=float("inf"),
 ):
     """Builds a ciw object that represents a model of a queuing network with two
-    service centres; the hospital and the buffer space. Patients arrive at the
-    hospital and at the buffer space with rates that follow the exponential
-    distribution of λ_ο and λ_α respectively. The service distribution follows
+    service centres; the service area and the buffer space. individuals arrive at the
+    service area and at the buffer space with rates that follow the exponential
+    distribution of λ_1 and λ_2 respectively. The service distribution follows
     a constant distribution of 0 for the buffer space and an exponential
-    distribution with a rate of μ for the hospital. The variables "num_of_servers"
+    distribution with a rate of μ for the service area. The variables "num_of_servers"
     and "buffer_capacity" indicate the capacities of the two centres. Finally,
     the queue capacity is set to the difference between the number of servers and
-    the system capacity for the hospital centre and for the buffer space it is
+    the system capacity for the service area centre and for the buffer space it is
     set to zero, as there should not occur any waiting there, just blockage.
 
     Parameters
     ----------
     lambda_2 : float
-        Arrival rate of ambulance patients
+        Arrival rate of class 2 individuals
     lambda_1 : float
-        Arrival rate of other patients
+        Arrival rate of class 1 individuals
     mu : float
-        Service rate of hospital
+        Service rate of service area
     num_of_servers : integer
-        The num_of_servers of the hospital
+        The num_of_servers of the service area
     """
 
     model = ciw.create_network(
@@ -54,7 +54,7 @@ def build_custom_node(threshold=float("inf")):
     ciw.Node class and replaces methods release_blocked_individual and finish_service.
     The methods are modified in such a way such that all individuals that are in
     the buffer space node (node 1) remain blocked as long as the number of individuals
-    in the hospital node (node 2) exceeds the threshold.
+    in the service area node (node 2) exceeds the threshold.
 
     Parameters
     ----------
@@ -150,9 +150,9 @@ def simulate_model(
     """Simulate the model by using the custom node and returning the simulation object.
 
     It is important to note that when the threshold is greater than the system capacity
-    the buffer capacity is forced to be 1 because otherwise, when the hospital gets
-    full, ambulance patients will flood the buffer spaces which is not what should
-    happen in this particular scenario.
+    the buffer capacity is forced to be 1 because otherwise, when the service area
+    gets full, class 2 individuals will flood the buffer area which is not what
+    should happen in this particular scenario.
     TODO: use different approach to handle this scenario
 
     Additionally, the buffer capacity should always be greater or equal to 1
@@ -310,8 +310,8 @@ def get_average_simulated_state_probabilities(
 def extract_times_from_records(simulation_records, warm_up_time):
     """Get the required times (waiting, service, blocking) out of ciw's records
     where all individuals are treated the same way. This function can't distinguish
-    between ambulance patients and other patients. It returns the aggregated waiting
-    time, service times BUT only blocking times of ambulance patients.
+    between class 1 and class 2 individuals. It returns the aggregated waiting
+    time, service times BUT only blocking times of class 2 individuals.
 
     Parameters
     ----------
@@ -348,8 +348,8 @@ def extract_times_from_individuals(
 ):
     """
     Extract waiting times and service times for all individuals and proceed to extract
-    blocking times for just ambulance patients. The function uses individual's records
-    and determines the type of patient that each individual is, based on the number
+    blocking times for just class 2 individuals. The function uses individual's records
+    and determines the type of class that each individual is, based on the number
     of nodes visited.
     """
     waiting_times = []
@@ -409,8 +409,8 @@ def get_multiple_runs_results(
     patient_type="both",
 ):
     """Get the waiting times, service times and blocking times for multiple runs
-    of the simulation. The function may return the times for ambulance patients,
-    other patients or the aggregated total of the two.
+    of the simulation. The function may return the times for class 2 individuals,
+    class 1 individuals or the aggregated total of the two.
 
     Parameters
     ----------
@@ -421,7 +421,7 @@ def get_multiple_runs_results(
     output_type : str, optional
         The results' output type (either tuple or list)], by default "tuple"
     patients_type : str, optional
-        A string to identify what type of patients to get the times for
+        A string to identify what type of class to get the times for
 
     Returns
     -------
@@ -486,7 +486,7 @@ def get_multiple_runs_results(
     return results
 
 
-def get_mean_blocking_difference_between_two_hospitals(
+def get_mean_blocking_difference_between_two_systems(
     prop_1,
     lambda_2,
     lambda_1_1,
@@ -503,22 +503,22 @@ def get_mean_blocking_difference_between_two_hospitals(
     warm_up_time,
     runtime,
 ):
-    """Given a predefined proportion of the ambulance's arrival rate calculate the
-    mean difference between blocking times of two hospitals with given set of parameters.
-    Note that all parameters that end in "_1" correspond to the first hospital while "_2"
-    to the second.
+    """Given a predefined proportion of class's 2 arrival rate calculate the
+    mean difference between blocking times of two systems with given set of parameters.
+    Note that all parameters that end in "_1" correspond to the first
+    system while "_2" to the second.
 
     Parameters
     ----------
     prop_1 : float
-        Proportion of ambulance's arrival rate that will be distributed to hospital 1
+        Proportion of class's 2 arrival rate that will be distributed to system 1
     lambda_2 : float
-        Total ambulance arrival rate
+        Total class 2 arrival rate
 
     Returns
     -------
     float
-        The difference between the mean blocking time of the two hospitals
+        The difference between the mean blocking time of the two systems
     """
     lambda_2_1 = prop_1 * lambda_2
     lambda_2_2 = (1 - prop_1) * lambda_2
@@ -548,18 +548,18 @@ def get_mean_blocking_difference_between_two_hospitals(
         runtime=runtime,
     )
 
-    hospital_1_blockages = [
+    system_1_blockages = [
         np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_1
     ]
-    hospital_2_blockages = [
+    system_2_blockages = [
         np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_2
     ]
-    diff = np.mean(hospital_1_blockages) - np.mean(hospital_2_blockages)
+    diff = np.mean(system_1_blockages) - np.mean(system_2_blockages)
 
     return diff
 
 
-def calculate_ambulance_best_response(
+def calculate_class_2_individuals_best_response(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -575,23 +575,23 @@ def calculate_ambulance_best_response(
     warm_up_time,
     runtime,
 ):
-    """Obtains the optimal distribution of ambulances such that the blocking times
-    of the ambulances in the two hospitals are identical and thus optimal(minimised).
+    """Obtains the optimal distribution of class 2 individuals such that the
+    blocking times in the two systems are identical and thus optimal(minimised).
 
     The brentq function is used which is an algorithm created to find the root of
     a function that combines root bracketing, bisection, and inverse quadratic
     interpolation. In this specific example the root to be found is the difference
-    between the blocking times of two hospitals. In essence the brentq algorithm
+    between the blocking times of two systems. In essence the brentq algorithm
     attempts to find the value of "prop_1" where the "diff" is zero
-    (see function: get_mean_blocking_difference_between_two_hospitals).
+    (see function: get_mean_blocking_difference_between_two_systems).
 
     Returns
     -------
     float
-        The optimal proportion where the hospitals have identical blocking times
+        The optimal proportion where the systems have identical blocking times
     """
     optimal_prop = scipy.optimize.brentq(
-        get_mean_blocking_difference_between_two_hospitals,
+        get_mean_blocking_difference_between_two_systems,
         a=0.01,
         b=0.99,
         args=(

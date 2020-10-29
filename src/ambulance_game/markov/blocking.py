@@ -3,9 +3,9 @@ import numpy as np
 from .utils import (
     is_accepting_state,
     is_blocking_state,
-    expected_time_in_markov_state_ignoring_ambulance_arrivals,
+    expected_time_in_markov_state_ignoring_class_2_arrivals,
     prob_service,
-    prob_other_arrival,
+    prob_class_1_arrival,
 )
 
 from .markov import (
@@ -28,8 +28,8 @@ def get_coefficients_row_of_array_associated_with_state(
         -> the sojourn time of that state PLUS
         -> the probability of service multiplied by the blocking time of
         state (u, v-1) (i.e. the state to end up when a service occurs) PLUS
-        -> the probability of other arrivals multiplied by the blocking time of
-        state (u, v+1)
+        -> the probability of class 1 arrivals multiplied by the blocking time
+        of state (u, v+1)
 
     Some other cases of this formula:
         -> when (u,v) not a blocking state: b(u,v) = 0
@@ -70,7 +70,7 @@ def get_coefficients_row_of_array_associated_with_state(
         service_state = (state[0] - 1, state[1])
     else:
         service_state = (state[0], state[1] - 1)
-    others_arrival_state = (state[0], state[1] + 1)
+    class_1_arrival_state = (state[0], state[1] + 1)
 
     lhs_coefficient_row = np.zeros([buffer_capacity, system_capacity - threshold + 1])
     lhs_coefficient_row[state[0] - 1, state[1] - threshold] = -1
@@ -80,15 +80,15 @@ def get_coefficients_row_of_array_associated_with_state(
         else:
             entry = 1
         lhs_coefficient_row[service_state[0] - 1, service_state[1] - threshold] = entry
-    if others_arrival_state[1] <= system_capacity:
+    if class_1_arrival_state[1] <= system_capacity:
         lhs_coefficient_row[
-            others_arrival_state[0] - 1, others_arrival_state[1] - threshold
-        ] = prob_other_arrival(state, lambda_1, mu, num_of_servers)
+            class_1_arrival_state[0] - 1, class_1_arrival_state[1] - threshold
+        ] = prob_class_1_arrival(state, lambda_1, mu, num_of_servers)
     lhs_coefficient_row = np.reshape(
         lhs_coefficient_row, (1, len(lhs_coefficient_row) * len(lhs_coefficient_row[0]))
     )[0]
 
-    rhs_value = -expected_time_in_markov_state_ignoring_ambulance_arrivals(
+    rhs_value = -expected_time_in_markov_state_ignoring_class_2_arrivals(
         state, lambda_1, mu, num_of_servers, system_capacity
     )
 
@@ -257,7 +257,7 @@ def mean_blocking_time_formula(
     """
     if formula == "algebraic":
         mean_blocking_time = 0
-        prob_accept_ambulance = 0
+        prob_accept_class_2_ind = 0
         blocking_times = get_blocking_times_of_all_states(
             lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
         )
@@ -267,8 +267,8 @@ def mean_blocking_time_formula(
             ):
                 arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
                 mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
-                prob_accept_ambulance += pi[u, v]
-        return mean_blocking_time / prob_accept_ambulance
+                prob_accept_class_2_ind += pi[u, v]
+        return mean_blocking_time / prob_accept_class_2_ind
     elif formula == "closed-form":
         # Build closed-form formula
         raise NotImplementedError("To be implemented")

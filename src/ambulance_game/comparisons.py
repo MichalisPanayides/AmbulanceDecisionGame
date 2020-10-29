@@ -106,8 +106,8 @@ def get_heatmaps(
         plt.subplot(1, 3, 1)
     plt.imshow(sim_state_probabilities_array, cmap="cividis")
     plt.title("Simulation state probabilities", fontsize=11, fontweight="bold")
-    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
-    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
+    plt.xlabel("Individuals in service area", fontsize=11, fontweight="bold")
+    plt.ylabel("Individuals in buffer centre", fontsize=11, fontweight="bold")
     plt.colorbar()
 
     if not linear_positioning:
@@ -117,8 +117,8 @@ def get_heatmaps(
 
     plt.imshow(markov_state_probabilities_array, cmap="cividis")
     plt.title("Markov chain state probabilities", fontsize=11, fontweight="bold")
-    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
-    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
+    plt.xlabel("Individuals in service area", fontsize=11, fontweight="bold")
+    plt.ylabel("Individuals in buffer centre", fontsize=11, fontweight="bold")
     plt.colorbar()
 
     if not linear_positioning:
@@ -131,8 +131,8 @@ def get_heatmaps(
         fontsize=11,
         fontweight="bold",
     )
-    plt.xlabel("Patients in Hospital", fontsize=11, fontweight="bold")
-    plt.ylabel("Patients blocked", fontsize=11, fontweight="bold")
+    plt.xlabel("Individuals in service area", fontsize=11, fontweight="bold")
+    plt.ylabel("Individuals in buffer centre", fontsize=11, fontweight="bold")
     plt.colorbar()
 
 
@@ -165,13 +165,13 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num : float
     num_of_trials : int
     patient_type : str, optional
-        A string to identify whether to get the waiting time of other patients,
-        ambulance patients or the overall of both, by default "both"
+        A string to identify whether to get the waiting time of class 1 individuals,
+        class 2 individuals or the overall of both, by default "both"
 
     Returns
     -------
     float
-        The waiting time in the system of the given patient type
+        The waiting time in the system of the given class
     """
     state_probabilities = get_average_simulated_state_probabilities(
         lambda_2=lambda_2,
@@ -193,7 +193,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     ]
 
     if patient_type == "both":
-        mean_waiting_time_other = mean_waiting_time_formula(
+        mean_waiting_time_class_1 = mean_waiting_time_formula(
             all_states=all_states,
             pi=state_probabilities,
             patient_type="others",
@@ -205,7 +205,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
         )
-        mean_waiting_time_ambulance = mean_waiting_time_formula(
+        mean_waiting_time_class_2 = mean_waiting_time_formula(
             all_states=all_states,
             pi=state_probabilities,
             patient_type="ambulance",
@@ -218,7 +218,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             buffer_capacity=buffer_capacity,
         )
 
-        prob_accept_others = np.sum(
+        prob_accept_class_1 = np.sum(
             [
                 state_probabilities[state]
                 for state in all_states
@@ -227,7 +227,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
                 )
             ]
         )
-        prob_accept_ambulance = np.sum(
+        prob_accept_class_2 = np.sum(
             [
                 state_probabilities[state]
                 for state in all_states
@@ -237,16 +237,16 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
             ]
         )
 
-        ambulance_rate = (lambda_2 * prob_accept_ambulance) / (
-            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
+        class_2_rate = (lambda_2 * prob_accept_class_2) / (
+            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
         )
-        others_rate = (lambda_1 * prob_accept_others) / (
-            (lambda_2 * prob_accept_ambulance) + (lambda_1 * prob_accept_others)
+        class_1_rate = (lambda_1 * prob_accept_class_1) / (
+            (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
         )
 
         return (
-            mean_waiting_time_ambulance * ambulance_rate
-            + mean_waiting_time_other * others_rate
+            mean_waiting_time_class_2 * class_2_rate
+            + mean_waiting_time_class_1 * class_1_rate
         )
 
     mean_waiting_time = mean_waiting_time_formula(
@@ -364,8 +364,8 @@ def get_plot_comparing_times(
     buffer_capacity : int
     times_to_compare : str
     patient_type : str, optional
-        A string to identify whether to get the waiting time of other patients,
-        ambulance patients or the overall of both, by default "both"
+        A string to identify whether to get the waiting time of class 1 or
+        class 2 individuals or the overall of both, by default "both"
     plot_over : str, optional
         A string with the name of the variable to plot over, by default "lambda_2"
     max_parameter_value : float, optional

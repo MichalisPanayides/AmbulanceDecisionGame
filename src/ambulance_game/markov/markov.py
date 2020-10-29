@@ -27,10 +27,10 @@ def build_states(threshold, system_capacity, buffer_capacity):
     ----------
     threshold : int
         Distinguishes between the two sets of states to be combined. In general,
-        if the number of individuals in the hospital >= threshold ambulance patients
-        are not allowed.
+        if the number of individuals in the service area >= threshold then,
+        class 2 individuals are not allowed.
     system_capacity : int
-        The maximum capacity of the hospital (i.e. number of servers + queue size)
+        The maximum capacity of the service area (i.e. number of servers + queue size)
     buffer_capacity : int
         The number of buffer spaces
 
@@ -63,7 +63,7 @@ def build_states(threshold, system_capacity, buffer_capacity):
     return all_states
 
 
-def visualise_ambulance_markov_chain(
+def visualise_markov_chain(
     num_of_servers,
     threshold,
     system_capacity,
@@ -127,7 +127,6 @@ def visualise_ambulance_markov_chain(
     nx.draw_networkx_labels(G, pos, font_size=fontsize)
 
     plt.axis("off")
-
     return G
 
 
@@ -225,9 +224,9 @@ def get_transition_matrix(
     Parameters
     ----------
     num_of_servers : int
-        The number of servers of the hospital
+        The number of servers
     threshold : int
-        The threshold that indicates when to start blocking ambulances
+        The threshold that indicates when to start blocking class 2 individuals
     system_capacity : int
         The total capacity of the system
     buffer_capacity : int
@@ -457,8 +456,8 @@ def get_markov_state_probabilities(
         return states_probabilities_array
 
 
-def get_mean_number_of_patients_in_system(pi, states):
-    """Mean number of patients in the system = Σ[π_i * (u_i + v_i)]
+def get_mean_number_of_individuals_in_system(pi, states):
+    """Mean number of individuals in the system = Σ[π_i * (u_i + v_i)]
 
     Parameters
     ----------
@@ -470,15 +469,15 @@ def get_mean_number_of_patients_in_system(pi, states):
     Returns
     -------
     float
-        Mean number of patients in the whole model
+        Mean number of individuals in the whole model
     """
     states = np.array(states)
-    mean_patients_in_system = np.sum((states[:, 0] + states[:, 1]) * pi)
-    return mean_patients_in_system
+    mean_inds_in_system = np.sum((states[:, 0] + states[:, 1]) * pi)
+    return mean_inds_in_system
 
 
-def get_mean_number_of_patients_in_hospital(pi, states):
-    """Mean number of patients in the hospital = Σ[π_i * v_i]
+def get_mean_number_of_individuals_in_service_area(pi, states):
+    """Mean number of individuals in the service area = Σ[π_i * v_i]
 
     Parameters
     ----------
@@ -490,15 +489,15 @@ def get_mean_number_of_patients_in_hospital(pi, states):
     Returns
     -------
     float
-        Mean number of patients in the hospital
+        Mean number of individuals
     """
     states = np.array(states)
-    mean_patients_in_hospital = np.sum(states[:, 1] * pi)
-    return mean_patients_in_hospital
+    mean_inds_in_service_area = np.sum(states[:, 1] * pi)
+    return mean_inds_in_service_area
 
 
-def get_mean_number_of_ambulances_blocked(pi, states):
-    """Mean number of ambulances blocked = Σ[π_i * u_i]
+def get_mean_number_of_individuals_in_buffer_center(pi, states):
+    """Mean number of class 2 individuals blocked = Σ[π_i * u_i]
 
     Parameters
     ----------
@@ -510,8 +509,8 @@ def get_mean_number_of_ambulances_blocked(pi, states):
     Returns
     -------
     float
-        Mean number of blocked ambulances
+        Mean number of blocked class 2 individuals
     """
     states = np.array(states)
-    mean_ambulances_blocked = np.sum(states[:, 0] * pi)
-    return mean_ambulances_blocked
+    mean_blocked = np.sum(states[:, 0] * pi)
+    return mean_blocked

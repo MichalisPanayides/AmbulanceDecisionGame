@@ -1,6 +1,6 @@
 from .markov import (
     build_states,
-    visualise_ambulance_markov_chain,
+    visualise_markov_chain,
     get_symbolic_transition_matrix,
     get_transition_matrix,
     convert_symbolic_transition_matrix,
@@ -8,9 +8,9 @@ from .markov import (
     get_steady_state_numerically,
     get_steady_state_algebraically,
     get_markov_state_probabilities,
-    get_mean_number_of_patients_in_system,
-    get_mean_number_of_patients_in_hospital,
-    get_mean_number_of_ambulances_blocked,
+    get_mean_number_of_individuals_in_system,
+    get_mean_number_of_individuals_in_service_area,
+    get_mean_number_of_individuals_in_buffer_center,
 )
 
 from .waiting import (
@@ -36,9 +36,9 @@ from .utils import (
     is_waiting_state,
     is_blocking_state,
     expected_time_in_markov_state_ignoring_arrivals,
-    expected_time_in_markov_state_ignoring_ambulance_arrivals,
+    expected_time_in_markov_state_ignoring_class_2_arrivals,
     prob_service,
-    prob_other_arrival,
+    prob_class_1_arrival,
 )
 
 from .graphical import (

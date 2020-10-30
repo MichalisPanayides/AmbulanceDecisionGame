@@ -8,17 +8,17 @@ Using this logic it is possible to calculate any performance measures that are r
 to the mean number of individuals in the system.
 
 
-Average number of patients in the system: 
+Average number of people in the system: 
 \begin{equation}
     L = \sum_{i=1}^{|\pi|} \pi_i (u_i + v_i)
 \end{equation} 
 
-Average number of patients in the hospital: 
+Average number of people in the service centre: 
 \begin{equation}
     L_H = \sum_{i=1}^{|\pi|} \pi_i v_i
 \end{equation}
 
-Average number of ambulances being blocked:
+Average number of people in the buffer centre:
 \begin{equation}
     L_A = \sum_{i=1}^{|\pi|} \pi_i u_i
 \end{equation}
@@ -27,25 +27,27 @@ Consequently getting the performance measures that are related to the duration o
 time is not as straightforward. 
 Such performance measures are the mean waiting time in the system and the mean time 
 blocked in the system. 
-Under the scope of this study two approaches have been considered to calculate these 
-performance measures; a recursive algorithm and consequently a closed-form formula.
+Under the scope of this study three approaches have been considered to calculate these 
+performance measures; a direct approach, a recursive algorithm and consequently a
+closed-form formula.
 
-The research question that needs to be answered here is: ``When an ambulance/other 
-patient enters the system, what is the expected time that they will have to wait?''. 
+The research question that needs to be answered here is: ``When a class 1/2 
+individuals enters the system, what is the expected time that they will have to 
+wait?''. 
 In order to formulate the answer to that question one needs to consider all possible 
 scenarios of what state the system can be in when an individual arrives. 
-Furthermore, a different recursive formula arises for \textit{ambulance patients} 
-and a different one for \textit{other patients}.
+Furthermore, different formulas arises for class 1 individuals 
+and a different one for class 2 individuals.
 
 \subsection{Mean waiting time} 
-\subsubsection{Recursive formula for mean waiting time of \textit{other patients}}
+\subsubsection{Recursive formula for mean waiting time of class 1 individuals}
 \label{sec:recursive-waiting-time-others}
 
-To calculate the mean waiting time of \textit{other patients} one must first identify 
+To calculate the mean waiting time of class 1 individuals one must first identify 
 the set of states \((u, v)\) that will imply that a wait will occur. 
 For this particular Markov chain, this points to all states that satisfy \(v > C\) 
-i.e. all states where the number of individuals in the hospital exceed the number 
-of servers. 
+i.e. all states where the number of individuals in the service centre exceed the 
+number of servers. 
 The set of such states is defined as \textit{waiting states} and can be denoted 
 as a subset of all the states, where:
 
@@ -54,13 +56,14 @@ as a subset of all the states, where:
 \end{equation}
 
 Additionally, there are certain states in the model where arrivals cannot occur. 
-An \textit{other patient} cannot arrive whenever the model is at any state \((u, N)\) 
+A class 1 individual cannot arrive whenever the model is at any state 
+\((u, N)\) 
 for all \(u\) where \(N\) is the system capacity. 
 Therefore the set of all such states that an arrival may occur are defined as 
 \textit{accepting states} and are denoted as:
 
 \begin{equation}\label{eq:accepting_states_others}
-    S_A^{(o)} = \{(u, v) \in S \; | \; v < N \}
+    S_A^{(1)} = \{(u, v) \in S \; | \; v < N \}
 \end{equation}
 
 
@@ -118,9 +121,9 @@ occur after that.
     \label{other_patients_trip}
 \end{figure}
 
-As illustrated in figure \ref{other_patients_trip} an \textit{other patient}, 
+As illustrated in figure \ref{other_patients_trip} a class 1 individual, 
 when in the threshold column, only visits one of the nodes since they are not 
-affected by \textit{ambulance patients}. 
+affected by class 2 individuals. 
 Thus, one may acquire the desired time by calculating the inverse of the sum of 
 the out-flow rate of that state. 
 Since we are ignoring arrivals though the only way to exit the state will only be 
@@ -128,40 +131,42 @@ via a service.
 In essence this notion can be expressed as:
 
 \begin{equation} \label{eq:sojourn_others}
-    c^{(o)}(u,v) = 
+    c^{(1)}(u,v) = 
     \begin{cases}
         0, & \textbf{if } u > 0 \textbf{ and } v = T \\
         \frac{1}{\text{min}(v,C)\mu}, & \textbf{otherwise}
     \end{cases}
 \end{equation}
 
-Note that whenever any \textit{other patient} is at a state \((u,v)\) where \(u > 0\) 
+Note that whenever any class 1 individual is at a state \((u,v)\) where 
+\(u > 0\) 
 and \(v = T\) (i.e. all states \((1,T), (2,T) \dots, (M,T)\)) the sojourn time is 
 set to \(0\). 
 This is done to capture the trip thorough the Markov chain from the perspective 
-of other patients. 
+of class 1 individuals. 
 Meaning that they will visit all states of the threshold column but only the one 
 in the first row will return a non-zero sojourn time.
 
 Now, using the above equations, and considering all sates that belong in \(S_w\) 
 the following recursive formula can be used to get the mean waiting time spent in 
 each state in the Markov model. 
-For \textit{other patients}, whenever the model is at state \( (u,v) \), any incoming 
-patient will proceed to arrive at state \( (u, v+1) \). 
-Patients will then proceed to visit all other states until they reach one which 
+For class 1 individuals, whenever the model is at state \( (u,v) \), any 
+incoming 
+individual will proceed to arrive at state \( (u, v+1) \). 
+individuals will then proceed to visit all other states until they reach one which 
 has less than \(C\) servers occupied (i.e. until a server becomes available). 
 The formula goes through all states from right to left recursively and adds the 
 sojourn times of all these states together until it reaches a state that is not 
 in the set of waiting states. 
-Thus, the expected waiting time of an \textit{other patient} when they arrive at 
+Thus, the expected waiting time of a class 1 individual when they arrive at 
 state \( (u,v) \) can be given by:
 
 \begin{equation} \label{eq:waiting-time-at-each-state-other}
-    w^{(o)}(u,v) = 
+    w^{(1)}(u,v) = 
     \begin{cases} 
         0, \hspace{4.85cm} & \textbf{if } (u,v) \notin S_w \\
-        c^{(o)}(u,v) + w^{(o)}(u-1, v), & \textbf{if } u > 0 \textbf{ and } v = T \\
-        c^{(o)}(u,v) + w^{(o)}(u, v-1), & \textbf{otherwise}
+        c^{(1)}(u,v) + w^{(1)}(u-1, v), & \textbf{if } u > 0 \textbf{ and } v = T \\
+        c^{(1)}(u,v) + w^{(1)}(u, v-1), & \textbf{otherwise}
     \end{cases}
 \end{equation}
 
@@ -170,16 +175,16 @@ waiting times of accepting states multiplied by the probability of being at that
 state and dividing by the probability of being in any accepting state.
 
 \begin{equation} \label{eq:recursive-waiting-time-others}
-    W^{(o)} = \frac{\sum_{(u,v) \in S_A^{(o)}} w^{(o)}(u,v) 
-    \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(o)}} \pi_{(u,v)}}
+    W^{(1)} = \frac{\sum_{(u,v) \in S_A^{(1)}} w^{(1)}(u,v) 
+    \pi_{(u,v)}}{\sum_{(u,v) \in S_A^{(1)}} \pi_{(u,v)}}
 \end{equation}
 
 
 
 \subsubsection{Recursive formula for mean waiting time of 
-\textit{ambulance patients}} \label{sec:recursive-waiting-time-ambulance}
+class 2 individuals} \label{sec:recursive-waiting-time-ambulance}
 
-Equivalently the mean waiting time for \textit{ambulance patients} can be calculated 
+Equivalently the mean waiting time for class 2 individuals can be calculated 
 in a similar manner. 
 The set of waiting states is the same as before but there is a slight modification 
 in the set of accepting states.
@@ -189,31 +194,33 @@ in the set of accepting states.
 \]
 
 \begin{equation}\label{eq:accepting_states_ambulance}
-    S_A^{(a)}=
+    S_A^{(2)}=
     \begin{cases}
         \{(u, v) \in S \; | \; u < M \} & \textbf{if } T \leq N\\
         \{(u, v) \in S \; | \; v < N \} & \textbf{otherwise}
     \end{cases}
 \end{equation}
 
-The set of accepting states is modified in such a way such that an \textit{ambulance 
-patient} cannot arrive in the model when the model is at any state \((M, v)\) for 
-all \(v \geq T\) where \(M\) is the parking capacity and \(T\) is the threshold. 
+The set of accepting states is modified in such a way such that a class 2 
+individual cannot arrive in the model when the model is at any state \((M, v)\) 
+for 
+all \(v \geq T\) where \(M\) is the buffer centre capacity and \(T\) is the threshold. 
 An odd situation here is when the threshold is set to a very high number that is 
 more than the actual system capacity. 
 In such cases the set of accepting states is defined in the same way as the 
-\textit{other patients} case. 
-That is because whenever \(T > N\) no ambulance will ever be blocked in the model 
+class 1 individuals case (\ref{eq:accepting_states_others}). 
+That is because whenever \(T > N\) no class 2 individual will ever be blocked in 
+the model 
 (since that threshold can never be reached) and thus the last accepting state of 
 the model will be state \( (0,N-1)\). 
 
-Now just like in the \textit{other patients} case the sojourn time is needed. 
-For \textit{ambulance patients} whenever individuals are at any row apart from the 
+Now just like in the class 1 individuals case the sojourn time is needed. 
+For class 2 individuals whenever individuals are at any row apart from the 
 first one they automatically get a wait time of \(0\) since they are essentially 
 blocked.
 
 \begin{equation} \label{eq:sojourn_ambulance}
-    c^{(a)}(u,v) = 
+    c^{(2)}(u,v) = 
     \begin{cases}
         0, & \textbf{if } u > 0 \\
         \frac{1}{\text{min}(v,C)\mu}, & \textbf{otherwise}
@@ -221,58 +228,58 @@ blocked.
 \end{equation}
 
 Finally, the recursive formula and the mean waiting time equation are identical 
-to the ones described above with the exception that they now use \(c^{(a)}(u,v)\) 
-instead of \(c^{(o)}(u,v)\).
+to the ones described above with the exception that they now use \(c^{(2)}(u,v)\) 
+instead of \(c^{(1)}(u,v)\).
 \begin{equation} \label{eq:waiting-time-at-each-state-ambulance}
-    w^{(a)}(u,v) = 
+    w^{(2)}(u,v) = 
     \begin{cases} 
         0, \hspace{4.85cm} & \textbf{if } (u,v) \notin S_w \\
-        c^{(a)}(u,v) + w^{(a)}(u-1, v), & \textbf{if } u > 0 \textbf{ and } v = T \\
-        c^{(a)}(u,v) + w^{(a)}(u, v-1), & \textbf{otherwise}
+        c^{(2)}(u,v) + w^{(2)}(u-1, v), & \textbf{if } u > 0 \textbf{ and } v = T \\
+        c^{(2)}(u,v) + w^{(2)}(u, v-1), & \textbf{otherwise}
     \end{cases}
 \end{equation}
 
 \begin{equation}\label{eq:recursive-waiting-time-ambulance}
-    W^{(a)} = \frac{\sum_{(u,v) \in S_A^{(a)}} w^{(a)}(u,v) \pi_{(u,v)}}
-    {\sum_{(u,v) \in S_A^{(a)}} \pi_{(u,v)}}
+    W^{(2)} = \frac{\sum_{(u,v) \in S_A^{(2)}} w^{(2)}(u,v) \pi_{(u,v)}}
+    {\sum_{(u,v) \in S_A^{(2)}} \pi_{(u,v)}}
 \end{equation}
 
 \subsubsection{Mean Waiting Time - Closed-form}
 Upon closer inspection of the recursive formula a more compact formula can arise. 
 The equivalent closed-form formula eliminates the need for recursion and thus makes 
 the computation of waiting times much more efficient. 
-Just like in the recursive part there are two formulas; one for \textit{ambulance} 
-and one for \textit{other patients}. 
+Just like in the recursive part there are two formulas; one for \textit{class 1} 
+and one for class 2 individuals. 
 The formulas are given by:
 
 \begin{equation} \label{eq:closed_form_waiting_others}
-    W^{(o)} = \frac{\sum_{\substack{(u,v) \, \in S_A^{(o)} \\ v \geq C}} 
+    W^{(1)} = \frac{\sum_{\substack{(u,v) \, \in S_A^{(1)} \\ v \geq C}} 
     \frac{1}{C \mu} \times (v-C+1) \times \pi(u,v)}{\sum_{(u,v) \, 
-    \in S_A^{(o)}} \pi(u,v)}
+    \in S_A^{(1)}} \pi(u,v)}
 \end{equation}
     
 \begin{equation}\label{eq:closed_form_waiting_ambulance}
-    W^{(a)} = \frac{\sum_{\substack{(u,v) \, \in S_A^{(a)} \\ min(v,T) \geq C}} 
+    W^{(2)} = \frac{\sum_{\substack{(u,v) \, \in S_A^{(2)} \\ min(v,T) \geq C}} 
     \frac{1}{C \mu} \times (\min(v+1,T)-C) \times \pi(u,v)}{\sum_{(u,v) \, 
-    \in S_A^{(a)}} \pi(u,v)}
+    \in S_A^{(2)}} \pi(u,v)}
 \end{equation}
 
 Note here that the summation, in both equations \ref{eq:closed_form_waiting_others} 
 and \ref{eq:closed_form_waiting_ambulance}, goes through all states in the set of 
 accepting 
-states of either \textit{ambulance or other patients} respectively, where a wait 
+states of either class 1 or class 2 individuals respectively, where a wait 
 incurs. 
 In equation \ref{eq:closed_form_waiting_others} that includes all states \((u,v)\) 
-in the set of accepting states of other patients such that \( v \geq C\); i.e. 
+in the set of accepting states of class 1 individuals such that \( v \geq C\); i.e. 
 whenever an arrival occurs and the system is at a state where the number of individuals 
 in the system is more than or equal to $C$. 
-Consequently, for the states that are included in the summation  the expression 
+Consequently, for the states that are included in the summation the expression 
 \( v-C+1 \) indicates the amount of people in service one would have to wait for 
 upon arrival at the hospital.
 
 Additionally, the minimisation function in equation 
 \ref{eq:closed_form_waiting_ambulance} 
-(\textit{ambulance patients}) ensures that when an ambulance arrives at any state 
+ensures that when a class 2 individual arrives at any state 
 that is greater than the predetermined threshold, the wait that the individual will 
 have to endure remains the same. 
 In essence, the expression \(\min(v+1,T) - C\) returns the number of people in line 
@@ -282,35 +289,35 @@ in front of a particular individual upon arrival.
 \subsubsection{Overall Waiting Time}
 
 Consequently, the overall waiting time should can be estimated by a linear combination 
-of the waiting times of \textit{other and ambulance patients}. 
-The overall waiting time can be then given by the following equation where \(c_o\) 
-and \(c_a\) are the coefficients of each patient's type waiting time:
+of the waiting times of class 1 and class 2 individuals. 
+The overall waiting time can be then given by the following equation where \(c_1\) 
+and \(c_2\) are the coefficients of each individual's type waiting time:
 
 \begin{equation}\label{overall_waiting_time_coeff}
-    W = c_o W^{(o)} + c_a W^{(a)}
+    W = c_1 W^{(1)} + c_2 W^{(2)}
 \end{equation}
 
-The two coefficients represent the proportion of patients of each patient type that 
+The two coefficients represent the proportion of individuals of each type that 
 traversed through the model. 
 Theoretically, getting these percentages should be as simple as looking at the arrival 
-rates of each patient type but in practise if the hospital or the parking space 
-is full, some patients may be lost to the system. 
-Thus, one should account for the probability that a patient is lost to the system. 
+rates of each type but in practise if the service centre or the buffer centre 
+is full, some individuals may be lost to the system. 
+Thus, one should account for the probability that an individual is lost to the system. 
 This probability can be easily calculated by using the two sets of accepting states 
-\(S_A^{(a)}\) and \(S_A^{(o)}\) defined earlier in equations 
+\(S_A^{(2)}\) and \(S_A^{(1)}\) defined earlier in equations 
 \ref{eq:accepting_states_others} 
 and \ref{eq:accepting_states_ambulance}. 
-Let us define here the probability, for either patient type, that an individual 
+Let us define here the probability, for either class type, that an individual 
 is not lost in the system by:
 
 \begin{equation*}
-    P(L'_o) = \sum_{(u,v) \, \in S_A^{(o)}} \pi(u,v) \hspace{2cm}
-    P(L'_a) = \sum_{(u,v) \, \in S_A^{(a)}} \pi(u,v)
+    P(L'_1) = \sum_{(u,v) \, \in S_A^{(1)}} \pi(u,v) \hspace{2cm}
+    P(L'_2) = \sum_{(u,v) \, \in S_A^{(2)}} \pi(u,v)
 \end{equation*}
 
 Having defined these probabilities one may combine them with the arrival rates of 
-each patient type in such a way to get the expected proportions of ambulance and 
-other patients in the model. 
+each class type in such a way to get the expected proportions of class 1 and 
+class 2 individuals in the model. 
 Thus, by using these values as the coefficient of equation 
 \ref{overall_waiting_time_coeff} 
 the resultant equation can be used to get the overall waiting time. 
@@ -318,8 +325,8 @@ Note here that the equation below gets the overall waiting time for both the rec
 and the closed-form formula.
 
 \begin{equation}\label{overall_waiting_time}
-    W = \frac{\lambda_o P(L'_o)}{\lambda_a P(L'_a) + \lambda_o P(L'_o)} W^{(o)} + 
-    \frac{\lambda_a P(L'_a)}{\lambda_a P(L'_a) + \lambda_o P(L'_o)} W^{(a)}
+    W = \frac{\lambda_1 P(L'_1)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(1)} + 
+    \frac{\lambda_2 P(L'_2)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(2)}
 \end{equation}
 
 
@@ -338,25 +345,24 @@ and the closed-form formula.
 
 \subsubsection{Direct approach for mean blocking time}
 
-Unlike the waiting time, the blocking time is only calculated for ambulance patients.  
-% TODO Modify this to no longer refer to ambulance/patients etc...
-That is because other patients cannot be blocked. Thus, one only needs to consider 
-the pathway of ambulance patients to get the mean blocking time of the system. 
-Blocking occurs at states \((u,v)\) 
-where \(u > 0 \). Thus, the set of blocking states can be defined as:
+Unlike the waiting time, the blocking time is only calculated for class 2 individuals.  
+That is because class 1 individuals cannot be blocked. 
+Thus, one only needs to consider the pathway of class 2 individuals to get the 
+mean blocking time of the system. 
+Blocking occurs at states \((u,v)\) where \(u > 0 \). 
+Thus, the set of blocking states can be defined as:
 
 \begin{equation*}
     S_b = \{(u,v) \in S \; | \; u > 0\}
 \end{equation*}
  
-In order to not consider patients that will be lost to the system, the set of accepting
-% TODO patients -> generic vocabulary
-states needs to be taken into account. As defined in section 
+In order to not consider individuals that will be lost to the system, the set of 
+accepting states needs to be taken into account. As defined in section 
 \ref{sec:recursive-waiting-time-ambulance},
 the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
 
 \begin{equation*}
-    S_A^{(a)}=
+    S_A^{(2)}=
     \begin{cases}
         \{(u, v) \in S \; | \; u < M \} & \textbf{if } T \leq N\\
         \{(u, v) \in S \; | \; v < N \} & \textbf{otherwise}
@@ -366,40 +372,40 @@ the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
 For the waiting time formula in sections \ref{sec:recursive-waiting-time-others}
 and \ref{sec:recursive-waiting-time-ambulance}
 the mean sojourn time for each state was considered,
-ignoring any arrivals. Here, the same approach is used but ignoring only ambulance  
-% TODO ambulance -> generic term
-arrivals. That is because for the waiting time formula, once a patient enters the  
-% TODO patient/hospital -> generic term
-hospital (i.e. starts waiting) any patient arriving after them will not affect their
-pathway. That is not the case for blocking time. When an ambulance patient is blocked, 
-% TODO patient -> generic term
-any \textit{other} patient that arrives will cause the blocked patient to remain 
-blocked for more time. Therefore, \textit{other} arrivals are considered here:
+ignoring any arrivals. Here, the same approach is used but ignoring only class 2
+arrivals. That is because for the waiting time formula, once an individual enters 
+the service centre (i.e. starts waiting) any individual arriving after them will 
+not affect their
+pathway. That is not the case for blocking time. When a class 2 individual is 
+blocked, 
+any class 1 individual that arrives will cause the blocked individual to remain 
+blocked for more time. Therefore, class 1 arrivals are considered here:
 
 \begin{equation}\label{eq:time_in_state_blocking_time}
     c(u,v) = 
     \begin{cases}
         \frac{1}{\min(v,C) \mu}, & \text{if } v = C\\
-        \frac{1}{\min(v,C) \mu + \lambda^o}, & \text{otherwise}
+        \frac{1}{\min(v,C) \mu + \lambda_1}, & \text{otherwise}
     \end{cases}
 \end{equation}
  
 In equation \ref{eq:time_in_state_blocking_time}, both service completions and 
-\textit{other} patient arrivals are considered. 
-Thus, from a blocked patient's perspective whenever the system moves from one state \(u\)
-to another state \(v\) it can either:
+class 1 arrivals are considered. 
+Thus, from a blocked individual's perspective whenever the system moves from one 
+state \((u,v)\)
+to another state it can either:
 
 \begin{itemize}
     \item be because of a service being completed: we will denote the probability 
     of this happening by \(p_s(u,v)\). 
-    \item be because of an arrival of another individual of the first class denoted 
-    by \(p_o(u,v)\).  % TODO Align "first class" with whatever generic terms are used.
+    \item be because of an arrival of an individual of class 1: denoting such 
+    probability by \(p_o(u,v)\).
 \end{itemize}
 The probabilities are given by:
 
 \begin{equation*}
-    p_s(u,v) = \frac{\min(v,C)\mu}{\lambda^o + \min(v,C)\mu}, \qquad
-    p_o(u,v) = \frac{\lambda^o}{\lambda^o + \min(v,C)\mu}
+    p_s(u,v) = \frac{\min(v,C)\mu}{\lambda_1 + \min(v,C)\mu}, \qquad
+    p_o(u,v) = \frac{\lambda_1}{\lambda_1 + \min(v,C)\mu}
 \end{equation*}
 
 
@@ -435,7 +441,7 @@ states.
 
 \begin{multicols*}{2}
     \begin{figure}[H]
-        \scalebox{0.65}{\input{MarkovChain/expressions_from_pi/example_model_2362/main.tex}}
+        \scalebox{0.50}{\input{MarkovChain/expressions_from_pi/example_model_2362/main.tex}}
         \caption{Example of Markov chain}
         \label{fig:example-algeb-blocking}
     \end{figure}

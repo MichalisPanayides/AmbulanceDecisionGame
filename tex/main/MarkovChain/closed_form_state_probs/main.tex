@@ -1,5 +1,4 @@
 \subsection{Graph Theoretical Approach}
-% TODO: Generalise notation in entire section 
 
 This section aims to investigate the connection between Markov chains and graph 
 theory by exploring alternative ways of calculating the steady state probabilities 
@@ -8,18 +7,17 @@ and considering the problem from different perspectives.
 \subsubsection{Parameters}
 The parameters considered as inputs are:
 \begin{multicols}{2}
-    % TODO: Generalise notation - number of servers, system capacity and parking capacity
     \begin{itemize}
         \item the number of servers \(C\),
         \item the threshold \(T\), 
-        \item the system capacity \(N\),
-        \item the parking capacity \(M\). 
+        \item the capacity of the service centre \(N\),
+        \item the capacity of the buffer centre \(M\). 
     \end{itemize}
 \end{multicols}
 
-% TODO: Generalise notation - change ambulance patients and other patients into class 1 and 2 patients
-Additional parameters of the model are the ambulance arrival rate, the others' 
-arrival rate and the service rate (\(\lambda^A, \lambda^o, \mu\)). 
+Additional parameters of the model are the class 1 individuals arrival rate, 
+the class 2 individuals
+arrival rate and the service rate (\(\lambda_2, \lambda_1, \mu\)). 
 More specifically, the way these parameters are translated into the model are:
 
 \begin{itemize}
@@ -38,10 +36,10 @@ More specifically, the way these parameters are translated into the model are:
     and states where \(0 \leq u \leq M\). 
     Increasing \(T\) results in having more set of states where \(u\) can only 
     be \(0\).
-    \item \textbf{System capacity (\(N\)):} Is the upper bound of \(v\) for all 
+    \item \textbf{Service centre capacity (\(N\)):} Is the upper bound of \(v\) for all 
     states \((u,v)\).
-    \item \textbf{Parking capacity (\(M\)):} Is the upper bound of \(u\) for all 
-    states \((u,v)\) such that \(u \geq T\).
+    \item \textbf{Buffer centre capacity (\(M\)):} Is the upper bound of \(u\) for all 
+    states \((u,v)\) such that \(v \geq T\).
 \end{itemize}
 
 
@@ -154,7 +152,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \end{center}
 
     \begin{flalign*}
-        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda^A \mu^3
+        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda_2 \mu^3
     \end{flalign*}
 \end{multicols}
 
@@ -170,7 +168,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
 \end{multicols}
 
 \begin{equation*}
-    \tilde{\pi}_{(0,0)} = \mu^4 + \lambda^A \mu^3
+    \tilde{\pi}_{(0,0)} = \mu^4 + \lambda_2 \mu^3
 \end{equation*}
 
 
@@ -190,7 +188,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \end{figure}
 
     \begin{flalign*}
-        \xrightarrow{\hspace*{2cm}} \hspace{1cm} (\lambda^A)^2 \mu^4
+        \xrightarrow{\hspace*{2cm}} \hspace{1cm} (\lambda_2)^2 \mu^4
     \end{flalign*}
 \end{multicols}
 
@@ -202,7 +200,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \end{figure}
 
     \begin{flalign*}
-        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda^A \mu^5
+        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda_2 \mu^5
     \end{flalign*}
 \end{multicols}
 
@@ -214,7 +212,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \end{figure}
 
     \begin{flalign*}
-        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda^A \mu^5
+        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda_2 \mu^5
     \end{flalign*}
 \end{multicols}
 
@@ -226,7 +224,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \end{figure}
 
     \begin{flalign*}
-        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda^A \lambda^o \mu^4
+        \xrightarrow{\hspace*{2cm}} \hspace{1cm} \lambda_2 \lambda_1 \mu^4
     \end{flalign*}
 \end{multicols}
 
@@ -243,8 +241,8 @@ As well as this, the sum of all the weights of the spanning trees denoted by
 \end{multicols}
 
 \begin{equation*}
-    \tilde{\pi}_{(0,0)} = (\lambda^A)^2 \mu^4 + 2 \lambda^A \mu^5 + 
-    \lambda^A \lambda^o \mu^4 + \mu^6
+    \tilde{\pi}_{(0,0)} = (\lambda_2)^2 \mu^4 + 2 \lambda_2 \mu^5 + 
+    \lambda_2 \lambda_1 \mu^4 + \mu^6
 \end{equation*}
 
 
@@ -264,7 +262,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \columnbreak
     \vspace*{0cm}
     \begin{equation*}
-        (\lambda^A)^2 \mu^4
+        (\lambda_2)^2 \mu^4
     \end{equation*}
     \vspace*{\fill}
     \columnbreak
@@ -277,7 +275,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \columnbreak
     \vspace*{0.3cm}
     \begin{equation*}
-        \lambda^A \mu^5
+        \lambda_2 \mu^5
     \end{equation*}
 \end{multicols}
 
@@ -291,7 +289,7 @@ As well as this, the sum of all the weights of the spanning trees denoted by
     \columnbreak
     \vspace*{0.3cm}
     \begin{equation*}
-        \lambda^A \mu^5
+        \lambda_2 \mu^5
     \end{equation*}
     \vspace*{\fill}
     \columnbreak
@@ -310,14 +308,14 @@ As well as this, the sum of all the weights of the spanning trees denoted by
 
 
 \begin{equation*}
-    \tilde{\pi}_{(0,0)} = (\lambda^A)^2 \mu^4 + 2 \lambda^A \mu^5 + \mu^6
+    \tilde{\pi}_{(0,0)} = (\lambda_2)^2 \mu^4 + 2 \lambda_2 \mu^5 + \mu^6
 \end{equation*}
 
 \newpage
 \subsubsection{Conjecture of adding rows}
 
 Let us consider three Markov models with the same number of servers \(C=1\), 
-the same threshold \(T=1\), the same system capacity \(N=2\) but 
+the same threshold \(T=1\), the same service centre capacity \(N=2\) but 
 \(M\in\{1, 2, 3\}\).
 
 
@@ -343,29 +341,29 @@ the same threshold \(T=1\), the same system capacity \(N=2\) but
     \end{figure}
 \end{multicols}
 
-By increasing the parking capacity of the system it can be observed that 
+By increasing the buffer centre capacity of the system it can be observed that 
 \(|T_{(0,0)}(G)|\) increases as well since more combinations of paths can be 
 generated using the new edges and vertices. 
 The corresponding values of \(\tilde{\pi}_{(0,0)}\) of the three systems are:
 
 \begin{align}
-    M = 1: \tilde{\pi}_{(0,0)} &= \mu^4 + \mu^3 \lambda_A = 
-    \mu^3 (\mu + \lambda^A) \label{eq:rows-conjecture-1}\\
-    M = 2: \tilde{\pi}_{(0,0)} &= \mu^6 + 2\mu^5 \lambda_A + \mu^4 (\lambda^A)^2 
-    = \mu^4(\mu^2 + 2\mu \lambda_A + (\lambda^A)^2) 
-    = \mu^4 (\mu + \lambda^A) ^ 2 \label{eq:rows-conjecture-2}\\
-    M = 3: \tilde{\pi}_{(0,0)} &= \mu^8 + 3 \mu^7 \lambda^A + 
-    3 \mu^6 (\lambda^A)^2 + \mu^5(\lambda^A)^3 \nonumber \\
-    &= \mu^5 (\mu^3 + 3 \mu ^2 \lambda^A + 3 \mu (\lambda^A)^2 + (\lambda^A)^3) 
+    M = 1: \tilde{\pi}_{(0,0)} &= \mu^4 + \mu^3 \lambda_2 = 
+    \mu^3 (\mu + \lambda_2) \label{eq:rows-conjecture-1}\\
+    M = 2: \tilde{\pi}_{(0,0)} &= \mu^6 + 2\mu^5 \lambda_2 + \mu^4 (\lambda_2)^2 
+    = \mu^4(\mu^2 + 2\mu \lambda_2 + (\lambda_2)^2) 
+    = \mu^4 (\mu + \lambda_2) ^ 2 \label{eq:rows-conjecture-2}\\
+    M = 3: \tilde{\pi}_{(0,0)} &= \mu^8 + 3 \mu^7 \lambda_2 + 
+    3 \mu^6 (\lambda_2)^2 + \mu^5(\lambda_2)^3 \nonumber \\
+    &= \mu^5 (\mu^3 + 3 \mu ^2 \lambda_2 + 3 \mu (\lambda_2)^2 + (\lambda_2)^3) 
     \nonumber \\
-    &= \mu^5 (\mu + \lambda^A) ^ 3 \label{eq:rows-conjecture-3}
+    &= \mu^5 (\mu + \lambda_2) ^ 3 \label{eq:rows-conjecture-3}
 \end{align}
 
 Note that in equations (\ref{eq:rows-conjecture-1}),(\ref{eq:rows-conjecture-2}) 
 and (\ref{eq:rows-conjecture-3}), the following equation holds: 
 
 \begin{equation}\label{eq:rows-conjecture-general}
-    \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (\mu + \lambda^A)^M
+    \tilde{\pi}_{(0,0)} = \mu^{(N+M)} (\mu + \lambda_2)^M
 \end{equation}
 
 % TODO: Perform experiments to validate this
@@ -383,7 +381,8 @@ to investigate the effect of adding columns (increasing \(N\)) and finding an
 expression for \(k(C,T,N)\).
 
 \subsubsection{The effect of increasing \(N\) (Incomplete section)}
-In this section we will consider a parking capacity of \(M=1\) and see the effect 
+In this section we will consider a buffer centre capacity of \(M=1\) and see the 
+effect 
 of modifying other parameters on \(k(C, T, N)\).
 
 \begin{multicols}{2}
@@ -401,8 +400,8 @@ of modifying other parameters on \(k(C, T, N)\).
 \end{multicols}
 \vspace{-0.5cm}
 \begin{alignat}{2} \label{eq:00_rate_1131}
-    \hspace{4em} & \tilde{\pi}_{(0,0)} = \mu^3[\lambda^a + \mu] \hspace{8em} & 
-    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o + 2\lambda^A 
+    \hspace{4em} & \tilde{\pi}_{(0,0)} = \mu^3[\lambda_2 + \mu] \hspace{8em} & 
+    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda_2)^2 + \lambda_2 \lambda_1 + 2\lambda_2 
     \mu + \mu^2] 
 \end{alignat}
 
@@ -413,9 +412,9 @@ of modifying other parameters on \(k(C, T, N)\).
         \input{MarkovChain/closed_form_state_probs/example_model_1141/main.tex}}
 \end{figure}
 \begin{equation}\label{eq:00_rate_1141}
-    \tilde{\pi}_{(0,0)} = \mu^5[(\lambda^A)^3 + 2(\lambda^A)^2 \lambda^o + 
-    3(\lambda^A)^2 \mu + \lambda^A (\lambda^o)^2 + 2\lambda^A \lambda^o \mu + 
-    3\lambda^A \mu^2 + \mu^3]
+    \tilde{\pi}_{(0,0)} = \mu^5[(\lambda_2)^3 + 2(\lambda_2)^2 \lambda_1 + 
+    3(\lambda_2)^2 \mu + \lambda_2 (\lambda_1)^2 + 2\lambda_2 \lambda_1 \mu + 
+    3\lambda_2 \mu^2 + \mu^3]
 \end{equation}
 
 \begin{figure}[h]
@@ -424,12 +423,12 @@ of modifying other parameters on \(k(C, T, N)\).
         \input{MarkovChain/closed_form_state_probs/example_model_1151/main.tex}}
 \end{figure}
 \begin{align}\label{eq:00_rate_1151}
-    \tilde{\pi}_{(0,0)} =& \mu^6[(\lambda^A)^4 + 3(\lambda^A)^3 \lambda^o + 
-    4(\lambda^A)^3 \mu + 3(\lambda^A)^2 (\lambda^o)^2 + 
-    6(\lambda^A)^2 \lambda^o \mu \\
-    & + 6(\lambda^A)^2 \mu^2 + \lambda^A (\lambda^o)^3 + 
-    2\lambda^A (\lambda^o)^2 \mu + 3\lambda^A \lambda^o \mu^2 + 
-    4\lambda^A \mu^3 + \mu^4] \nonumber
+    \tilde{\pi}_{(0,0)} =& \mu^6[(\lambda_2)^4 + 3(\lambda_2)^3 \lambda_1 + 
+    4(\lambda_2)^3 \mu + 3(\lambda_2)^2 (\lambda_1)^2 + 
+    6(\lambda_2)^2 \lambda_1 \mu \\
+    & + 6(\lambda_2)^2 \mu^2 + \lambda_2 (\lambda_1)^3 + 
+    2\lambda_2 (\lambda_1)^2 \mu + 3\lambda_2 \lambda_1 \mu^2 + 
+    4\lambda_2 \mu^3 + \mu^4] \nonumber
 \end{align}
 
 \newpage
@@ -442,14 +441,14 @@ An initial attempt to get such an expression can be seen below:
 \begin{align}\label{eq:columns-conjecture-general}
     k(C,T,N) &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} 
     \sum_{p_3=C - p_1 - p_2 - 1}^{C - p_1 - p_2 - 1} R(p_1, p_2, p_3) 
-    (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3} \nonumber \\ 
+    (\lambda_2)^{p_1} (\lambda_1)^{p_2} \mu^{p_3} \nonumber \\ 
     &= \sum_{p_1=0}^{C-1} \sum_{p_2=0}^{C-p_1-1} R(p_1, p_2, C-p_1-p_2-1) 
-    (\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{C-p_1-p_2-1} 
+    (\lambda_2)^{p_1} (\lambda_1)^{p_2} \mu^{C-p_1-p_2-1} 
 \end{align}
 
 In equation \ref{eq:columns-conjecture-general} the coefficient function 
 \(R(p_1,p_2,p_3)\) is introduced were takes as arguments the powers of 
-\(\lambda^A, \lambda^o \text{ and } \mu\). 
+\(\lambda_2, \lambda_1 \text{ and } \mu\). 
 Note here that \(p_3\), the power of \(\mu\), is defined as \(p_3=C-p_1-p_2-1\) 
 since for all base models they need to satisfy \(p_1 + p_2 + p_3 = C-1\). 
 For the starting coefficients of the model the function \(R(p_1,p_2,p_3)\) gives 
@@ -478,7 +477,7 @@ the values of the coefficients and is defined as:
 Note here that the final value \(U_{p_1,p_2,p_3}\) corresponds to coefficients 
 that are unknown and are currently investigated. 
 The function \(R\) takes as arguments a possible combination of numbers of 
-\(\lambda^A, \lambda^o \text{ and } \mu \) for a given system and outputs the 
+\(\lambda_2, \lambda_1 \text{ and } \mu \) for a given system and outputs the 
 coefficient of that term which in turn represents how many spanning trees exist 
 in the graph with that specific combination. 
 For instance consider the coefficients \((p_1,p_2,p_3)\) of some of the terms 
@@ -486,32 +485,32 @@ from the equations above:
 
 \begin{multicols}{2}
     \begin{itemize}
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda^A)^2\): 
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow (\lambda_2)^2\): 
         \(R(2,0,0) = \binom{2+0}{0} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda^A \lambda^o\): 
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow \lambda_2 \lambda_1\): 
         \(R(1,1,0) = \binom{1+1-1}{1} = 1\)
-        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda^A \mu\): 
+        \item (\ref{eq:00_rate_1131}) \( \Rightarrow 2 \lambda_2 \mu\): 
         \(R(1,0,1) = \binom{1+1}{1} = 2\)
         \item (\ref{eq:00_rate_1131}) \( \Rightarrow \mu^2\): \(R(0,0,2) = 1\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda^A)^2 \lambda^o\): 
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 2(\lambda_2)^2 \lambda_1\): 
         \(R(2,1,0) = \binom{2+1-1}{1} = 2\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda^A)^2 \mu\): 
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3(\lambda_2)^2 \mu\): 
         \(R(2,0,1) = \binom{2+1}{1} = 3\)
-        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda^A \mu^2\): 
+        \item (\ref{eq:00_rate_1141}) \( \Rightarrow 3 \lambda_2 \mu^2\): 
         \(R(1,0,2) = \binom{1+2}{2} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^3 \lambda^o\): 
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda_2)^3 \lambda_1\): 
         \(R(3,1,0) = \binom{3+1-1}{1} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda^A)^2 (\lambda^o)^2 \): 
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 3 (\lambda_2)^2 (\lambda_1)^2 \): 
         \(R(2,2,0) = \binom{3}{2} = 3\)
-        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \mu ^ 2\): 
+        \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda_2)^2 \mu ^ 2\): 
         \(R(2,0,2) = \binom{2+2}{2} = 6\)
     \end{itemize}
 \end{multicols}
 
 \begin{itemize}
-    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda^A)^2 \lambda^o \mu\): 
+    \item (\ref{eq:00_rate_1151}) \( \Rightarrow 6 (\lambda_2)^2 \lambda_1 \mu\): 
     \(R(2,1,1) = \binom{2+1+1}{2} + 1\binom{2+1}{1+1} - \binom{2+1}{1} = 6 + 3 - 3 = 6\)
-    \item \small{(e.g)} \( \Rightarrow (\lambda^A)^2 (\lambda^o)^2 \mu\): 
+    \item \small{(e.g)} \( \Rightarrow (\lambda_2)^2 (\lambda_1)^2 \mu\): 
     \(R(2,2,1) = \binom{2+2+1}{2} - \binom{2+2-1}{2-1} + \sum_{i=2}^{2+2-2} 
     i\binom{i-1}{2-1} = 10 - 3 + (2 \times 1) = 9\)
 \end{itemize}
@@ -603,8 +602,8 @@ Consider the expression of \(\tilde{\pi}_{(0,0)}\) associated with this Markov
 model:
 
 \begin{equation}\label{eq:pi_00_rate_example}
-    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda^A)^2 + \lambda^A \lambda^o 
-    + 2\lambda^A \mu + \mu^2] 
+    \tilde{\pi}_{(0,0)} = \mu^4[(\lambda_2)^2 + \lambda_2 \lambda_1 
+    + 2\lambda_2 \mu + \mu^2] 
 \end{equation}
 
 It can be seen that there is a \(\mu^4\) term that is a common factor of all the
@@ -742,18 +741,18 @@ corresponding spanning trees from the above figure and the invalid permutations
 A general formula for finding all such permutations can be found, where the 
 inputs are \( p_1\), \(p_2\) and \(p_3\) that correspond to the number of \(D\),
 \(R\) and \(L\) respectively and the output would be the coefficient of the term 
-\((\lambda^A)^{p_1} (\lambda^o)^{p_2} \mu^{p_3}\). 
+\((\lambda_2)^{p_1} (\lambda_1)^{p_2} \mu^{p_3}\). 
 For instance, by applying such a formula to the example in equation 
 \ref{eq:pi_00_rate_example}, the desired output should be:
 
 \begin{itemize}
-    \item \((\lambda^A)^2 \hspace{0.95cm} \rightarrow \hspace{1cm} 
+    \item \((\lambda_2)^2 \hspace{0.95cm} \rightarrow \hspace{1cm} 
     p_1 = 2, p_2=0, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} 
     \text{coefficient } = 1\)
-    \item \(\lambda^A \lambda^o \hspace{1cm} \rightarrow \hspace{1cm} 
+    \item \(\lambda_2 \lambda_1 \hspace{1cm} \rightarrow \hspace{1cm} 
     p_1 = 1, p_2=1, p_3=0 \hspace{1cm} \rightarrow \hspace{1cm} 
     \text{coefficient } = 1\)
-    \item \(2 \lambda^A \mu \hspace{1cm} \rightarrow \hspace{1cm}
+    \item \(2 \lambda_2 \mu \hspace{1cm} \rightarrow \hspace{1cm}
      p_1 = 1, p_2=0, p_3=1 \hspace{1cm} \rightarrow \hspace{1cm} 
      \text{coefficient } = 2\)
     \item \(\mu^2 \hspace{1.45cm} \rightarrow \hspace{1cm} 
@@ -761,8 +760,8 @@ For instance, by applying such a formula to the example in equation
     \text{coefficient } = 1\)
 \end{itemize}
 
-Thus, given all possible and valid combinations of powers among \(\lambda^A, 
-\lambda^o \text{ and } \mu\) (i.e. \(p_1,p_2,p_3\)) generated by equation 
+Thus, given all possible and valid combinations of powers among \(\lambda_2, 
+\lambda_1 \text{ and } \mu\) (i.e. \(p_1,p_2,p_3\)) generated by equation 
 \ref{eq:columns-conjecture-general}, an alternative and improved form of the 
 value of \(R(p_1, p_2, p_3)\) described in equation \ref{eq:coefficient-function} 
 is given by:
@@ -820,7 +819,7 @@ Thus, the term \(E_{RL}\) is a particular set of permutations that the formula o
 \end{equation*}
 
 \subsubsection{Example of the permutation algorithm}
-Consider the term \((\lambda^A) (\lambda^o) \mu^2\) and the above expressions.
+Consider the term \((\lambda_2) (\lambda_1) \mu^2\) and the above expressions.
 In order to get the coefficient of that term the permutation algorithm needs to 
 be applied with an input of \(p_1=1, p_2=1, p_3=2\), i.e. 1 \(D\), 1 \(R\) and 2 
 \(L\)s in the array.

@@ -5,7 +5,8 @@ def reset_L_and_R_in_array(edges, lefts):
     """
     Take an array and re-sorts the values in such a way such that:
     - All "D" values remain in the exact same position
-    - In the remaining spaces, "L" and "R" are sorted starting from the left with all "L"
+    - In the remaining spaces, "L" and "R" are sorted starting from the left with
+    all "L"
 
     Example
     -----------
@@ -25,13 +26,17 @@ def reset_L_and_R_in_array(edges, lefts):
 
 
 def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
-    """Finds the next permutation of an array (edges) by permuting a specific element of the array (direction) over another specified element of the array (permute_over).
+    """Finds the next permutation of an array (edges) by permuting a specific
+    element of the array (direction) over another specified element of the array
+    (permute_over).
     [X, X, Y, Y]->[X, Y, X, Y]->[X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
 
     This function is used in the following cases:
         - If the array consists only of elements "L" and "D" (direction="L"):
-            - The rightmost "L" value will be replaced with the "D" value that is exactly after it.
-            - If there is no "D" after the last "L" (meaning "L" is already in the last position):
+            - The rightmost "L" value will be replaced with the "D" value that is
+            exactly after it.
+            - If there is no "D" after the last "L" (meaning "L" is already in the
+            last position):
                 1. Turn all consecutive rightmost "L" into "D"
                 2. Find an "L" value with a "D" in the next position.
                 3. Replace that "L" with "D"
@@ -44,7 +49,8 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
             - Treats all "L" and "R" values as the same element
             - Performs the same operations as above with (L+R vs D)
 
-        - If the array consists only of elements "L" and "R" (direction="L", permute_over="R"):
+        - If the array consists only of elements "L" and "R"
+        (direction="L", permute_over="R"):
             - Performs the same operations as above with (L vs R)
 
     Example 1 (direction = "L")
@@ -106,7 +112,9 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
 
 
 def find_next_permutation_over_L_and_R(edges):
-    """This function deals with permutations of "L" and "R" while not changing positions to any other element. In essence, it only changes the positions of "L" and "R" elements in an orderly manner.
+    """This function deals with permutations of "L" and "R" while not changing
+    positions to any other element. In essence, it only changes the positions of
+    "L" and "R" elements in an orderly manner.
 
     Example
     ----------
@@ -131,12 +139,14 @@ def find_next_permutation_over_L_and_R(edges):
 
 
 def generate_next_permutation_of_edges(edges, downs, lefts, rights):
-    """Given an array of with elements "L", "R" and "D" finds the next permutation of the elements in an orderly manner such that all possible combinations considered at the end.
+    """Given an array of with elements "L", "R" and "D" finds the next permutation
+    of the elements in an orderly manner such that all possible combinations
+    considered at the end.
 
     Parameters
     ----------
     edges : array
-        The current permutatioin of the edges
+        The current permutation of the edges
     downs : int
         Number of down-edges that exist in the array
     lefts : int
@@ -188,14 +198,16 @@ def generate_next_permutation_of_edges(edges, downs, lefts, rights):
     return edges
 
 
-def check_permutation_is_valid(edges, parking_capacity):
+def check_permutation_is_valid(edges, buffer_capacity):
     """Check that the given array is a valid spanning tree of the graph.
     Specifically, a given array is not a valid spanning tree if:
-        - Any element that corresponds to a node of the final column is "R" (nodes of last column cannot have a right edge)
-        - If there exist an "L" value exaclty after an "R" value (would make a cycle between two nodes)"""
+        - Any element that corresponds to a node of the final column is "R"
+        (nodes of last column cannot have a right edge)
+        - If there exist an "L" value exactly after an "R" value
+        (would make a cycle between two nodes)"""
 
-    start = (len(edges) / parking_capacity) - 1
-    for pos in np.linspace(start, len(edges) - 1, parking_capacity, dtype=int):
+    start = (len(edges) / buffer_capacity) - 1
+    for pos in np.linspace(start, len(edges) - 1, buffer_capacity, dtype=int):
         if edges[pos] == "R":
             return False
 
@@ -207,43 +219,48 @@ def check_permutation_is_valid(edges, parking_capacity):
 
 
 def get_rate_of_state_00_graphically(
-    lambda_a, lambda_o, mu, num_of_servers, threshold, system_capacity, parking_capacity
+    lambda_2, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
-    """Calculates the unnormalised rate of state (0,0) using the same permutation
+    """Calculates the unnormalized rate of state (0,0) using the same permutation
     algorithm used in function generate_code_for_tikz_spanning_trees_rooted_at_00().
-    The function considers the markov chain with the given paramaters and performs
+    The function considers the Markov chain with the given parameters and performs
     the following steps:
-        - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
-            - Initialise an array with the corresponding values i.e. ["L","L","R","R","R","D","D"]
+        - FOR a specific combination of edges
+        (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
+            - Initialise an array with the corresponding values
+            i.e. ["L","L","R","R","R","D","D"]
             - WHILE more trees exist with these specific values:
-                - if the array can be translated into a valid spanning tree (no cycles):
+                - if the array can be translated into a valid spanning tree
+                (no cycles):
                     - +1 to the number of spanning trees
-                - Generate the next permutation i.e. ["L","L","R","R","R","D","D"] -> ["L","R","L","R","R","D","D"]
+                - Generate the next permutation
+                i.e. ["L","L","R","R","R","D","D"] -> ["L","R","L","R","R","D","D"]
                 - if no more permutations can be generated exit the while loop
-                - Add to the total P00_rate the term with the number of all possible spannign
-                    trees multiplied by lambda_a raised to the power of the down edges, multiplied
-                    by lambda_o raised to the power of the right edges, multiplied by mu raised
-                    to the power of the left edges:
+                - Add to the total P00_rate the term with the number of all
+                possible spanning
+                    trees multiplied by lambda_2 raised to the power of the down
+                    edges, multiplied by lambda_1 raised to the power of the right
+                    edges, multiplied by mu raised to the power of the left edges:
                     e.g num_of_spanning_trees * (λ_α^2) * (λ_ο^3) * (μ^2)
             - Move to next combination of edges until all combinations are considered
         - Add to P00_rate the term: μ^(N-T)
-        - Muliplry P00_rate by the term: μ^(N*M)
+        - Multiply P00_rate by the term: μ^(N*M)
 
     TODO: fix function for case of num_of_servers > 1
 
     Parameters
     ----------
-    lambda_a : float
-    lambda_o : float
+    lambda_2 : float
+    lambda_1 : float
     mu : float
     num_of_servers : int
     threshold : int
     system_capacity : int
-    parking_capacity : int
+    buffer_capacity : int
 
     Returns
     -------
-        The unnormalised rate of state (0,0) (P_00)
+        The unnormalized rate of state (0,0) (P_00)
     """
 
     if num_of_servers != 1:
@@ -251,23 +268,23 @@ def get_rate_of_state_00_graphically(
 
     P00_rate = 0
     for down_edges in np.linspace(
-        parking_capacity * (system_capacity - threshold),
+        buffer_capacity * (system_capacity - threshold),
         1,
-        parking_capacity * (system_capacity - threshold),
+        buffer_capacity * (system_capacity - threshold),
         dtype=int,
     ):
         for right_edges in range(
-            parking_capacity * (system_capacity - threshold) - down_edges + 1
+            buffer_capacity * (system_capacity - threshold) - down_edges + 1
         ):
             spanning_tree_counter = 0
             edges_index = [
                 "D"
-                if (i >= parking_capacity * (system_capacity - threshold) - down_edges)
+                if (i >= buffer_capacity * (system_capacity - threshold) - down_edges)
                 else "N"
-                for i in range(parking_capacity * (system_capacity - threshold))
+                for i in range(buffer_capacity * (system_capacity - threshold))
             ]
             left_edges = (
-                parking_capacity * (system_capacity - threshold)
+                buffer_capacity * (system_capacity - threshold)
                 - down_edges
                 - right_edges
             )
@@ -280,7 +297,9 @@ def get_rate_of_state_00_graphically(
 
             more_trees_exist = True
             while more_trees_exist:
-                is_valid = check_permutation_is_valid(edges_index, parking_capacity)
+                is_valid = check_permutation_is_valid(
+                    edges=edges_index, buffer_capacity=buffer_capacity
+                )
                 if is_valid:
                     spanning_tree_counter += 1
                 edges_index = generate_next_permutation_of_edges(
@@ -294,20 +313,21 @@ def get_rate_of_state_00_graphically(
 
             P00_rate += (
                 spanning_tree_counter
-                * lambda_a ** down_edges
-                * lambda_o ** right_edges
+                * lambda_2 ** down_edges
+                * lambda_1 ** right_edges
                 * mu ** left_edges
             )
 
     P00_rate += mu ** (system_capacity - threshold)
-    P00_rate *= mu ** (system_capacity * parking_capacity)
+    P00_rate *= mu ** (system_capacity * buffer_capacity)
 
     return P00_rate
 
 
 def get_all_permutations(D, R, L):
-    """Given some number of "D"s, some number of "R"s and some number of "L"s, this function gets the
-    total number of permutations of an array that consists of these "D","R" and "L".
+    """Given some number of "D"s, some number of "R"s and some number of "L"s,
+    this function gets the total number of permutations of an array that consists
+    of these "D","R" and "L".
 
     This can be calculated by: (D+R+L)! / (D! * R! * L!)
 
@@ -331,8 +351,9 @@ def get_all_permutations(D, R, L):
 
 
 def get_permutations_ending_in_R(D, R, L):
-    """Given some number of "D"s, some number of "R"s and some number of "L"s, this function gets the
-    total number of permutations of an array that consists of these "D","R" and "L" and ends in "R".
+    """Given some number of "D"s, some number of "R"s and some number of "L"s,
+    this function gets the total number of permutations of an array that consists
+    of these "D","R" and "L" and ends in "R".
 
     This can be calculated by: (D+R+L)! / (D! * (R-1)! * L!)
 
@@ -359,9 +380,10 @@ def get_permutations_ending_in_R(D, R, L):
 
 
 def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
-    """Given some number of "D"s, some number of "R"s and some number of "L"s, this function gets the
-    total number of permutations of an array that consists of these "D","R" and "L", ends in "D" and
-    has at least one "R" followed by an "L" somewhere.
+    """Given some number of "D"s, some number of "R"s and some number of "L"s,
+    this function gets the total number of permutations of an array that consists
+    of these "D","R" and "L", ends in "D" and has at least one "R" followed by an
+    "L" somewhere.
 
     This can be calculated by:
         Σ_(i=1)^(min(R,L)) (-1)^(i+1) [(D+R+L-i-1)! / ((D-1)! * (R-i)! * (L-i)! * (i)!)]
@@ -378,7 +400,8 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
     Returns
     -------
     int
-        total number of permutations ending in "D" with at least one "R" followed by an "L"
+        total number of permutations ending in "D" with at least one "R" followed
+        by an "L"
     """
     max_RL = min(R, L)
     if max_RL > 0:
@@ -402,9 +425,10 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
 
 
 def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
-    """Given some number of "D"s, some number of "R"s and some number of "L"s, this function gets the
-    total number of permutations of an array that consists of these "D","R" and "L", ends in "L" and
-    has at least one "R" followed by an "L" somewhere.
+    """Given some number of "D"s, some number of "R"s and some number of "L"s,
+    this function gets the total number of permutations of an array that consists
+    of these "D","R" and "L", ends in "L" and has at least one "R" followed by an
+    "L" somewhere.
 
     This can be calculated by:
         Σ_(i=1)^(min(R,L-1)) (-1)^(i+1) [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i-1)! * (i)!)]
@@ -421,7 +445,8 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
     Returns
     -------
     int
-        total number of permutations ending in "L" with at least one "R" followed by an "L" (excluding final "L")
+        total number of permutations ending in "L" with at least one "R" followed
+        by an "L" (excluding final "L")
     """
     max_RL = min(R, L - 1)
     if max_RL > 0:
@@ -445,9 +470,10 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
 
 
 def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
-    """Given some number of "D"s, some number of "R"s and some number of "L"s, this function gets the
-    total number of permutations of an array that consists of these "D","R" and "L" ends in ["R","L"] and
-    has no "R"'s followed by an "L" anywhere else.
+    """Given some number of "D"s, some number of "R"s and some number of "L"s,
+    this function gets the total number of permutations of an array that consists
+    of these "D","R" and "L" ends in ["R","L"] and has no "R"'s followed by an
+    "L" anywhere else.
 
     This can be calculated by:
         Σ_(i=1)^(min(R,L)) (-1)^(i+1) [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i)! * (i-1)!)]
@@ -464,7 +490,8 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
     Returns
     -------
     int
-        total number of permutations ending in ["R", "L"] with no "R" followed by an "L" anywhere else
+        total number of permutations ending in ["R", "L"] with no "R" followed by
+        an "L" anywhere else
     """
     max_RL = min(R, L)
     if max_RL > 0:
@@ -489,10 +516,11 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
 
 
 def get_coefficient(D, R, L):
-    """Get the coefficient of the term (lambda_a ^ D) * (lambda_o ^ R) * (mu ^ L) by using only the values
-    of D, R and L. The function finds all valid spanning trees by permuting around the number of D's, R's
-    and L's. The function finds all permutations where there is no "R" at the end and there is no "R"
-    followed by an "L" anywhere. This is done in the following way:
+    """Get the coefficient of the term (lambda_2 ^ D) * (lambda_1 ^ R) * (mu ^ L)
+    by using only the values of D, R and L. The function finds all valid spanning
+    trees by permuting around the number of D's, R's and L's. The function finds
+    all permutations where there is no "R" at the end and there is no "R" followed
+    by an "L" anywhere. This is done in the following way:
     - Find the total number of permutations
     - Subtract the permutations ending in "R"
     - Subtract the permutations that end in "D" AND have an "RL" somewhere
@@ -511,7 +539,7 @@ def get_coefficient(D, R, L):
     Returns
     -------
     int
-        The coefficient of the term: (lambda_a ^ D) * (lambda_o ^ R) * (mu ^ L)
+        The coefficient of the term: (lambda_2 ^ D) * (lambda_1 ^ R) * (mu ^ L)
     """
     all_permutations = get_all_permutations(D, R, L)
     permutations_ending_in_R = get_permutations_ending_in_R(D, R, L)

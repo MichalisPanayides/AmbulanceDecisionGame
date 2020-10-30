@@ -1,7 +1,7 @@
 \section{Proper Methodology}
 The problem is formulated as a normal form game where the players are the two hospitals. 
-Each hospital is given \( C_A \) and \( C_B \) number of strategies where \( C_A \) 
-and \( C_B \) are the total capacities of the hospitals. 
+Each hospital is given \( N_A \) and \( N_B \) number of strategies where \( N_A \) 
+and \( N_B \) are the total capacities of the hospitals. 
 In other words, depending on the capacity of each hospital, they may choose to stop 
 receiving patients from arriving ambulances whenever they reach a certain capacity 
 threshold. 
@@ -47,8 +47,8 @@ maximise:
 \end{align}
 
 Finally, the problem can be expressed as a normal form game with two players where 
-each player/hospital has \( C_A \) and \( C_B \) strategies respectively. 
-The two \( C_A \times C_B \) payoff matrices for the utilities of the two hospitals 
+each player/hospital has \( N_A \) and \( N_B \) strategies respectively. 
+The two \( N_A \times N_B \) payoff matrices for the utilities of the two hospitals 
 can be defined as:
 
 \begin{table}[h]
@@ -94,10 +94,10 @@ The model will be run multiple times for various values of these parameters.
     \centering
     \begin{tabular}{|l|l|}
         \hline
-        \( \Lambda \) & Number of patients that need to be distributed \\ \hline
-        \( \lambda_i^o \) & Arrival rate of other patients that enter hospital i \\ \hline
+        \( \Lambda_2 \) & Number of patients that need to be distributed \\ \hline
+        \( \lambda_{1,i} \) & Arrival rate of other patients that enter hospital i \\ \hline
         \( \mu_i \) & Service rate of hospital i \\ \hline
-        \( C_i \) & Total capacity of hospital i \\ \hline
+        \( N_i \) & Total capacity of hospital i \\ \hline
     \end{tabular}
     \caption{Fixed Parameters}
 \end{table}

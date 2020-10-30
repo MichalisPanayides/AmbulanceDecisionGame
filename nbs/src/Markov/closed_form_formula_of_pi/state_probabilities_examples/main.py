@@ -4,12 +4,12 @@ import sympy as sym
 from sympy.abc import a, b, c, d, e, f, g, h, i, j
 
 
-def get_symbolic_pi(num_of_servers, threshold, system_capacity, parking_capacity):
+def get_symbolic_pi(num_of_servers, threshold, system_capacity, buffer_capacity):
     Q_sym = abg.markov.get_symbolic_transition_matrix(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     dimension = Q_sym.shape[0]
     if dimension > 7:
@@ -25,18 +25,18 @@ def get_symbolic_state_probabilities_1222():
     num_of_servers = 1
     threshold = 2
     system_capacity = 2
-    parking_capacity = 2
+    buffer_capacity = 2
 
     sym_pi_1222 = get_symbolic_pi(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     all_states_1222 = abg.markov.build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     sym_state_probs_1222 = [0 for _ in range(len(all_states_1222))]
@@ -47,7 +47,7 @@ def get_symbolic_state_probabilities_1222():
     sym_state_probs_1222[4] = sym.factor(sym_pi_1222[e])  # (1,2)
 
     sym_state_recursive_ratios_1222 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1222[0, 0] = 1
     sym_state_recursive_ratios_1222[0, 1] = sym.factor(
@@ -70,18 +70,18 @@ def get_symbolic_state_probabilities_1121():
     num_of_servers = 1
     threshold = 1
     system_capacity = 2
-    parking_capacity = 1
+    buffer_capacity = 1
 
     all_states_1121 = abg.markov.build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     sym_pi_1121 = get_symbolic_pi(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     sym_state_probs_1121 = [0 for _ in range(len(all_states_1121))]
 
@@ -92,7 +92,7 @@ def get_symbolic_state_probabilities_1121():
     sym_state_probs_1121[4] = sym.factor(sym_pi_1121[e])  # (1,2)
 
     sym_state_recursive_ratios_1121 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1121[0, 0] = 1
     sym_state_recursive_ratios_1121[0, 1] = sym.factor(
@@ -114,7 +114,7 @@ def get_symbolic_state_probabilities_1121():
     )  # (1,1) -> (1,2)
 
     sym_state_recursive_ratios_P0_1121 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1121[0, 0] = 1
     sym_state_recursive_ratios_P0_1121[0, 1] = sym.factor(
@@ -142,65 +142,65 @@ def get_symbolic_state_probabilities_1122():
     # num_of_servers = 1
     threshold = 1
     system_capacity = 2
-    parking_capacity = 2
+    buffer_capacity = 2
 
     all_states_1122 = abg.markov.build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     sym_state_probs_1122 = [0 for _ in range(len(all_states_1122))]
 
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda^o")
-    sym_lambda_a = sym.symbols("lambda^A")
+    sym_lambda_1 = sym.symbols("lambda_1")
+    sym_lambda_2 = sym.symbols("lambda_2")
     sym_mu = sym.symbols("mu")
 
     sym_state_probs_1122[0] = (
         (sym_mu ** 6)
-        + 2 * (sym_lambda_a) * (sym_mu ** 5)
-        + (sym_lambda_a ** 2) * (sym_mu ** 4)
+        + 2 * (sym_lambda_2) * (sym_mu ** 5)
+        + (sym_lambda_2 ** 2) * (sym_mu ** 4)
     )  # (0,0)
     sym_state_probs_1122[1] = (sym_Lambda * sym_mu ** 3) * (
-        sym_mu ** 2 + 2 * sym_mu * sym_lambda_a + sym_lambda_a ** 2
+        sym_mu ** 2 + 2 * sym_mu * sym_lambda_2 + sym_lambda_2 ** 2
     )  # (0,1)
-    sym_state_probs_1122[2] = (sym_Lambda * sym_lambda_a * sym_mu ** 2) * (
-        sym_lambda_a ** 2
-        + sym_lambda_a * sym_lambda_o
-        + sym_lambda_o * sym_mu
+    sym_state_probs_1122[2] = (sym_Lambda * sym_lambda_2 * sym_mu ** 2) * (
+        sym_lambda_2 ** 2
+        + sym_lambda_2 * sym_lambda_1
+        + sym_lambda_1 * sym_mu
         + sym_mu ** 2
-        + 2 * sym_lambda_a * sym_mu
+        + 2 * sym_lambda_2 * sym_mu
     )  # (1,1)
-    sym_state_probs_1122[3] = (sym_Lambda * sym_lambda_a ** 2 * sym_mu) * (
-        sym_lambda_a ** 2
-        + 2 * sym_lambda_o * sym_lambda_a
-        + 3 * sym_lambda_o * sym_mu
+    sym_state_probs_1122[3] = (sym_Lambda * sym_lambda_2 ** 2 * sym_mu) * (
+        sym_lambda_2 ** 2
+        + 2 * sym_lambda_1 * sym_lambda_2
+        + 3 * sym_lambda_1 * sym_mu
         + sym_mu ** 2
-        + 2 * sym_lambda_a * sym_mu
-        + sym_lambda_o ** 2
+        + 2 * sym_lambda_2 * sym_mu
+        + sym_lambda_1 ** 2
     )  # (2,1)
-    sym_state_probs_1122[4] = (sym_Lambda * sym_lambda_o * sym_mu ** 3) * (
-        sym_lambda_a + sym_mu
+    sym_state_probs_1122[4] = (sym_Lambda * sym_lambda_1 * sym_mu ** 3) * (
+        sym_lambda_2 + sym_mu
     )  # (0,2)
     sym_state_probs_1122[5] = (
-        sym_Lambda * sym_lambda_o * sym_lambda_a * sym_mu ** 2
+        sym_Lambda * sym_lambda_1 * sym_lambda_2 * sym_mu ** 2
     ) * (
-        2 * sym_mu + sym_lambda_o + sym_lambda_a
+        2 * sym_mu + sym_lambda_1 + sym_lambda_2
     )  # (1,2)
-    sym_state_probs_1122[6] = (sym_Lambda * sym_lambda_o * sym_lambda_a ** 2) * (
-        sym_lambda_o ** 2
-        + 4 * sym_lambda_o * sym_mu
-        + 2 * sym_lambda_o * sym_lambda_a
+    sym_state_probs_1122[6] = (sym_Lambda * sym_lambda_1 * sym_lambda_2 ** 2) * (
+        sym_lambda_1 ** 2
+        + 4 * sym_lambda_1 * sym_mu
+        + 2 * sym_lambda_1 * sym_lambda_2
         + 3 * sym_mu ** 2
-        + sym_lambda_a ** 2
-        + 3 * sym_lambda_a * sym_mu
+        + sym_lambda_2 ** 2
+        + 3 * sym_lambda_2 * sym_mu
     )  # (2,2)
 
     total_1122 = np.sum(sym_state_probs_1122)
     sym_state_probs_1122 = [i / total_1122 for i in sym_state_probs_1122]
 
     sym_state_recursive_ratios_1122 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1122[0, 0] = 1
     sym_state_recursive_ratios_1122[0, 1] = sym.factor(
@@ -232,7 +232,7 @@ def get_symbolic_state_probabilities_1122():
     )  # (2,1) -> (2,2)
 
     sym_state_recursive_ratios_P0_1122 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1122[0, 0] = 1
     sym_state_recursive_ratios_P0_1122[0, 1] = sym.factor(
@@ -267,10 +267,10 @@ def get_symbolic_state_probabilities_1123():
     num_of_servers = 1
     threshold = 1
     system_capacity = 2
-    parking_capacity = 3
+    buffer_capacity = 3
 
     Q_sym_1123 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     p00, p01, p11, p21, p31, p02, p12, p22, p32 = sym.symbols(
@@ -312,7 +312,7 @@ def get_symbolic_state_probabilities_1123():
     )
 
     sym_state_recursive_ratios_1123 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1123[0, 0] = 1
     sym_state_recursive_ratios_1123[0, 1] = sym.factor(
@@ -352,7 +352,7 @@ def get_symbolic_state_probabilities_1123():
     )  # (2,2) -> (3,2)
 
     sym_state_recursive_ratios_P0_1123 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1123[0, 0] = 1
     sym_state_recursive_ratios_P0_1123[0, 1] = sym.factor(
@@ -392,51 +392,51 @@ def get_symbolic_state_probabilities_1341():
     # num_of_servers = 1
     threshold = 3
     system_capacity = 4
-    parking_capacity = 1
+    buffer_capacity = 1
 
     all_states_1341 = abg.markov.build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     sym_state_probs_1341 = [0 for _ in range(len(all_states_1341))]
 
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda^o")
-    sym_lambda_a = sym.symbols("lambda^A")
+    sym_lambda_1 = sym.symbols("lambda_1")
+    sym_lambda_2 = sym.symbols("lambda_2")
     sym_mu = sym.symbols("mu")
 
-    sym_state_probs_1341[0] = (sym_lambda_a) * (sym_mu ** 5) + (sym_mu ** 6)  # (0,0)
-    sym_state_probs_1341[1] = sym_Lambda * sym_lambda_a * (sym_mu ** 4) + sym_Lambda * (
+    sym_state_probs_1341[0] = (sym_lambda_2) * (sym_mu ** 5) + (sym_mu ** 6)  # (0,0)
+    sym_state_probs_1341[1] = sym_Lambda * sym_lambda_2 * (sym_mu ** 4) + sym_Lambda * (
         sym_mu ** 5
     )  # (0,1)
-    sym_state_probs_1341[2] = (sym_Lambda ** 2) * sym_lambda_a * (sym_mu ** 3) + (
+    sym_state_probs_1341[2] = (sym_Lambda ** 2) * sym_lambda_2 * (sym_mu ** 3) + (
         sym_Lambda ** 2
     ) * (
         sym_mu ** 4
     )  # (0,2)
-    sym_state_probs_1341[3] = (sym_Lambda ** 3) * sym_lambda_a * (sym_mu ** 2) + (
+    sym_state_probs_1341[3] = (sym_Lambda ** 3) * sym_lambda_2 * (sym_mu ** 2) + (
         sym_Lambda ** 3
     ) * (
         sym_mu ** 3
     )  # (0,3)
     sym_state_probs_1341[4] = (
-        (sym_Lambda ** 3) * sym_lambda_o * sym_lambda_a * sym_mu
-        + (sym_Lambda ** 3) * sym_lambda_a * (sym_mu ** 2)
-        + (sym_Lambda ** 3) * sym_lambda_a * sym_lambda_a * sym_mu
+        (sym_Lambda ** 3) * sym_lambda_1 * sym_lambda_2 * sym_mu
+        + (sym_Lambda ** 3) * sym_lambda_2 * (sym_mu ** 2)
+        + (sym_Lambda ** 3) * sym_lambda_2 * sym_lambda_2 * sym_mu
     )  # (1,3)
-    sym_state_probs_1341[5] = (sym_Lambda ** 3) * sym_lambda_o * (sym_mu ** 2)  # (0,4)
+    sym_state_probs_1341[5] = (sym_Lambda ** 3) * sym_lambda_1 * (sym_mu ** 2)  # (0,4)
     sym_state_probs_1341[6] = (
-        (sym_Lambda ** 3) * (sym_lambda_o ** 2) * sym_lambda_a
-        + (sym_Lambda ** 3) * sym_lambda_o * (sym_lambda_a ** 2)
-        + 2 * (sym_Lambda ** 3) * sym_lambda_o * sym_lambda_a * sym_mu
+        (sym_Lambda ** 3) * (sym_lambda_1 ** 2) * sym_lambda_2
+        + (sym_Lambda ** 3) * sym_lambda_1 * (sym_lambda_2 ** 2)
+        + 2 * (sym_Lambda ** 3) * sym_lambda_1 * sym_lambda_2 * sym_mu
     )  # (1,4)
 
     total_1341 = np.sum(sym_state_probs_1341)
     sym_state_probs_1341 = [i / total_1341 for i in sym_state_probs_1341]
 
     sym_state_recursive_ratios_1341 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1341[0, 0] = 1
     sym_state_recursive_ratios_1341[0, 1] = sym.factor(
@@ -465,7 +465,7 @@ def get_symbolic_state_probabilities_1341():
     )  # (1,3) -> (1,4)
 
     sym_state_recursive_ratios_P0_1341 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1341[0, 0] = 1
     sym_state_recursive_ratios_P0_1341[0, 1] = sym.factor(
@@ -500,89 +500,89 @@ def get_symbolic_state_probabilities_1131():
     # num_of_servers = 1
     threshold = 1
     system_capacity = 3
-    parking_capacity = 1
+    buffer_capacity = 1
 
     all_states_1131 = abg.markov.build_states(
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
     sym_state_probs_1131 = [0 for _ in range(len(all_states_1131))]
 
     sym_Lambda = sym.symbols("Lambda")
-    sym_lambda_o = sym.symbols("lambda^o")
-    sym_lambda_a = sym.symbols("lambda^A")
+    sym_lambda_1 = sym.symbols("lambda_1")
+    sym_lambda_2 = sym.symbols("lambda_2")
     sym_mu = sym.symbols("mu")
 
     # (0,0)
     sym_state_probs_1131[0] = (
         (sym_mu ** 6)
-        + 2 * (sym_lambda_a * (sym_mu ** 5))
-        + ((sym_lambda_a ** 2) * (sym_mu ** 4))
-        + (sym_lambda_o * sym_lambda_a * (sym_mu ** 4))
+        + 2 * (sym_lambda_2 * (sym_mu ** 5))
+        + ((sym_lambda_2 ** 2) * (sym_mu ** 4))
+        + (sym_lambda_1 * sym_lambda_2 * (sym_mu ** 4))
     )
     # (0,1)
     sym_state_probs_1131[1] = sym_state_probs_1131[0] * sym_Lambda / sym_mu
     # (1,1)
     sym_state_probs_1131[2] = (
-        (sym_Lambda * (sym_lambda_o ** 2) * sym_lambda_a * (sym_mu ** 2))
-        + (sym_Lambda * sym_lambda_a * sym_lambda_o * (sym_mu ** 3))
-        + 2 * (sym_Lambda * sym_lambda_o * (sym_lambda_a ** 2) * (sym_mu ** 2))
-        + 2 * (sym_Lambda * (sym_lambda_a ** 2) * (sym_mu ** 3))
-        + (sym_Lambda * (sym_lambda_a ** 3) * (sym_mu ** 2))
-        + (sym_Lambda * sym_lambda_a * (sym_mu ** 4))
+        (sym_Lambda * (sym_lambda_1 ** 2) * sym_lambda_2 * (sym_mu ** 2))
+        + (sym_Lambda * sym_lambda_2 * sym_lambda_1 * (sym_mu ** 3))
+        + 2 * (sym_Lambda * sym_lambda_1 * (sym_lambda_2 ** 2) * (sym_mu ** 2))
+        + 2 * (sym_Lambda * (sym_lambda_2 ** 2) * (sym_mu ** 3))
+        + (sym_Lambda * (sym_lambda_2 ** 3) * (sym_mu ** 2))
+        + (sym_Lambda * sym_lambda_2 * (sym_mu ** 4))
     )
     # (0,2)
     sym_state_probs_1131[3] = (
-        sym_Lambda * sym_lambda_o * sym_mu ** 3 * (sym_lambda_a + sym_mu)
+        sym_Lambda * sym_lambda_1 * sym_mu ** 3 * (sym_lambda_2 + sym_mu)
     )
     # (1,2)
-    sym_state_probs_1131[4] = (sym_Lambda * sym_lambda_a * sym_lambda_o * sym_mu) * (
-        (sym_lambda_a ** 2)
-        + 2 * sym_lambda_a * sym_lambda_o
-        + 3 * sym_lambda_a * sym_mu
-        + (sym_lambda_o ** 2)
-        + 2 * sym_lambda_o * sym_mu
+    sym_state_probs_1131[4] = (sym_Lambda * sym_lambda_2 * sym_lambda_1 * sym_mu) * (
+        (sym_lambda_2 ** 2)
+        + 2 * sym_lambda_2 * sym_lambda_1
+        + 3 * sym_lambda_2 * sym_mu
+        + (sym_lambda_1 ** 2)
+        + 2 * sym_lambda_1 * sym_mu
         + 2 * (sym_mu ** 2)
     )
     # (0,3)
-    sym_state_probs_1131[5] = sym_Lambda * (sym_lambda_o ** 2) * (sym_mu ** 3)
+    sym_state_probs_1131[5] = sym_Lambda * (sym_lambda_1 ** 2) * (sym_mu ** 3)
     # (1,3)
-    sym_state_probs_1131[6] = (sym_Lambda * sym_lambda_a * (sym_lambda_o ** 2)) * (
-        (sym_lambda_a ** 2)
-        + 2 * sym_lambda_a * sym_lambda_o
-        + 3 * sym_lambda_a * sym_mu
-        + (sym_lambda_o ** 2)
-        + 2 * sym_lambda_o * sym_mu
+    sym_state_probs_1131[6] = (sym_Lambda * sym_lambda_2 * (sym_lambda_1 ** 2)) * (
+        (sym_lambda_2 ** 2)
+        + 2 * sym_lambda_2 * sym_lambda_1
+        + 3 * sym_lambda_2 * sym_mu
+        + (sym_lambda_1 ** 2)
+        + 2 * sym_lambda_1 * sym_mu
         + 3 * (sym_mu ** 2)
     )
 
     denominator = (
-        sym_Lambda * sym_lambda_a ** 3 * sym_lambda_o ** 2
-        + sym_Lambda * sym_lambda_a ** 3 * sym_lambda_o * sym_mu
-        + sym_Lambda * sym_lambda_a ** 3 * sym_mu ** 2
-        + 2 * sym_Lambda * sym_lambda_a ** 2 * sym_lambda_o ** 3
-        + 5 * sym_Lambda * sym_lambda_a ** 2 * sym_lambda_o ** 2 * sym_mu
-        + 5 * sym_Lambda * sym_lambda_a ** 2 * sym_lambda_o * sym_mu ** 2
-        + 3 * sym_Lambda * sym_lambda_a ** 2 * sym_mu ** 3
-        + sym_Lambda * sym_lambda_a * sym_lambda_o ** 4
-        + 3 * sym_Lambda * sym_lambda_a * sym_lambda_o ** 3 * sym_mu
-        + 6 * sym_Lambda * sym_lambda_a * sym_lambda_o ** 2 * sym_mu ** 2
-        + 5 * sym_Lambda * sym_lambda_a * sym_lambda_o * sym_mu ** 3
-        + 3 * sym_Lambda * sym_lambda_a * sym_mu ** 4
-        + sym_Lambda * sym_lambda_o ** 2 * sym_mu ** 3
-        + sym_Lambda * sym_lambda_o * sym_mu ** 4
+        sym_Lambda * sym_lambda_2 ** 3 * sym_lambda_1 ** 2
+        + sym_Lambda * sym_lambda_2 ** 3 * sym_lambda_1 * sym_mu
+        + sym_Lambda * sym_lambda_2 ** 3 * sym_mu ** 2
+        + 2 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 ** 3
+        + 5 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 ** 2 * sym_mu
+        + 5 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 * sym_mu ** 2
+        + 3 * sym_Lambda * sym_lambda_2 ** 2 * sym_mu ** 3
+        + sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 4
+        + 3 * sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 3 * sym_mu
+        + 6 * sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 2 * sym_mu ** 2
+        + 5 * sym_Lambda * sym_lambda_2 * sym_lambda_1 * sym_mu ** 3
+        + 3 * sym_Lambda * sym_lambda_2 * sym_mu ** 4
+        + sym_Lambda * sym_lambda_1 ** 2 * sym_mu ** 3
+        + sym_Lambda * sym_lambda_1 * sym_mu ** 4
         + sym_Lambda * sym_mu ** 5
-        + sym_lambda_a ** 2 * sym_mu ** 4
-        + sym_lambda_a * sym_lambda_o * sym_mu ** 4
-        + 2 * sym_lambda_a * sym_mu ** 5
+        + sym_lambda_2 ** 2 * sym_mu ** 4
+        + sym_lambda_2 * sym_lambda_1 * sym_mu ** 4
+        + 2 * sym_lambda_2 * sym_mu ** 5
         + sym_mu ** 6
     )
 
     sym_state_probs_1131 = [i / denominator for i in sym_state_probs_1131]
 
     sym_state_recursive_ratios_1131 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1131[0, 0] = 1
     sym_state_recursive_ratios_1131[0, 1] = sym.factor(
@@ -613,7 +613,7 @@ def get_symbolic_state_probabilities_1131():
     )  # (1,2) -> (1,3)
 
     sym_state_recursive_ratios_P0_1131 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1131[0, 0] = 1
     sym_state_recursive_ratios_P0_1131[0, 1] = sym.factor(
@@ -647,10 +647,10 @@ def get_symbolic_state_probabilities_1132():
     num_of_servers = 1
     threshold = 1
     system_capacity = 3
-    parking_capacity = 2
+    buffer_capacity = 2
 
     Q_sym_1132 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     p00, p01, p11, p21, p02, p12, p22, p03, p13, p23 = sym.symbols(
@@ -694,7 +694,7 @@ def get_symbolic_state_probabilities_1132():
     )
 
     sym_state_recursive_ratios_1132 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1132[0, 0] = 1
     sym_state_recursive_ratios_1132[0, 1] = sym.factor(
@@ -740,7 +740,7 @@ def get_symbolic_state_probabilities_1132():
     )  # (2,2) -> (2,3)
 
     sym_state_recursive_ratios_P0_1132 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1132[0, 0] = 1
     sym_state_recursive_ratios_P0_1132[0, 1] = sym.factor(
@@ -783,10 +783,10 @@ def get_symbolic_state_probabilities_1141():
     num_of_servers = 1
     threshold = 1
     system_capacity = 4
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1141 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     p00, p01, p11, p02, p12, p03, p13, p04, p14 = sym.symbols(
@@ -828,7 +828,7 @@ def get_symbolic_state_probabilities_1141():
     )
 
     sym_state_recursive_ratios_1141 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1141[0, 0] = 1
     sym_state_recursive_ratios_1141[0, 1] = sym.factor(
@@ -868,7 +868,7 @@ def get_symbolic_state_probabilities_1141():
     )  # (1,3) -> (1,4)
 
     sym_state_recursive_ratios_P0_1141 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1141[0, 0] = 1
     sym_state_recursive_ratios_P0_1141[0, 1] = sym.factor(
@@ -908,13 +908,13 @@ def get_symbolic_state_probabilities_1142():
     num_of_servers = 1
     threshold = 1
     system_capacity = 4
-    parking_capacity = 2
+    buffer_capacity = 2
 
     Q_sym_1142 = abg.markov.get_symbolic_transition_matrix(
         num_of_servers=num_of_servers,
         threshold=threshold,
         system_capacity=system_capacity,
-        parking_capacity=parking_capacity,
+        buffer_capacity=buffer_capacity,
     )
 
     p00, p01, p11, p21, p02, p12, p22, p03, p13, p23, p04, p14, p24 = sym.symbols(
@@ -966,7 +966,7 @@ def get_symbolic_state_probabilities_1142():
     )
 
     sym_state_recursive_ratios_1142 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1142[0, 0] = 1
     sym_state_recursive_ratios_1142[0, 1] = sym.factor(
@@ -1027,7 +1027,7 @@ def get_symbolic_state_probabilities_1142():
     )  # (2,3) -> (2,4)
 
     sym_state_recursive_ratios_P0_1142 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1142[0, 0] = 1
     sym_state_recursive_ratios_P0_1142[0, 1] = sym.factor(
@@ -1082,10 +1082,10 @@ def get_symbolic_state_probabilities_1151():
     num_of_servers = 1
     threshold = 1
     system_capacity = 5
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1151 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15 = sym.symbols(
@@ -1131,7 +1131,7 @@ def get_symbolic_state_probabilities_1151():
     )
 
     sym_state_recursive_ratios_1151 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1151[0, 0] = 1
     sym_state_recursive_ratios_1151[0, 1] = sym.factor(
@@ -1180,7 +1180,7 @@ def get_symbolic_state_probabilities_1151():
     )  # (1,4) -> (1,5)
 
     sym_state_recursive_ratios_P0_1151 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1151[0, 0] = 1
     sym_state_recursive_ratios_P0_1151[0, 1] = sym.factor(
@@ -1226,10 +1226,10 @@ def get_symbolic_state_probabilities_1161():
     num_of_servers = 1
     threshold = 1
     system_capacity = 6
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1161 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     p00, p01, p11, p02, p12, p03, p13, p04, p14, p05, p15, p06, p16 = sym.symbols(
@@ -1281,7 +1281,7 @@ def get_symbolic_state_probabilities_1161():
     )
 
     sym_state_recursive_ratios_1161 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1161[0, 0] = 1
     sym_state_recursive_ratios_1161[0, 1] = sym.factor(
@@ -1339,7 +1339,7 @@ def get_symbolic_state_probabilities_1161():
     )  # (1,5) -> (1,6)
 
     sym_state_recursive_ratios_P0_1161 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1161[0, 0] = 1
     sym_state_recursive_ratios_P0_1161[0, 1] = sym.factor(
@@ -1391,10 +1391,10 @@ def get_symbolic_state_probabilities_1171():
     num_of_servers = 1
     threshold = 1
     system_capacity = 7
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1171 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     (
@@ -1466,7 +1466,7 @@ def get_symbolic_state_probabilities_1171():
     )
 
     sym_state_recursive_ratios_1171 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1171[0, 0] = 1
     sym_state_recursive_ratios_1171[0, 1] = sym.factor(
@@ -1533,7 +1533,7 @@ def get_symbolic_state_probabilities_1171():
     )  # (1,6) -> (1,7)
 
     sym_state_recursive_ratios_P0_1171 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1171[0, 0] = 1
     sym_state_recursive_ratios_P0_1171[0, 1] = sym.factor(
@@ -1591,10 +1591,10 @@ def get_symbolic_state_probabilities_1181():
     num_of_servers = 1
     threshold = 1
     system_capacity = 8
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1181 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     (
@@ -1708,7 +1708,7 @@ def get_symbolic_state_probabilities_1181():
     )
 
     sym_state_recursive_ratios_1181 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1181[0, 0] = 1
     sym_state_recursive_ratios_1181[0, 1] = sym.factor(
@@ -1784,7 +1784,7 @@ def get_symbolic_state_probabilities_1181():
     )  # (1,7) -> (1,8)
 
     sym_state_recursive_ratios_P0_1181 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1181[0, 0] = 1
     sym_state_recursive_ratios_P0_1181[0, 1] = sym.factor(
@@ -1848,10 +1848,10 @@ def get_symbolic_state_probabilities_1191():
     num_of_servers = 1
     threshold = 1
     system_capacity = 9
-    parking_capacity = 1
+    buffer_capacity = 1
 
     Q_sym_1191 = abg.markov.get_symbolic_transition_matrix(
-        num_of_servers, threshold, system_capacity, parking_capacity
+        num_of_servers, threshold, system_capacity, buffer_capacity
     )
 
     (
@@ -1975,7 +1975,7 @@ def get_symbolic_state_probabilities_1191():
     )
 
     sym_state_recursive_ratios_1191 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_1191[0, 0] = 1
     sym_state_recursive_ratios_1191[0, 1] = sym.factor(
@@ -2060,7 +2060,7 @@ def get_symbolic_state_probabilities_1191():
     )  # (1,8) -> (1,9)
 
     sym_state_recursive_ratios_P0_1191 = sym.zeros(
-        parking_capacity + 1, system_capacity + 1
+        buffer_capacity + 1, system_capacity + 1
     )
     sym_state_recursive_ratios_P0_1191[0, 0] = 1
     sym_state_recursive_ratios_P0_1191[0, 1] = sym.factor(

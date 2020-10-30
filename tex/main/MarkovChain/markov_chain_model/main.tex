@@ -1,18 +1,22 @@
-\section{Hospital Markov chain model}
-The following Markov chain represents the transition between states of a hospital 
-while capturing the EMS interaction with it. 
-The hospital accepts both ambulance and other patients normally until a certain 
-threshold \(T\) is reached. When it is reached all ambulances that arrive will be 
-marked as \textit{``parked outside''} until the number of people in the system is 
+\section{Markov chain model}
+The following Markov chain represents the transition between states of a service
+centre 
+while capturing the interactions between it and a buffer centre.
+The service centre accepts two types of individuals; Class 1 and Class 2.  
+Class 2 individuals are accepted until a pre-determined threshold \(T\) of 
+individuals is reached.
+When reached, all Class 2 individuals that arrive will remain \textit{``blocked''}
+in the buffer centre until the number of people in the system is 
 reduced below \(T\). 
-Additionally, if the patients in the hospital keep rising, they may exceed the number 
-of servers \(C\) available, which will in turn mean that every new patient will 
+Additionally, if the people in the service centre keep rising, they may exceed
+the number 
+of servers \(C\) available, which will in turn mean that every new person will 
 have to wait for a server to become free. 
 The states of the Markov chain are denoted by \((u,v)\) where:
 
 \begin{itemize}
-    \item \(u\) = number of ambulances parked outside of the hospital
-    \item \(v\) = number of patients in the hospital
+    \item \(u\) = number of Class 2 individuals blocked
+    \item \(v\) = number of Class 1 individuals in the service centre
 \end{itemize}
 
 \begin{figure}
@@ -152,61 +156,61 @@ The states of the Markov chain are denoted by \((u,v)\) where:
             (two) edge[bend left] node {\( 2 \mu \)} (one)
             (two) edge[bend left] node {\( \Lambda \)} (three)
             (three) edge[bend left] node {\( T \mu \)} (two)
-            (three) edge[bend left] node {\( \lambda^o \)} (four)
+            (three) edge[bend left] node {\( \lambda_1 \)} (four)
             (four) edge[bend left] node {\( (T+1) \mu \)} (three)
-            (four) edge[bend left] node {\( \lambda^o \)} (five)
+            (four) edge[bend left] node {\( \lambda_1 \)} (five)
             (five) edge[bend left] node {\( (T+2) \mu \)} (four)
-            (five) edge[bend left] node {\( \lambda^o \)} (six)
+            (five) edge[bend left] node {\( \lambda_1 \)} (six)
             (six) edge[bend left] node {\( C\mu \)} (five)
-            (six) edge[bend left] node {\( \lambda^o \)} (seven)
+            (six) edge[bend left] node {\( \lambda_1 \)} (seven)
             (seven) edge[bend left] node {\( C\mu \)} (six)
 
             % Second Horizontal Edges
-            (three_one) edge[bend left] node {\( \lambda^o \)} (four_one)
+            (three_one) edge[bend left] node {\( \lambda_1 \)} (four_one)
             (four_one) edge[bend left] node {\( (T+1) \mu \)} (three_one)
-            (four_one) edge[bend left] node {\( \lambda^o \)} (five_one)
+            (four_one) edge[bend left] node {\( \lambda_1 \)} (five_one)
             (five_one) edge[bend left] node {\( (T+2) \mu \)} (four_one)
-            (five_one) edge[bend left] node {\( \lambda^o \)} (six_one)
+            (five_one) edge[bend left] node {\( \lambda_1 \)} (six_one)
             (six_one) edge[bend left] node {\( C\mu \)} (five_one)
-            (six_one) edge[bend left] node {\( \lambda^o \)} (seven_one)
+            (six_one) edge[bend left] node {\( \lambda_1 \)} (seven_one)
             (seven_one) edge[bend left] node {\( C\mu \)} (six_one)
 
             % Third Horizontal Edges
-            (three_two) edge[bend left] node {\( \lambda^o \)} (four_two)
+            (three_two) edge[bend left] node {\( \lambda_1 \)} (four_two)
             (four_two) edge[bend left] node [below] {\( (T+1) \mu \)} (three_two)
-            (four_two) edge[bend left] node {\( \lambda^o \)} (five_two)
+            (four_two) edge[bend left] node {\( \lambda_1 \)} (five_two)
             (five_two) edge[bend left] node {\( (T+2) \mu \)} (four_two)
-            (five_two) edge[bend left] node {\( \lambda^o \)} (six_two)
+            (five_two) edge[bend left] node {\( \lambda_1 \)} (six_two)
             (six_two) edge[bend left] node {\( C\mu \)} (five_two)
-            (six_two) edge[bend left] node {\( \lambda^o \)} (seven_two)
+            (six_two) edge[bend left] node {\( \lambda_1 \)} (seven_two)
             (seven_two) edge[bend left] node {\( C\mu \)} (six_two)
 
             % First Vertical Edges
-            (three) edge[bend left] node {\( \lambda^A \)} (three_one)
+            (three) edge[bend left] node {\( \lambda_2 \)} (three_one)
             (three_one) edge[bend left] node {\( T \mu \)} (three)
-            (three_one) edge[bend left] node {\( \lambda^A \)} (three_two)
+            (three_one) edge[bend left] node {\( \lambda_2 \)} (three_two)
             (three_two) edge[bend left] node {\( T\mu \)} (three_one)
-            (three_two) edge[bend left] node {\( \lambda^A \)} (three_three)
+            (three_two) edge[bend left] node {\( \lambda_2 \)} (three_three)
             (three_three) edge[bend left] node {\( T\mu \)} (three_two)
 
             % Second Vertical Edges
-            (four) edge node {\( \lambda^A \)} (four_one)
-            (four_one) edge node {\( \lambda^A \)} (four_two)
-            (four_two) edge node {\( \lambda^A \)} (four_three)
+            (four) edge node {\( \lambda_2 \)} (four_one)
+            (four_one) edge node {\( \lambda_2 \)} (four_two)
+            (four_two) edge node {\( \lambda_2 \)} (four_three)
 
             % Fourth Vertical Edges
-            (six) edge node {\( \lambda^A \)} (six_one)
-            (six_one) edge node {\( \lambda^A \)} (six_two)
-            (six_two) edge node {\( \lambda^A \)} (six_three)
+            (six) edge node {\( \lambda_2 \)} (six_one)
+            (six_one) edge node {\( \lambda_2 \)} (six_two)
+            (six_two) edge node {\( \lambda_2 \)} (six_three)
 
             % General Case
-            (general_case_left) edge[bend left] node {\( \lambda^o \)} (general_case_mid)
+            (general_case_left) edge[bend left] node {\( \lambda_1 \)} (general_case_mid)
             (general_case_mid) edge[bend left] node {\( v_i \mu \)} (general_case_left)
             (general_case_right) edge[bend left] node {\( (v_i +1) \mu \)} (general_case_mid)
-            (general_case_mid) edge[bend left] node {\( \lambda_o \)} (general_case_right)
-            % (five_three) edge node {\( \lambda_A \)} (general_case_mid)
-            (general_case_up) edge node {\( \lambda_A \)} (general_case_mid)
-            (general_case_mid) edge node {\( \lambda_A \)} (general_case_down)
+            (general_case_mid) edge[bend left] node {\( \lambda_1 \)} (general_case_right)
+            % (five_three) edge node {\( \lambda_2 \)} (general_case_mid)
+            (general_case_up) edge node {\( \lambda_2 \)} (general_case_mid)
+            (general_case_mid) edge node {\( \lambda_2 \)} (general_case_down)
             ;
     \end{tikzpicture}
     \caption{Markov chain} 
@@ -237,9 +241,9 @@ Therefore, the entries of the transition matrix \(Q\), can be given by
     \begin{cases}
         \Lambda, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } 
         v_i < \text{t} \\
-        \lambda^o, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } 
+        \lambda_1, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,-1) \textbf{ and } 
         v_i \geq \text{t} \\
-        \lambda^a, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
+        \lambda_2, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (-1,0) \\
         v_i \mu, & \textbf{if } (u_i, v_i) - (u_j, v_j) = (0,1) \textbf{ and } 
         v_i \leq C \textbf{ or} \\ & \hspace{0.37cm}(u_i, v_i) - (u_j, v_j) = (1,0) 
         \textbf{ and } v_i = T \leq C \\
@@ -253,12 +257,12 @@ Therefore, the entries of the transition matrix \(Q\), can be given by
 
 In order to acquire an exact solution of the problem a slight adjustment needs to 
 be considered. 
-The problem defined above assumes no upper boundary to the number of people that 
-can wait for service or the number of ambulances that can be parked outside. 
+The problem defined above assumes no upper boundary to the number of individuals 
+that can wait for service or the ones that are blocked in the buffer centre. 
 Therefore, a different state space \( \tilde S \) needs to be constructed where 
 \( \tilde S \subseteq S \) and there is a maximum allowed number of people \( N \) 
-that can be in the system and a maximum allowed number of ambulances \( M \) 
-parked outside:
+that can be in the system and a maximum allowed number of people \( M \) that can
+be blocked in the buffer centre:
 
 \begin{equation}
     \tilde S = \left\{ (u, v) \in S\;| u \leq M, v\leq N \right\}

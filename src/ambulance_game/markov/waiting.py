@@ -73,18 +73,22 @@ def get_waiting_time_for_each_state_recursively(
         next_state = (state[0], state[1] - 1)
 
     wait = expected_time_in_markov_state_ignoring_arrivals(
-        state, class_type, num_of_servers, mu, threshold
+        state=state,
+        class_type=class_type,
+        num_of_servers=num_of_servers,
+        mu=mu,
+        threshold=threshold,
     )
     wait += get_waiting_time_for_each_state_recursively(
-        next_state,
-        class_type,
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        state=next_state,
+        class_type=class_type,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     return wait
 
@@ -137,22 +141,26 @@ def mean_waiting_time_formula_using_recursive_approach(
     probability_of_accepting = 0
     for u, v in all_states:
         if is_accepting_state(
-            (u, v), class_type, threshold, system_capacity, buffer_capacity
+            state=(u, v),
+            class_type=class_type,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
         ):
             arriving_state = (u, v + 1)
             if class_type == 2 and v >= threshold:
                 arriving_state = (u + 1, v)
 
             current_state_wait = get_waiting_time_for_each_state_recursively(
-                arriving_state,
-                class_type,
-                lambda_2,
-                lambda_1,
-                mu,
-                num_of_servers,
-                threshold,
-                system_capacity,
-                buffer_capacity,
+                state=arriving_state,
+                class_type=class_type,
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
             )
             mean_waiting_time += current_state_wait * pi[u, v]
             probability_of_accepting += pi[u, v]
@@ -213,11 +221,11 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 (state[1] - num_of_servers + 1) * pi[state] * sojourn_time
                 for state in all_states
                 if is_accepting_state(
-                    state,
-                    class_type,
-                    threshold,
-                    system_capacity,
-                    buffer_capacity,
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
                 )
                 and state[1] >= num_of_servers
             ]
@@ -226,11 +234,11 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state,
-                    class_type,
-                    threshold,
-                    system_capacity,
-                    buffer_capacity,
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
                 )
             ]
         )
@@ -243,11 +251,11 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 * sojourn_time
                 for state in all_states
                 if is_accepting_state(
-                    state,
-                    class_type,
-                    threshold,
-                    system_capacity,
-                    buffer_capacity,
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
                 )
                 and min(state[1], threshold) >= num_of_servers
             ]
@@ -256,11 +264,11 @@ def mean_waiting_time_formula_using_closed_form_approach(
                 pi[state]
                 for state in all_states
                 if is_accepting_state(
-                    state,
-                    class_type,
-                    threshold,
-                    system_capacity,
-                    buffer_capacity,
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
                 )
             ]
         )
@@ -304,56 +312,50 @@ def overall_waiting_time_formula(
     float
         The overall mean waiting time by combining class 1 and class 2 individuals
     """
-    mean_waiting_time_class_1 = waiting_formula(
-        all_states=all_states,
-        pi=pi,
-        class_type=1,
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    mean_waiting_time_class_2 = waiting_formula(
-        all_states=all_states,
-        pi=pi,
-        class_type=2,
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
+    mean_waiting_times_for_each_class = [
+        waiting_formula(
+            all_states=all_states,
+            pi=pi,
+            class_type=class_type,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        )
+        for class_type in (1, 2)
+    ]
 
-    prob_accept_class_1 = np.sum(
-        [
-            pi[state]
-            for state in all_states
-            if is_accepting_state(state, 1, threshold, system_capacity, buffer_capacity)
-        ]
-    )
-    prob_accept_class_2 = np.sum(
-        [
-            pi[state]
-            for state in all_states
-            if is_accepting_state(state, 2, threshold, system_capacity, buffer_capacity)
-        ]
-    )
-    class_2_rate = (lambda_2 * prob_accept_class_2) / (
-        (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-    )
-    class_1_rate = (lambda_1 * prob_accept_class_1) / (
-        (lambda_2 * prob_accept_class_2) + (lambda_1 * prob_accept_class_1)
-    )
+    prob_accept = [
+        np.sum(
+            [
+                pi[state]
+                for state in all_states
+                if is_accepting_state(
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
+                )
+            ]
+        )
+        for class_type in (1, 2)
+    ]
 
-    return (
-        mean_waiting_time_class_2 * class_2_rate
-        + mean_waiting_time_class_1 * class_1_rate
+    class_rates = [
+        prob_accept[i] / ((lambda_2 * prob_accept[1]) + (lambda_1 * prob_accept[0]))
+        for i in range(2)
+    ]
+    class_rates[0] *= lambda_1
+    class_rates[1] *= lambda_2
+
+    mean_waiting_time = np.sum(
+        [mean_waiting_times_for_each_class[i] * class_rates[i] for i in range(2)]
     )
+    return mean_waiting_time
 
 
 def get_mean_waiting_time_using_markov_state_probabilities(
@@ -400,44 +402,40 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         class 2 individuals or the overall of both
     """
     transition_matrix = get_transition_matrix(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.solve
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
-    pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
+    pi = get_markov_state_probabilities(pi=pi, all_states=all_states, output=np.ndarray)
     if class_type == 3:
-        mean_waiting_time = overall_waiting_time_formula(
-            all_states=all_states,
-            pi=pi,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-            waiting_formula=waiting_formula,
-        )
+        get_mean_waiting_time = overall_waiting_time_formula
     else:
-        mean_waiting_time = waiting_formula(
-            all_states=all_states,
-            pi=pi,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
+        get_mean_waiting_time = waiting_formula
+
+    mean_waiting_time = get_mean_waiting_time(
+        all_states=all_states,
+        pi=pi,
+        class_type=class_type,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        waiting_formula=waiting_formula,
+    )
+
     return mean_waiting_time

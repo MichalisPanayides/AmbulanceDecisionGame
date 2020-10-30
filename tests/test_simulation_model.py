@@ -420,7 +420,7 @@ def test_example_get_multiple_results_for_different_individuals_classes():
         threshold=4,
         num_of_trials=10,
         seed_num=1,
-        class_type=3,
+        class_type=None,
     )
 
     all_servs = [np.mean(s.service_times) for s in mult_results]
@@ -434,7 +434,7 @@ def test_example_get_multiple_results_for_different_individuals_classes():
         threshold=4,
         num_of_trials=10,
         seed_num=1,
-        class_type=2,
+        class_type=1,
     )
 
     all_waits_class_2 = [np.mean(w.waiting_times) for w in mult_results]
@@ -449,7 +449,7 @@ def test_example_get_multiple_results_for_different_individuals_classes():
         threshold=4,
         num_of_trials=10,
         seed_num=1,
-        class_type=1,
+        class_type=0,
     )
     all_waits_class_1 = [np.mean(w.waiting_times) for w in mult_results]
     all_servs_class_1 = [np.mean(s.service_times) for s in mult_results]

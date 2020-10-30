@@ -148,7 +148,7 @@ def mean_waiting_time_formula_using_recursive_approach(
             buffer_capacity=buffer_capacity,
         ):
             arriving_state = (u, v + 1)
-            if class_type == 2 and v >= threshold:
+            if class_type == 1 and v >= threshold:
                 arriving_state = (u + 1, v)
 
             current_state_wait = get_waiting_time_for_each_state_recursively(
@@ -215,7 +215,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     float
     """
     sojourn_time = 1 / (num_of_servers * mu)
-    if class_type == 1:
+    if class_type == 0:
         mean_waiting_time = np.sum(
             [
                 (state[1] - num_of_servers + 1) * pi[state] * sojourn_time
@@ -243,7 +243,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
             ]
         )
     # TODO: Break function into 2 functions
-    if class_type == 2:
+    if class_type == 1:
         mean_waiting_time = np.sum(
             [
                 (min(state[1] + 1, threshold) - num_of_servers)
@@ -278,7 +278,6 @@ def mean_waiting_time_formula_using_closed_form_approach(
 def overall_waiting_time_formula(
     all_states,
     pi,
-    class_type,
     lambda_2,
     lambda_1,
     mu,
@@ -287,6 +286,8 @@ def overall_waiting_time_formula(
     system_capacity,
     buffer_capacity,
     waiting_formula,
+    *args,
+    **kwargs,
 ):
     """
     Gets the overall waiting time for all individuals by calculating both class 1
@@ -325,7 +326,7 @@ def overall_waiting_time_formula(
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
         )
-        for class_type in (1, 2)
+        for class_type in range(2)
     ]
 
     prob_accept = [
@@ -342,18 +343,22 @@ def overall_waiting_time_formula(
                 )
             ]
         )
-        for class_type in (1, 2)
+        for class_type in range(2)
     ]
 
     class_rates = [
-        prob_accept[i] / ((lambda_2 * prob_accept[1]) + (lambda_1 * prob_accept[0]))
-        for i in range(2)
+        prob_accept[class_type]
+        / ((lambda_2 * prob_accept[1]) + (lambda_1 * prob_accept[0]))
+        for class_type in range(2)
     ]
     class_rates[0] *= lambda_1
     class_rates[1] *= lambda_2
 
     mean_waiting_time = np.sum(
-        [mean_waiting_times_for_each_class[i] * class_rates[i] for i in range(2)]
+        [
+            mean_waiting_times_for_each_class[class_type] * class_rates[class_type]
+            for class_type in range(2)
+        ]
     )
     return mean_waiting_time
 
@@ -366,7 +371,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
     threshold,
     system_capacity,
     buffer_capacity,
-    class_type=3,
+    class_type=None,
     waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
 ):
     """
@@ -419,7 +424,7 @@ def get_mean_waiting_time_using_markov_state_probabilities(
         Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi = get_markov_state_probabilities(pi=pi, all_states=all_states, output=np.ndarray)
-    if class_type == 3:
+    if class_type is None:
         get_mean_waiting_time = overall_waiting_time_formula
     else:
         get_mean_waiting_time = waiting_formula

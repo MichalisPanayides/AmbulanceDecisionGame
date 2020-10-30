@@ -44,7 +44,7 @@ def is_accepting_state(state, class_type, threshold, system_capacity, buffer_cap
     state : tuple
         a tuples of the form (u,v)
     class_type : int
-        A string to distinguish between class 1 and class 2 individuals
+        A string to distinguish between class 1 (=0) and class 2 individuals (=1)
     system_capacity : int
         The capacity of the system (hospital) = N
     buffer_capacity : int
@@ -56,13 +56,13 @@ def is_accepting_state(state, class_type, threshold, system_capacity, buffer_cap
         An indication of whether or not an arrival of the given type
         (class_type) can occur
     """
-    if class_type == 2:
+    if class_type == 1:
         condition = (
             (state[0] < buffer_capacity)
             if (threshold <= system_capacity)
             else (state[1] < system_capacity)
         )
-    if class_type == 1:
+    if class_type == 0:
         condition = state[1] < system_capacity
     return condition
 
@@ -91,7 +91,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     state : tuple
         a tuples of the form (u,v)
     class_type : int
-        A string to distinguish between class 1 and class 2 individuals
+        A string to distinguish between class 1(=0) and class 2(=1) individuals
     num_of_servers : int
         The number of servers = C
     mu : float
@@ -102,7 +102,7 @@ def expected_time_in_markov_state_ignoring_arrivals(
     float
         The expected waiting time in the given state
     """
-    if state[0] > 0 and (state[1] == threshold or class_type == 2):
+    if state[0] > 0 and (state[1] == threshold or class_type == 1):
         return 0
     return 1 / (min(state[1], num_of_servers) * mu)
 

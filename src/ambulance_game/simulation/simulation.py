@@ -406,7 +406,7 @@ def get_multiple_runs_results(
     output_type="tuple",
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
-    class_type=3,
+    class_type=None,
 ):
     """Get the waiting times, service times and blocking times for multiple runs
     of the simulation. The function may return the times for class 2 individuals,
@@ -422,7 +422,7 @@ def get_multiple_runs_results(
         The results' output type (either tuple or list)], by default "tuple"
     class_type : int, optional
         An integer to identify what type of class to get the times for, where
-        class_type=1,2,3 to denote class 1, class 2 or both
+        class_type=(0,1,None) to denote class 1, class 2 or both
 
     Returns
     -------
@@ -451,14 +451,14 @@ def get_multiple_runs_results(
             buffer_capacity,
         )
 
-        if class_type == 3:
+        if class_type is None:
             sim_results = simulation.get_all_records()
             waiting_times, serving_times, blocking_times = extract_times_from_records(
                 sim_results, warm_up_time
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 
-        if class_type == 2:
+        if class_type == 1:
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,
@@ -468,8 +468,8 @@ def get_multiple_runs_results(
                 individuals, warm_up_time, first_node_to_visit=1, total_node_visits=2
             )
             results.append(records(waiting_times, serving_times, blocking_times))
-
-        if class_type == 1:
+        # TODO: Put class_type == 1 and class_type == 2 in one else statement
+        if class_type == 0:
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,

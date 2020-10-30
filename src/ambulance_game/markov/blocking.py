@@ -258,7 +258,7 @@ def mean_blocking_time_formula_using_direct_approach(
         lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
     )
     for u, v in all_states:
-        if is_accepting_state((u, v), 2, threshold, system_capacity, buffer_capacity):
+        if is_accepting_state((u, v), 1, threshold, system_capacity, buffer_capacity):
             arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
             mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
             prob_accept_class_2_ind += pi[u, v]

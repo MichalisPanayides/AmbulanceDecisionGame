@@ -150,7 +150,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num,
     runtime=1440,
     num_of_trials=10,
-    class_type=3,
+    class_type=None,
     waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
 ):
     """An alternative approach to obtaining the mean waiting time from the simulation.
@@ -169,8 +169,9 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     seed_num : float
     num_of_trials : int
     class_type : int, optional
-        A string to identify whether to get the waiting time of class 1 individuals,
-        class 2 individuals or the overall of both, by default 3
+        Takes values (0, 1, None) to identify whether to get the waiting time of
+        class 1 individuals, class 2 individuals or the overall of both,
+        by default None
 
     Returns
     -------
@@ -196,34 +197,26 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
         if state_probabilities[u, v] > 0
     ]
 
-    if class_type == 3:
-        mean_waiting_time = overall_waiting_time_formula(
-            all_states=all_states,
-            pi=state_probabilities,
-            class_type=1,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-            waiting_formula=waiting_formula,
-        )
+    if class_type is None:
+        get_mean_waiting_time = overall_waiting_time_formula
     else:
-        mean_waiting_time = waiting_formula(
-            all_states=all_states,
-            pi=state_probabilities,
-            class_type=class_type,
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-        return mean_waiting_time
+        get_mean_waiting_time = waiting_formula
+
+    mean_waiting_time = get_mean_waiting_time(
+        all_states=all_states,
+        pi=state_probabilities,
+        class_type=class_type,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        waiting_formula=waiting_formula,
+    )
+
+    return mean_waiting_time
 
 
 def get_mean_blocking_time_simulation(
@@ -305,7 +298,7 @@ def get_plot_comparing_times(
     buffer_capacity,
     times_to_compare,
     warm_up_time=0,
-    class_type=3,
+    class_type=None,
     plot_over="lambda_2",
     max_parameter_value=1,
     accuracy=None,
@@ -327,8 +320,9 @@ def get_plot_comparing_times(
     buffer_capacity : int
     times_to_compare : str
     class_type : int, optional
-        A string to identify whether to get the waiting time of class 1 or
-        class 2 individuals or the overall of both, by default 3
+        Takes values (0, 1, None) to identify whether to get the waiting time of
+        class 1 individuals, class 2 individuals or the overall of both,
+        by default None
     plot_over : str, optional
         A string with the name of the variable to plot over, by default "lambda_2"
     max_parameter_value : float, optional

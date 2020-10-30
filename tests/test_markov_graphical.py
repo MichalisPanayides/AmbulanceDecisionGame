@@ -34,11 +34,11 @@ def test_reset_L_and_R_in_array():
     positions.
     """
     array_to_reset = ["R", "D", "D", "R", "D", "L", "L"]
-    reset_array = reset_L_and_R_in_array(array_to_reset, 2)
+    reset_array = reset_L_and_R_in_array(edges=array_to_reset, lefts=2)
     assert reset_array == ["L", "D", "D", "L", "D", "R", "R"]
 
     array_to_reset = ["R", "R", "L", "L", "L"]
-    reset_array = reset_L_and_R_in_array(array_to_reset, 3)
+    reset_array = reset_L_and_R_in_array(edges=array_to_reset, lefts=3)
     assert reset_array == ["L", "L", "L", "R", "R"]
 
 
@@ -123,20 +123,20 @@ def test_check_permutation_is_valid():
     """Test that valid permutations return true and that the cases when a permutation
     is invalid return False"""
     valid_permutation = ["L", "L", "D", "R", "D"]
-    assert check_permutation_is_valid(valid_permutation, 1)
+    assert check_permutation_is_valid(edges=valid_permutation, buffer_capacity=1)
 
     valid_permutation = ["L", "L", "D", "R", "D", "L"]
-    assert check_permutation_is_valid(valid_permutation, 2)
+    assert check_permutation_is_valid(edges=valid_permutation, buffer_capacity=2)
 
     invalid_permutation = ["L", "L", "D", "R"]
-    assert not check_permutation_is_valid(invalid_permutation, 1)
+    assert not check_permutation_is_valid(edges=invalid_permutation, buffer_capacity=1)
 
     invalid_permutation = ["L", "L", "R", "D", "D", "L"]
-    assert not check_permutation_is_valid(invalid_permutation, 2)
+    assert not check_permutation_is_valid(edges=invalid_permutation, buffer_capacity=2)
 
     invalid_permutation = ["R", "L", "L", "D", "D", "L"]
-    assert not check_permutation_is_valid(invalid_permutation, 1)
-    assert not check_permutation_is_valid(invalid_permutation, 2)
+    assert not check_permutation_is_valid(edges=invalid_permutation, buffer_capacity=1)
+    assert not check_permutation_is_valid(edges=invalid_permutation, buffer_capacity=2)
 
 
 def test_get_rate_of_state_00_graphically():
@@ -181,28 +181,28 @@ def test_get_rate_of_state_00_graphically():
 
 def test_get_all_permutations_examples():
     """Test to ensure that function works as expected for specific examples"""
-    assert get_all_permutations(1, 2, 3) == 60
-    assert get_all_permutations(2, 5, 2) == 756
-    assert get_all_permutations(6, 5, 4) == 630630
-    assert get_all_permutations(10, 15, 20) == 10361546974682663760
+    assert get_all_permutations(D=1, R=2, L=3) == 60
+    assert get_all_permutations(D=2, R=5, L=2) == 756
+    assert get_all_permutations(D=6, R=5, L=4) == 630630
+    assert get_all_permutations(D=10, R=15, L=20) == 10361546974682663760
 
 
 @given(num=integers(min_value=1, max_value=30))
 def test_get_all_permutations_when_two_of_the_inputs_are_1(num):
     """Ensure that function works as expected when two of the inputs are equal to one"""
     T = num + 2
-    assert get_all_permutations(num, 1, 1) == (T - 1) * (T)
-    assert get_all_permutations(1, num, 1) == (T - 1) * (T)
-    assert get_all_permutations(1, 1, num) == (T - 1) * (T)
+    assert get_all_permutations(D=num, R=1, L=1) == (T - 1) * (T)
+    assert get_all_permutations(D=1, R=num, L=1) == (T - 1) * (T)
+    assert get_all_permutations(D=1, R=1, L=num) == (T - 1) * (T)
 
 
 def test_get_permutations_ending_in_R_examples():
     """Test on specific examples for the function"""
-    assert get_permutations_ending_in_R(100, 0, 200) == 0
-    assert get_permutations_ending_in_R(2, 3, 4) == 420
-    assert get_permutations_ending_in_R(4, 5, 4) == 34650
-    assert get_permutations_ending_in_R(7, 8, 9) == 2804596080
-    assert get_permutations_ending_in_R(10, 12, 13) == 327314719892160
+    assert get_permutations_ending_in_R(D=100, R=0, L=200) == 0
+    assert get_permutations_ending_in_R(D=2, R=3, L=4) == 420
+    assert get_permutations_ending_in_R(D=4, R=5, L=4) == 34650
+    assert get_permutations_ending_in_R(D=7, R=8, L=9) == 2804596080
+    assert get_permutations_ending_in_R(D=10, R=12, L=13) == 327314719892160
 
 
 @given(
@@ -212,37 +212,45 @@ def test_get_permutations_ending_in_R_examples():
 )
 def test_get_permutations_ending_in_R_equivalence_to_all_permutations(D, R, L):
     """Test that the function is equivalent to the get_all_permutations function with R-1"""
-    assert get_permutations_ending_in_R(D, R, L) == get_all_permutations(D, R - 1, L)
+    assert get_permutations_ending_in_R(D=D, R=R, L=L) == get_all_permutations(
+        D=D, R=R - 1, L=L
+    )
 
 
 def test_get_permutations_ending_in_D_where_any_RL_exists_examples():
     """Test on specific examples for the function"""
-    assert get_permutations_ending_in_D_where_any_RL_exists(200, 0, 300) == 0
-    assert get_permutations_ending_in_D_where_any_RL_exists(120, 400, 0) == 0
-    assert get_permutations_ending_in_D_where_any_RL_exists(1, 1, 1) == 1
-    assert get_permutations_ending_in_D_where_any_RL_exists(2, 2, 2) == 21
-    assert get_permutations_ending_in_D_where_any_RL_exists(3, 3, 3) == 460
-    assert get_permutations_ending_in_D_where_any_RL_exists(6, 5, 4) == 220500
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=200, R=0, L=300) == 0
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=120, R=400, L=0) == 0
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=1, R=1, L=1) == 1
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=2, R=2, L=2) == 21
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=3, R=3, L=3) == 460
+    assert get_permutations_ending_in_D_where_any_RL_exists(D=6, R=5, L=4) == 220500
 
 
 def test_get_permutations_ending_in_L_where_any_RL_exists_examples():
     """Test on specific examples for the function"""
-    assert get_permutations_ending_in_L_where_any_RL_exists(300, 0, 1000) == 0
-    assert get_permutations_ending_in_L_where_any_RL_exists(201, 150, 0) == 0
-    assert get_permutations_ending_in_L_where_any_RL_exists(100, 200, 1) == 0
-    assert get_permutations_ending_in_L_where_any_RL_exists(2, 2, 2) == 12
-    assert get_permutations_ending_in_L_where_any_RL_exists(3, 3, 3) == 360
-    assert get_permutations_ending_in_L_where_any_RL_exists(6, 5, 4) == 129360
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=300, R=0, L=1000) == 0
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=201, R=150, L=0) == 0
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=100, R=200, L=1) == 0
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=2, R=2, L=2) == 12
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=3, R=3, L=3) == 360
+    assert get_permutations_ending_in_L_where_any_RL_exists(D=6, R=5, L=4) == 129360
 
 
 def test_get_permutations_ending_in_RL_where_RL_exists_only_at_the_end_examples():
     """Test on specific examples for the function"""
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(100, 0, 200) == 0
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(100, 200, 0) == 0
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(1, 1, 1) == 1
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(1, 2, 3) == 6
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(3, 4, 2) == 80
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(5, 6, 4) == 14112
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
+        D=100, R=0, L=200
+    ) == 0
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
+        D=100, R=200, L=0
+    ) == 0
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=1, L=1) == 1
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=2, L=3) == 6
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=3, R=4, L=2) == 80
+    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
+        D=5, R=6, L=4
+    ) == 14112
 
 
 def test_get_coefficient_known_examples():
@@ -365,7 +373,7 @@ def test_get_coefficient_known_examples():
         7,
     ]
     for example, coefficient in zip(known_examples, known_coefficients):
-        assert get_coefficient(example[0], example[1], example[2]) == coefficient
+        assert get_coefficient(D=example[0], R=example[1], L=example[2]) == coefficient
 
 
 @given(
@@ -375,11 +383,11 @@ def test_get_coefficient_known_examples():
 )
 def test_get_coefficient_known_scenarios(D, R, L):
     """Test special cases of the get_coefficient() function"""
-    assert get_coefficient(1, R, L) == L + 1
-    assert get_coefficient(D, 0, 0) == 1
-    assert get_coefficient(0, 0, L) == 1
-    assert get_coefficient(D, 1, 0) == D
-    assert get_coefficient(D, 0, 1) == D + 1
+    assert get_coefficient(D=1, R=R, L=L) == L + 1
+    assert get_coefficient(D=D, R=0, L=0) == 1
+    assert get_coefficient(D=0, R=0, L=L) == 1
+    assert get_coefficient(D=D, R=1, L=0) == D
+    assert get_coefficient(D=D, R=0, L=1) == D + 1
 
 
 def test_get_coefficient_using_matrix_tree_theorem():
@@ -402,8 +410,8 @@ def test_get_coefficient_using_matrix_tree_theorem():
         for p1 in range(1, number_of_states + 1):
             for p2 in range(0, (number_of_states - p1 + 1)):
                 p3 = number_of_states - p1 - p2
-                total_number_of_spanning_trees += get_coefficient(p1, p2, p3)
-        total_number_of_spanning_trees += get_coefficient(0, 0, number_of_states)
+                total_number_of_spanning_trees += get_coefficient(D=p1, R=p2, L=p3)
+        total_number_of_spanning_trees += get_coefficient(D=0, R=0, L=number_of_states)
         return total_number_of_spanning_trees
 
     for i in range(1, 20):

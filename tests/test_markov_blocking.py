@@ -225,7 +225,6 @@ def test_get_blocking_times_of_all_states_using_direct_approach_example_1():
 
 
 def test_get_blocking_times_of_all_states_using_direct_approach_example_2():
-    """[summary]"""
     blocking_times = get_blocking_times_of_all_states_using_direct_approach(
         lambda_1=2,
         mu=1,
@@ -390,12 +389,12 @@ def test_mean_blocking_time_formula_using_direct_approach_closed_form():
     # TODO: Make test once closed form formula is found
     with pytest.raises(NotImplementedError):
         mean_blocking_time_formula_using_closed_form_approach(
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
+            all_states=None,
+            pi=None,
+            lambda_1=None,
+            mu=None,
+            num_of_servers=None,
+            threshold=None,
+            system_capacity=None,
+            buffer_capacity=None,
         )

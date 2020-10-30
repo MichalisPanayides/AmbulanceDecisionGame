@@ -21,10 +21,10 @@ def test_is_blocking_state():
     """
     for v in range(1, 100):
         u = random.randint(1, 100)
-        assert is_blocking_state((u, v))
+        assert is_blocking_state(state=(u, v))
 
     for v in range(1, 100):
-        assert not is_blocking_state((0, v))
+        assert not is_blocking_state(state=(0, v))
 
 
 def test_expected_time_in_markov_state_ignoring_class_2_arrivals():

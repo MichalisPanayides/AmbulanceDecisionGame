@@ -64,7 +64,11 @@ def get_heatmaps(
     linear_positioning : Boolean, optional
         To distinguish between the two position formats of the heatmaps, by default False
     """
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
     transition_matrix = get_transition_matrix(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -75,7 +79,7 @@ def get_heatmaps(
         buffer_capacity=buffer_capacity,
     )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.lstsq
     )
 
     sim_state_probabilities_array = get_average_simulated_state_probabilities(
@@ -375,11 +379,11 @@ def get_plot_comparing_times(
             buffer_capacity = int(parameter)
 
         times = get_multiple_runs_results(
-            lambda_2,
-            lambda_1,
-            mu,
-            num_of_servers,
-            threshold,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
             num_of_trials=num_of_trials,
             seed_num=seed_num,
             runtime=runtime,
@@ -391,26 +395,26 @@ def get_plot_comparing_times(
         if times_to_compare == "waiting":
             simulation_times = [np.mean(w.waiting_times) for w in times]
             mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
-                lambda_2,
-                lambda_1,
-                mu,
-                num_of_servers,
-                threshold,
-                system_capacity,
-                buffer_capacity,
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
                 seed_num=seed_num,
                 runtime=runtime,
                 num_of_trials=num_of_trials,
                 class_type=class_type,
             )
             mean_time_markov = get_mean_waiting_time_using_markov_state_probabilities(
-                lambda_2,
-                lambda_1,
-                mu,
-                num_of_servers,
-                threshold,
-                system_capacity,
-                buffer_capacity,
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
                 class_type=class_type,
             )
         elif times_to_compare == "blocking":

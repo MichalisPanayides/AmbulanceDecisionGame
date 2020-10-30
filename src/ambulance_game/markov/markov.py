@@ -93,7 +93,11 @@ def visualise_markov_chain(
         a networkx object that consists of the Markov chain
     """
 
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
     G = nx.DiGraph()
     for _, origin_state in enumerate(all_states):
         for _, destination_state in enumerate(all_states):
@@ -191,7 +195,11 @@ def get_symbolic_transition_matrix(
     lambda_2 = sym.symbols("lambda_2")
     mu = sym.symbols("mu")
 
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
     Q = sym.zeros(len(all_states))
     # if threshold > system_capacity:
     #     threshold = system_capacity
@@ -237,7 +245,11 @@ def get_transition_matrix(
     numpy.ndarray
         The transition matrix Q
     """
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
     size = len(all_states)
     Q = np.zeros((size, size))
     # if threshold > system_capacity:

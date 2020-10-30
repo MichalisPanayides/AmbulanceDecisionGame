@@ -142,8 +142,8 @@ def test_get_transition_matrix_entry(
     destination_state_4 = (u - 1, v)
 
     entry_1 = get_transition_matrix_entry(
-        origin_state,
-        destination_state_1,
+        origin=origin_state,
+        destination=destination_state_1,
         threshold=threshold,
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -152,8 +152,8 @@ def test_get_transition_matrix_entry(
         num_of_servers=num_of_servers,
     )
     entry_2 = get_transition_matrix_entry(
-        origin_state,
-        destination_state_2,
+        origin=origin_state,
+        destination=destination_state_2,
         threshold=threshold,
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -162,8 +162,8 @@ def test_get_transition_matrix_entry(
         num_of_servers=num_of_servers,
     )
     entry_3 = get_transition_matrix_entry(
-        origin_state,
-        destination_state_3,
+        origin=origin_state,
+        destination=destination_state_3,
         threshold=threshold,
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -172,8 +172,8 @@ def test_get_transition_matrix_entry(
         num_of_servers=num_of_servers,
     )
     entry_4 = get_transition_matrix_entry(
-        origin_state,
-        destination_state_4,
+        origin=origin_state,
+        destination=destination_state_4,
         threshold=threshold,
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -296,7 +296,7 @@ def test_convert_symbolic_transition_matrix(threshold):
         buffer_capacity=buffer_capacity,
     )
     converted_matrix = convert_symbolic_transition_matrix(
-        sym_transition_matrix, lambda_2, lambda_1, mu
+        Q_sym=sym_transition_matrix, lambda_2=lambda_2, lambda_1=lambda_1, mu=mu
     )
 
     assert np.allclose(converted_matrix, transition_matrix)
@@ -318,9 +318,9 @@ def test_is_steady_state_examples():
     steady_3 = np.array([1, 2, 3])
     generator_matrix_3 = np.array([[-4, 2, 2], [0, -2, 2], [1, 5, -6]])
 
-    assert is_steady_state(steady_1, generator_matrix_1)
-    assert is_steady_state(steady_2, generator_matrix_2)
-    assert not is_steady_state(steady_3, generator_matrix_3)
+    assert is_steady_state(state=steady_1, Q=generator_matrix_1)
+    assert is_steady_state(state=steady_2, Q=generator_matrix_2)
+    assert not is_steady_state(state=steady_3, Q=generator_matrix_3)
 
 
 @given(
@@ -337,7 +337,9 @@ def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
-    steady = get_steady_state_numerically(Q, integration_function=sci.integrate.odeint)
+    steady = get_steady_state_numerically(
+        Q=Q, integration_function=sci.integrate.odeint
+    )
     assert is_steady_state(steady, Q)
 
 
@@ -356,9 +358,9 @@ def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
     steady = get_steady_state_numerically(
-        Q, integration_function=sci.integrate.solve_ivp
+        Q=Q, integration_function=sci.integrate.solve_ivp
     )
-    assert is_steady_state(steady, Q)
+    assert is_steady_state(state=steady, Q=Q)
 
 
 @given(Q=arrays(np.int8, (10, 10)))
@@ -389,8 +391,8 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
     returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
-    steady = get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve)
-    assert is_steady_state(steady, Q)
+    steady = get_steady_state_algebraically(Q=Q, algebraic_function=np.linalg.solve)
+    assert is_steady_state(state=steady, Q=Q)
 
 
 @given(
@@ -407,34 +409,30 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
-    steady = get_steady_state_algebraically(Q, algebraic_function=np.linalg.lstsq)
-    assert is_steady_state(steady, Q)
+    steady = get_steady_state_algebraically(Q=Q, algebraic_function=np.linalg.lstsq)
+    assert is_steady_state(state=steady, Q=Q)
 
 
 def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
     """
-    lambda_2 = 0.1
-    lambda_1 = 0.2
-    mu = 0.2
-    num_of_servers = 3
-    threshold = 3
-    system_capacity = 5
-    buffer_capacity = 4
-
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=3,
+        system_capacity=5,
+        buffer_capacity=4,
+    )
     transition_matrix = get_transition_matrix(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=0.1,
+        lambda_1=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=3,
+        system_capacity=5,
+        buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.lstsq
     )
     pi_dictionary = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=dict
@@ -447,26 +445,22 @@ def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
     """
-    lambda_2 = 0.1
-    lambda_1 = 0.2
-    mu = 0.2
-    num_of_servers = 3
-    threshold = 3
-    system_capacity = 5
-    buffer_capacity = 4
-
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(
+        threshold=3,
+        system_capacity=5,
+        buffer_capacity=4,
+    )
     transition_matrix = get_transition_matrix(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=0.1,
+        lambda_1=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=3,
+        system_capacity=5,
+        buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.lstsq
     )
     pi_array = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=np.ndarray
@@ -479,44 +473,36 @@ def test_get_mean_number_of_individuals_examples():
     """
     Some examples to ensure that the correct mean number of individuals are output
     """
-    lambda_2 = 0.2
-    lambda_1 = 0.2
-    mu = 0.2
-    num_of_servers = 3
-    threshold = 4
-    system_capacity = 20
-    buffer_capacity = 20
-
-    all_states = build_states(threshold, system_capacity, buffer_capacity)
+    all_states = build_states(threshold=4, system_capacity=20, buffer_capacity=20)
     transition_matrix = get_transition_matrix(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=0.2,
+        lambda_1=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=20,
+        buffer_capacity=20,
     )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.lstsq
     )
     assert (
         round(
-            get_mean_number_of_individuals_in_system(pi, all_states),
+            get_mean_number_of_individuals_in_system(pi=pi, states=all_states),
             number_of_digits_to_round,
         )
         == 2.88827497
     )
     assert (
         round(
-            get_mean_number_of_individuals_in_service_area(pi, all_states),
+            get_mean_number_of_individuals_in_service_area(pi=pi, states=all_states),
             number_of_digits_to_round,
         )
         == 2.44439504
     )
     assert (
         round(
-            get_mean_number_of_individuals_in_buffer_center(pi, all_states),
+            get_mean_number_of_individuals_in_buffer_center(pi=pi, states=all_states),
             number_of_digits_to_round,
         )
         == 0.44387993

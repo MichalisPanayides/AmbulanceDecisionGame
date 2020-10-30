@@ -8,7 +8,9 @@ from ambulance_game.markov.tikz import (
 
 def test_generate_code_for_tikz_figure_example_1():
 
-    tikz_code = generate_code_for_tikz_figure(1, 1, 1, 1)
+    tikz_code = generate_code_for_tikz_figure(
+        num_of_servers=1, threshold=1, system_capacity=1, buffer_capacity=1
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -17,7 +19,9 @@ def test_generate_code_for_tikz_figure_example_1():
 
 
 def test_generate_code_for_tikz_figure_example_2():
-    tikz_code = generate_code_for_tikz_figure(6, 10, 9, 1)
+    tikz_code = generate_code_for_tikz_figure(
+        num_of_servers=6, threshold=10, system_capacity=9, buffer_capacity=1
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -26,7 +30,9 @@ def test_generate_code_for_tikz_figure_example_2():
 
 
 def test_generate_code_for_tikz_figure_example_3():
-    tikz_code = generate_code_for_tikz_figure(4, 6, 6, 2)
+    tikz_code = generate_code_for_tikz_figure(
+        num_of_servers=4, threshold=6, system_capacity=6, buffer_capacity=2
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -35,7 +41,9 @@ def test_generate_code_for_tikz_figure_example_3():
 
 
 def test_generate_code_for_tikz_figure_example_4():
-    tikz_code = generate_code_for_tikz_figure(3, 2, 5, 2)
+    tikz_code = generate_code_for_tikz_figure(
+        num_of_servers=3, threshold=2, system_capacity=5, buffer_capacity=2
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -44,7 +52,9 @@ def test_generate_code_for_tikz_figure_example_4():
 
 
 def test_build_body_of_tikz_spanning_tree_example_1():
-    tikz_code = build_body_of_tikz_spanning_tree(1, 2, 3, 4)
+    tikz_code = build_body_of_tikz_spanning_tree(
+        num_of_servers=1, threshold=2, system_capacity=3, buffer_capacity=4
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -53,7 +63,9 @@ def test_build_body_of_tikz_spanning_tree_example_1():
 
 
 def test_build_body_of_tikz_spanning_tree_example_2():
-    tikz_code = build_body_of_tikz_spanning_tree(3, 1, 3, 3)
+    tikz_code = build_body_of_tikz_spanning_tree(
+        num_of_servers=3, threshold=1, system_capacity=3, buffer_capacity=3
+    )
     assert type(tikz_code) == str
     assert (
         tikz_code
@@ -64,7 +76,13 @@ def test_build_body_of_tikz_spanning_tree_example_2():
 def test_get_tikz_code_for_permutation_example_1():
     array = ["D", "D", "D", "D", "D"]
     assert (
-        get_tikz_code_for_permutation(array, 2, 3, 8, 1)
+        get_tikz_code_for_permutation(
+            edges=array,
+            num_of_servers=2,
+            threshold=3,
+            system_capacity=8,
+            buffer_capacity=1,
+        )
         == "\\draw[->](u0v4) edge node {\\(\\lambda_2 \\)} (u1v4);\n\\draw[->](u0v5) edge node {\\(\\lambda_2 \\)} (u1v5);\n\\draw[->](u0v6) edge node {\\(\\lambda_2 \\)} (u1v6);\n\\draw[->](u0v7) edge node {\\(\\lambda_2 \\)} (u1v7);\n\\draw[->](u0v8) edge node {\\(\\lambda_2 \\)} (u1v8);\n"
     )
 
@@ -72,7 +90,13 @@ def test_get_tikz_code_for_permutation_example_1():
 def test_get_tikz_code_for_permutation_example_2():
     array = ["D", "L", "D", "L", "D"]
     assert (
-        get_tikz_code_for_permutation(array, 2, 3, 8, 1)
+        get_tikz_code_for_permutation(
+            edges=array,
+            num_of_servers=2,
+            threshold=3,
+            system_capacity=8,
+            buffer_capacity=1,
+        )
         == "\\draw[->](u0v4) edge node {\\(\\lambda_2 \\)} (u1v4);\n\\draw[->](u0v5) edge node {\\(2\\mu \\)} (u0v4);\n\\draw[->](u0v6) edge node {\\(\\lambda_2 \\)} (u1v6);\n\\draw[->](u0v7) edge node {\\(2\\mu \\)} (u0v6);\n\\draw[->](u0v8) edge node {\\(\\lambda_2 \\)} (u1v8);\n"
     )
 
@@ -80,7 +104,13 @@ def test_get_tikz_code_for_permutation_example_2():
 def test_get_tikz_code_for_permutation_example_3():
     array = ["R", "D", "R", "D", "L", "L"]
     assert (
-        get_tikz_code_for_permutation(array, 3, 3, 5, 3)
+        get_tikz_code_for_permutation(
+            edges=array,
+            num_of_servers=3,
+            threshold=3,
+            system_capacity=5,
+            buffer_capacity=3,
+        )
         == "\\draw[->](u0v4) edge node {\\(\\lambda_1 \\)} (u0v5);\n\\draw[->](u0v5) edge node {\\(\\lambda_2 \\)} (u1v5);\n\\draw[->](u1v4) edge node {\\(\\lambda_1 \\)} (u1v5);\n\\draw[->](u1v5) edge node {\\(\\lambda_2 \\)} (u2v5);\n\\draw[->](u2v4) edge node {\\(3\\mu \\)} (u2v3);\n\\draw[->](u2v5) edge node {\\(3\\mu \\)} (u2v4);\n"
     )
 

@@ -268,15 +268,15 @@ def test_get_state_probabilities_dict():
     tracker = ciw.trackers.NodePopulation()
 
     Q = simulate_model(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        seed_num,
-        runtime,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        seed_num=seed_num,
+        runtime=runtime,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
         tracker=tracker,
     )
     pi_dictionary = get_simulated_state_probabilities(simulation_object=Q, output=dict)
@@ -299,15 +299,15 @@ def test_get_state_probabilities_array():
     tracker = ciw.trackers.NodePopulation()
 
     Q = simulate_model(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        seed_num,
-        runtime,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        seed_num=seed_num,
+        runtime=runtime,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
         tracker=tracker,
     )
     pi_array = get_simulated_state_probabilities(simulation_object=Q, output=np.ndarray)
@@ -330,17 +330,16 @@ def test_get_average_state_probabilities_array():
     num_of_trials = 5
 
     pi_array = get_average_simulated_state_probabilities(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
-        seed_num,
-        runtime,
-        num_of_trials,
-        # output=np.ndarray,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=seed_num,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
     )
 
     assert round(np.nansum(pi_array), number_of_digits_to_round) == 1

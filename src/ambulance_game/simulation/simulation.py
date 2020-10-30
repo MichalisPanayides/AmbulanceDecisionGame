@@ -180,7 +180,12 @@ def simulate_model(
     if seed_num == None:
         seed_num = random.random()
     model = build_model(
-        lambda_2, lambda_1, mu, num_of_servers, system_capacity, buffer_capacity
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     node = build_custom_node(threshold)
     ciw.seed(seed_num)
@@ -267,18 +272,21 @@ def get_average_simulated_state_probabilities(
         )
     for trial in range(num_of_trials):
         simulation_object = simulate_model(
-            lambda_2,
-            lambda_1,
-            mu,
-            num_of_servers,
-            threshold,
-            seed_num + trial,
-            runtime,
-            system_capacity,
-            buffer_capacity,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            seed_num=seed_num + trial,
+            runtime=runtime,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
         )
         state_probabilities = get_simulated_state_probabilities(
-            simulation_object, output, system_capacity, buffer_capacity
+            simulation_object=simulation_object,
+            output=output,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
         )
         if output == dict:
             if len(average_state_probabilities) == 0:
@@ -440,15 +448,15 @@ def get_multiple_runs_results(
     results = []
     for trial in range(num_of_trials):
         simulation = simulate_model(
-            lambda_2,
-            lambda_1,
-            mu,
-            num_of_servers,
-            threshold,
-            seed_num + trial,
-            runtime,
-            system_capacity,
-            buffer_capacity,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            seed_num=seed_num + trial,
+            runtime=runtime,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
         )
 
         if class_type is None:
@@ -465,7 +473,10 @@ def get_multiple_runs_results(
                 serving_times,
                 blocking_times,
             ) = extract_times_from_individuals(
-                individuals, warm_up_time, first_node_to_visit=1, total_node_visits=2
+                individuals=individuals,
+                warm_up_time=warm_up_time,
+                first_node_to_visit=1,
+                total_node_visits=2,
             )
             results.append(records(waiting_times, serving_times, blocking_times))
         # TODO: Put class_type == 1 and class_type == 2 in one else statement
@@ -476,7 +487,10 @@ def get_multiple_runs_results(
                 serving_times,
                 blocking_times,
             ) = extract_times_from_individuals(
-                individuals, warm_up_time, first_node_to_visit=2, total_node_visits=1
+                individuals=individuals,
+                warm_up_time=warm_up_time,
+                first_node_to_visit=2,
+                total_node_visits=1,
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 

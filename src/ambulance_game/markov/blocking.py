@@ -76,7 +76,9 @@ def get_coefficients_row_of_array_associated_with_state(
     lhs_coefficient_row[state[0] - 1, state[1] - threshold] = -1
     if service_state[0] > 0:
         if state[1] < system_capacity:
-            entry = prob_service(state, lambda_1, mu, num_of_servers)
+            entry = prob_service(
+                state=state, lambda_1=lambda_1, mu=mu, num_of_servers=num_of_servers
+            )
         else:
             entry = 1
         lhs_coefficient_row[service_state[0] - 1, service_state[1] - threshold] = entry
@@ -89,7 +91,11 @@ def get_coefficients_row_of_array_associated_with_state(
     )[0]
 
     rhs_value = -expected_time_in_markov_state_ignoring_class_2_arrivals(
-        state, lambda_1, mu, num_of_servers, system_capacity
+        state=state,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        system_capacity=system_capacity,
     )
 
     return lhs_coefficient_row, rhs_value
@@ -131,13 +137,13 @@ def get_blocking_time_linear_system(
     ):
         if is_blocking_state(state):
             system_coefficients = get_coefficients_row_of_array_associated_with_state(
-                state,
-                lambda_1,
-                mu,
-                num_of_servers,
-                threshold,
-                system_capacity,
-                buffer_capacity,
+                state=state,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
             )
             if len(all_coefficients_array) == 0:
                 all_coefficients_array = system_coefficients[0]
@@ -255,10 +261,21 @@ def mean_blocking_time_formula_using_direct_approach(
     mean_blocking_time = 0
     prob_accept_class_2_ind = 0
     blocking_times = get_blocking_times_of_all_states_using_direct_approach(
-        lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     for u, v in all_states:
-        if is_accepting_state((u, v), 1, threshold, system_capacity, buffer_capacity):
+        if is_accepting_state(
+            state=(u, v),
+            class_type=1,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        ):
             arriving_state = (u + 1, v) if v >= threshold else (u, v + 1)
             mean_blocking_time += blocking_times[arriving_state] * pi[u, v]
             prob_accept_class_2_ind += pi[u, v]
@@ -308,13 +325,13 @@ def get_mean_blocking_time_using_markov_state_probabilities(
         the mean blocking time of the Markov model
     """
     transition_matrix = get_transition_matrix(
-        lambda_2,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     all_states = build_states(
         threshold=threshold,
@@ -322,17 +339,17 @@ def get_mean_blocking_time_using_markov_state_probabilities(
         buffer_capacity=buffer_capacity,
     )
     pi = get_steady_state_algebraically(
-        transition_matrix, algebraic_function=np.linalg.solve
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
     mean_blocking_time = blocking_formula(
-        all_states,
-        pi,
-        lambda_1,
-        mu,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        all_states=all_states,
+        pi=pi,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     return mean_blocking_time

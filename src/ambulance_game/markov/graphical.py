@@ -297,7 +297,9 @@ def get_rate_of_state_00_graphically(
 
             more_trees_exist = True
             while more_trees_exist:
-                is_valid = check_permutation_is_valid(edges_index, buffer_capacity)
+                is_valid = check_permutation_is_valid(
+                    edges=edges_index, buffer_capacity=buffer_capacity
+                )
                 if is_valid:
                     spanning_tree_counter += 1
                 edges_index = generate_next_permutation_of_edges(

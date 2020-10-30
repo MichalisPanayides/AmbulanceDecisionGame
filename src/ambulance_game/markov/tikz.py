@@ -444,11 +444,11 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
                     )
 
                     tikz_code += get_tikz_code_for_permutation(
-                        edges_index,
-                        num_of_servers,
-                        threshold,
-                        system_capacity,
-                        buffer_capacity,
+                        edges=edges_index,
+                        num_of_servers=num_of_servers,
+                        threshold=threshold,
+                        system_capacity=system_capacity,
+                        buffer_capacity=buffer_capacity,
                     )
                     tikz_code += "\\end{tikzpicture}"
                     tikz_code = tikz_code.replace("1\\mu", "\\mu")
@@ -466,14 +466,17 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
 
     edges_index = ["L" for _ in range(buffer_capacity * (system_capacity - threshold))]
     tikz_code = build_body_of_tikz_spanning_tree(
-        num_of_servers, threshold, system_capacity, buffer_capacity
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     tikz_code += get_tikz_code_for_permutation(
-        edges_index,
-        num_of_servers,
-        threshold,
-        system_capacity,
-        buffer_capacity,
+        edges=edges_index,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
     )
     tikz_code += "\\end{tikzpicture}"
     tikz_code = tikz_code.replace("1\\mu", "\\mu")

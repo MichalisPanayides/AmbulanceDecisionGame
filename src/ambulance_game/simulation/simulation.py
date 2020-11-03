@@ -512,6 +512,10 @@ def get_mean_blocking_difference_between_two_systems(
     num_of_servers_2,
     threshold_1,
     threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
     seed_num_1,
     seed_num_2,
     num_of_trials,
@@ -549,6 +553,8 @@ def get_mean_blocking_difference_between_two_systems(
         num_of_trials=num_of_trials,
         output_type="tuple",
         runtime=runtime,
+        system_capacity=system_capacity_1,
+        buffer_capacity=buffer_capacity_1,
     )
     res_2 = get_multiple_runs_results(
         lambda_2=lambda_2_2,
@@ -561,6 +567,8 @@ def get_mean_blocking_difference_between_two_systems(
         num_of_trials=num_of_trials,
         output_type="tuple",
         runtime=runtime,
+        system_capacity=system_capacity_2,
+        buffer_capacity=buffer_capacity_2,
     )
 
     system_1_blockages = [
@@ -584,11 +592,17 @@ def calculate_class_2_individuals_best_response(
     num_of_servers_2,
     threshold_1,
     threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
     seed_num_1,
     seed_num_2,
     num_of_trials,
     warm_up_time,
     runtime,
+    lower_bound=0.01,
+    upper_bound=0.99,
 ):
     """Obtains the optimal distribution of class 2 individuals such that the
     blocking times in the two systems are identical and thus optimal(minimised).
@@ -605,10 +619,58 @@ def calculate_class_2_individuals_best_response(
     float
         The optimal proportion where the systems have identical blocking times
     """
+    check_1 = get_mean_blocking_difference_between_two_systems(
+        prop_1=lower_bound,
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        seed_num_1=seed_num_1,
+        seed_num_2=seed_num_2,
+        num_of_trials=num_of_trials,
+        warm_up_time=warm_up_time,
+        runtime=runtime,
+    )
+    check_2 = get_mean_blocking_difference_between_two_systems(
+        prop_1=upper_bound,
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        seed_num_1=seed_num_1,
+        seed_num_2=seed_num_2,
+        num_of_trials=num_of_trials,
+        warm_up_time=warm_up_time,
+        runtime=runtime,
+    )
+
+    if check_1 >= 0 and check_2 >= 0:
+        return 0
+    if check_1 <= 0 and check_2 <= 0:
+        return 1
+
     optimal_prop = scipy.optimize.brentq(
         get_mean_blocking_difference_between_two_systems,
-        a=0.01,
-        b=0.99,
+        a=lower_bound,
+        b=upper_bound,
         args=(
             lambda_2,
             lambda_1_1,
@@ -619,6 +681,10 @@ def calculate_class_2_individuals_best_response(
             num_of_servers_2,
             threshold_1,
             threshold_2,
+            system_capacity_1,
+            system_capacity_2,
+            buffer_capacity_1,
+            buffer_capacity_2,
             seed_num_1,
             seed_num_2,
             num_of_trials,

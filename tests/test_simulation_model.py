@@ -501,6 +501,10 @@ def test_get_mean_blocking_difference_between_two_systems_equal_split(
         num_of_trials=5,
         warm_up_time=100,
         runtime=500,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
     )
     assert diff == 0
 
@@ -528,9 +532,12 @@ def test_get_mean_blocking_difference_between_two_systems_increasing():
                 num_of_trials=100,
                 warm_up_time=100,
                 runtime=500,
+                system_capacity_1=float("inf"),
+                system_capacity_2=float("inf"),
+                buffer_capacity_1=float("inf"),
+                buffer_capacity_2=float("inf"),
             )
         )
-    print(diff_list)
     is_increasing = all(x <= y for x, y in zip(diff_list, diff_list[1:]))
     assert is_increasing
 
@@ -561,6 +568,10 @@ def test_calculate_class_2_individuals_best_response_equal_split():
         num_of_trials=5,
         warm_up_time=100,
         runtime=500,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
     )
 
     assert np.isclose(equal_split, 0.5)

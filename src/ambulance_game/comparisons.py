@@ -142,6 +142,12 @@ def get_heatmaps(
     plt.ylabel("Individuals in buffer centre", fontsize=11, fontweight="bold")
     plt.colorbar()
 
+    return (
+        sim_state_probabilities_array,
+        markov_state_probabilities_array,
+        diff_states_probabilities_array,
+    )
+
 
 def get_mean_waiting_time_from_simulation_state_probabilities(
     lambda_2,
@@ -223,7 +229,7 @@ def get_mean_waiting_time_from_simulation_state_probabilities(
     return mean_waiting_time
 
 
-def get_mean_blocking_time_simulation(
+def get_mean_blocking_time_from_simulation_state_probabilities(
     lambda_2,
     lambda_1,
     mu,
@@ -392,6 +398,7 @@ def get_plot_comparing_times(
             buffer_capacity=buffer_capacity,
             class_type=class_type,
         )
+        # TODO: Get rid of times_to_compare variable
         if times_to_compare == "waiting":
             simulation_times = [np.mean(w.waiting_times) for w in times]
             mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
@@ -418,8 +425,10 @@ def get_plot_comparing_times(
                 class_type=class_type,
             )
         elif times_to_compare == "blocking":
+            if class_type == 0:
+                raise Exception("Blocking does not occur for class 1 individuals")
             simulation_times = [np.mean(b.blocking_times) for b in times]
-            mean_time_sim = get_mean_blocking_time_simulation(
+            mean_time_sim = get_mean_blocking_time_from_simulation_state_probabilities(
                 lambda_2=lambda_2,
                 lambda_1=lambda_1,
                 mu=mu,

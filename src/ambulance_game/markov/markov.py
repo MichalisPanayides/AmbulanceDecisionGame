@@ -68,7 +68,8 @@ def visualise_markov_chain(
     threshold,
     system_capacity,
     buffer_capacity,
-    nodesize=2000,
+    nodesize_free=2000,
+    nodesize_full=2000,
     fontsize=12,
 ):
     """This function's purpose is the visualisation of the Markov chain system using
@@ -117,14 +118,14 @@ def visualise_markov_chain(
     nx.draw_networkx_nodes(
         G,
         pos,
-        node_size=nodesize,
-        nodelist=[state for state in all_states if state[1] < num_of_servers],
+        node_size=nodesize_free,
+        nodelist=[state for state in all_states if state[1] <= num_of_servers],
     )
     nx.draw_networkx_nodes(
         G,
         pos,
-        node_size=nodesize,
-        nodelist=[state for state in all_states if state[1] >= num_of_servers],
+        node_size=nodesize_full,
+        nodelist=[state for state in all_states if state[1] > num_of_servers],
         node_color="red",
     )
     nx.draw_networkx_edges(G, pos, arrowstyle="fancy")

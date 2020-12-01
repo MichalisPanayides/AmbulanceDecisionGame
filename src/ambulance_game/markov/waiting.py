@@ -298,9 +298,8 @@ def overall_waiting_time_formula(
     ----------
     all_states : list
     pi : array
-    class_type : int
-    lambda_2 : float
     lambda_1 : float
+    lambda_2 : float
     mu : float
     num_of_servers : int
     threshold : int

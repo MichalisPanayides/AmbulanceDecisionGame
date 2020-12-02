@@ -107,7 +107,6 @@ def expected_time_in_markov_state_ignoring_arrivals(
     return 1 / (min(state[1], num_of_servers) * mu)
 
 
-# TODO Modify name to fit generic formulation
 def expected_time_in_markov_state_ignoring_class_2_arrivals(
     state, lambda_1, mu, num_of_servers, system_capacity
 ):

@@ -474,7 +474,7 @@ def test_get_plot_comparing_blocking_times_class_2():
         class_type=1,
         plot_over="lambda_2",
         max_parameter_value=3,
-        accuracy=5,
+        accuracy=None,
     )
 
     expected_range_space = [
@@ -541,7 +541,7 @@ def test_get_plot_comparing_blocking_times_both_classes():
         class_type=None,
         plot_over="num_of_servers",
         max_parameter_value=5,
-        accuracy=5,
+        accuracy=None,
     )
 
     expected_range_space = [
@@ -622,9 +622,9 @@ def test_get_plot_comparing_blocking_times_property(
         runtime=100,
         times_to_compare="blocking",
         class_type=1,
-        plot_over="lambda_2",
+        plot_over="buffer_capacity",
         max_parameter_value=5,
-        accuracy=5,
+        accuracy=None,
     )
 
     (
@@ -645,9 +645,9 @@ def test_get_plot_comparing_blocking_times_property(
         runtime=100,
         times_to_compare="blocking",
         class_type=None,
-        plot_over="lambda_2",
+        plot_over="buffer_capacity",
         max_parameter_value=5,
-        accuracy=5,
+        accuracy=None,
     )
 
     assert np.all(range_space_1 == range_space_2)

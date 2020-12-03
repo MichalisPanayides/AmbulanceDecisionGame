@@ -98,6 +98,21 @@ def test_get_coefficients_row_of_array_associated_with_state_example_3():
         )
 
 
+def test_get_coefficients_row_of_array_associated_with_state_example_4():
+    assert (
+        get_coefficients_row_of_array_associated_with_state(
+            state=(0, 4),
+            lambda_1=2,
+            mu=1,
+            num_of_servers=3,
+            threshold=10,
+            system_capacity=10,
+            buffer_capacity=5,
+        )
+        == 0
+    )
+
+
 def test_get_blocking_time_linear_system_example_1():
     M, b = get_blocking_time_linear_system(
         lambda_1=2,

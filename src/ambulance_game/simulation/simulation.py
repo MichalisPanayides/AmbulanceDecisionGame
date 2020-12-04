@@ -1,7 +1,8 @@
-import numpy as np
-import random
-import ciw
 import collections
+import random
+
+import ciw
+import numpy as np
 import scipy.optimize
 
 

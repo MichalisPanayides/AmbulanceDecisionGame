@@ -1,23 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-from hypothesis import (
-    given,
-    settings,
-)
-from hypothesis.strategies import (
-    integers,
-    floats,
-)
-
 from ambulance_game.comparisons import (
     get_heatmaps,
-    get_mean_waiting_time_from_simulation_state_probabilities,
     get_mean_blocking_time_from_simulation_state_probabilities,
+    get_mean_waiting_time_from_simulation_state_probabilities,
     get_plot_comparing_times,
 )
-
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
 
 number_of_digits_to_round = 8
 

@@ -1,10 +1,11 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy as np
-import sympy as sym
 import itertools
+
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 import scipy as sci
 import scipy.integrate
+import sympy as sym
 
 
 def build_states(threshold, system_capacity, buffer_capacity):

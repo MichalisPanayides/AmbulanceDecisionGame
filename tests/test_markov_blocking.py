@@ -1,14 +1,13 @@
 import numpy as np
 import pytest
-
 from ambulance_game.markov.blocking import (
-    get_coefficients_row_of_array_associated_with_state,
-    get_blocking_time_linear_system,
     convert_solution_to_correct_array_format,
+    get_blocking_time_linear_system,
     get_blocking_times_of_all_states_using_direct_approach,
-    mean_blocking_time_formula_using_direct_approach,
-    mean_blocking_time_formula_using_closed_form_approach,
+    get_coefficients_row_of_array_associated_with_state,
     get_mean_blocking_time_using_markov_state_probabilities,
+    mean_blocking_time_formula_using_closed_form_approach,
+    mean_blocking_time_formula_using_direct_approach,
 )
 
 number_of_digits_to_round = 8

@@ -1,27 +1,18 @@
-import pytest
-import numpy as np
 import ciw
-
-from hypothesis import (
-    given,
-    settings,
-)
-from hypothesis.strategies import (
-    floats,
-    integers,
-)
-
-
+import numpy as np
+import pytest
 from ambulance_game.simulation.simulation import (
-    build_model,
     build_custom_node,
-    simulate_model,
-    get_simulated_state_probabilities,
-    get_average_simulated_state_probabilities,
-    get_multiple_runs_results,
-    get_mean_blocking_difference_between_two_systems,
+    build_model,
     calculate_class_2_individuals_best_response,
+    get_average_simulated_state_probabilities,
+    get_mean_blocking_difference_between_two_systems,
+    get_multiple_runs_results,
+    get_simulated_state_probabilities,
+    simulate_model,
 )
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
 
 number_of_digits_to_round = 8
 

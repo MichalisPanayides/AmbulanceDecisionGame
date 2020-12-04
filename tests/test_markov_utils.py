@@ -1,13 +1,13 @@
 import random
 
 from ambulance_game.markov.utils import (
-    is_waiting_state,
-    is_blocking_state,
-    is_accepting_state,
     expected_time_in_markov_state_ignoring_arrivals,
     expected_time_in_markov_state_ignoring_class_2_arrivals,
-    prob_service,
+    is_accepting_state,
+    is_blocking_state,
+    is_waiting_state,
     prob_class_1_arrival,
+    prob_service,
 )
 
 number_of_digits_to_round = 8

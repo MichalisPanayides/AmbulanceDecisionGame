@@ -1,34 +1,30 @@
-import numpy as np
 import matplotlib.pyplot as plt
-
-from .simulation.simulation import (
-    simulate_model,
-    get_multiple_runs_results,
-    get_simulated_state_probabilities,
-    get_average_simulated_state_probabilities,
-)
-
-from .markov.markov import (
-    build_states,
-    get_transition_matrix,
-    get_steady_state_algebraically,
-    get_markov_state_probabilities,
-)
-
-from .markov.waiting import (
-    mean_waiting_time_formula_using_direct_approach,
-    mean_waiting_time_formula_using_closed_form_approach,
-    mean_waiting_time_formula_using_recursive_approach,
-    overall_waiting_time_formula,
-    get_mean_waiting_time_using_markov_state_probabilities,
-)
+import numpy as np
 
 from .markov.blocking import (
-    mean_blocking_time_formula_using_direct_approach,
     get_mean_blocking_time_using_markov_state_probabilities,
+    mean_blocking_time_formula_using_direct_approach,
 )
-
+from .markov.markov import (
+    build_states,
+    get_markov_state_probabilities,
+    get_steady_state_algebraically,
+    get_transition_matrix,
+)
 from .markov.utils import is_accepting_state
+from .markov.waiting import (
+    get_mean_waiting_time_using_markov_state_probabilities,
+    mean_waiting_time_formula_using_closed_form_approach,
+    mean_waiting_time_formula_using_direct_approach,
+    mean_waiting_time_formula_using_recursive_approach,
+    overall_waiting_time_formula,
+)
+from .simulation.simulation import (
+    get_average_simulated_state_probabilities,
+    get_multiple_runs_results,
+    get_simulated_state_probabilities,
+    simulate_model,
+)
 
 
 def get_heatmaps(

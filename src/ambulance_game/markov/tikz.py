@@ -1,10 +1,11 @@
 import numpy as np
+
 from .graphical import (
-    reset_L_and_R_in_array,
+    check_permutation_is_valid,
     find_next_permutation_over,
     find_next_permutation_over_L_and_R,
     generate_next_permutation_of_edges,
-    check_permutation_is_valid,
+    reset_L_and_R_in_array,
 )
 
 

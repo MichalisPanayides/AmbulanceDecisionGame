@@ -49,6 +49,8 @@ from .utils import (
     is_waiting_state,
     prob_class_1_arrival,
     prob_service,
+    get_probability_of_accepting,
+    get_proportion_of_individuals_not_lost,
 )
 from .waiting import (
     get_mean_waiting_time_using_markov_state_probabilities,

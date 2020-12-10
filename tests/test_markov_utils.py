@@ -230,3 +230,74 @@ def test_prob_class_1_arrival():
             state=(u, v), lambda_1=lambda_1, mu=mu, num_of_servers=1
         )
         assert prob == lambda_1 / (lambda_1 + mu)
+
+
+def test_get_probability_of_accepting_example():
+    """
+    Test that the probability of accepting an individual is as expected
+    """
+    all_states = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 3),
+        (2, 3),
+        (0, 4),
+        (1, 4),
+        (2, 4),
+        (0, 5),
+        (1, 5),
+        (2, 5),
+    ]
+    pi = np.array(
+        [
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            [np.nan, np.nan, np.nan, 0.1, 0.1, 0.05],
+            [np.nan, np.nan, np.nan, 0.05, 0.05, 0.05],
+        ]
+    )
+
+    assert get_probability_of_accepting(
+        all_states=all_states, pi=pi, threshold=2, system_capacity=4, buffer_capacity=2
+    ) == [0.8, 0.85]
+
+
+def test_get_proportion_of_individuals_not_lost_example():
+    """
+    Tests that the proportion of non-lost individuals is as expected
+    """
+    all_states = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 3),
+        (2, 3),
+        (0, 4),
+        (1, 4),
+        (2, 4),
+        (0, 5),
+        (1, 5),
+        (2, 5),
+    ]
+    pi = np.array(
+        [
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            [np.nan, np.nan, np.nan, 0.1, 0.1, 0.05],
+            [np.nan, np.nan, np.nan, 0.05, 0.05, 0.05],
+        ]
+    )
+
+    assert (
+        get_proportion_of_individuals_not_lost(
+            all_states=all_states,
+            pi=pi,
+            lambda_1=3,
+            lambda_2=2,
+            threshold=2,
+            system_capacity=5,
+            buffer_capacity=2,
+        )
+        == 0.8
+    )

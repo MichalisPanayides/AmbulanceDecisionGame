@@ -1,5 +1,7 @@
 import random
 
+import numpy as np
+
 from ambulance_game.markov.utils import (
     expected_time_in_markov_state_ignoring_arrivals,
     expected_time_in_markov_state_ignoring_class_2_arrivals,
@@ -8,6 +10,8 @@ from ambulance_game.markov.utils import (
     is_waiting_state,
     prob_class_1_arrival,
     prob_service,
+    get_probability_of_accepting,
+    get_proportion_of_individuals_not_lost,
 )
 
 number_of_digits_to_round = 8
@@ -258,9 +262,16 @@ def test_get_probability_of_accepting_example():
         ]
     )
 
-    assert get_probability_of_accepting(
-        all_states=all_states, pi=pi, threshold=2, system_capacity=4, buffer_capacity=2
-    ) == [0.8, 0.85]
+    assert np.allclose(
+        get_probability_of_accepting(
+            all_states=all_states,
+            pi=pi,
+            threshold=2,
+            system_capacity=5,
+            buffer_capacity=2,
+        ),
+        [0.8, 0.85],
+    )
 
 
 def test_get_proportion_of_individuals_not_lost_example():
@@ -289,7 +300,7 @@ def test_get_proportion_of_individuals_not_lost_example():
         ]
     )
 
-    assert (
+    assert np.allclose(
         get_proportion_of_individuals_not_lost(
             all_states=all_states,
             pi=pi,
@@ -298,6 +309,6 @@ def test_get_proportion_of_individuals_not_lost_example():
             threshold=2,
             system_capacity=5,
             buffer_capacity=2,
-        )
-        == 0.8
+        ),
+        [0.5853658536585366, 0.4146341463414634],
     )

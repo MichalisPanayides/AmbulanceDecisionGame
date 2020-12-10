@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def is_waiting_state(state, num_of_servers):
     """Checks if waiting occurs in the given state. In essence, all states (u,v)
     where v > C are considered waiting states.

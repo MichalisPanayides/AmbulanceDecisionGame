@@ -4,12 +4,14 @@ import pytest
 from ambulance_game.simulation.simulation import (
     build_custom_node,
     build_model,
+    simulate_model,
     calculate_class_2_individuals_best_response,
     get_average_simulated_state_probabilities,
     get_mean_blocking_difference_between_two_systems,
     get_multiple_runs_results,
     get_simulated_state_probabilities,
-    simulate_model,
+    extract_total_individuals_and_the_ones_within_target_for_both_classes,
+    get_mean_proportion_of_individuals_within_target_for_multiple_runs,
 )
 from hypothesis import given, settings
 from hypothesis.strategies import floats, integers
@@ -566,3 +568,40 @@ def test_calculate_class_2_individuals_best_response_equal_split():
     )
 
     assert np.isclose(equal_split, 0.5)
+
+
+def test_extract_total_individuals_and_the_ones_within_target_for_both_classes():
+    inds = simulate_model(
+        lambda_2=2,
+        lambda_1=2,
+        mu=1,
+        num_of_servers=5,
+        threshold=8,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=0,
+        runtime=200,
+    ).get_all_individuals()
+
+    assert extract_total_individuals_and_the_ones_within_target_for_both_classes(
+        individuals=inds, target=0
+    ) == (20, 0, 20, 0)
+
+
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs():
+
+    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+        lambda_2=1,
+        lambda_1=1,
+        mu=0.5,
+        num_of_servers=6,
+        threshold=5,
+        system_capacity=10,
+        buffer_capacity=5,
+        seed_num=0,
+        num_of_trials=2,
+        runtime=100,
+        target=0,
+    )
+
+    assert props == (0, 0, 0)

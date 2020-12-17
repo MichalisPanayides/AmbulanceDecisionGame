@@ -35,6 +35,16 @@ from .markov import (
     is_steady_state,
     visualise_markov_chain,
 )
+from .proportion import (
+    erlang_cdf,
+    general_psi_function,
+    get_probability_of_waiting_time_in_system_less_than_target_for_state,
+    get_proportion_of_individuals_within_time_target,
+    hypoexponential_cdf,
+    overall_proportion_of_individuals_within_time_target,
+    proportion_within_target_using_markov_state_probabilities,
+    specific_psi_function,
+)
 from .tikz import (
     build_body_of_tikz_spanning_tree,
     generate_code_for_tikz_figure,
@@ -44,13 +54,13 @@ from .tikz import (
 from .utils import (
     expected_time_in_markov_state_ignoring_arrivals,
     expected_time_in_markov_state_ignoring_class_2_arrivals,
+    get_probability_of_accepting,
+    get_proportion_of_individuals_not_lost,
     is_accepting_state,
     is_blocking_state,
     is_waiting_state,
     prob_class_1_arrival,
     prob_service,
-    get_probability_of_accepting,
-    get_proportion_of_individuals_not_lost,
 )
 from .waiting import (
     get_mean_waiting_time_using_markov_state_probabilities,

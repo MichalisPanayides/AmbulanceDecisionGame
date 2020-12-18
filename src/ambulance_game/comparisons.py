@@ -11,6 +11,12 @@ from .markov.markov import (
     get_steady_state_algebraically,
     get_transition_matrix,
 )
+from .markov.proportion import (
+    get_proportion_of_individuals_within_time_target,
+    overall_proportion_of_individuals_within_time_target,
+    proportion_within_target_using_markov_state_probabilities,
+    specific_psi_function,
+)
 from .markov.waiting import (
     get_mean_waiting_time_using_markov_state_probabilities,
     mean_waiting_time_formula_using_closed_form_approach,
@@ -18,14 +24,8 @@ from .markov.waiting import (
 )
 from .simulation.simulation import (
     get_average_simulated_state_probabilities,
-    get_multiple_runs_results,
     get_mean_proportion_of_individuals_within_target_for_multiple_runs,
-)
-from .markov.proportion import (
-    specific_psi_function,
-    proportion_within_target_using_markov_state_probabilities,
-    get_proportion_of_individuals_within_time_target,
-    overall_proportion_of_individuals_within_time_target,
+    get_multiple_runs_results,
 )
 
 

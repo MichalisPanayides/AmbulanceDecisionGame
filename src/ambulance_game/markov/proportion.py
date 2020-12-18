@@ -1,4 +1,6 @@
 import math
+import operator
+from functools import reduce
 
 import numpy as np
 import sympy as sym
@@ -10,6 +12,10 @@ from .markov import (
     get_transition_matrix,
 )
 from .utils import get_proportion_of_individuals_not_lost, is_accepting_state
+
+
+def product_of_all_elements(iterable):
+    return reduce(operator.mul, iterable, 1)
 
 
 def general_psi_function(arg, k, l, exp_rates, freq, a):
@@ -41,7 +47,7 @@ def general_psi_function(arg, k, l, exp_rates, freq, a):
         Hypoexponential distribution.
     """
     t = sym.Symbol("t")
-    product = np.math.prod(
+    product = product_of_all_elements(
         [(exp_rates[j] + t) ** (-freq[j]) for j in range(a + 1) if j != k]
     )
     psi_val = -sym.diff(product, t, l - 1)
@@ -140,7 +146,8 @@ def hypoexponential_cdf(x, exp_rates, freq, psi_func=specific_psi_function):
             iteration /= np.math.factorial(freq[k] - l) * np.math.factorial(l - 1)
             summation += float(iteration)
     output = 1 - (
-        np.math.prod([exp_rates[j] ** freq[j] for j in range(1, a + 1)]) * summation
+        product_of_all_elements([exp_rates[j] ** freq[j] for j in range(1, a + 1)])
+        * summation
     )
     return output
 

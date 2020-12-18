@@ -5,7 +5,9 @@ from ambulance_game.comparisons import (
     get_heatmaps,
     get_mean_blocking_time_from_simulation_state_probabilities,
     get_mean_waiting_time_from_simulation_state_probabilities,
+    get_proportion_within_target_from_simulation_state_probabilities,
     get_plot_comparing_times,
+    plot_of_proportion_within_target,
 )
 from hypothesis import given, settings
 from hypothesis.strategies import floats, integers
@@ -214,6 +216,27 @@ def test_get_mean_blocking_time_from_simulation_state_probabilities():
     )
     assert round(mean_blocking_time, number_of_digits_to_round) == round(
         0.6247616245889802, number_of_digits_to_round
+    )
+
+
+def test_get_proportion_within_target_from_simulation_state_probabilities():
+    mean_proportion = get_proportion_within_target_from_simulation_state_probabilities(
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=3,
+        threshold=7,
+        system_capacity=10,
+        buffer_capacity=5,
+        target=4,
+        class_type=0,
+        seed_num=0,
+        num_of_trials=2,
+        runtime=100,
+    )
+
+    assert round(mean_proportion, number_of_digits_to_round) == round(
+        0.9605868280871762, number_of_digits_to_round
     )
 
 
@@ -648,3 +671,183 @@ def test_get_plot_comparing_blocking_times_property(
     )
     assert np.all(markov_times_1 == markov_times_2)
     assert np.all(simulation_times_1 == simulation_times_2)
+
+
+def test_plot_of_proportion_within_target_class_1():
+    (
+        range_space,
+        simulation_props_using_markov_formula,
+        markov_props,
+        simulation_props,
+    ) = plot_of_proportion_within_target(
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=3,
+        min_threshold=2,
+        max_threshold=10,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=1,
+        num_of_trials=2,
+        runtime=100,
+        target=4,
+        class_type=0,
+        accuracy=5,
+    )
+
+    expected_range_space = [
+        2,
+        4,
+        6,
+        8,
+        10,
+    ]
+    expected_sim_props_using_formula = [
+        0.9790136369646812,
+        0.9694014142792851,
+        0.9607171712756224,
+        0.9512206646084153,
+        0.9435197873252772,
+    ]
+    expected_markov_props = [
+        0.9769758299950714,
+        0.9698065422230608,
+        0.9624762629273674,
+        0.9564778065163335,
+        0.9524639194726416,
+    ]
+
+    expected_sim_props = [
+        [0.9615384615384616, 1.0],
+        [0.9504132231404959, 0.978494623655914],
+        [0.9338842975206612, 0.989247311827957],
+        [0.9090909090909091, 0.989247311827957],
+        [0.9008264462809917, 0.989247311827957],
+    ]
+    assert np.all(range_space == expected_range_space)
+    assert np.allclose(
+        simulation_props_using_markov_formula, expected_sim_props_using_formula
+    )
+    assert np.allclose(markov_props, expected_markov_props)
+    assert np.allclose(simulation_props, expected_sim_props)
+
+
+def test_plot_of_proportion_within_target_class_2():
+    (
+        range_space,
+        simulation_props_using_markov_formula,
+        markov_props,
+        simulation_props,
+    ) = plot_of_proportion_within_target(
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=3,
+        min_threshold=2,
+        max_threshold=10,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=1,
+        num_of_trials=2,
+        runtime=100,
+        target=4,
+        class_type=1,
+        accuracy=5,
+    )
+
+    expected_range_space = [
+        2,
+        4,
+        6,
+        8,
+        10,
+    ]
+    expected_sim_props_using_formula = [
+        0.9816843611112658,
+        0.9776764633348265,
+        0.9695135798097695,
+        0.9607212930115949,
+        0.9505136921747348,
+    ]
+    expected_markov_props = [
+        0.9816843611112656,
+        0.9776309516976318,
+        0.9695851706481967,
+        0.96203774630283,
+        0.9559521606811459,
+    ]
+
+    expected_sim_props = [
+        [1.0, 0.9880952380952381],
+        [0.978021978021978, 0.9770114942528736],
+        [0.967032967032967, 0.9655172413793104],
+        [0.9560439560439561, 0.9655172413793104],
+        [0.9230769230769231, 0.9655172413793104],
+    ]
+    assert np.all(range_space == expected_range_space)
+    assert np.allclose(
+        simulation_props_using_markov_formula, expected_sim_props_using_formula
+    )
+    assert np.allclose(markov_props, expected_markov_props)
+    assert np.allclose(simulation_props, expected_sim_props)
+
+
+def test_plot_of_proportion_within_target_both_classes():
+    (
+        range_space,
+        simulation_props_using_markov_formula,
+        markov_props,
+        simulation_props,
+    ) = plot_of_proportion_within_target(
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=3,
+        min_threshold=2,
+        max_threshold=10,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=1,
+        num_of_trials=2,
+        runtime=100,
+        target=4,
+        class_type=None,
+        accuracy=5,
+    )
+
+    expected_range_space = [
+        2,
+        4,
+        6,
+        8,
+        10,
+    ]
+    expected_sim_props_using_formula = [
+        0.9803420072819845,
+        0.973534925815833,
+        0.965115375542696,
+        0.955970978810005,
+        0.947016739750006,
+    ]
+    expected_markov_props = [
+        0.9793015428995077,
+        0.9737157940379565,
+        0.966029525931023,
+        0.959257362821785,
+        0.9542079250880933,
+    ]
+
+    expected_sim_props = [
+        [0.9786096256684492, 0.9938650306748467],
+        [0.9622641509433962, 0.9777777777777777],
+        [0.9481132075471698, 0.9777777777777777],
+        [0.9292452830188679, 0.9777777777777777],
+        [0.910377358490566, 0.9777777777777777],
+    ]
+    assert np.all(range_space == expected_range_space)
+    assert np.allclose(
+        simulation_props_using_markov_formula, expected_sim_props_using_formula
+    )
+    assert np.allclose(markov_props, expected_markov_props)
+    assert np.allclose(simulation_props, expected_sim_props)

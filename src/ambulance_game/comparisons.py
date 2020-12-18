@@ -24,6 +24,13 @@ from .simulation.simulation import (
     get_multiple_runs_results,
     get_simulated_state_probabilities,
     simulate_model,
+    get_mean_proportion_of_individuals_within_target_for_multiple_runs,
+)
+from .markov.proportion import (
+    specific_psi_function,
+    proportion_within_target_using_markov_state_probabilities,
+    get_proportion_of_individuals_within_time_target,
+    overall_proportion_of_individuals_within_time_target,
 )
 
 
@@ -494,3 +501,176 @@ def get_plot_comparing_times(
     plt.ylabel("Waiting time", fontsize=15, fontweight="bold")
     plt.legend()
     return range_space, all_mean_times_sim, all_mean_times_markov, all_times_sim
+
+
+def get_proportion_within_target_from_simulation_state_probabilities(
+    lambda_1,
+    lambda_2,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    target,
+    class_type=None,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+    psi_func=specific_psi_function,
+):
+    pi = get_average_simulated_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=seed_num,
+        num_of_trials=num_of_trials,
+        runtime=runtime,
+    )
+    all_states = [
+        (u, v) for v in range(pi.shape[1]) for u in range(pi.shape[0]) if pi[u, v] > 0
+    ]
+
+    if class_type is None:
+        proportion_formula = overall_proportion_of_individuals_within_time_target
+    else:
+        proportion_formula = get_proportion_of_individuals_within_time_target
+
+    prop = proportion_formula(
+        all_states=all_states,
+        pi=pi,
+        class_type=class_type,
+        lambda_1=lambda_1,
+        lambda_2=lambda_2,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        target=target,
+        psi_func=psi_func,
+    )
+    return prop
+
+
+def plot_of_proportion_within_target(
+    lambda_1,
+    lambda_2,
+    mu,
+    num_of_servers,
+    min_threshold,
+    max_threshold,
+    system_capacity,
+    buffer_capacity,
+    seed_num,
+    num_of_trials,
+    runtime,
+    class_type,
+    target,
+    accuracy=10,
+    psi_func=specific_psi_function,
+):
+    all_props_sim = []
+    all_mean_props_markov = []
+    all_mean_props_sim = []
+    threshold_space = np.linspace(min_threshold, max_threshold, accuracy, dtype=int)
+    for threshold in threshold_space:
+        if class_type == None:
+            index = 0
+        else:
+            index = class_type + 1
+        simulation_proportions = (
+            get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+                lambda_1=lambda_1,
+                lambda_2=lambda_2,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+                seed_num=seed_num,
+                num_of_trials=num_of_trials,
+                runtime=runtime,
+                target=target,
+            )[index]
+        )
+        mean_prop_markov = proportion_within_target_using_markov_state_probabilities(
+            lambda_1=lambda_1,
+            lambda_2=lambda_2,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            target=target,
+            class_type=class_type,
+            psi_func=psi_func,
+        )
+        mean_prop_sim = (
+            get_proportion_within_target_from_simulation_state_probabilities(
+                lambda_1=lambda_1,
+                lambda_2=lambda_2,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+                target=target,
+                class_type=class_type,
+                seed_num=seed_num,
+                num_of_trials=num_of_trials,
+                runtime=runtime,
+                psi_func=psi_func,
+            )
+        )
+        all_props_sim.append(simulation_proportions)
+        all_mean_props_markov.append(mean_prop_markov)
+        all_mean_props_sim.append(mean_prop_sim)
+
+    diff = (threshold_space[1] - threshold_space[0]) / 2
+    plt.figure(figsize=(23, 10))
+    plt.plot(
+        threshold_space,
+        all_mean_props_sim,
+        label="Simulation",
+        ls="solid",
+        lw=1.5,
+    )
+    plt.plot(
+        threshold_space,
+        all_mean_props_markov,
+        label="Markov chain",
+        ls="solid",
+        lw=1.5,
+    )
+    plt.violinplot(
+        all_props_sim,
+        positions=threshold_space,
+        widths=diff,
+        showmeans=True,
+        showmedians=False,
+    )
+    title = (
+        r"$\lambda_2=$"
+        + str(lambda_2)
+        + r", $\lambda_1=$"
+        + str(lambda_1)
+        + r", $\mu=$"
+        + str(mu)
+        + ", C="
+        + str(num_of_servers)
+        + ", N="
+        + str(system_capacity)
+        + ", M="
+        + str(buffer_capacity)
+    )
+    plt.title(title, fontsize=18)
+    plt.xlabel("Threshold", fontsize=15, fontweight="bold")
+    plt.ylabel(
+        "Proportion of individuals within target", fontsize=15, fontweight="bold"
+    )
+    plt.legend()
+    return threshold_space, all_mean_props_sim, all_mean_props_markov, all_props_sim

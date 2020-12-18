@@ -6,8 +6,7 @@ from ambulance_game.comparisons import (
     get_mean_blocking_time_from_simulation_state_probabilities,
     get_mean_waiting_time_from_simulation_state_probabilities,
     get_proportion_within_target_from_simulation_state_probabilities,
-    get_plot_comparing_times,
-    plot_of_proportion_within_target,
+    plot_output_comparisons,
 )
 from hypothesis import given, settings
 from hypothesis.strategies import floats, integers
@@ -240,7 +239,7 @@ def test_get_proportion_within_target_from_simulation_state_probabilities():
     )
 
 
-def test_get_plot_comparing_times_waiting_class_1():
+def test_plot_output_comparisons_waiting_class_1():
     """
     Test that the values to be plotted by the function for the mean waiting time
     of class 1 individuals are the expected when using:
@@ -253,7 +252,7 @@ def test_get_plot_comparing_times_waiting_class_1():
         simulation_times_using_markov_formula,
         markov_times,
         simulation_times,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=3,
         lambda_2=4,
         mu=1,
@@ -264,7 +263,7 @@ def test_get_plot_comparing_times_waiting_class_1():
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="waiting",
+        measure_to_compare="waiting",
         class_type=0,
         plot_over="mu",
         max_parameter_value=5,
@@ -301,7 +300,7 @@ def test_get_plot_comparing_times_waiting_class_1():
     assert np.allclose(simulation_times, expected_sim_times)
 
 
-def test_get_plot_comparing_waiting_times_class_2():
+def test_plot_output_comparisons_waiting_class_2():
     """
     Test that the values to be plotted by the function for the mean waiting time
     of class 2 individuals are the expected when using:
@@ -314,7 +313,7 @@ def test_get_plot_comparing_waiting_times_class_2():
         simulation_times_using_markov_formula,
         markov_times,
         simulation_times,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=3,
         lambda_2=4,
         mu=1,
@@ -325,7 +324,7 @@ def test_get_plot_comparing_waiting_times_class_2():
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="waiting",
+        measure_to_compare="waiting",
         class_type=1,
         plot_over="system_capacity",
         max_parameter_value=18,
@@ -368,7 +367,7 @@ def test_get_plot_comparing_waiting_times_class_2():
     assert np.allclose(simulation_times, expected_sim_times)
 
 
-def test_get_plot_comparing_waiting_times_both_classes():
+def test_plot_output_comparisons_waiting_both_classes():
     """
     Test that the values to be plotted by the function for the mean waiting time
     of all individuals are the expected when using:
@@ -381,7 +380,7 @@ def test_get_plot_comparing_waiting_times_both_classes():
         simulation_times_using_markov_formula,
         markov_times,
         simulation_times,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=3,
         lambda_2=4,
         mu=1,
@@ -392,7 +391,7 @@ def test_get_plot_comparing_waiting_times_both_classes():
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="waiting",
+        measure_to_compare="waiting",
         class_type=None,
         plot_over="threshold",
         max_parameter_value=9,
@@ -435,13 +434,13 @@ def test_get_plot_comparing_waiting_times_both_classes():
     assert np.allclose(simulation_times, expected_sim_times)
 
 
-def test_get_plot_comparing_times_blocking_class_1():
+def test_plot_output_comparisons_blocking_class_1():
     """
     Test to ensure an error comes up when trying to get the blocking times of
     class 1 individuals
     """
     with pytest.raises(Exception):
-        get_plot_comparing_times(
+        plot_output_comparisons(
             lambda_1=1,
             lambda_2=1,
             mu=1,
@@ -452,7 +451,7 @@ def test_get_plot_comparing_times_blocking_class_1():
             seed_num=0,
             num_of_trials=1,
             runtime=100,
-            times_to_compare="blocking",
+            measure_to_compare="blocking",
             class_type=0,
             plot_over="lambda_1",
             max_parameter_value=3,
@@ -460,7 +459,7 @@ def test_get_plot_comparing_times_blocking_class_1():
         )
 
 
-def test_get_plot_comparing_blocking_times_class_2():
+def test_plot_output_comparisons_blocking_class_2():
     """
     Test that the values to be plotted by the function for the mean blocking time
     of class 2 individuals are the expected when using:
@@ -473,7 +472,7 @@ def test_get_plot_comparing_blocking_times_class_2():
         simulation_times_using_markov_formula,
         markov_times,
         simulation_times,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=1,
         lambda_2=1,
         mu=1,
@@ -484,7 +483,7 @@ def test_get_plot_comparing_blocking_times_class_2():
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="blocking",
+        measure_to_compare="blocking",
         class_type=1,
         plot_over="lambda_2",
         max_parameter_value=3,
@@ -527,7 +526,7 @@ def test_get_plot_comparing_blocking_times_class_2():
     assert np.allclose(simulation_times, expected_sim_times)
 
 
-def test_get_plot_comparing_blocking_times_both_classes():
+def test_plot_output_comparisons_blocking_both_classes():
     """
     Test that the values to be plotted by the function for the mean waiting time
     of all individuals are the expected when using:
@@ -540,7 +539,7 @@ def test_get_plot_comparing_blocking_times_both_classes():
         simulation_times_using_markov_formula,
         markov_times,
         simulation_times,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=1,
         lambda_2=1,
         mu=1,
@@ -551,7 +550,7 @@ def test_get_plot_comparing_blocking_times_both_classes():
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="blocking",
+        measure_to_compare="blocking",
         class_type=None,
         plot_over="num_of_servers",
         max_parameter_value=5,
@@ -604,7 +603,7 @@ def test_get_plot_comparing_blocking_times_both_classes():
     buffer_capacity=integers(min_value=2, max_value=10),
 )
 @settings(max_examples=5, deadline=None)
-def test_get_plot_comparing_blocking_times_property(
+def test_plot_output_comparisons_blocking_property(
     lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
@@ -623,7 +622,7 @@ def test_get_plot_comparing_blocking_times_property(
         simulation_times_using_markov_formula_1,
         markov_times_1,
         simulation_times_1,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=lambda_1,
         lambda_2=lambda_2,
         mu=mu,
@@ -634,7 +633,7 @@ def test_get_plot_comparing_blocking_times_property(
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="blocking",
+        measure_to_compare="blocking",
         class_type=1,
         plot_over="buffer_capacity",
         max_parameter_value=5,
@@ -646,7 +645,7 @@ def test_get_plot_comparing_blocking_times_property(
         simulation_times_using_markov_formula_2,
         markov_times_2,
         simulation_times_2,
-    ) = get_plot_comparing_times(
+    ) = plot_output_comparisons(
         lambda_1=lambda_1,
         lambda_2=lambda_2,
         mu=mu,
@@ -657,7 +656,7 @@ def test_get_plot_comparing_blocking_times_property(
         seed_num=0,
         num_of_trials=1,
         runtime=100,
-        times_to_compare="blocking",
+        measure_to_compare="blocking",
         class_type=None,
         plot_over="buffer_capacity",
         max_parameter_value=5,
@@ -679,13 +678,12 @@ def test_plot_of_proportion_within_target_class_1():
         simulation_props_using_markov_formula,
         markov_props,
         simulation_props,
-    ) = plot_of_proportion_within_target(
+    ) = plot_output_comparisons(
         lambda_1=1,
         lambda_2=1,
         mu=1,
         num_of_servers=3,
-        min_threshold=2,
-        max_threshold=10,
+        threshold=2,
         system_capacity=20,
         buffer_capacity=10,
         seed_num=1,
@@ -693,7 +691,10 @@ def test_plot_of_proportion_within_target_class_1():
         runtime=100,
         target=4,
         class_type=0,
+        measure_to_compare="proportion",
         accuracy=5,
+        plot_over="threshold",
+        max_parameter_value=10,
     )
 
     expected_range_space = [
@@ -739,13 +740,12 @@ def test_plot_of_proportion_within_target_class_2():
         simulation_props_using_markov_formula,
         markov_props,
         simulation_props,
-    ) = plot_of_proportion_within_target(
+    ) = plot_output_comparisons(
         lambda_1=1,
         lambda_2=1,
         mu=1,
         num_of_servers=3,
-        min_threshold=2,
-        max_threshold=10,
+        threshold=2,
         system_capacity=20,
         buffer_capacity=10,
         seed_num=1,
@@ -753,7 +753,10 @@ def test_plot_of_proportion_within_target_class_2():
         runtime=100,
         target=4,
         class_type=1,
+        measure_to_compare="proportion",
         accuracy=5,
+        plot_over="threshold",
+        max_parameter_value=10,
     )
 
     expected_range_space = [
@@ -799,13 +802,12 @@ def test_plot_of_proportion_within_target_both_classes():
         simulation_props_using_markov_formula,
         markov_props,
         simulation_props,
-    ) = plot_of_proportion_within_target(
+    ) = plot_output_comparisons(
         lambda_1=1,
         lambda_2=1,
         mu=1,
         num_of_servers=3,
-        min_threshold=2,
-        max_threshold=10,
+        threshold=2,
         system_capacity=20,
         buffer_capacity=10,
         seed_num=1,
@@ -813,7 +815,10 @@ def test_plot_of_proportion_within_target_both_classes():
         runtime=100,
         target=4,
         class_type=None,
+        measure_to_compare="proportion",
         accuracy=5,
+        plot_over="threshold",
+        max_parameter_value=10,
     )
 
     expected_range_space = [

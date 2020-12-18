@@ -11,19 +11,14 @@ from .markov.markov import (
     get_steady_state_algebraically,
     get_transition_matrix,
 )
-from .markov.utils import is_accepting_state
 from .markov.waiting import (
     get_mean_waiting_time_using_markov_state_probabilities,
     mean_waiting_time_formula_using_closed_form_approach,
-    mean_waiting_time_formula_using_direct_approach,
-    mean_waiting_time_formula_using_recursive_approach,
     overall_waiting_time_formula,
 )
 from .simulation.simulation import (
     get_average_simulated_state_probabilities,
     get_multiple_runs_results,
-    get_simulated_state_probabilities,
-    simulate_model,
     get_mean_proportion_of_individuals_within_target_for_multiple_runs,
 )
 from .markov.proportion import (
@@ -298,6 +293,59 @@ def get_mean_blocking_time_from_simulation_state_probabilities(
     return mean_blocking_time
 
 
+def get_proportion_within_target_from_simulation_state_probabilities(
+    lambda_1,
+    lambda_2,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    target,
+    class_type=None,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+    psi_func=specific_psi_function,
+):
+    pi = get_average_simulated_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=seed_num,
+        num_of_trials=num_of_trials,
+        runtime=runtime,
+    )
+    all_states = [
+        (u, v) for v in range(pi.shape[1]) for u in range(pi.shape[0]) if pi[u, v] > 0
+    ]
+
+    if class_type is None:
+        proportion_formula = overall_proportion_of_individuals_within_time_target
+    else:
+        proportion_formula = get_proportion_of_individuals_within_time_target
+
+    prop = proportion_formula(
+        all_states=all_states,
+        pi=pi,
+        class_type=class_type,
+        lambda_1=lambda_1,
+        lambda_2=lambda_2,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        target=target,
+        psi_func=psi_func,
+    )
+    return prop
+
+
 def get_plot_comparing_times(
     lambda_2,
     lambda_1,
@@ -501,59 +549,6 @@ def get_plot_comparing_times(
     plt.ylabel("Waiting time", fontsize=15, fontweight="bold")
     plt.legend()
     return range_space, all_mean_times_sim, all_mean_times_markov, all_times_sim
-
-
-def get_proportion_within_target_from_simulation_state_probabilities(
-    lambda_1,
-    lambda_2,
-    mu,
-    num_of_servers,
-    threshold,
-    system_capacity,
-    buffer_capacity,
-    target,
-    class_type=None,
-    seed_num=None,
-    num_of_trials=10,
-    runtime=2000,
-    psi_func=specific_psi_function,
-):
-    pi = get_average_simulated_state_probabilities(
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-        seed_num=seed_num,
-        num_of_trials=num_of_trials,
-        runtime=runtime,
-    )
-    all_states = [
-        (u, v) for v in range(pi.shape[1]) for u in range(pi.shape[0]) if pi[u, v] > 0
-    ]
-
-    if class_type is None:
-        proportion_formula = overall_proportion_of_individuals_within_time_target
-    else:
-        proportion_formula = get_proportion_of_individuals_within_time_target
-
-    prop = proportion_formula(
-        all_states=all_states,
-        pi=pi,
-        class_type=class_type,
-        lambda_1=lambda_1,
-        lambda_2=lambda_2,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-        target=target,
-        psi_func=psi_func,
-    )
-    return prop
 
 
 def plot_of_proportion_within_target(

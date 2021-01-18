@@ -10,3 +10,7 @@ src/ambulance_game.egg-info/
 *synctex.gz
 *.toc
 *__pycache__
+*.bbl
+*.bcf
+*.blg
+*.run.xml

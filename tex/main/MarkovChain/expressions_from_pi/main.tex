@@ -673,9 +673,9 @@ distribution with two vector parameters.
 The CDF of this distribution can be therefore used to get the probability of the 
 time in spent in the system being less than a given target.
 The CDF of the general hypoexponential distribution \(Hypo(\vec{r}, 
-\vec{\lambda})\), is given by the following expression, where \(\vec{r}\) 
-contains all \(k\) values of erlang distributions and \(\vec{\lambda}\) contains
-all 
+\vec{\lambda})\), is given by the following expression, where vector \(\vec{r}\) 
+contains all \(k\)-values of the erlang distributions and \(\vec{\lambda}\) 
+is a vector of the distinct parameters.
 
 \begin{align} \label{eq:general-cdf-hypoexponential}
     & P(H < t) = 1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 

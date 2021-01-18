@@ -62,7 +62,7 @@ for all \(u\) where \(N\) is the system capacity.
 Therefore the set of all such states that an arrival may occur are defined as 
 \textit{accepting states} and are denoted as:
 
-\begin{equation}\label{eq:accepting_states_others}
+\begin{equation}\label{eq:accepting_states_class_1}
     S_A^{(1)} = \{(u, v) \in S \; | \; v < N \}
 \end{equation}
 
@@ -170,7 +170,7 @@ state \( (u,v) \) can be given by:
     \end{cases}
 \end{equation}
 
-Finally, the overall mean waiting time can be calculated by summing over all expected 
+Finally, the mean waiting time can be calculated by summing over all expected 
 waiting times of accepting states multiplied by the probability of being at that 
 state and dividing by the probability of being in any accepting state.
 
@@ -193,7 +193,7 @@ in the set of accepting states.
     S_w = \{(u, v) \in S \; | \; v > C \}    
 \]
 
-\begin{equation}\label{eq:accepting_states_ambulance}
+\begin{equation}\label{eq:accepting_states_class_2}
     S_A^{(2)}=
     \begin{cases}
         \{(u, v) \in S \; | \; u < M \} & \textbf{if } T \leq N\\
@@ -208,7 +208,7 @@ all \(v \geq T\) where \(M\) is the buffer centre capacity and \(T\) is the thre
 An odd situation here is when the threshold is set to a very high number that is 
 more than the actual system capacity. 
 In such cases the set of accepting states is defined in the same way as the 
-class 1 individuals case (\ref{eq:accepting_states_others}). 
+class 1 individuals case (\ref{eq:accepting_states_class_1}). 
 That is because whenever \(T > N\) no class 2 individual will ever be blocked in 
 the model 
 (since that threshold can never be reached) and thus the last accepting state of 
@@ -293,7 +293,7 @@ of the waiting times of class 1 and class 2 individuals.
 The overall waiting time can be then given by the following equation where \(c_1\) 
 and \(c_2\) are the coefficients of each individual's type waiting time:
 
-\begin{equation}\label{overall_waiting_time_coeff}
+\begin{equation}\label{eq:overall_waiting_time_coeff}
     W = c_1 W^{(1)} + c_2 W^{(2)}
 \end{equation}
 
@@ -305,8 +305,8 @@ is full, some individuals may be lost to the system.
 Thus, one should account for the probability that an individual is lost to the system. 
 This probability can be easily calculated by using the two sets of accepting states 
 \(S_A^{(2)}\) and \(S_A^{(1)}\) defined earlier in equations 
-\ref{eq:accepting_states_others} 
-and \ref{eq:accepting_states_ambulance}. 
+\ref{eq:accepting_states_class_1} 
+and \ref{eq:accepting_states_class_2}. 
 Let us define here the probability, for either class type, that an individual 
 is not lost in the system by:
 
@@ -319,26 +319,16 @@ Having defined these probabilities one may combine them with the arrival rates o
 each class type in such a way to get the expected proportions of class 1 and 
 class 2 individuals in the model. 
 Thus, by using these values as the coefficient of equation 
-\ref{overall_waiting_time_coeff} 
+\ref{eq:overall_waiting_time_coeff} 
 the resultant equation can be used to get the overall waiting time. 
 Note here that the equation below gets the overall waiting time for both the recursive 
 and the closed-form formula.
 
-\begin{equation}\label{overall_waiting_time}
+\begin{equation}\label{eq:overall_waiting_time}
     W = \frac{\lambda_1 P(L'_1)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(1)} + 
     \frac{\lambda_2 P(L'_2)}{\lambda_2 P(L'_2) + \lambda_1 P(L'_1)} W^{(2)}
 \end{equation}
 
-
-% \newpage
-% Mean waiting time in the hospital:
-% \begin{equation}
-%     W_q = \sum_{i=1}^{|\pi|} \frac{\text{max}(v_i - C, 0) \; \pi_i}{\sum_{\substack{j=1 \\ i \neq j}}^{|\pi|} q_{i j}}
-% \end{equation}
-
-% \begin{equation}
-%     W_q = \sum_{i=1}^{|\pi|} \pi_i \frac{v_i - c}{v_i \mu}, \quad v_i > c
-% \end{equation}
 
 
 \subsection{Mean blocking time}
@@ -359,7 +349,7 @@ Thus, the set of blocking states can be defined as:
 In order to not consider individuals that will be lost to the system, the set of 
 accepting states needs to be taken into account. As defined in section 
 \ref{sec:recursive-waiting-time-ambulance},
-the set of accepting states is given by (\ref{eq:accepting_states_ambulance}):
+the set of accepting states is given by (\ref{eq:accepting_states_class_2}):
 
 \begin{equation*}
     S_A^{(2)}=
@@ -615,11 +605,11 @@ having a service to exiting the system.
 Thus, the waiting and service time of an individual in the model of figure 
 \ref{fig:distribution-of-time-at-specific-state-1-server} can be captured by an 
 erlang distributed random variable. 
-The general cdf of the erlang distribution \(Erlang(k, \lambda)\) is given by:
+The general CDF of the erlang distribution \(Erlang(k, \lambda)\) is given by:
 
-\begin{equation*}
+\begin{equation} \label{eq:cdf-erlang}
     P(S < t) = 1 - \sum_{i=0}^{k-1} \frac{1}{i!} e^{-\lambda t} (\lambda t)^i
-\end{equation*}
+\end{equation}
 
 Unfortunately, the erlang distribution can only be used for the sum of 
 identically distributed random variables from the exponential distribution. 
@@ -679,9 +669,9 @@ For this particular example:
 The random variable \(H\) from equation 
 \ref{eq:multiple-servers-distribution-example} follows a hypoexponential 
 distribution with two vector parameters. 
-The cdf of this distribution can be therefore used to get the probability of the 
+The CDF of this distribution can be therefore used to get the probability of the 
 time in spent in the system being less than a given target.
-The cdf of the general hypoexponential distribution \(Hypo(\vec{r}, 
+The CDF of the general hypoexponential distribution \(Hypo(\vec{r}, 
 \vec{\lambda})\), is given by the following expression, where \(\vec{r}\) 
 contains all \(k\) values of erlang distributions and \(\vec{\lambda}\) contains
 all 
@@ -699,8 +689,8 @@ all
 
 
 
-\subsubsection{Specific cdf of hypoexponential distribution}
-Equation \ref{eq:general-cdf-hypoexponential} refers to the general cdf of the
+\subsubsection{Specific CDF of hypoexponential distribution}
+Equation \ref{eq:general-cdf-hypoexponential} refers to the general CDF of the
 hypoexponential distribution where the size of the vector parameters can be of
 any size.
 In the Markov chain models described in figures 
@@ -716,7 +706,7 @@ finishing a service (\(\mu\)) and the parameter for moving forward in the queue
 For the special case of \(C=1\) the hypoexponential distribution will not be 
 used as this is equivalent to an erlang distribution.
 Therefore, by fixing the sizes of \(\vec{r}\) and \(\vec{\lambda}\) to 2, the 
-following specific expression for the cdf of the hypoexponential distribution
+following specific expression for the CDF of the hypoexponential distribution
 arises, where the derivative is removed:
 
 
@@ -842,7 +832,8 @@ Thus the proof is split into two parts, for \(k=1\) and \(k=2\).
             \frac{(-1)^{x} (x-1)!}{\lambda_2}
             \left[\frac{1}{t^x} - \frac{1}{(t + \lambda_2)^x}\right]
         \end{equation*}
-        \item Prove true for \(l = x + 1\): \(\Bigg( \frac{\partial^x}{\partial t ^ x} 
+        \item Prove true for \(l = x + 1\): 
+        \(\Bigg( \frac{\partial^x}{\partial t ^ x} 
         \left( \frac{-1}{t (t + \lambda_2)} \right) = 
         \frac{(-1)^{x + 1} (x)!}{\lambda_2}
         \left[\frac{1}{t^{x+1}}-\frac{1}{(t + \lambda_2)^{x+1}}\right] \Bigg)\)
@@ -871,3 +862,152 @@ Thus the proof is split into two parts, for \(k=1\) and \(k=2\).
         \end{equation*}
     \end{enumerate}
 \end{itemize}
+
+\subsubsection{Proportion within target for class 1 and class 2 individuals}
+
+Given the two CDFs of the Erlang and Hypoexponential distributions a new 
+function has to be defined to decide which one to use among the two.
+Based on the state of the model, there can be three scenarios when an individual
+arrives.
+\begin{enumerate}
+    \item There is a free server and the individual does not have to wait
+    \begin{equation*}
+        X_{(u,v)} \sim Erlang(1, \mu) 
+    \end{equation*}
+    \item The individual arrives at a queue at the \(n^{th}\) position and the 
+    model has \(C > 1\) servers
+    \begin{equation*}
+        X_{(u,v)} \sim Hypo((n, 1), (C \mu, \mu)) 
+    \end{equation*}
+    \item The individual arrives at a queue at the \(n^{th}\) position and the 
+    model has \(C = 1\) servers
+    \begin{equation*}
+        X_{(u,v)} \sim Erlang(n + 1, \mu) 
+    \end{equation*}
+\end{enumerate}
+
+Note here that for the first case \(Erlang(1, \mu)\) is equivalent to 
+\(Exp(\mu)\). 
+Let us define \(X_{(u,v)}^{(1)}\) the distribution of class 1 individuals and
+\(X_{(u,v)}^{(2)}\) the distribution of class 2 individuals, when arriving at 
+state \((u,v)\) of the model.
+
+\begin{equation}
+    X_{(u,v)}^{(1)} \sim 
+    \begin{cases}
+        \textbf{Erlang}(v, \mu), & \textbf{if } C = 1 \textbf{ and } v>1 \\
+        \textbf{Hypo}\left(\vec{r}=(v - C, 1), \vec{\lambda}=(C \mu, \mu)\right), 
+            & \textbf{if } C > 1 \textbf{ and } v>C \\
+        \textbf{Erlang}(1, \mu), & \textbf{if } v \leq C
+    \end{cases}
+\end{equation}
+
+\begin{equation}
+    X_{(u,v)}^{(2)} \sim 
+    \begin{cases}
+        \textbf{Erlang}(\min(v, T), \mu), & \textbf{if } C = 1
+            \textbf{ and } v, T > 1 \\
+        \textbf{Hypo}\left(\vec{r}=(\min(v, T) - C, 1), \vec{\lambda}=(C \mu, \mu)\right), & 
+            \textbf{if } C > 1 \textbf{ and } v, T  > C \\
+        \textbf{Erlang}(1, \mu), & \textbf{if } v \leq C \textbf{ or } T \leq C
+    \end{cases}
+\end{equation}
+
+
+Equations \ref{eq:cdf-erlang} and \ref{eq:specific-cdf-hypoexponential} can now
+be used.
+Therefore, the probability that an individual arriving at a specific state is 
+within a given time target \(t\) is given by the following formulas:
+
+
+\begin{equation}
+    P(X_{(u,v)}^{(1)} < t) = 
+    \begin{cases}
+        1 - \sum_{i=0}^{v-1} \frac{1}{i!} e^{-\mu t} (\mu t)^i, 
+            & \textbf{if } C = 1 \textbf{ and } v>1 \\
+        & \\
+        1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 
+            \sum_{k=1}^{\mid \vec{r} \mid} \sum_{l=1}^{r_k}
+            \frac{\Psi_{k,l}(-\lambda_k)t^{r_k - l} 
+            e^{-\lambda_k t}}{(r_k - l)! (l - 1)!},
+            & \textbf{if } C > 1 \textbf{ and } v > C \\
+        \textbf{where } \vec{r}=(v - C, 1) \textbf{ and } 
+            \vec{\lambda}=(C \mu, \mu) & \\
+        & \\
+        1 - e^{-\mu t},  & \textbf{if } v \leq C
+    \end{cases}
+\end{equation}
+
+
+\begin{equation}
+    P(X_{(u,v)}^{(2)} < t) = 
+    \begin{cases}
+        1 - \sum_{i=0}^{\min(v,T)-1} \frac{1}{i!} e^{-\mu t} (\mu t)^i,  
+            & \textbf{if } C = 1 \textbf{ and } v, T > 1 \\
+        & \\
+        1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 
+            \sum_{k=1}^{\mid \vec{r} \mid} \sum_{l=1}^{r_k}
+            \frac{\Psi_{k,l}(-\lambda_k)t^{r_k - l} 
+            e^{-\lambda_k t}}{(r_k - l)! (l - 1)!}, 
+            & \textbf{if } C > 1 \textbf{ and } v, T  > C \\
+        \textbf{where } \vec{r}=(\min(v, T) - C, 1) \textbf{ and } 
+            \vec{\lambda}=(C \mu, \mu) & \\
+        & \\
+        1 - e^{-\mu t}, & \textbf{if } v \leq C \textbf{ or } T \leq C
+    \end{cases}
+\end{equation}
+
+
+In addition the set of accepting states for class 1 (\(S_A^{(1)}\)) and class 2 
+(\(S_A^{(2)}\)) individuals defined in  (\ref{eq:accepting_states_class_1}) and 
+(\ref{eq:accepting_states_class_2}) are also needed here.
+Note here that, \(S\) denotes the set of all states of the Markov chain model. 
+
+\begin{align*}
+    S_A^{(1)} &= \{(u, v) \in S \; | \; v < N \} \\
+    S_A^{(2)} &=
+    \begin{cases}
+        \{(u, v) \in S \; | \; u < M \}, & \textbf{if } T \leq N \\
+        \{(u, v) \in S \; | \; v < N \}, & \textbf{otherwise}
+    \end{cases}
+\end{align*}
+
+Having defined everything, it only remains to use a formula similar to the ones 
+of equations \ref{eq:recursive-waiting-time-others}, 
+\ref{eq:recursive-waiting-time-ambulance} and 
+\ref{eq:general-algebaric-approach-blocking-time}.
+The following formula uses the state probability vector \(\pi\) to get the 
+weighted average of the probability below target of all states in the Markov
+model.
+
+\begin{equation}
+    P(X^{(1)} < t) = \frac{\sum_{(u,v) \in S_A^{(1)}} P(X_{u,v}^{(1)} < t) 
+    \pi_{u,v} }{\sum_{(u,v) \in S_A^{(1)}} \pi_{u,v}}
+\end{equation}
+
+\begin{equation}
+    P(X^{(2)} < t) = \frac{\sum_{(u,v) \in S_A^{(2)}} P(X_{u,v}^{(2)} < t) 
+    \pi_{u,v} }{\sum_{(u,v) \in S_A^{(2)}} \pi_{u,v}}
+\end{equation}
+
+
+\subsubsection{Overall proportion within target}
+
+The overall proportion of individuals for both class 1 and class 2 individuals
+is given by the equivalent formula of equations 
+(\ref{eq:overall_waiting_time_coeff}) and (\ref{eq:overall_waiting_time}).
+The following formula uses the probability of lost individuals from both classes
+to get the weighted sum of the two already existing probabilities.
+
+\begin{equation*}
+    P(L'_1) = \sum_{(u,v) \, \in S_A^{(1)}} \pi(u,v), \hspace{1.5cm}
+    P(L'_2) = \sum_{(u,v) \, \in S_A^{(2)}} \pi(u,v)
+\end{equation*}
+
+\begin{equation}\label{eq:overall_proportion_within_target}
+    P(X < t)= \frac{\lambda_1 P(L'_1)}{\lambda_2 P(L'_2)+\lambda_1 P(L'_1)} 
+    P(X^{(1)} < t) + \frac{\lambda_2 P(L'_2)}{\lambda_2 P(L'_2) + \lambda_1 
+    P(L'_1)} P(X^{(2)} < t)
+\end{equation}
+
+

@@ -69,7 +69,7 @@ Therefore the set of all such states that an arrival may occur are defined as
 
 
 Moreover, another element that needs to be considered is the expected waiting time 
-in each state \( c(u,v) \), otherwise known as sojourn time. 
+in each state \( c(u,v) \), otherwise known as sojourn time \cite{Raghunandanan}. 
 In order to do so a variation of the Markov model has to be considered where when 
 the individual arrives at any of the states of the model no more arrivals can 
 occur after that. 
@@ -584,7 +584,7 @@ system from state \((0,4)\) is given by the sum of exponentially distributed
 random variables with the same parameter \(\mu\). 
 The sum of such random variables form the Erlang distribution which is defined 
 by the number of random variables that are added and their exponential 
-parameter.
+parameter \cite{Legros2015}.
 Note here that these random variables represent the individual's pathway from 
 the perspective of the individual. 
 Thus, \(X_i\) represents the random variable of the time that it takes for an
@@ -651,7 +651,8 @@ erlang distributed random variables.
 The sum of erlang distributed random variables is said to follow the 
 hypoexponential distribution. 
 The hypoexponential distribution is defined with two vectors of size equal
-to the number of Erlang random variables that are added together. 
+to the number of Erlang random variables that are added together
+\cite{Akkouchi2008}, \cite{Smaili2013}. 
 For this particular example:
 
 \begin{align} \label{eq:multiple-servers-distribution-example}
@@ -692,7 +693,7 @@ all
 \subsubsection{Specific CDF of hypoexponential distribution}
 Equation \ref{eq:general-cdf-hypoexponential} refers to the general CDF of the
 hypoexponential distribution where the size of the vector parameters can be of
-any size.
+any size \cite{Favaro2010}.
 In the Markov chain models described in figures 
 \ref{fig:distribution-of-time-at-specific-state-1-server} and 
 \ref{fig:distribution-of-time-at-specific-state-2-servers} the parameter vectors 
@@ -740,7 +741,8 @@ is true:
 
 
 
-\subsubsection{Proof of equation \ref{eq:hypoexponential-expression-to-proof}}
+\subsubsection{Proof of specific hypoexponential distribution 
+\ref{eq:hypoexponential-expression-to-proof}}
  
 This section aims to show that there exists a simplified expression of equation 
 \ref{eq:general-cdf-hypoexponential} that is specific to the proposed Markov 

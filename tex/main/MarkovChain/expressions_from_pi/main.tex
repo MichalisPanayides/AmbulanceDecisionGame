@@ -584,7 +584,7 @@ system from state \((0,4)\) is given by the sum of exponentially distributed
 random variables with the same parameter \(\mu\). 
 The sum of such random variables form the Erlang distribution which is defined 
 by the number of random variables that are added and their exponential 
-parameter \cite{Legros2015}.
+parameter.
 Note here that these random variables represent the individual's pathway from 
 the perspective of the individual. 
 Thus, \(X_i\) represents the random variable of the time that it takes for an
@@ -605,10 +605,10 @@ having a service to exiting the system.
 Thus, the waiting and service time of an individual in the model of figure 
 \ref{fig:distribution-of-time-at-specific-state-1-server} can be captured by an 
 erlang distributed random variable. 
-The general CDF of the erlang distribution \(Erlang(k, \lambda)\) is given by:
+The general CDF of the erlang distribution \(Erlang(k, \mu)\) is given by:
 
 \begin{equation} \label{eq:cdf-erlang}
-    P(S < t) = 1 - \sum_{i=0}^{k-1} \frac{1}{i!} e^{-\lambda t} (\lambda t)^i
+    P(S < t) = 1 - \sum_{i=0}^{k-1} \frac{1}{i!} e^{-\mu t} (\mu t)^i
 \end{equation}
 
 Unfortunately, the erlang distribution can only be used for the sum of 
@@ -675,7 +675,7 @@ time in spent in the system being less than a given target.
 The CDF of the general hypoexponential distribution \(Hypo(\vec{r}, 
 \vec{\lambda})\), is given by the following expression, where vector \(\vec{r}\) 
 contains all \(k\)-values of the erlang distributions and \(\vec{\lambda}\) 
-is a vector of the distinct parameters.
+is a vector of the distinct parameters \cite{Favaro2010}.
 
 \begin{align} \label{eq:general-cdf-hypoexponential}
     & P(H < t) = 1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 
@@ -689,9 +689,34 @@ is a vector of the distinct parameters.
 \end{align}
 
 
+The computation of the derivative makes equation \ref{eq:general-cdf-hypoexponential}
+computationally expensive. 
+In \cite{Legros2015} an alternative linear version of that CDF is explored via 
+matrix analysis, and is given by the following formula:
+
+\begin{equation} \label{eq:linear-general-cdf-hypoexponential}
+    \begin{split}
+        F(x) = &1 - \sum_{k=1}^{n} \sum_{l=0}^{k-1} (-1)^{k-1} {n \choose k} 
+            {k-1 \choose l} \sum_{j=1}^{n} \sum_{s=1}^{j-1} e^{-x \lambda_s} 
+            \prod_{l=1}^{s-1} \left( \frac{\lambda_l}{\lambda_l - \lambda_s} \right)
+            ^ {k_s} \\
+        & \times \sum_{s < a_1 < \dots < a_{l-1} < j} 
+            \left( \frac{\lambda_s}{\lambda_s - \lambda_{a_1}} \right) ^ {k_s}
+            \prod_{m=s+1}^{a_1-1} \left( \frac{\lambda_m}{\lambda_m - 
+            \lambda_{a_1}} ^ {k_m} \right) 
+            \prod_{n=a_1}^{a_2-1} \left( \frac{\lambda_n}{\lambda_n - 
+            \lambda_{a_2}} ^ {k_n} \right) \\
+        & \dots \prod_{r=a_l-1}^{j-1} \left( \frac{\lambda_r}{\lambda_r - 
+            \lambda_{a_j}} ^ {k_r} \right) 
+            \sum_{q=0}^{k_s - 1} \frac{((\lambda_s - \lambda_{a_1})x)^q}{q!}, \\
+        & \text{for } \geq 0
+    \end{split}
+\end{equation}
+
 
 \subsubsection{Specific CDF of hypoexponential distribution}
-Equation \ref{eq:general-cdf-hypoexponential} refers to the general CDF of the
+Equations \ref{eq:general-cdf-hypoexponential} and 
+\ref{eq:linear-general-cdf-hypoexponential} refers to the general CDF of the
 hypoexponential distribution where the size of the vector parameters can be of
 any size \cite{Favaro2010}.
 In the Markov chain models described in figures 
@@ -928,7 +953,7 @@ within a given time target \(t\) is given by the following formulas:
         1 - \sum_{i=0}^{v-1} \frac{1}{i!} e^{-\mu t} (\mu t)^i, 
             & \textbf{if } C = 1 \textbf{ and } v>1 \\
         & \\
-        1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 
+        1 - (\mu C)^{v-C} \mu  
             \sum_{k=1}^{\mid \vec{r} \mid} \sum_{l=1}^{r_k}
             \frac{\Psi_{k,l}(-\lambda_k)t^{r_k - l} 
             e^{-\lambda_k t}}{(r_k - l)! (l - 1)!},
@@ -947,7 +972,7 @@ within a given time target \(t\) is given by the following formulas:
         1 - \sum_{i=0}^{\min(v,T)-1} \frac{1}{i!} e^{-\mu t} (\mu t)^i,  
             & \textbf{if } C = 1 \textbf{ and } v, T > 1 \\
         & \\
-        1 - \left( \prod_{j=1}^{\mid \vec{r} \mid} \lambda_j^{r_j} \right) 
+        1 - (C \mu ) ^ {\min(v,T) - C} \mu
             \sum_{k=1}^{\mid \vec{r} \mid} \sum_{l=1}^{r_k}
             \frac{\Psi_{k,l}(-\lambda_k)t^{r_k - l} 
             e^{-\lambda_k t}}{(r_k - l)! (l - 1)!}, 

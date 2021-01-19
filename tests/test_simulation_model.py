@@ -1,27 +1,20 @@
-import pytest
-import numpy as np
 import ciw
-
-from hypothesis import (
-    given,
-    settings,
-)
-from hypothesis.strategies import (
-    floats,
-    integers,
-)
-
-
+import numpy as np
+import pytest
 from ambulance_game.simulation.simulation import (
-    build_model,
     build_custom_node,
+    build_model,
     simulate_model,
-    get_simulated_state_probabilities,
-    get_average_simulated_state_probabilities,
-    get_multiple_runs_results,
-    get_mean_blocking_difference_between_two_systems,
     calculate_class_2_individuals_best_response,
+    get_average_simulated_state_probabilities,
+    get_mean_blocking_difference_between_two_systems,
+    get_multiple_runs_results,
+    get_simulated_state_probabilities,
+    extract_total_individuals_and_the_ones_within_target_for_both_classes,
+    get_mean_proportion_of_individuals_within_target_for_multiple_runs,
 )
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
 
 number_of_digits_to_round = 8
 
@@ -575,3 +568,77 @@ def test_calculate_class_2_individuals_best_response_equal_split():
     )
 
     assert np.isclose(equal_split, 0.5)
+
+
+def test_extract_total_individuals_and_the_ones_within_target_for_both_classes_example():
+    inds = simulate_model(
+        lambda_2=2,
+        lambda_1=2,
+        mu=1,
+        num_of_servers=5,
+        threshold=8,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=0,
+        runtime=200,
+    ).get_all_individuals()
+
+    assert extract_total_individuals_and_the_ones_within_target_for_both_classes(
+        individuals=inds, target=1
+    ) == (394, 212, 372, 192)
+
+
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_wwith_0_target():
+    """
+    Test that for any random seed number there are no individuals that exit the
+    system in less than 0 time (all individuals have a non-negative mean).
+
+    i.e. Ensure that the proportion of individuals that spend less than 0 time
+    in the simulation is 0%
+    """
+    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+        lambda_2=1,
+        lambda_1=1,
+        mu=0.5,
+        num_of_servers=6,
+        threshold=5,
+        system_capacity=10,
+        buffer_capacity=5,
+        seed_num=None,
+        num_of_trials=5,
+        runtime=100,
+        target=0,
+    )
+
+    assert np.all(prop == 0 for prop in props[0])
+    assert np.all(prop == 0 for prop in props[1])
+    assert np.all(prop == 0 for prop in props[2])
+
+
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example():
+    """
+    Test the mean proportion of individuals for a given set of parameters
+    """
+    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+        lambda_2=1,
+        lambda_1=1,
+        mu=0.5,
+        num_of_servers=6,
+        threshold=5,
+        system_capacity=10,
+        buffer_capacity=5,
+        seed_num=0,
+        num_of_trials=2,
+        runtime=100,
+        target=2,
+    )
+
+    assert round(np.mean(props[0]), number_of_digits_to_round) == round(
+        0.6085194375516956, number_of_digits_to_round
+    )
+    assert round(np.mean(props[1]), number_of_digits_to_round) == round(
+        0.6043700088731145, number_of_digits_to_round
+    )
+    assert round(np.mean(props[2]), number_of_digits_to_round) == round(
+        0.6124698398771661, number_of_digits_to_round
+    )

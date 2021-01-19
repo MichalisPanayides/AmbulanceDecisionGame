@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def is_waiting_state(state, num_of_servers):
     """Checks if waiting occurs in the given state. In essence, all states (u,v)
     where v > C are considered waiting states.
@@ -107,7 +110,6 @@ def expected_time_in_markov_state_ignoring_arrivals(
     return 1 / (min(state[1], num_of_servers) * mu)
 
 
-# TODO Modify name to fit generic formulation
 def expected_time_in_markov_state_ignoring_class_2_arrivals(
     state, lambda_1, mu, num_of_servers, system_capacity
 ):
@@ -133,3 +135,94 @@ def prob_service(state, lambda_1, mu, num_of_servers):
 def prob_class_1_arrival(state, lambda_1, mu, num_of_servers):
     """Gets the probability of a class 1 arrival to occur"""
     return lambda_1 / (lambda_1 + (mu * min(state[1], num_of_servers)))
+
+
+def get_probability_of_accepting(
+    all_states,
+    pi,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+):
+    """
+    Generates the probability of acceptance for both class types of a given
+    Markov model.
+
+    Parameters
+    ----------
+    all_states : list
+    pi : numpy.array
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+
+    Returns
+    -------
+    list
+        The probability of accepting an individual upon its arrival for class 0
+        and class 1
+    """
+    prob_accept = [
+        np.sum(
+            [
+                pi[state]
+                for state in all_states
+                if is_accepting_state(
+                    state=state,
+                    class_type=class_type,
+                    threshold=threshold,
+                    system_capacity=system_capacity,
+                    buffer_capacity=buffer_capacity,
+                )
+            ]
+        )
+        for class_type in range(2)
+    ]
+    return prob_accept
+
+
+def get_proportion_of_individuals_not_lost(
+    all_states,
+    pi,
+    lambda_1,
+    lambda_2,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+):
+    """
+    Generates the proportion of individuals that will normally travel through the
+    system and will not be lost to the system.
+
+    Parameters
+    ----------
+    all_states : lists
+    pi : numpy.array
+    lambda_1 : float
+    lambda_2 : float
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+
+    Returns
+    -------
+    list
+        The proportion of not lost individuals of both class 0 and class 1
+        individuals
+    """
+    prob_accept = get_probability_of_accepting(
+        all_states,
+        pi,
+        threshold,
+        system_capacity,
+        buffer_capacity,
+    )
+    class_rates = [
+        prob_accept[class_type]
+        / ((lambda_2 * prob_accept[1]) + (lambda_1 * prob_accept[0]))
+        for class_type in range(2)
+    ]
+    class_rates[0] *= lambda_1
+    class_rates[1] *= lambda_2
+
+    return class_rates

@@ -4,7 +4,6 @@ import unittest
 
 from setuptools import find_packages, setup
 
-
 requirements = ["numpy>=1.12.1"]
 
 

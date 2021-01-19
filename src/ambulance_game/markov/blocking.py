@@ -1,18 +1,17 @@
 import numpy as np
 
-from .utils import (
-    is_accepting_state,
-    is_blocking_state,
-    expected_time_in_markov_state_ignoring_class_2_arrivals,
-    prob_service,
-    prob_class_1_arrival,
-)
-
 from .markov import (
     build_states,
-    get_transition_matrix,
-    get_steady_state_algebraically,
     get_markov_state_probabilities,
+    get_steady_state_algebraically,
+    get_transition_matrix,
+)
+from .utils import (
+    expected_time_in_markov_state_ignoring_class_2_arrivals,
+    is_accepting_state,
+    is_blocking_state,
+    prob_class_1_arrival,
+    prob_service,
 )
 
 

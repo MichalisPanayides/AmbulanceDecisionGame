@@ -696,18 +696,18 @@ matrix analysis, and is given by the following formula:
 
 \begin{equation} \label{eq:linear-general-cdf-hypoexponential}
     \begin{split}
-        F(x) = &1 - \sum_{k=1}^{n} \sum_{l=0}^{k-1} (-1)^{k-1} {n \choose k} 
-            {k-1 \choose l} \sum_{j=1}^{n} \sum_{s=1}^{j-1} e^{-x \lambda_s} 
+        F(x) = &1 - \sum_{k=1}^{n} \sum_{l=0}^{k-1} (-1)^{k-1} \binom{n}{k} 
+            \binom{k-1}{l} \sum_{j=1}^{n} \sum_{s=1}^{j-1} e^{-x \lambda_s} 
             \prod_{l=1}^{s-1} \left( \frac{\lambda_l}{\lambda_l - \lambda_s} \right)
             ^ {k_s} \\
         & \times \sum_{s < a_1 < \dots < a_{l-1} < j} 
             \left( \frac{\lambda_s}{\lambda_s - \lambda_{a_1}} \right) ^ {k_s}
             \prod_{m=s+1}^{a_1-1} \left( \frac{\lambda_m}{\lambda_m - 
-            \lambda_{a_1}} ^ {k_m} \right) 
+            \lambda_{a_1}}\right) ^ {k_m}  
             \prod_{n=a_1}^{a_2-1} \left( \frac{\lambda_n}{\lambda_n - 
-            \lambda_{a_2}} ^ {k_n} \right) \\
+            \lambda_{a_2}}\right) ^ {k_n} \\
         & \dots \prod_{r=a_l-1}^{j-1} \left( \frac{\lambda_r}{\lambda_r - 
-            \lambda_{a_j}} ^ {k_r} \right) 
+            \lambda_{a_j}}\right) ^ {k_r}  
             \sum_{q=0}^{k_s - 1} \frac{((\lambda_s - \lambda_{a_1})x)^q}{q!}, \\
         & \text{for } \geq 0
     \end{split}

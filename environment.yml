@@ -2,13 +2,13 @@ name: AmbulanceGame
 channels:
   - defaults
 dependencies:
-  - sympy
-  - scipy
-  - numpy
-  - python
+  - sympy==1.5.1
+  - scipy==1.4.1
+  - numpy==1.19.2
+  - python==3.8.1
   - notebook==6.0.3
-  - pylint
-  - matplotlib
-  - seaborn
-  - ipykernel
+  - pylint==2.4.4
+  - matplotlib==3.3.2
+  - seaborn==0.10.0
+  - ipykernel==5.3.4
 prefix: C:\Users\micha\Anaconda3\envs\AmbulanceGame

@@ -28,7 +28,7 @@ def write_data(data, path="main.csv"):
     """
     Opens `path` in append mode and write the data
     """
-    with open(path, "w") as out_file:
+    with open(path, "a", newline="") as out_file:
         csv_writer = csv.writer(out_file)
         csv_writer.writerow(data)
 
@@ -90,6 +90,7 @@ def main(
     except FileNotFoundError:
         header = ["repetition", "tolerance"] + keys + ["time_taken"]
         write_data(data=header, path=path)
+        cache = set()
 
     while True:
 
@@ -104,7 +105,7 @@ def main(
                 )
 
                 data = [repetition, tolerance] + list(parameter_values) + [time_taken]
-                write_data(data=header, path=path)
+                write_data(data=data, path=path)
 
         problem_parameters["system_capacity_1"] += 1
 

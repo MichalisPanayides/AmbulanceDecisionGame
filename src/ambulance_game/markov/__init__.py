@@ -45,6 +45,7 @@ from .proportion import (
     proportion_within_target_using_markov_state_probabilities,
     specific_psi_function,
 )
+from .response import calculate_class_2_individuals_best_response
 from .tikz import (
     build_body_of_tikz_spanning_tree,
     generate_code_for_tikz_figure,
@@ -54,6 +55,7 @@ from .tikz import (
 from .utils import (
     expected_time_in_markov_state_ignoring_arrivals,
     expected_time_in_markov_state_ignoring_class_2_arrivals,
+    get_accepting_proportion_of_class_2_individuals,
     get_probability_of_accepting,
     get_proportion_of_individuals_not_lost,
     is_accepting_state,

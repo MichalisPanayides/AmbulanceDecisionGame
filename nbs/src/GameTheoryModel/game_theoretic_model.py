@@ -1,4 +1,5 @@
 import itertools
+import functools
 
 import matplotlib.pyplot as plt
 import nashpy as nash
@@ -8,6 +9,7 @@ import scipy.optimize
 import ambulance_game as abg
 
 
+@functools.lru_cache(maxsize=None)
 def get_accepting_proportion_of_class_2_individuals(
     lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
@@ -74,8 +76,7 @@ def make_plot_of_distribution_among_two_systems(
     buffer_capacity_1,
     buffer_capacity_2,
     accuracy=10,
-    plot_variable=0,
-    alpha=0.5,
+    alpha=0,
 ):
     """
     Given two distinct systems and a joint value for lambda_2, plot the blocking
@@ -186,6 +187,7 @@ def make_plot_of_distribution_among_two_systems(
     return distribution_plot
 
 
+@functools.lru_cache(maxsize=None)
 def get_weighted_mean_blocking_difference_between_two_markov_systems(
     prop_1,
     lambda_2,
@@ -201,7 +203,7 @@ def get_weighted_mean_blocking_difference_between_two_markov_systems(
     system_capacity_2,
     buffer_capacity_1,
     buffer_capacity_2,
-    alpha=0.6,
+    alpha=0,
 ):
     """
     Get a weighted mean blocking difference between two Markov systems. This
@@ -286,6 +288,7 @@ def get_weighted_mean_blocking_difference_between_two_markov_systems(
     return decision_value_1 - decision_value_2
 
 
+@functools.lru_cache(maxsize=None)
 def calculate_class_2_individuals_best_response_markov(
     lambda_2,
     lambda_1_1,
@@ -303,6 +306,8 @@ def calculate_class_2_individuals_best_response_markov(
     lower_bound=0.01,
     upper_bound=0.99,
     routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
+    alpha=0,
+    tolerance=0.0001,
 ):
     """
     Get the best distribution of individuals (i.e. p_1, p_2) such that the
@@ -350,6 +355,7 @@ def calculate_class_2_individuals_best_response_markov(
         system_capacity_2=system_capacity_2,
         buffer_capacity_1=buffer_capacity_1,
         buffer_capacity_2=buffer_capacity_2,
+        alpha=alpha,
     )
     check_2 = routing_function(
         prop_1=upper_bound,
@@ -366,6 +372,7 @@ def calculate_class_2_individuals_best_response_markov(
         system_capacity_2=system_capacity_2,
         buffer_capacity_1=buffer_capacity_1,
         buffer_capacity_2=buffer_capacity_2,
+        alpha=alpha,
     )
 
     if check_1 >= 0 and check_2 >= 0:
@@ -391,11 +398,14 @@ def calculate_class_2_individuals_best_response_markov(
             system_capacity_2,
             buffer_capacity_1,
             buffer_capacity_2,
+            alpha,
         ),
+        xtol=tolerance,
     )
     return optimal_prop
 
 
+@functools.lru_cache(maxsize=None)
 def get_routing_matrix(
     lambda_2,
     lambda_1_1,
@@ -409,6 +419,7 @@ def get_routing_matrix(
     buffer_capacity_1,
     buffer_capacity_2,
     routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
+    alpha=0,
 ):
     """
     Get the optimal distribution matrix that consists of the proportion of
@@ -457,11 +468,13 @@ def get_routing_matrix(
             threshold_1=threshold_1,
             threshold_2=threshold_2,
             routing_function=routing_function,
+            alpha=alpha,
         )
         routing_matrix[threshold_1 - 1, threshold_2 - 1] = opt
     return routing_matrix
 
 
+@functools.lru_cache(maxsize=None)
 def get_payoff_matrices(
     lambda_2,
     lambda_1_1,
@@ -478,6 +491,7 @@ def get_payoff_matrices(
     alternative_utility=False,
     routing_matrix=None,
     routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
+    alpha=0,
 ):
     """
     The function uses the distribution array (that is the array that holds the
@@ -529,6 +543,7 @@ def get_payoff_matrices(
             buffer_capacity_1=buffer_capacity_1,
             buffer_capacity_2=buffer_capacity_2,
             routing_function=routing_function,
+            alpha=alpha,
         )
     utility_matrix_1 = np.zeros((system_capacity_1, system_capacity_2))
     utility_matrix_2 = np.zeros((system_capacity_1, system_capacity_2))
@@ -572,6 +587,7 @@ def get_payoff_matrices(
     return (utility_matrix_1, utility_matrix_2)
 
 
+@functools.lru_cache(maxsize=None)
 def build_game_using_payoff_matrices(
     lambda_2,
     lambda_1_1,
@@ -587,6 +603,8 @@ def build_game_using_payoff_matrices(
     target,
     payoff_matrix_A=None,
     payoff_matrix_B=None,
+    alternative_utility=False,
+    alpha=0,
 ):
     """
     Build the game theoretic model either by building the payoff matrices or by
@@ -628,9 +646,27 @@ def build_game_using_payoff_matrices(
             buffer_capacity_1=buffer_capacity_1,
             buffer_capacity_2=buffer_capacity_2,
             target=target,
+            alternative_utility=alternative_utility,
             routing_matrix=None,
             routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
+            alpha=alpha,
         )
 
     game = nash.Game(payoff_matrix_A, payoff_matrix_B)
     return game
+
+
+def make_fictitious_play_plot(game, iterations=20, seed=0):
+    np.random.seed(seed)
+    play_counts = tuple(game.fictitious_play(iterations=iterations))
+    plt.figure(figsize=(14, 10))
+    probabilities = [
+        row_play_counts / np.sum(row_play_counts) for row_play_counts, _ in play_counts
+    ]
+    for number, strategy in enumerate(zip(*probabilities)):
+        plt.plot(strategy, label=f"$s_{number}$")
+    plt.xlabel("Iteration")
+    plt.ylabel("Probability")
+    plt.title("Actions taken by row player")
+    plt.legend()
+    return play_counts[-1]

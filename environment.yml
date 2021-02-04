@@ -11,4 +11,6 @@ dependencies:
   - matplotlib==3.3.2
   - seaborn==0.10.0
   - ipykernel==5.3.4
+  - ciw==2.1.0
+  - networkx==2.4
 prefix: C:\Users\micha\Anaconda3\envs\AmbulanceGame

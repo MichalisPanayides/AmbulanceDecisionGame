@@ -307,7 +307,8 @@ def calculate_class_2_individuals_best_response_markov(
     upper_bound=0.99,
     routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
     alpha=0,
-    tolerance=0.0001,
+    xtol=1e-04,
+    rtol=8.9e-16,
 ):
     """
     Get the best distribution of individuals (i.e. p_1, p_2) such that the
@@ -400,7 +401,8 @@ def calculate_class_2_individuals_best_response_markov(
             buffer_capacity_2,
             alpha,
         ),
-        xtol=tolerance,
+        xtol=xtol,
+        rtol=rtol,
     )
     return optimal_prop
 
@@ -670,3 +672,53 @@ def make_fictitious_play_plot(game, iterations=20, seed=0):
     plt.title("Actions taken by row player")
     plt.legend()
     return play_counts[-1]
+
+
+def get_brentq_tolerance_heatmaps(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    xtol_values,
+    rtol_values,
+):
+    calculated_roots = np.zeros((len(rtol_values), len(xtol_values)))
+    for (r_index, rtol), (x_index, xtol) in itertools.product(
+        enumerate(rtol_values),
+        enumerate(xtol_values),
+    ):
+        root = calculate_class_2_individuals_best_response_markov(
+            lambda_2=lambda_2,
+            lambda_1_1=lambda_1_1,
+            lambda_1_2=lambda_1_2,
+            mu_1=mu_1,
+            mu_2=mu_2,
+            num_of_servers_1=num_of_servers_1,
+            num_of_servers_2=num_of_servers_2,
+            threshold_1=threshold_1,
+            threshold_2=threshold_2,
+            system_capacity_1=system_capacity_1,
+            system_capacity_2=system_capacity_2,
+            buffer_capacity_1=buffer_capacity_1,
+            buffer_capacity_2=buffer_capacity_2,
+            xtol=xtol,
+            rtol=rtol,
+        )
+        calculated_roots[r_index, x_index] = root
+    plt.figure(figsize=(20, 10))
+    plt.imshow(calculated_roots)
+    plt.title("Heatmap of rtol VS xtol VS calculated root")
+    plt.ylabel("rtol values")
+    plt.xlabel("xtol values")
+    plt.colorbar()
+
+    return calculated_roots

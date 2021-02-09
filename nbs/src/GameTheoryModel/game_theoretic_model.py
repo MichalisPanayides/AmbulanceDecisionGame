@@ -658,12 +658,15 @@ def build_game_using_payoff_matrices(
     return game
 
 
-def make_fictitious_play_plot(game, iterations=20, seed=0):
+def make_fictitious_play_plot(game, iterations=20, seed=None, play_counts_start=None):
     np.random.seed(seed)
-    play_counts = tuple(game.fictitious_play(iterations=iterations))
+    all_play_counts = tuple(
+        game.fictitious_play(iterations=iterations, play_counts=play_counts_start)
+    )
     plt.figure(figsize=(14, 10))
     probabilities = [
-        row_play_counts / np.sum(row_play_counts) for row_play_counts, _ in play_counts
+        row_play_counts / np.sum(row_play_counts)
+        for row_play_counts, _ in all_play_counts
     ]
     for number, strategy in enumerate(zip(*probabilities)):
         plt.plot(strategy, label=f"$s_{number}$")
@@ -671,7 +674,7 @@ def make_fictitious_play_plot(game, iterations=20, seed=0):
     plt.ylabel("Probability")
     plt.title("Actions taken by row player")
     plt.legend()
-    return play_counts[-1]
+    return all_play_counts[-1]
 
 
 def get_brentq_tolerance_heatmaps(

@@ -1,5 +1,6 @@
 import itertools
 import functools
+import random
 
 import matplotlib.pyplot as plt
 import nashpy as nash
@@ -675,6 +676,105 @@ def make_fictitious_play_plot(game, iterations=20, seed=None, play_counts_start=
     plt.title("Actions taken by row player")
     plt.legend()
     return all_play_counts[-1]
+
+
+def make_ficititious_play_plot_over_different_values_of_alpha(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    target,
+    iterations=1000,
+    width=0.1,
+    seed=random.randint(1, 100),
+):
+    player_strategies_1 = np.array([], dtype=np.int64)
+    player_strategies_2 = np.array([], dtype=np.int64)
+    for alpha in np.linspace(start=0, stop=1, num=6):
+        game = build_game_using_payoff_matrices(
+            lambda_2=lambda_2,
+            lambda_1_1=lambda_1_1,
+            lambda_1_2=lambda_1_2,
+            mu_1=mu_1,
+            mu_2=mu_2,
+            num_of_servers_1=num_of_servers_1,
+            num_of_servers_2=num_of_servers_2,
+            system_capacity_1=system_capacity_1,
+            system_capacity_2=system_capacity_2,
+            buffer_capacity_1=buffer_capacity_1,
+            buffer_capacity_2=buffer_capacity_2,
+            target=target,
+            alpha=alpha,
+        )
+        np.random.seed(seed)
+        play_counts = tuple(game.fictitious_play(iterations=iterations))
+        probabilities = [
+            player_strategies / np.sum(player_strategies)
+            for player_strategies in play_counts[-1]
+        ]
+
+        player_strategies_1 = (
+            np.vstack((player_strategies_1, probabilities[0]))
+            if player_strategies_1.size
+            else probabilities[0]
+        )
+
+        player_strategies_2 = (
+            np.vstack((player_strategies_2, probabilities[1]))
+            if player_strategies_2.size
+            else probabilities[1]
+        )
+
+    ind = np.linspace(start=0, stop=1, num=6)
+
+    plt.figure(figsize=(14, 10))
+    bottom_bar = np.array(
+        [0 for _ in range(len(player_strategies_1[:, 0]))], dtype=np.float64
+    )
+    for row_player_strategy in range(len(player_strategies_1[0])):
+        plt.bar(
+            ind,
+            player_strategies_1[:, row_player_strategy],
+            width,
+            bottom=bottom_bar,
+            label=f"$s_{{{row_player_strategy + 1}}}$",
+        )
+        bottom_bar += player_strategies_1[:, row_player_strategy]
+    plt.title(
+        "Fictitious play over different values of $\\alpha$ for the strategies of the row player"
+    )
+    plt.xlabel("$\\alpha$")
+    plt.ylabel("Proportion of each strategy being played")
+    plt.legend(loc=4, fontsize="x-large")
+
+    plt.figure(figsize=(14, 10))
+    bottom_bar = np.array(
+        [0 for _ in range(len(player_strategies_2[:, 0]))], dtype=np.float64
+    )
+    for column_player_strategy in range(len(player_strategies_2[0])):
+        plt.bar(
+            ind,
+            player_strategies_2[:, column_player_strategy],
+            width,
+            bottom=bottom_bar,
+            label=f"$s_{{{column_player_strategy + 1}}}$",
+        )
+        bottom_bar += player_strategies_2[:, column_player_strategy]
+    plt.title(
+        "Fictitious play over different values of $\\alpha$ for the strategies of the row player"
+    )
+    plt.xlabel("$\\alpha$")
+    plt.ylabel("Proportion of each strategy being played")
+    plt.legend(loc=4, fontsize="x-large")
+
+    return player_strategies_1, player_strategies_2
 
 
 def get_brentq_tolerance_heatmaps(

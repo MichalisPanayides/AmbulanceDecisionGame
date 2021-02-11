@@ -102,7 +102,7 @@ def get_weighted_mean_blocking_difference_between_two_markov_systems(
     return decision_value_1 - decision_value_2
 
 
-def calculate_class_2_individuals_best_response_markov(
+def calculate_class_2_individuals_best_response(
     lambda_2,
     lambda_1_1,
     lambda_1_2,

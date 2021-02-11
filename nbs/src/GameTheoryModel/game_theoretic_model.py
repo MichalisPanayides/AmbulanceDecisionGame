@@ -5,6 +5,7 @@ import random
 import matplotlib.pyplot as plt
 import nashpy as nash
 import numpy as np
+import pandas as pd
 import scipy.optimize
 
 import ambulance_game as abg
@@ -870,3 +871,21 @@ def make_calculated_roots_over_alpha_plot(
     plt.xlabel("$\\alpha$")
 
     return calculated_roots
+
+
+def make_brentq_heatmap_of_time_vs_xtol_vs_capacity(file_path="main.csv"):
+    df = pd.read_csv(file_path)
+    mean_time_df = pd.DataFrame(
+        np.zeros((19, 10)), columns=list(np.logspace(-10, -1, 10))
+    )
+    for index, row in df.iterrows():
+        mean_time_df[row["tolerance"]][int(row["system_capacity_1"] - 8)] += row[
+            "time_taken"
+        ]
+    mean_time_df /= 200
+    plt.figure(figsize=(23, 10))
+    plt.title("Heatmap of xtol VS $C_1$ VS time")
+    plt.xlabel("xtol values")
+    plt.ylabel("$C_1$")
+    plt.imshow(mean_time_df[:-1])
+    plt.colorbar()

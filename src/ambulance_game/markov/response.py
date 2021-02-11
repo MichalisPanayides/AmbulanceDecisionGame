@@ -102,7 +102,7 @@ def get_weighted_mean_blocking_difference_between_two_markov_systems(
     return decision_value_1 - decision_value_2
 
 
-def calculate_class_2_individuals_best_response(
+def calculate_class_2_individuals_best_response_markov(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -120,7 +120,8 @@ def calculate_class_2_individuals_best_response(
     upper_bound=0.99,
     routing_function=get_weighted_mean_blocking_difference_between_two_markov_systems,
     alpha=0,
-    tolerance=0.0001,
+    xtol=1e-04,
+    rtol=8.9e-16,
 ):
     """
     Get the best distribution of individuals (i.e. p_1, p_2) such that the
@@ -213,6 +214,7 @@ def calculate_class_2_individuals_best_response(
             buffer_capacity_2,
             alpha,
         ),
-        xtol=tolerance,
+        xtol=xtol,
+        rtol=rtol,
     )
     return optimal_prop

@@ -825,3 +825,48 @@ def get_brentq_tolerance_heatmaps(
     plt.colorbar()
 
     return calculated_roots
+
+
+def make_calculated_roots_over_alpha_plot(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    alpha_points=11,
+):
+    calculated_roots = np.zeros(alpha_points)
+    alpha_range = np.linspace(0, 1, alpha_points)
+    for ind, alpha in enumerate(alpha_range):
+        root = calculate_class_2_individuals_best_response_markov(
+            lambda_2=lambda_2,
+            lambda_1_1=lambda_1_1,
+            lambda_1_2=lambda_1_2,
+            mu_1=mu_1,
+            mu_2=mu_2,
+            num_of_servers_1=num_of_servers_1,
+            num_of_servers_2=num_of_servers_2,
+            threshold_1=threshold_1,
+            threshold_2=threshold_2,
+            system_capacity_1=system_capacity_1,
+            system_capacity_2=system_capacity_2,
+            buffer_capacity_1=buffer_capacity_1,
+            buffer_capacity_2=buffer_capacity_2,
+            alpha=alpha,
+        )
+        calculated_roots[ind] = root
+    plt.figure(figsize=(15, 10))
+    plt.plot(alpha_range, calculated_roots)
+    plt.title("Calculated root over different values of $\\alpha$")
+    plt.ylabel("Calculated root")
+    plt.xlabel("$\\alpha$")
+
+    return calculated_roots

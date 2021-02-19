@@ -2,6 +2,7 @@ import itertools
 import functools
 import random
 
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import nashpy as nash
 import numpy as np
@@ -889,3 +890,83 @@ def make_brentq_heatmap_of_time_vs_xtol_vs_capacity(file_path="main.csv"):
     plt.ylabel("$C_1$")
     plt.imshow(mean_time_df[:-1])
     plt.colorbar()
+
+
+def make_violinplots_of_fictitious_play(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    target,
+    alpha=0.5,
+    iterations=100,
+    seed_start=0,
+    seed_reps=30,
+    num_of_violiplots=8,
+    violin_width=10,
+):
+    seed_range = np.linspace(seed_start, seed_start + 10000, seed_reps, dtype=int)
+    violinplots_data_pos = np.linspace(1, iterations, num_of_violiplots, dtype=int)
+
+    game = build_game_using_payoff_matrices(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        target=target,
+        alpha=alpha,
+    )
+
+    all_violinplots_data_row = None
+    for seed in seed_range:
+        np.random.seed(seed)
+        play_counts = tuple(game.fictitious_play(iterations=iterations))
+        current_violinplot_data_row_player = None
+        for pos in violinplots_data_pos:
+            row_plays, col_plays = play_counts[pos]
+            if current_violinplot_data_row_player is None:
+                current_violinplot_data_row_player = np.array([row_plays])
+            else:
+                current_violinplot_data_row_player = np.concatenate(
+                    (current_violinplot_data_row_player, np.array([row_plays]))
+                )
+
+        if all_violinplots_data_row is None:
+            all_violinplots_data_row = [current_violinplot_data_row_player]
+        else:
+            all_violinplots_data_row = np.concatenate(
+                (
+                    all_violinplots_data_row,
+                    [current_violinplot_data_row_player],
+                )
+            )
+    row_player_strategies = all_violinplots_data_row.shape[2]
+    plt.figure(figsize=(20, 10))
+    row_labels = []
+    for row_strategy in range(row_player_strategies):
+        violin = plt.violinplot(
+            all_violinplots_data_row[:, :, row_strategy],
+            violinplots_data_pos,
+            widths=violin_width,
+        )
+        color = violin["bodies"][0].get_facecolor().flatten()
+        row_labels.append((mpatches.Patch(color=color), f"$s_{{{row_strategy + 1}}}$"))
+
+    plt.xlabel("Iteration")
+    plt.ylabel("Times played")
+    plt.legend(*zip(*row_labels), fontsize="x-large")
+    return all_violinplots_data_row

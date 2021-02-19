@@ -932,21 +932,31 @@ def make_violinplots_of_fictitious_play(
     )
 
     all_violinplots_data_row = None
+    all_violinplots_data_col = None
     for seed in seed_range:
         np.random.seed(seed)
         play_counts = tuple(game.fictitious_play(iterations=iterations))
         current_violinplot_data_row_player = None
+        current_violinplot_data_col_player = None
         for pos in violinplots_data_pos:
             row_plays, col_plays = play_counts[pos]
-            if current_violinplot_data_row_player is None:
+            if (
+                current_violinplot_data_row_player is None
+                and current_violinplot_data_col_player is None
+            ):
                 current_violinplot_data_row_player = np.array([row_plays])
+                current_violinplot_data_col_player = np.array([col_plays])
             else:
                 current_violinplot_data_row_player = np.concatenate(
                     (current_violinplot_data_row_player, np.array([row_plays]))
                 )
+                current_violinplot_data_col_player = np.concatenate(
+                    (current_violinplot_data_col_player, np.array([col_plays]))
+                )
 
-        if all_violinplots_data_row is None:
+        if all_violinplots_data_row is None and all_violinplots_data_col is None:
             all_violinplots_data_row = [current_violinplot_data_row_player]
+            all_violinplots_data_col = [current_violinplot_data_col_player]
         else:
             all_violinplots_data_row = np.concatenate(
                 (
@@ -954,9 +964,18 @@ def make_violinplots_of_fictitious_play(
                     [current_violinplot_data_row_player],
                 )
             )
+            all_violinplots_data_col = np.concatenate(
+                (
+                    all_violinplots_data_col,
+                    [current_violinplot_data_col_player],
+                )
+            )
+
     row_player_strategies = all_violinplots_data_row.shape[2]
+    col_player_strategies = all_violinplots_data_col.shape[2]
+    row_labels, col_labels = [], []
+
     plt.figure(figsize=(20, 10))
-    row_labels = []
     for row_strategy in range(row_player_strategies):
         violin = plt.violinplot(
             all_violinplots_data_row[:, :, row_strategy],
@@ -969,4 +988,19 @@ def make_violinplots_of_fictitious_play(
     plt.xlabel("Iteration")
     plt.ylabel("Times played")
     plt.legend(*zip(*row_labels), fontsize="x-large")
-    return all_violinplots_data_row
+
+    plt.figure(figsize=(20, 10))
+    for col_strategy in range(col_player_strategies):
+        violin = plt.violinplot(
+            all_violinplots_data_col[:, :, col_strategy],
+            violinplots_data_pos,
+            widths=violin_width,
+        )
+        color = violin["bodies"][0].get_facecolor().flatten()
+        col_labels.append((mpatches.Patch(color=color), f"$s_{{{col_strategy + 1}}}$"))
+
+    plt.xlabel("Iteration")
+    plt.ylabel("Times played")
+    plt.legend(*zip(*col_labels), fontsize="x-large")
+
+    return all_violinplots_data_row, all_violinplots_data_col

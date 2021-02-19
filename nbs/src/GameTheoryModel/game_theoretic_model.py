@@ -910,10 +910,13 @@ def make_violinplots_of_fictitious_play(
     seed_start=0,
     seed_reps=30,
     num_of_violiplots=8,
-    violin_width=10,
+    use_probs=True,
+    violin_width=None,
 ):
     seed_range = np.linspace(seed_start, seed_start + 10000, seed_reps, dtype=int)
     violinplots_data_pos = np.linspace(1, iterations, num_of_violiplots, dtype=int)
+    if violin_width is None:
+        violin_width = iterations / (num_of_violiplots - 1)
 
     game = build_game_using_payoff_matrices(
         lambda_2=lambda_2,
@@ -936,6 +939,15 @@ def make_violinplots_of_fictitious_play(
     for seed in seed_range:
         np.random.seed(seed)
         play_counts = tuple(game.fictitious_play(iterations=iterations))
+        if use_probs:
+            play_counts = [
+                [
+                    row_play_counts / np.sum(row_play_counts),
+                    col_play_counts / np.sum(col_play_counts),
+                ]
+                for row_play_counts, col_play_counts in play_counts
+            ]
+
         current_violinplot_data_row_player = None
         current_violinplot_data_col_player = None
         for pos in violinplots_data_pos:

@@ -64,132 +64,6 @@ def get_accepting_proportion_of_class_2_individuals(
     return prob_accept[1]
 
 
-def make_plot_of_distribution_among_two_systems(
-    lambda_2,
-    lambda_1_1,
-    lambda_1_2,
-    mu_1,
-    mu_2,
-    num_of_servers_1,
-    num_of_servers_2,
-    threshold_1,
-    threshold_2,
-    system_capacity_1,
-    system_capacity_2,
-    buffer_capacity_1,
-    buffer_capacity_2,
-    accuracy=10,
-    alpha=0,
-):
-    """
-    Given two distinct systems and a joint value for lambda_2, plot the blocking
-    times of the two systems by altering the value of the proportion of people
-    that go to each hospital.
-
-    Parameters
-    ----------
-    lambda_2 : float
-    lambda_1_1 : float
-    lambda_1_2 : float
-    mu_1 : float
-    mu_2 : float
-    num_of_servers_1 : int
-    num_of_servers_2 : int
-    threshold_1 : int
-    threshold_2 : int
-    system_capacity_1 : int
-    system_capacity_2 : int
-    buffer_capacity_1 : int
-    buffer_capacity_2 : int
-    accuracy : int, optional
-    alpha : float, optional
-
-    Returns
-    -------
-    plot
-        The plot of blocking times of 2 systems over different arrival
-        distributions of individuals
-    """
-
-    system_times_1 = []
-    system_times_2 = []
-    all_arrival_rates = np.linspace(0, lambda_2, accuracy + 1)
-    for lambda_2_1 in all_arrival_rates[1:-1]:
-        lambda_2_2 = lambda_2 - lambda_2_1
-        blocking_times_1 = (
-            abg.markov.get_mean_blocking_time_using_markov_state_probabilities(
-                lambda_2=lambda_2_1,
-                lambda_1=lambda_1_1,
-                mu=mu_1,
-                num_of_servers=num_of_servers_1,
-                threshold=threshold_1,
-                system_capacity=system_capacity_1,
-                buffer_capacity=buffer_capacity_1,
-            )
-        )
-        blocking_times_2 = (
-            abg.markov.get_mean_blocking_time_using_markov_state_probabilities(
-                lambda_2=lambda_2_2,
-                lambda_1=lambda_1_2,
-                mu=mu_2,
-                num_of_servers=num_of_servers_2,
-                threshold=threshold_2,
-                system_capacity=system_capacity_2,
-                buffer_capacity=buffer_capacity_2,
-            )
-        )
-        prob_accept_1 = get_accepting_proportion_of_class_2_individuals(
-            lambda_1=lambda_1_1,
-            lambda_2=lambda_2_1,
-            mu=mu_1,
-            num_of_servers=num_of_servers_1,
-            threshold=threshold_1,
-            system_capacity=system_capacity_1,
-            buffer_capacity=buffer_capacity_1,
-        )
-        prob_accept_2 = get_accepting_proportion_of_class_2_individuals(
-            lambda_1=lambda_1_2,
-            lambda_2=lambda_2_2,
-            mu=mu_2,
-            num_of_servers=num_of_servers_2,
-            threshold=threshold_2,
-            system_capacity=system_capacity_2,
-            buffer_capacity=buffer_capacity_2,
-        )
-
-        system_times_1.append(
-            alpha * (1 - prob_accept_1) + (1 - alpha) * blocking_times_1
-        )
-        system_times_2.append(
-            alpha * (1 - prob_accept_2) + (1 - alpha) * blocking_times_2
-        )
-
-    x_labels = all_arrival_rates[1:-1] / all_arrival_rates[-1]
-    plt.figure(figsize=(23, 10))
-    distribution_plot = plt.plot(x_labels, system_times_1, ls="solid", lw=1.5)
-    plt.plot(x_labels, system_times_2, ls="solid", lw=1.5)
-    plt.legend(["System 1", "System 2"], fontsize="x-large")
-
-    title = "Individuals distribution between two systems"
-    y_axis_label = "$\\alpha P(L_i) + (1 - \\alpha) B_i $"
-
-    plt.title(
-        title
-        + "($T_1$="
-        + str(threshold_1)
-        + ", $T_2$="
-        + str(threshold_2)
-        + ", $\\alpha$="
-        + str(alpha)
-        + ")",
-        fontsize=18,
-    )
-    plt.ylabel(y_axis_label, fontsize=15, fontweight="bold")
-    plt.xlabel(f"$p_1$", fontsize=15, fontweight="bold")
-
-    return distribution_plot
-
-
 @functools.lru_cache(maxsize=None)
 def get_weighted_mean_blocking_difference_between_two_markov_systems(
     prop_1,
@@ -661,7 +535,220 @@ def build_game_using_payoff_matrices(
     return game
 
 
+### Plots
+
+
+def get_data_for_distribution_among_two_systems_plot(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    accuracy,
+    alpha,
+):
+    """
+    Generates the data to be used by make_plot_of_distribution_among_two_systems()
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : float
+    num_of_servers_2 : float
+    threshold_1 : float
+    threshold_2 : float
+    system_capacity_1 : float
+    system_capacity_2 : float
+    buffer_capacity_1 : float
+    buffer_capacity_2 : float
+    accuracy : float
+    alpha : float
+
+    Returns
+    -------
+    numpy.array, list, list
+    """
+    system_times_1 = []
+    system_times_2 = []
+    all_arrival_rates = np.linspace(0, lambda_2, accuracy + 1)
+    for lambda_2_1 in all_arrival_rates[1:-1]:
+        lambda_2_2 = lambda_2 - lambda_2_1
+        blocking_times_1 = (
+            abg.markov.get_mean_blocking_time_using_markov_state_probabilities(
+                lambda_2=lambda_2_1,
+                lambda_1=lambda_1_1,
+                mu=mu_1,
+                num_of_servers=num_of_servers_1,
+                threshold=threshold_1,
+                system_capacity=system_capacity_1,
+                buffer_capacity=buffer_capacity_1,
+            )
+        )
+        blocking_times_2 = (
+            abg.markov.get_mean_blocking_time_using_markov_state_probabilities(
+                lambda_2=lambda_2_2,
+                lambda_1=lambda_1_2,
+                mu=mu_2,
+                num_of_servers=num_of_servers_2,
+                threshold=threshold_2,
+                system_capacity=system_capacity_2,
+                buffer_capacity=buffer_capacity_2,
+            )
+        )
+        prob_accept_1 = get_accepting_proportion_of_class_2_individuals(
+            lambda_1=lambda_1_1,
+            lambda_2=lambda_2_1,
+            mu=mu_1,
+            num_of_servers=num_of_servers_1,
+            threshold=threshold_1,
+            system_capacity=system_capacity_1,
+            buffer_capacity=buffer_capacity_1,
+        )
+        prob_accept_2 = get_accepting_proportion_of_class_2_individuals(
+            lambda_1=lambda_1_2,
+            lambda_2=lambda_2_2,
+            mu=mu_2,
+            num_of_servers=num_of_servers_2,
+            threshold=threshold_2,
+            system_capacity=system_capacity_2,
+            buffer_capacity=buffer_capacity_2,
+        )
+
+        system_times_1.append(
+            alpha * (1 - prob_accept_1) + (1 - alpha) * blocking_times_1
+        )
+        system_times_2.append(
+            alpha * (1 - prob_accept_2) + (1 - alpha) * blocking_times_2
+        )
+    return all_arrival_rates, system_times_1, system_times_2
+
+
+def make_plot_of_distribution_among_two_systems(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    accuracy=10,
+    alpha=0,
+):
+    """
+    Given two distinct systems and a joint value for lambda_2, plot the blocking
+    times of the two systems by altering the value of the proportion of people
+    that go to each hospital.
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    accuracy : int, optional
+    alpha : float, optional
+
+    Returns
+    -------
+    plot
+        The plot of blocking times of 2 systems over different arrival
+        distributions of individuals
+    """
+    (
+        all_arrival_rates,
+        system_times_1,
+        system_times_2,
+    ) = get_data_for_distribution_among_two_systems_plot(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        accuracy=accuracy,
+        alpha=alpha,
+    )
+
+    x_labels = all_arrival_rates[1:-1] / all_arrival_rates[-1]
+    plt.figure(figsize=(23, 10))
+    distribution_plot = plt.plot(x_labels, system_times_1, ls="solid", lw=1.5)
+    plt.plot(x_labels, system_times_2, ls="solid", lw=1.5)
+    plt.legend(["System 1", "System 2"], fontsize="x-large")
+
+    title = "Individuals distribution between two systems"
+    y_axis_label = "$\\alpha P(L_i) + (1 - \\alpha) B_i $"
+
+    plt.title(
+        title
+        + "($T_1$="
+        + str(threshold_1)
+        + ", $T_2$="
+        + str(threshold_2)
+        + ", $\\alpha$="
+        + str(alpha)
+        + ")",
+        fontsize=18,
+    )
+    plt.ylabel(y_axis_label, fontsize=15, fontweight="bold")
+    plt.xlabel(f"$p_1$", fontsize=15, fontweight="bold")
+
+    return distribution_plot
+
+
 def make_fictitious_play_plot(game, iterations=20, seed=None, play_counts_start=None):
+    """
+    Given a game plot the different probabilities that each strategy is played
+    over a number of iterations.
+
+    Parameters
+    ----------
+    game : nashpy.Game object
+    iterations : int, optional
+        total number of iterations of the fictitious play, by default 20
+    seed : int, optional
+    play_counts_start : tuple, optional
+        a tuple of 2 numpy arrays that contain the initial play of the fictitious
+        play for both players, by default None
+
+    Returns
+    -------
+    tuple
+        The total number each strategy was played
+    """
     np.random.seed(seed)
     all_play_counts = tuple(
         game.fictitious_play(iterations=iterations, play_counts=play_counts_start)
@@ -680,7 +767,7 @@ def make_fictitious_play_plot(game, iterations=20, seed=None, play_counts_start=
     return all_play_counts[-1]
 
 
-def make_ficititious_play_plot_over_different_values_of_alpha(
+def get_data_for_ficititious_play_plot_over_different_values_of_alpha(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -694,9 +781,32 @@ def make_ficititious_play_plot_over_different_values_of_alpha(
     buffer_capacity_2,
     target,
     iterations=1000,
-    width=0.1,
     seed=random.randint(1, 100),
 ):
+    """
+    Generate data for make_ficititious_play_plot_over_different_values_of_alpha()
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    target : float
+    iterations : int, optional
+    seed : int, optional
+
+    Returns
+    -------
+    numpy array, numpy array
+    """
     player_strategies_1 = np.array([], dtype=np.int64)
     player_strategies_2 = np.array([], dtype=np.int64)
     for alpha in np.linspace(start=0, stop=1, num=6):
@@ -734,6 +844,74 @@ def make_ficititious_play_plot_over_different_values_of_alpha(
             else probabilities[1]
         )
 
+        return player_strategies_1, player_strategies_2
+
+
+def make_ficititious_play_plot_over_different_values_of_alpha(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    target,
+    iterations=1000,
+    width=0.1,
+    seed=random.randint(1, 100),
+):
+    """
+    Given a game plot the different probabilities that each strategy is played
+    for different values of alpha.
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    target : float
+    iterations : int, optional
+        Number of iterations for each value of alpha, by default 1000
+    width : float, optional
+        The width of each bar plot, by default 0.1
+    seed : int, optional
+        The random number seed to be used, by default random.randint(1, 100)
+
+    Returns
+    -------
+    numpy array, numpy array
+    """
+    (
+        player_strategies_1,
+        player_strategies_2,
+    ) = get_data_for_ficititious_play_plot_over_different_values_of_alpha(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        target=target,
+        iterations=iterations,
+        seed=seed,
+    )
     ind = np.linspace(start=0, stop=1, num=6)
 
     plt.figure(figsize=(14, 10))
@@ -779,7 +957,7 @@ def make_ficititious_play_plot_over_different_values_of_alpha(
     return player_strategies_1, player_strategies_2
 
 
-def get_brentq_tolerance_heatmaps(
+def get_data_for_brentq_tolerance_heatmaps(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -796,6 +974,34 @@ def get_brentq_tolerance_heatmaps(
     xtol_values,
     rtol_values,
 ):
+    """
+    Generate data for brentq tolerance
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    xtol_values : numpy array
+        The range of values of xtol
+    rtol_values : numpy array
+        The range of values of rtol
+
+    Returns
+    -------
+    numpy array
+        a numpy array containing all calculated roots
+    """
     calculated_roots = np.zeros((len(rtol_values), len(xtol_values)))
     for (r_index, rtol), (x_index, xtol) in itertools.product(
         enumerate(rtol_values),
@@ -819,6 +1025,72 @@ def get_brentq_tolerance_heatmaps(
             rtol=rtol,
         )
         calculated_roots[r_index, x_index] = root
+    return calculated_roots
+
+
+def get_brentq_tolerance_heatmaps(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    xtol_values,
+    rtol_values,
+):
+    """
+    Generate a heatmap for the value of the calculated root p_1 of brentq for
+    different values of the tolerance parameters.
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    xtol_values : numpy array
+        The range of values of xtol
+    rtol_values : numpy array
+        The range of values of rtol
+
+    Returns
+    -------
+    numpy array
+        a numpy array containing all calculated roots
+    """
+    calculated_roots = get_data_for_brentq_tolerance_heatmaps(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        xtol_values=xtol_values,
+        rtol_values=rtol_values,
+    )
     plt.figure(figsize=(20, 10))
     plt.imshow(calculated_roots)
     plt.title("Heatmap of rtol VS xtol VS calculated root")
@@ -829,7 +1101,7 @@ def get_brentq_tolerance_heatmaps(
     return calculated_roots
 
 
-def make_calculated_roots_over_alpha_plot(
+def get_data_for_calculated_roots_over_alpha_plot(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -845,6 +1117,34 @@ def make_calculated_roots_over_alpha_plot(
     buffer_capacity_2,
     alpha_points=11,
 ):
+    """
+    Generate data for make_calculated_roots_over_alpha_plot()
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    alpha_points : int, optional
+        The number points of alpha in the range [0,1], by default 11
+
+    Returns
+    -------
+    np.array
+        The range of alpha
+    np.array
+        All calculated roots for all values of alpha
+    """
     calculated_roots = np.zeros(alpha_points)
     alpha_range = np.linspace(0, 1, alpha_points)
     for ind, alpha in enumerate(alpha_range):
@@ -865,6 +1165,68 @@ def make_calculated_roots_over_alpha_plot(
             alpha=alpha,
         )
         calculated_roots[ind] = root
+    return alpha_range, calculated_roots
+
+
+def make_calculated_roots_over_alpha_plot(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    alpha_points=11,
+):
+    """
+    Make a plot of the calculated root p_1 of brentq() over different values of
+    alpha
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    alpha_points : int, optional
+        The number of points of alpha in the range [0,1], by default 11
+
+    Returns
+    -------
+    np.array
+        All calculated roots for all values of alpha
+    """
+    alpha_range, calculated_roots = get_data_for_calculated_roots_over_alpha_plot(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        alpha_points=alpha_points,
+    )
     plt.figure(figsize=(15, 10))
     plt.plot(alpha_range, calculated_roots)
     plt.title("Calculated root over different values of $\\alpha$")
@@ -875,6 +1237,20 @@ def make_calculated_roots_over_alpha_plot(
 
 
 def make_brentq_heatmap_of_time_vs_xtol_vs_capacity(file_path="main.csv"):
+    """
+    Make a heatmap of brentq() mean runtime for different values of xtol and
+    system_capacity_1 (C_1)
+
+    Parameters
+    ----------
+    file_path : str, optional
+        the path of the data to be used, by default "main.csv"
+
+    Returns
+    -------
+    panda data frame
+        A data frame that contains mean runtime of each run.
+    """
     df = pd.read_csv(file_path)
     min_sys_cap = min(df["system_capacity_1"])
     max_sys_cap = max(df["system_capacity_1"])
@@ -882,7 +1258,7 @@ def make_brentq_heatmap_of_time_vs_xtol_vs_capacity(file_path="main.csv"):
         np.zeros((max_sys_cap - min_sys_cap + 1, 10)),
         columns=list(np.logspace(-10, -1, 10)),
     )
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         mean_time_df[row["tolerance"]][
             int(row["system_capacity_1"] - min_sys_cap)
         ] += row["time_taken"]
@@ -896,7 +1272,7 @@ def make_brentq_heatmap_of_time_vs_xtol_vs_capacity(file_path="main.csv"):
     return mean_time_df
 
 
-def make_violinplots_of_fictitious_play(
+def get_data_of_violinplots_of_fictitious_play(
     lambda_2,
     lambda_1_1,
     lambda_1_2,
@@ -915,12 +1291,47 @@ def make_violinplots_of_fictitious_play(
     seed_reps=30,
     num_of_violiplots=8,
     use_probs=True,
-    violin_width=None,
 ):
+    """
+    Generate data for make_violinplots_of_fictitious_play()
+
+    Parameters
+    ----------
+    lambda_2 : int
+    lambda_1_1 : int
+    lambda_1_2 : int
+    mu_1 : int
+    mu_2 : int
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    target : int
+    alpha : float, optional
+    iterations : int, optional
+        Number of iterations of fictitious play, by default 100
+    seed_start : int, optional
+        Start of the seed range, by default 0
+    seed_reps : int, optional
+        Seed repetitions, by default 30
+    num_of_violiplots : int, optional
+        The number of violin plots to be created, by default 8
+    use_probs : bool, optional
+        Indicator of using play probabilities (T) or play counts (F), by default True
+
+    Returns
+    -------
+    numpy array
+        The range of the violin plots positions
+    numpy array
+        numpy array containing all probabilities of row player
+    numpy array
+        numpy array containing all probabilities of column player
+    """
     seed_range = np.linspace(seed_start, seed_start + 10000, seed_reps, dtype=int)
     violinplots_data_pos = np.linspace(1, iterations, num_of_violiplots, dtype=int)
-    if violin_width is None:
-        violin_width = iterations / (num_of_violiplots - 1)
 
     game = build_game_using_payoff_matrices(
         lambda_2=lambda_2,
@@ -986,6 +1397,97 @@ def make_violinplots_of_fictitious_play(
                     [current_violinplot_data_col_player],
                 )
             )
+
+    return violinplots_data_pos, all_violinplots_data_row, all_violinplots_data_col
+
+
+def make_violinplots_of_fictitious_play(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    target,
+    alpha=0.5,
+    iterations=100,
+    seed_start=0,
+    seed_reps=30,
+    num_of_violiplots=8,
+    use_probs=True,
+    violin_width=None,
+):
+    """
+    Make two plots (row player, column player) of violin plots of fictitious play 
+    for different seeds over certain number of iterations.
+    
+    Parameters
+    ----------
+    lambda_2 : int
+    lambda_1_1 : int
+    lambda_1_2 : int
+    mu_1 : int
+    mu_2 : int
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    target : int
+    alpha : float, optional
+    iterations : int, optional
+        Number of iterations of fictitious play, by default 100
+    seed_start : int, optional
+        Start of the seed range, by default 0
+    seed_reps : int, optional
+        Seed repetitions, by default 30
+    num_of_violiplots : int, optional
+        The number of violin plots to be created, by default 8
+    use_probs : bool, optional
+        Indicator of using play probabilities (T) or play counts (F), by default True
+    violin_width : float, optional
+        The width of each violin plot, by default None
+
+    Returns
+    -------
+    numpy array
+        numpy array containing all probabilities of row player
+    numpy array
+        numpy array containing all probabilities of column player
+    """
+
+    (
+        violinplots_data_pos,
+        all_violinplots_data_row,
+        all_violinplots_data_col,
+    ) = get_data_of_violinplots_of_fictitious_play(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        target=target,
+        alpha=alpha,
+        iterations=iterations,
+        seed_start=seed_start,
+        seed_reps=seed_reps,
+        num_of_violiplots=num_of_violiplots,
+        use_probs=use_probs,
+    )
+    if violin_width is None:
+        violin_width = iterations / (num_of_violiplots - 1)
 
     row_player_strategies = all_violinplots_data_row.shape[2]
     col_player_strategies = all_violinplots_data_col.shape[2]

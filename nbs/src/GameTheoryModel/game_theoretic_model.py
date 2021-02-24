@@ -1423,9 +1423,9 @@ def make_violinplots_of_fictitious_play(
     violin_width=None,
 ):
     """
-    Make two plots (row player, column player) of violin plots of fictitious play 
+    Make two plots (row player, column player) of violin plots of fictitious play
     for different seeds over certain number of iterations.
-    
+
     Parameters
     ----------
     lambda_2 : int

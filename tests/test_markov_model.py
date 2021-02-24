@@ -321,6 +321,7 @@ def test_is_steady_state_examples():
     e=floats(min_value=1, max_value=10),
     f=floats(min_value=1, max_value=10),
 )
+@settings(deadline=None)
 def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     """
     Ensures that getting the steady state numerically using scipy's odeint integration

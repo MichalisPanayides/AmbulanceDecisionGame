@@ -9,6 +9,8 @@ from ambulance_game.game import (
     build_game_using_payoff_matrices,
 )
 
+number_of_digits_to_round = 8
+
 
 def test_get_accepting_proportion_of_class_2_individuals_examples():
     """
@@ -28,29 +30,35 @@ def test_get_accepting_proportion_of_class_2_individuals_examples():
     )
 
     assert (
-        get_accepting_proportion_of_class_2_individuals(
-            lambda_1=2,
-            lambda_2=2,
-            mu=2,
-            num_of_servers=2,
-            threshold=2,
-            system_capacity=2,
-            buffer_capacity=2,
+        round(
+            get_accepting_proportion_of_class_2_individuals(
+                lambda_1=2,
+                lambda_2=2,
+                mu=2,
+                num_of_servers=2,
+                threshold=2,
+                system_capacity=2,
+                buffer_capacity=2,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.9230769230769231
+        == round(0.9230769230769231, number_of_digits_to_round)
     )
 
     assert (
-        get_accepting_proportion_of_class_2_individuals(
-            lambda_1=10,
-            lambda_2=10,
-            mu=2,
-            num_of_servers=5,
-            threshold=5,
-            system_capacity=5,
-            buffer_capacity=5,
+        round(
+            get_accepting_proportion_of_class_2_individuals(
+                lambda_1=10,
+                lambda_2=10,
+                mu=2,
+                num_of_servers=5,
+                threshold=5,
+                system_capacity=5,
+                buffer_capacity=5,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.8523592984113859
+        == round(0.8523592984113859, number_of_digits_to_round)
     )
 
 
@@ -60,66 +68,75 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
     for different values of alpha
     """
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.5,
-            lambda_2=2,
-            lambda_1_1=2,
-            lambda_1_2=2,
-            mu_1=2,
-            mu_2=2,
-            num_of_servers_1=2,
-            num_of_servers_2=2,
-            threshold_1=3,
-            threshold_2=5,
-            system_capacity_1=5,
-            system_capacity_2=5,
-            buffer_capacity_1=5,
-            buffer_capacity_2=4,
-            alpha=0,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.5,
+                lambda_2=2,
+                lambda_1_1=2,
+                lambda_1_2=2,
+                mu_1=2,
+                mu_2=2,
+                num_of_servers_1=2,
+                num_of_servers_2=2,
+                threshold_1=3,
+                threshold_2=5,
+                system_capacity_1=5,
+                system_capacity_2=5,
+                buffer_capacity_1=5,
+                buffer_capacity_2=4,
+                alpha=0,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.3786808388674136
+        == round(0.3786808388674136, number_of_digits_to_round)
     )
 
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.5,
-            lambda_2=2,
-            lambda_1_1=2,
-            lambda_1_2=2,
-            mu_1=2,
-            mu_2=2,
-            num_of_servers_1=2,
-            num_of_servers_2=2,
-            threshold_1=3,
-            threshold_2=5,
-            system_capacity_1=5,
-            system_capacity_2=5,
-            buffer_capacity_1=5,
-            buffer_capacity_2=4,
-            alpha=0.5,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.5,
+                lambda_2=2,
+                lambda_1_1=2,
+                lambda_1_2=2,
+                mu_1=2,
+                mu_2=2,
+                num_of_servers_1=2,
+                num_of_servers_2=2,
+                threshold_1=3,
+                threshold_2=5,
+                system_capacity_1=5,
+                system_capacity_2=5,
+                buffer_capacity_1=5,
+                buffer_capacity_2=4,
+                alpha=0.5,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.1946865334809922
+        == round(0.1946865334809922, number_of_digits_to_round)
     )
 
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.5,
-            lambda_2=2,
-            lambda_1_1=2,
-            lambda_1_2=2,
-            mu_1=2,
-            mu_2=2,
-            num_of_servers_1=2,
-            num_of_servers_2=2,
-            threshold_1=3,
-            threshold_2=5,
-            system_capacity_1=5,
-            system_capacity_2=5,
-            buffer_capacity_1=5,
-            buffer_capacity_2=4,
-            alpha=1,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.5,
+                lambda_2=2,
+                lambda_1_1=2,
+                lambda_1_2=2,
+                mu_1=2,
+                mu_2=2,
+                num_of_servers_1=2,
+                num_of_servers_2=2,
+                threshold_1=3,
+                threshold_2=5,
+                system_capacity_1=5,
+                system_capacity_2=5,
+                buffer_capacity_1=5,
+                buffer_capacity_2=4,
+                alpha=1,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.010692228094570821
+        == round(0.010692228094570821, number_of_digits_to_round)
     )
 
 
@@ -129,66 +146,75 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
     for different values of alpha
     """
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.8,
-            lambda_2=4,
-            lambda_1_1=3,
-            lambda_1_2=2,
-            mu_1=3,
-            mu_2=2,
-            num_of_servers_1=3,
-            num_of_servers_2=4,
-            threshold_1=6,
-            threshold_2=5,
-            system_capacity_1=8,
-            system_capacity_2=9,
-            buffer_capacity_1=4,
-            buffer_capacity_2=3,
-            alpha=0,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.8,
+                lambda_2=4,
+                lambda_1_1=3,
+                lambda_1_2=2,
+                mu_1=3,
+                mu_2=2,
+                num_of_servers_1=3,
+                num_of_servers_2=4,
+                threshold_1=6,
+                threshold_2=5,
+                system_capacity_1=8,
+                system_capacity_2=9,
+                buffer_capacity_1=4,
+                buffer_capacity_2=3,
+                alpha=0,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.039826434411056905
+        == round(0.039826434411056905, number_of_digits_to_round)
     )
 
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.8,
-            lambda_2=4,
-            lambda_1_1=3,
-            lambda_1_2=2,
-            mu_1=3,
-            mu_2=2,
-            num_of_servers_1=3,
-            num_of_servers_2=4,
-            threshold_1=6,
-            threshold_2=5,
-            system_capacity_1=8,
-            system_capacity_2=9,
-            buffer_capacity_1=4,
-            buffer_capacity_2=3,
-            alpha=0.5,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.8,
+                lambda_2=4,
+                lambda_1_1=3,
+                lambda_1_2=2,
+                mu_1=3,
+                mu_2=2,
+                num_of_servers_1=3,
+                num_of_servers_2=4,
+                threshold_1=6,
+                threshold_2=5,
+                system_capacity_1=8,
+                system_capacity_2=9,
+                buffer_capacity_1=4,
+                buffer_capacity_2=3,
+                alpha=0.5,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.024201250377136538
+        == round(0.024201250377136538, number_of_digits_to_round)
     )
 
     assert (
-        get_weighted_mean_blocking_difference_between_two_systems(
-            prop_1=0.8,
-            lambda_2=4,
-            lambda_1_1=3,
-            lambda_1_2=2,
-            mu_1=3,
-            mu_2=2,
-            num_of_servers_1=3,
-            num_of_servers_2=4,
-            threshold_1=6,
-            threshold_2=5,
-            system_capacity_1=8,
-            system_capacity_2=9,
-            buffer_capacity_1=4,
-            buffer_capacity_2=3,
-            alpha=1,
+        round(
+            get_weighted_mean_blocking_difference_between_two_systems(
+                prop_1=0.8,
+                lambda_2=4,
+                lambda_1_1=3,
+                lambda_1_2=2,
+                mu_1=3,
+                mu_2=2,
+                num_of_servers_1=3,
+                num_of_servers_2=4,
+                threshold_1=6,
+                threshold_2=5,
+                system_capacity_1=8,
+                system_capacity_2=9,
+                buffer_capacity_1=4,
+                buffer_capacity_2=3,
+                alpha=1,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.008576066343216171
+        == round(0.008576066343216171, number_of_digits_to_round)
     )
 
 
@@ -223,22 +249,25 @@ def test_calculate_class_2_individuals_best_response_example_2():
     for slightly larger model.
     """
     assert (
-        calculate_class_2_individuals_best_response(
-            lambda_2=6,
-            lambda_1_1=2,
-            lambda_1_2=3,
-            mu_1=5,
-            mu_2=2,
-            num_of_servers_1=3,
-            num_of_servers_2=4,
-            threshold_1=7,
-            threshold_2=9,
-            system_capacity_1=10,
-            system_capacity_2=10,
-            buffer_capacity_1=10,
-            buffer_capacity_2=10,
+        round(
+            calculate_class_2_individuals_best_response(
+                lambda_2=6,
+                lambda_1_1=2,
+                lambda_1_2=3,
+                mu_1=5,
+                mu_2=2,
+                num_of_servers_1=3,
+                num_of_servers_2=4,
+                threshold_1=7,
+                threshold_2=9,
+                system_capacity_1=10,
+                system_capacity_2=10,
+                buffer_capacity_1=10,
+                buffer_capacity_2=10,
+            ),
+            number_of_digits_to_round,
         )
-        == 0.8224704160104401
+        == round(0.8224704160104401, number_of_digits_to_round)
     )
 
 

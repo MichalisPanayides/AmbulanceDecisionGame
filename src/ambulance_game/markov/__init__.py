@@ -45,7 +45,6 @@ from .proportion import (
     proportion_within_target_using_markov_state_probabilities,
     specific_psi_function,
 )
-from .response import calculate_class_2_individuals_best_response
 from .tikz import (
     build_body_of_tikz_spanning_tree,
     generate_code_for_tikz_figure,

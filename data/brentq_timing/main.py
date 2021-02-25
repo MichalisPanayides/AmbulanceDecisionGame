@@ -10,7 +10,7 @@ import ambulance_game as abg
 
 def run_single_experiment(tolerance, **problem_parameters):
     then = time.time()
-    abg.markov.calculate_class_2_individuals_best_response(
+    abg.game.calculate_class_2_individuals_best_response(
         xtol=tolerance, **problem_parameters
     )
     now = time.time()

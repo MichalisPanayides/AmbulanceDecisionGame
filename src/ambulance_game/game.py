@@ -353,7 +353,6 @@ def get_routing_matrix(
     return routing_matrix
 
 
-@functools.lru_cache(maxsize=None)
 def get_payoff_matrices(
     lambda_2,
     lambda_1_1,

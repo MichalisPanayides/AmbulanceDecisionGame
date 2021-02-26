@@ -145,7 +145,7 @@ def get_blocking_time_linear_system(
                 buffer_capacity=buffer_capacity,
             )
             if len(all_coefficients_array) == 0:
-                all_coefficients_array = system_coefficients[0]
+                all_coefficients_array = [system_coefficients[0]]
                 constant_column = [system_coefficients[1]]
             else:
                 all_coefficients_array = np.vstack(

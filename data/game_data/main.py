@@ -85,7 +85,7 @@ def main(
         df = read_data()
         cache = set(tuple(row) for _, row in df[keys].iterrows())
     except FileNotFoundError:
-        header = keys + ["routing matrix", "payoff matrix A", "payoff matrix B"]
+        header = keys + ["routing_matrix", "payoff_matrix_A", "payoff_matrix_B"]
         write_data(data=header, path=path)
         cache = set()
 
@@ -94,22 +94,24 @@ def main(
         parameter_values = tuple((problem_parameters[key] for key in keys))
 
         if parameter_values not in cache:
-
+            cache.add(parameter_values)
             (
                 routing_matrix,
                 payoff_matrix_A,
                 payoff_matrix_B,
             ) = generate_data_for_current_parameters(**problem_parameters)
             data = list(parameter_values) + [
-                routing_matrix.tostring().hex(),
-                payoff_matrix_A.tostring().hex(),
-                payoff_matrix_B.tostring().hex(),
+                np.array2string(routing_matrix, separator=","),
+                np.array2string(payoff_matrix_A, separator=","),
+                np.array2string(payoff_matrix_B, separator=","),
             ]
             write_data(data=data, path=path)
 
         problem_parameters["lambda_2"] = round(random.uniform(0, 10), 1)
         problem_parameters["lambda_1_1"] = round(random.uniform(0, 10), 1)
         problem_parameters["lambda_1_2"] = round(random.uniform(0, 10), 1)
+        problem_parameters["alpha"] = int(random.random() * 11) / 10
+
         problem_parameters["mu_1"] = round(random.uniform(0, 10), 1)
         problem_parameters["mu_2"] = round(random.uniform(0, 10), 1)
         problem_parameters["num_of_servers_1"] = random.randint(1, 10)
@@ -122,7 +124,6 @@ def main(
         )
         problem_parameters["buffer_capacity_1"] = random.randint(1, 10)
         problem_parameters["buffer_capacity_2"] = random.randint(1, 10)
-        problem_parameters["alpha"] = int(random.random() * 11) / 10
 
 
 if __name__ == "__main__":

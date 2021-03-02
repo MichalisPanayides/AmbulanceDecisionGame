@@ -1,4 +1,5 @@
 import csv
+import itertools
 import random
 
 import numpy as np
@@ -93,24 +94,49 @@ def main(
 
         parameter_values = tuple((problem_parameters[key] for key in keys))
 
-        if parameter_values not in cache:
-            cache.add(parameter_values)
-            (
-                routing_matrix,
-                payoff_matrix_A,
-                payoff_matrix_B,
-            ) = generate_data_for_current_parameters(**problem_parameters)
-            data = list(parameter_values) + [
-                np.array2string(routing_matrix, separator=","),
-                np.array2string(payoff_matrix_A, separator=","),
-                np.array2string(payoff_matrix_B, separator=","),
-            ]
-            write_data(data=data, path=path)
+        lambda_2_values = np.linspace(
+            start=0,
+            stop=problem_parameters["mu_1"] * problem_parameters["system_capacity_1"]
+            + problem_parameters["mu_2"] * problem_parameters["system_capacity_2"],
+            num=10,
+        )
+        lambda_1_1_values = np.linspace(
+            start=0,
+            stop=problem_parameters["mu_1"] * problem_parameters["system_capacity_1"],
+            num=10,
+        )
+        lambda_1_2_values = np.linspace(
+            start=0,
+            stop=problem_parameters["mu_2"] * problem_parameters["system_capacity_2"],
+            num=10,
+        )
+        alpha_values = np.linspace(
+            start=0,
+            stop=1,
+            num=11,
+        )
 
-        problem_parameters["lambda_2"] = round(random.uniform(0, 10), 1)
-        problem_parameters["lambda_1_1"] = round(random.uniform(0, 10), 1)
-        problem_parameters["lambda_1_2"] = round(random.uniform(0, 10), 1)
-        problem_parameters["alpha"] = int(random.random() * 11) / 10
+        for lambda_2, lambda_1_1, lambda_1_2, alpha in itertools.product(
+            lambda_2_values, lambda_1_1_values, lambda_1_2_values, alpha_values
+        ):
+            problem_parameters["lambda_2"] = lambda_2
+            problem_parameters["lambda_1_1"] = lambda_1_1
+            problem_parameters["lambda_1_2"] = lambda_1_2
+            problem_parameters["alpha"] = alpha
+
+            if parameter_values not in cache:
+                cache.add(parameter_values)
+                (
+                    routing_matrix,
+                    payoff_matrix_A,
+                    payoff_matrix_B,
+                ) = generate_data_for_current_parameters(**problem_parameters)
+                data = list(parameter_values) + [
+                    np.array2string(routing_matrix, separator=","),
+                    np.array2string(payoff_matrix_A, separator=","),
+                    np.array2string(payoff_matrix_B, separator=","),
+                ]
+                write_data(data=data, path=path)
 
         problem_parameters["mu_1"] = round(random.uniform(0, 10), 1)
         problem_parameters["mu_2"] = round(random.uniform(0, 10), 1)

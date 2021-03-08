@@ -96,33 +96,46 @@ def main(
 
         lambda_2_values = np.linspace(
             start=0,
-            stop=problem_parameters["mu_1"] * problem_parameters["system_capacity_1"]
-            + problem_parameters["mu_2"] * problem_parameters["system_capacity_2"],
-            num=10,
+            stop=2
+            * (
+                problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"]
+                + problem_parameters["mu_2"] * problem_parameters["num_of_servers_2"]
+            ),
+            num=30,
         )
         lambda_1_1_values = np.linspace(
             start=0,
-            stop=problem_parameters["mu_1"] * problem_parameters["system_capacity_1"],
-            num=10,
+            stop=problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"],
+            num=20,
         )
         lambda_1_2_values = np.linspace(
             start=0,
-            stop=problem_parameters["mu_2"] * problem_parameters["system_capacity_2"],
-            num=10,
+            stop=problem_parameters["mu_2"] * problem_parameters["num_of_servers_2"],
+            num=20,
         )
         alpha_values = np.linspace(
             start=0,
             stop=1,
-            num=11,
+            num=21,
+        )
+        target_values = np.linspace(
+            start=0,
+            stop=10,
+            num=20,
         )
 
-        for lambda_2, lambda_1_1, lambda_1_2, alpha in itertools.product(
-            lambda_2_values, lambda_1_1_values, lambda_1_2_values, alpha_values
+        for lambda_2, lambda_1_1, lambda_1_2, alpha, target in itertools.product(
+            lambda_2_values,
+            lambda_1_1_values,
+            lambda_1_2_values,
+            alpha_values,
+            target_values,
         ):
             problem_parameters["lambda_2"] = lambda_2
             problem_parameters["lambda_1_1"] = lambda_1_1
             problem_parameters["lambda_1_2"] = lambda_1_2
             problem_parameters["alpha"] = alpha
+            problem_parameters["target"] = target
 
             if parameter_values not in cache:
                 cache.add(parameter_values)
@@ -138,8 +151,8 @@ def main(
                 ]
                 write_data(data=data, path=path)
 
-        problem_parameters["mu_1"] = round(random.uniform(0, 10), 1)
-        problem_parameters["mu_2"] = round(random.uniform(0, 10), 1)
+        problem_parameters["mu_1"] = round(random.uniform(0.1, 10), 1)
+        problem_parameters["mu_2"] = round(random.uniform(0.1, 10), 1)
         problem_parameters["num_of_servers_1"] = random.randint(1, 10)
         problem_parameters["num_of_servers_2"] = random.randint(1, 10)
         problem_parameters["system_capacity_1"] = random.randint(

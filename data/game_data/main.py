@@ -132,7 +132,9 @@ def create_sub_directories_for_current_parameters(
     Create the directory and all of the sub-directories for the current set of
     parameters.
     """
-    directory_name = "_".join(str(value) for value in problem_parameters.values())
+    directory_name = "_".join(
+        str(round(value, 2)) for value in problem_parameters.values()
+    )
     new_directory = path / directory_name
     new_directory.mkdir(parents=True, exist_ok=True)
 
@@ -258,11 +260,11 @@ def main(
             alpha_values,
             target_values,
         ):
-            problem_parameters["lambda_2"] = lambda_2
-            problem_parameters["lambda_1_1"] = lambda_1_1
-            problem_parameters["lambda_1_2"] = lambda_1_2
-            problem_parameters["alpha"] = alpha
-            problem_parameters["target"] = target
+            problem_parameters["lambda_2"] = round(lambda_2, 2)
+            problem_parameters["lambda_1_1"] = round(lambda_1_1, 2)
+            problem_parameters["lambda_1_2"] = round(lambda_1_2, 2)
+            problem_parameters["alpha"] = round(alpha, 2)
+            problem_parameters["target"] = round(target, 2)
 
             if problem_parameters.values() not in cache:
                 cache.add(problem_parameters.values())

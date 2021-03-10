@@ -1,11 +1,46 @@
 import csv
 import itertools
+import pathlib
 import random
 
 import numpy as np
 import pandas as pd
 
 import ambulance_game as abg
+
+
+def read_data(path=pathlib.Path("data/parameters/main.csv")):
+    """
+    Read the data contents of the file as a pandas data frame
+    """
+    return pd.read_csv(path)
+
+
+def write_data_to_csv(data, path=pathlib.Path("data/parameters/main.csv")):
+    """
+    Opens `path` in append mode and write the data
+    """
+    with path.open("a", newline="") as outfile:
+        csv_writer = csv.writer(outfile)
+        csv_writer.writerow(data)
+
+
+def initialise_parameters_directory(**problem_parameters):
+    directory = pathlib.Path("data/parameters/")
+    directory.mkdir(parents=True, exist_ok=True)
+    readme_contents = (
+        "# Parameters"
+        "\n\nThis directory keeps track of all the parameters investigated so far. The"
+        "\ncontents of `main.csv` correspond to parameter values of the model in the"
+        "\nfollowing order:\n"
+    )
+    with (directory / "README.md").open("w") as file:
+        file.write(readme_contents)
+        file.write(
+            "".join("\n\t" + key + "," for key, value in problem_parameters.items())
+        )
+    if not (directory / "main.csv").exists():
+        write_data_to_csv(sorted(problem_parameters.keys()))
 
 
 def generate_data_for_current_parameters(**problem_parameters):
@@ -19,24 +54,84 @@ def generate_data_for_current_parameters(**problem_parameters):
     return routing_matrix, payoff_matrix_A, payoff_matrix_B
 
 
-def read_data(path="main.csv"):
-    """
-    Read the data file as a pandas data frame
-    """
-    return pd.read_csv(path)
+def write_README_for_current_parameters_directory(readme_path, **problem_parameters):
+    parameters_string = "".join(
+        "\n\t" + key + " = " + str(value) for key, value in problem_parameters.items()
+    )
+    readme_contents = (
+        "# Experiments for game"
+        "\n\nThis directory consists of the data for the following set of parameters: \n"
+        + "".join(parameters_string)
+        + "\n\nThe directory is structured in the following way:\n\n"
+        "\t|-- main.csv\n"
+        "\t|-- README.md\n"
+        "\t|-- routing\n"
+        "\t|   |-- main.csv\n"
+        "\t|   |-- README.md \n"
+        "\t|-- A\n"
+        "\t|   |-- main.csv\n"
+        "\t|   |-- README.md\n"
+        "\t|-- B\n"
+        "\t|   |-- main.csv\n"
+        "\t|   |-- README.md\n"
+    )
+    with readme_path.open("w") as file:
+        file.write(readme_contents)
 
 
-def write_data(data, path="main.csv"):
-    """
-    Opens `path` in append mode and write the data
-    """
-    with open(path, "a", newline="") as out_file:
-        csv_writer = csv.writer(out_file)
-        csv_writer.writerow(data)
+def write_README_for_current_parameters_sub_directories(readme_path, output_name):
+    with readme_path.open("w") as file:
+        file.write("# " + output_name[0].upper() + output_name[1:])
+        file.write(
+            "\n\nThis sub-directory contains the value of "
+            + output_name
+            + " in `main.csv`"
+        )
+
+
+def create_sub_directories_for_current_parameters(
+    routing_matrix,
+    payoff_matrix_A,
+    payoff_matrix_B,
+    path=pathlib.Path("data"),
+    **problem_parameters,
+):
+    directory_name = "_".join(str(value) for value in problem_parameters.values())
+    new_directory = path / directory_name
+    new_directory.mkdir(parents=True, exist_ok=True)
+
+    write_data_to_csv(data=problem_parameters.values(), path=new_directory / "main.csv")
+    write_README_for_current_parameters_directory(
+        readme_path=new_directory / "README.md", **problem_parameters
+    )
+
+    routing_subdirectory = new_directory / "Routing"
+    A_subdirectory = new_directory / "A"
+    B_subdirectory = new_directory / "B"
+    routing_subdirectory.mkdir(parents=True, exist_ok=True)
+    A_subdirectory.mkdir(parents=True, exist_ok=True)
+    B_subdirectory.mkdir(parents=True, exist_ok=True)
+
+    pd.DataFrame(routing_matrix).to_csv(routing_subdirectory / "main.csv")
+    pd.DataFrame(payoff_matrix_A).to_csv(A_subdirectory / "main.csv")
+    pd.DataFrame(payoff_matrix_B).to_csv(B_subdirectory / "main.csv")
+
+    write_README_for_current_parameters_sub_directories(
+        readme_path=routing_subdirectory / "README.md",
+        output_name="routing matrix",
+    )
+    write_README_for_current_parameters_sub_directories(
+        readme_path=A_subdirectory / "README.md",
+        output_name="payoff matrix A",
+    )
+    write_README_for_current_parameters_sub_directories(
+        readme_path=B_subdirectory / "README.md",
+        output_name="payoff matrix B",
+    )
 
 
 def main(
-    path="main.csv",
+    path=pathlib.Path(),
     problem_parameters=None,
 ):
     """
@@ -79,23 +174,19 @@ def main(
             "alpha": 0,
             "target": 1,
         }
-
-    keys = sorted(problem_parameters.keys())
+    problem_parameters = dict(sorted(problem_parameters.items()))
 
     try:
         df = read_data()
-        cache = set(tuple(row) for _, row in df[keys].iterrows())
+        cache = set(tuple(row) for _, row in df[problem_parameters.keys()].iterrows())
     except FileNotFoundError:
-        header = keys + ["routing_matrix", "payoff_matrix_A", "payoff_matrix_B"]
-        write_data(data=header, path=path)
+        initialise_parameters_directory(**problem_parameters)
         cache = set()
 
     while True:
 
-        parameter_values = tuple((problem_parameters[key] for key in keys))
-
         lambda_2_values = np.linspace(
-            start=0,
+            start=0.1,
             stop=2
             * (
                 problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"]
@@ -137,19 +228,21 @@ def main(
             problem_parameters["alpha"] = alpha
             problem_parameters["target"] = target
 
-            if parameter_values not in cache:
-                cache.add(parameter_values)
+            if problem_parameters.values() not in cache:
+                cache.add(problem_parameters.values())
                 (
                     routing_matrix,
                     payoff_matrix_A,
                     payoff_matrix_B,
                 ) = generate_data_for_current_parameters(**problem_parameters)
-                data = list(parameter_values) + [
-                    np.array2string(routing_matrix, separator=","),
-                    np.array2string(payoff_matrix_A, separator=","),
-                    np.array2string(payoff_matrix_B, separator=","),
-                ]
-                write_data(data=data, path=path)
+
+                create_sub_directories_for_current_parameters(
+                    routing_matrix=routing_matrix,
+                    payoff_matrix_A=payoff_matrix_A,
+                    payoff_matrix_B=payoff_matrix_B,
+                    **problem_parameters,
+                )
+                write_data_to_csv(data=problem_parameters.values())
 
         problem_parameters["mu_1"] = round(random.uniform(0.1, 10), 1)
         problem_parameters["mu_2"] = round(random.uniform(0.1, 10), 1)

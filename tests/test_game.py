@@ -407,7 +407,7 @@ def test_get_payoff_matrices_example_1():
     """
     Test for payoff matrices of the game
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,
@@ -434,7 +434,7 @@ def test_get_payoff_matrices_example_2():
     """
     Test for payoff matrices of the game
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=2,
         lambda_1_1=2,
         lambda_1_2=2,
@@ -478,7 +478,7 @@ def test_get_payoff_matrices_example_3():
     """
     Test for payoff matrices of the game when the alternative utility is used
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,

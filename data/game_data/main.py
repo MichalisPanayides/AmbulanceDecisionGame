@@ -147,15 +147,9 @@ def create_sub_directories_for_current_parameters(
     A_subdirectory.mkdir(parents=True, exist_ok=True)
     B_subdirectory.mkdir(parents=True, exist_ok=True)
 
-    pd.DataFrame(routing_matrix).to_csv(
-        routing_subdirectory / "main.csv", header=False, index=False
-    )
-    pd.DataFrame(payoff_matrix_A).to_csv(
-        A_subdirectory / "main.csv", header=False, index=False
-    )
-    pd.DataFrame(payoff_matrix_B).to_csv(
-        B_subdirectory / "main.csv", header=False, index=False
-    )
+    np.savetxt(routing_subdirectory / "main.csv", routing_matrix, delimiter=",")
+    np.savetxt(A_subdirectory / "main.csv", payoff_matrix_A, delimiter=",")
+    np.savetxt(B_subdirectory / "main.csv", payoff_matrix_B, delimiter=",")
 
     write_README_for_current_parameters_sub_directories(
         readme_path=routing_subdirectory / "README.md",

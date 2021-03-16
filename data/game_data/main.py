@@ -45,7 +45,7 @@ def initialise_parameters_directory(**problem_parameters):
         write_data_to_csv(sorted(problem_parameters.keys()))
 
 
-def generate_data_for_current_parameters(**problem_parameters):
+def generate_data_for_current_parameters(processes, **problem_parameters):
     """
     Generates the routing matrix, the payoff matrix for the row player (A) and
     the payoff matrix for the column player (B), given a set of parameters.
@@ -56,12 +56,9 @@ def generate_data_for_current_parameters(**problem_parameters):
     numpy array
     numpy array
     """
-    routing_parameters = {
-        key: value for key, value in problem_parameters.items() if key != "target"
-    }
-    routing_matrix = abg.game.get_routing_matrix(**routing_parameters)
-    payoff_matrix_A, payoff_matrix_B = abg.game.get_payoff_matrices(
-        routing_matrix=routing_matrix, **problem_parameters
+    payoff_matrix_A, payoff_matrix_B, routing_matrix = abg.game.get_payoff_matrices(
+        processes=processes,
+        **problem_parameters,
     )
     return routing_matrix, payoff_matrix_A, payoff_matrix_B
 
@@ -177,6 +174,7 @@ def create_sub_directories_for_current_parameters(
 def main(
     path=pathlib.Path(),
     problem_parameters=None,
+    processes=2,
 ):
     """
     Main experiment file.
@@ -278,7 +276,9 @@ def main(
                     routing_matrix,
                     payoff_matrix_A,
                     payoff_matrix_B,
-                ) = generate_data_for_current_parameters(**problem_parameters)
+                ) = generate_data_for_current_parameters(
+                    processes=processes, **problem_parameters
+                )
 
                 create_sub_directories_for_current_parameters(
                     routing_matrix=routing_matrix,

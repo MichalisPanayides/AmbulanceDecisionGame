@@ -2,6 +2,7 @@ import csv
 import itertools
 import pathlib
 import random
+import sys
 
 import numpy as np
 import pandas as pd
@@ -168,7 +169,7 @@ def create_sub_directories_for_current_parameters(
 def main(
     path=pathlib.Path(),
     problem_parameters=None,
-    processes=2,
+    processes=None,
 ):
     """
     Main experiment file.
@@ -297,4 +298,12 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    arguments = sys.argv
+    if len(arguments) == 2:
+        try:
+            processes = int(arguments[1])
+        except ValueError:
+            processes = None
+    else:
+        processes = None
+    main(processes=processes)

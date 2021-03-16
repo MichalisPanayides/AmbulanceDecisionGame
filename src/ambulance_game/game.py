@@ -490,10 +490,11 @@ def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
     utility_matrix_1 = np.zeros((N_1, N_2))
     utility_matrix_2 = np.zeros((N_1, N_2))
 
-    for row, col, routing_entry, utility_1_entry, utility_2_entry in computed_tasks:
-        routing_matrix[row - 1, col - 1] = routing_entry
-        utility_matrix_1[row - 1, col - 1] = utility_1_entry
-        utility_matrix_2[row - 1, col - 1] = utility_2_entry
+    for threshold_1, threshold_2, routing_entry, utility_1_entry, utility_2_entry in computed_tasks:
+        row_index, col_index =  threshold_1 - 1, threshold_2 - 1
+        routing_matrix[row_index, col_index] = routing_entry
+        utility_matrix_1[row_index, col_index] = utility_1_entry
+        utility_matrix_2[row_index, col_index] = utility_2_entry
 
     return routing_matrix, utility_matrix_1, utility_matrix_2
 

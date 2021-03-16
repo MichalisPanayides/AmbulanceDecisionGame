@@ -2,6 +2,7 @@ name: AmbulanceGame
 channels:
   - defaults
 dependencies:
+  - pip==20.2.4
   - sympy==1.5.1
   - scipy==1.4.1
   - numpy==1.19.2
@@ -11,7 +12,8 @@ dependencies:
   - matplotlib==3.3.2
   - seaborn==0.10.0
   - ipykernel==5.3.4
-  - ciw==2.1.0
   - networkx==2.4
   - dask==2021.3.0
+  - pip:
+      - ciw==2.1.0
 prefix: C:\Users\micha\Anaconda3\envs\AmbulanceGame

@@ -241,8 +241,8 @@ def main(
             problem_parameters["alpha"] = round(alpha, 2)
             problem_parameters["target"] = round(target, 2)
 
-            if problem_parameters.values() not in cache:
-                cache.add(problem_parameters.values())
+            if tuple(problem_parameters.values()) not in cache:
+                cache.add(tuple(problem_parameters.values()))
                 (
                     routing_matrix,
                     payoff_matrix_A,

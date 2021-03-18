@@ -83,16 +83,10 @@ def write_README_for_current_parameters_directory(readme_path, **problem_paramet
         + "".join(parameters_string)
         + "\n\nThe directory is structured in the following way:\n\n"
         "\t|-- main.csv\n"
+        "\t|-- main.npz\n"
         "\t|-- README.md\n"
-        "\t|-- routing\n"
-        "\t|   |-- main.csv\n"
-        "\t|   |-- README.md \n"
-        "\t|-- A\n"
-        "\t|   |-- main.csv\n"
-        "\t|   |-- README.md\n"
-        "\t|-- B\n"
-        "\t|   |-- main.csv\n"
-        "\t|   |-- README.md\n"
+        "\nwhere `main.csv` holds the values of the parameters and "
+        "`main.npz` holds the \nvalues of the generated data"
     )
     with readme_path.open("w") as file:
         file.write(readme_contents)
@@ -119,7 +113,7 @@ def write_README_for_current_parameters_sub_directories(readme_path, output_name
         )
 
 
-def create_sub_directories_for_current_parameters(
+def create_sub_directory_for_current_parameters(
     routing_matrix,
     payoff_matrix_A,
     payoff_matrix_B,
@@ -136,33 +130,15 @@ def create_sub_directories_for_current_parameters(
     new_directory = path / directory_name
     new_directory.mkdir(parents=True, exist_ok=True)
 
+    np.savez_compressed(
+        file=new_directory / "main",
+        routing_matrix=routing_matrix,
+        payoff_matrix_A=payoff_matrix_A,
+        payoff_matrix_B=payoff_matrix_B,
+    )
     write_data_to_csv(data=problem_parameters.values(), path=new_directory / "main.csv")
     write_README_for_current_parameters_directory(
         readme_path=new_directory / "README.md", **problem_parameters
-    )
-
-    routing_subdirectory = new_directory / "Routing"
-    A_subdirectory = new_directory / "A"
-    B_subdirectory = new_directory / "B"
-    routing_subdirectory.mkdir(parents=True, exist_ok=True)
-    A_subdirectory.mkdir(parents=True, exist_ok=True)
-    B_subdirectory.mkdir(parents=True, exist_ok=True)
-
-    np.savetxt(routing_subdirectory / "main.csv", routing_matrix, delimiter=",")
-    np.savetxt(A_subdirectory / "main.csv", payoff_matrix_A, delimiter=",")
-    np.savetxt(B_subdirectory / "main.csv", payoff_matrix_B, delimiter=",")
-
-    write_README_for_current_parameters_sub_directories(
-        readme_path=routing_subdirectory / "README.md",
-        output_name="routing matrix",
-    )
-    write_README_for_current_parameters_sub_directories(
-        readme_path=A_subdirectory / "README.md",
-        output_name="payoff matrix A",
-    )
-    write_README_for_current_parameters_sub_directories(
-        readme_path=B_subdirectory / "README.md",
-        output_name="payoff matrix B",
     )
 
 
@@ -275,7 +251,7 @@ def main(
                     processes=processes, **problem_parameters
                 )
 
-                create_sub_directories_for_current_parameters(
+                create_sub_directory_for_current_parameters(
                     routing_matrix=routing_matrix,
                     payoff_matrix_A=payoff_matrix_A,
                     payoff_matrix_B=payoff_matrix_B,

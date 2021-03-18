@@ -86,7 +86,15 @@ def write_README_for_current_parameters_directory(readme_path, **problem_paramet
         "\t|-- main.npz\n"
         "\t|-- README.md\n"
         "\nwhere `main.csv` holds the values of the parameters and "
-        "`main.npz` holds the \nvalues of the generated data"
+        "`main.npz` holds the \nvalues of the generated data.\n\n"
+        "To read the data from `main.npz` in python simply run:\n\n"
+        "```python\n"
+        ">>> import numpy as np\n"
+        ">>> loaded = np.load('main.npz')\n"
+        ">>> print(loaded['routing_matrix'])\n"
+        ">>> print(loaded['payoff_matrix_A'])\n"
+        ">>> print(loaded['payoff_matrix_B'])\n"
+        "```"
     )
     with readme_path.open("w") as file:
         file.write(readme_contents)

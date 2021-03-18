@@ -92,27 +92,6 @@ def write_README_for_current_parameters_directory(readme_path, **problem_paramet
         file.write(readme_contents)
 
 
-def write_README_for_current_parameters_sub_directories(readme_path, output_name):
-    """
-    Writes the readme files (README.md) for the sub-directories routing, A or B
-
-    Parameters
-    ----------
-    readme_path : pathlib.Path object
-        the path that the readme will go on
-    output_name : string
-        the numpy that we write the readme for, i.e. "routing matrix",
-        "payoff matrix of A", "payoff matrix of B"
-    """
-    with readme_path.open("w") as file:
-        file.write("# " + output_name[0].upper() + output_name[1:])
-        file.write(
-            "\n\nThis sub-directory contains the value of "
-            + output_name
-            + " in `main.csv`"
-        )
-
-
 def create_sub_directory_for_current_parameters(
     routing_matrix,
     payoff_matrix_A,
@@ -121,8 +100,9 @@ def create_sub_directory_for_current_parameters(
     **problem_parameters,
 ):
     """
-    Create the directory and all of the sub-directories for the current set of
-    parameters.
+    Create the directory for the current set of parameters, save the parameters
+    value into main.csv, save the generated data into a compressed main.npz and
+    create a README.md file for this directory.
     """
     directory_name = "_".join(
         str(round(value, 2)) for value in problem_parameters.values()

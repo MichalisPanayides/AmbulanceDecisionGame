@@ -434,7 +434,9 @@ def test_get_individual_entries_of_matrices_example():
 
     assert da.is_dask_collection(task)
     values = da.compute(task)
-    assert values == ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+    assert np.allclose(
+        values, ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+    )
 
 
 def test_compute_tasks():

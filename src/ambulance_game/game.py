@@ -376,7 +376,8 @@ def get_individual_entries_of_matrices(
 ):
     """
     Gets the (i,j)th entry of the payoff matrices and the routing matrix where
-    i=threshold_1 and j=threshold_2
+    i=threshold_1 and j=threshold_2. This function is wrapped by the dask.delayed
+    decorator and returns the output of the function as a dask task
 
     Parameters
     ----------

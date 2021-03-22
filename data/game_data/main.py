@@ -223,11 +223,11 @@ def main(
             alpha_values,
             target_values,
         ):
-            problem_parameters["lambda_2"] = round(lambda_2, 2)
-            problem_parameters["lambda_1_1"] = round(lambda_1_1, 2)
-            problem_parameters["lambda_1_2"] = round(lambda_1_2, 2)
+            problem_parameters["lambda_2"] = round(lambda_2, 1)
+            problem_parameters["lambda_1_1"] = round(lambda_1_1, 1)
+            problem_parameters["lambda_1_2"] = round(lambda_1_2, 1)
             problem_parameters["alpha"] = round(alpha, 2)
-            problem_parameters["target"] = round(target, 2)
+            problem_parameters["target"] = round(target, 1)
 
             if tuple(problem_parameters.values()) not in cache:
                 cache.add(tuple(problem_parameters.values()))

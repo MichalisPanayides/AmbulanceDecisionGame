@@ -6,7 +6,7 @@ routing matrix, and the payoff matrices.
 
 ## Usage
 
-To run the experiments simply run in the command line:
+To run the experiments run in the command line:
 
     $ python main.py
 

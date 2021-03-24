@@ -1,7 +1,7 @@
-import random
-
 import dask as da
 import numpy as np
+from hypothesis import given, settings
+from hypothesis.strategies import floats
 
 from ambulance_game.game import (
     build_game_using_payoff_matrices,
@@ -439,7 +439,12 @@ def test_get_individual_entries_of_matrices_example():
     )
 
 
-def test_compute_tasks():
+@settings(max_examples=20)
+@given(
+    x=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    y=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+)
+def test_compute_tasks(x, y):
     """
     Tests that dask tasks are computed as expected
     """
@@ -451,9 +456,6 @@ def test_compute_tasks():
     @da.delayed
     def double(x):
         return x * 2
-
-    x = random.random()
-    y = random.random()
 
     tasks = tuple((inc(x), double(y)))
     assert compute_tasks(tasks, processes=None) == (x + 1, 2 * y)

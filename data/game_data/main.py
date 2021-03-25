@@ -10,14 +10,14 @@ import pandas as pd
 import ambulance_game as abg
 
 
-def read_data(path=pathlib.Path("data/parameters/main.csv")):
+def read_data(path=pathlib.Path("data/_parameters/main.csv")):
     """
     Read the data contents of the file as a pandas data frame
     """
     return pd.read_csv(path)
 
 
-def write_data_to_csv(data, path=pathlib.Path("data/parameters/main.csv")):
+def write_data_to_csv(data, path=pathlib.Path("data/_parameters/main.csv")):
     """
     Opens `path` in append mode and write the data
     """
@@ -31,7 +31,7 @@ def initialise_parameters_directory(**problem_parameters):
     Creates the parameters directory along with the readme file and the empty
     main.csv file that will hold all investigated parameters
     """
-    directory = pathlib.Path("data/parameters/")
+    directory = pathlib.Path("data/_parameters/")
     directory.mkdir(parents=True, exist_ok=True)
     readme_contents = (
         "# Parameters"
@@ -223,11 +223,11 @@ def main(
             alpha_values,
             target_values,
         ):
-            problem_parameters["lambda_2"] = round(lambda_2, 1)
-            problem_parameters["lambda_1_1"] = round(lambda_1_1, 1)
-            problem_parameters["lambda_1_2"] = round(lambda_1_2, 1)
-            problem_parameters["alpha"] = round(alpha, 2)
-            problem_parameters["target"] = round(target, 1)
+            problem_parameters["lambda_2"] = lambda_2
+            problem_parameters["lambda_1_1"] = lambda_1_1
+            problem_parameters["lambda_1_2"] = lambda_1_2
+            problem_parameters["alpha"] = alpha
+            problem_parameters["target"] = target
 
             if tuple(problem_parameters.values()) not in cache:
                 cache.add(tuple(problem_parameters.values()))
@@ -247,8 +247,8 @@ def main(
                 )
                 write_data_to_csv(data=problem_parameters.values())
 
-        problem_parameters["mu_1"] = round(random.uniform(0.1, 10), 1)
-        problem_parameters["mu_2"] = round(random.uniform(0.1, 10), 1)
+        problem_parameters["mu_1"] = random.uniform(0.1, 10)
+        problem_parameters["mu_2"] = random.uniform(0.1, 10)
         problem_parameters["num_of_servers_1"] = random.randint(1, 10)
         problem_parameters["num_of_servers_2"] = random.randint(1, 10)
         problem_parameters["system_capacity_1"] = random.randint(

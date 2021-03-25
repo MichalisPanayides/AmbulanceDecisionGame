@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import itertools
 import pathlib
 import random
@@ -29,7 +30,8 @@ def write_data_to_csv(data, path=pathlib.Path("data/_parameters/main.csv")):
 def initialise_parameters_directory(**problem_parameters):
     """
     Creates the parameters directory along with the readme file and the empty
-    main.csv file that will hold all investigated parameters
+    main.csv file that will hold all investigated parameters along with their
+    hash value.
     """
     directory = pathlib.Path("data/_parameters/")
     directory.mkdir(parents=True, exist_ok=True)
@@ -38,12 +40,18 @@ def initialise_parameters_directory(**problem_parameters):
         "\n\nThis directory keeps track of all the parameters investigated so far. The"
         "\ncontents of `main.csv` correspond to parameter values of the model in the"
         "\nfollowing order:\n"
+        + "".join(
+            "\n\t" + key + ","
+            for key in tuple(problem_parameters.keys()) + ("hash_value",)
+        )
+        + "\n\nNote here that the `hash_value` parameter is a bit-array that "
+        "holds a unique id \nfor each set of parameters and payoff matrices "
+        "that also corresponds to the \ndirectory for that set of parameters"
     )
     with (directory / "README.md").open("w") as file:
         file.write(readme_contents)
-        file.write("".join("\n\t" + key + "," for key, _ in problem_parameters.items()))
     if not (directory / "main.csv").exists():
-        write_data_to_csv(sorted(problem_parameters.keys()))
+        write_data_to_csv(tuple(sorted(problem_parameters.keys())) + ("hash_value",))
 
 
 def generate_data_for_current_parameters(processes, **problem_parameters):
@@ -100,7 +108,7 @@ def write_README_for_current_parameters_directory(readme_path, **problem_paramet
         file.write(readme_contents)
 
 
-def create_sub_directory_for_current_parameters(
+def create_and_update_directories_with_current_parameter_values(
     routing_matrix,
     payoff_matrix_A,
     payoff_matrix_B,
@@ -108,13 +116,24 @@ def create_sub_directory_for_current_parameters(
     **problem_parameters,
 ):
     """
-    Create the directory for the current set of parameters, save the parameters
-    value into main.csv, save the generated data into a compressed main.npz and
-    create a README.md file for this directory.
+    Create the directory for the current set of parameters, under a unique name
+    created by the hash value of the string of all the parameters and the three
+    generated numpy array objects. After creating the directory, save the values
+    of the matrices in a compressed main.npz file, write a README.md file with
+    instructions on how the directory is structured and how to read the data and
+    save the values of the parameters in a main.csv file. Lastly update the
+    main.csv file located in parameters/ with the parameters values and the hash
+    value (which is also the directory name).
     """
-    directory_name = "_".join(
-        str(round(value, 2)) for value in problem_parameters.values()
+
+    hash_object = hashlib.md5(
+        ",".join(str(value) for value in problem_parameters.values()).encode("utf-8")
     )
+    hash_object.update(routing_matrix)
+    hash_object.update(payoff_matrix_A)
+    hash_object.update(payoff_matrix_B)
+    directory_name = hash_object.hexdigest()
+
     new_directory = path / directory_name
     new_directory.mkdir(parents=True, exist_ok=True)
 
@@ -124,10 +143,12 @@ def create_sub_directory_for_current_parameters(
         payoff_matrix_A=payoff_matrix_A,
         payoff_matrix_B=payoff_matrix_B,
     )
-    write_data_to_csv(data=problem_parameters.values(), path=new_directory / "main.csv")
+
     write_README_for_current_parameters_directory(
         readme_path=new_directory / "README.md", **problem_parameters
     )
+    write_data_to_csv(data=problem_parameters.values(), path=new_directory / "main.csv")
+    write_data_to_csv(data=tuple(problem_parameters.values()) + (directory_name,))
 
 
 def main(
@@ -239,13 +260,12 @@ def main(
                     processes=processes, **problem_parameters
                 )
 
-                create_sub_directory_for_current_parameters(
+                create_and_update_directories_with_current_parameter_values(
                     routing_matrix=routing_matrix,
                     payoff_matrix_A=payoff_matrix_A,
                     payoff_matrix_B=payoff_matrix_B,
                     **problem_parameters,
                 )
-                write_data_to_csv(data=problem_parameters.values())
 
         problem_parameters["mu_1"] = random.uniform(0.1, 10)
         problem_parameters["mu_2"] = random.uniform(0.1, 10)

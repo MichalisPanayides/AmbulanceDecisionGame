@@ -108,6 +108,18 @@ def write_README_for_current_parameters_directory(readme_path, **problem_paramet
         file.write(readme_contents)
 
 
+def get_hash_value_of_parameters_and_matrices(
+    problem_parameters, routing_matrix, payoff_matrix_A, payoff_matrix_B
+):
+    hash_object = hashlib.md5(
+        "".join(str(value) for value in problem_parameters.values()).encode("utf-8")
+    )
+    hash_object.update(routing_matrix)
+    hash_object.update(payoff_matrix_A)
+    hash_object.update(payoff_matrix_B)
+    return hash_object.hexdigest()
+
+
 def create_and_update_directories_with_current_parameter_values(
     routing_matrix,
     payoff_matrix_A,
@@ -126,15 +138,13 @@ def create_and_update_directories_with_current_parameter_values(
     value (which is also the directory name).
     """
 
-    hash_object = hashlib.md5(
-        ",".join(str(value) for value in problem_parameters.values()).encode("utf-8")
+    hash_value = get_hash_value_of_parameters_and_matrices(
+        problem_parameters=problem_parameters,
+        routing_matrix=routing_matrix,
+        payoff_matrix_A=payoff_matrix_A,
+        payoff_matrix_B=payoff_matrix_B,
     )
-    hash_object.update(routing_matrix)
-    hash_object.update(payoff_matrix_A)
-    hash_object.update(payoff_matrix_B)
-    directory_name = hash_object.hexdigest()
-
-    new_directory = path / directory_name
+    new_directory = path / hash_value
     new_directory.mkdir(parents=True, exist_ok=True)
 
     np.savez_compressed(
@@ -148,7 +158,7 @@ def create_and_update_directories_with_current_parameter_values(
         readme_path=new_directory / "README.md", **problem_parameters
     )
     write_data_to_csv(data=problem_parameters.values(), path=new_directory / "main.csv")
-    write_data_to_csv(data=tuple(problem_parameters.values()) + (directory_name,))
+    write_data_to_csv(data=tuple(problem_parameters.values()) + (hash_value,))
 
 
 def main(

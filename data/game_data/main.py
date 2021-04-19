@@ -169,42 +169,25 @@ def main(
     """
     Main experiment file.
 
-    Gets the routing matrix and the payoff matrices on a system with default
-    parameters:
-
-        "lambda_2": 1,
-        "lambda_1_1": 1,
-        "lambda_1_2": 1,
-        "mu_1": 2,
-        "mu_2": 2,
-        "num_of_servers_1": 1,
-        "num_of_servers_2": 1,
-        "system_capacity_1": 2,
-        "system_capacity_2": 2,
-        "buffer_capacity_1": 2,
-        "buffer_capacity_2": 2,
-        "alpha" : 0,
-        "target" : 1,
-
-    and increasing system_capacity_1
-
-    This reads in the data frame and only run new experiments.
+    Gets the routing matrix and the payoff matrices on a system with a default
+    set of parameters and explores new sets as it progresses. This reads in the
+    data frame and only run new experiments.
     """
     if problem_parameters is None:
         problem_parameters = {
-            "lambda_2": 1,
-            "lambda_1_1": 1,
-            "lambda_1_2": 1,
+            "lambda_2": None,
+            "lambda_1_1": None,
+            "lambda_1_2": None,
             "mu_1": 2,
-            "mu_2": 2,
-            "num_of_servers_1": 1,
-            "num_of_servers_2": 1,
-            "system_capacity_1": 2,
-            "system_capacity_2": 2,
-            "buffer_capacity_1": 2,
-            "buffer_capacity_2": 2,
-            "alpha": 0,
-            "target": 1,
+            "mu_2": 3,
+            "num_of_servers_1": 3,
+            "num_of_servers_2": 2,
+            "system_capacity_1": 6,
+            "system_capacity_2": 7,
+            "buffer_capacity_1": 5,
+            "buffer_capacity_2": 4,
+            "alpha": None,
+            "target": None,
         }
     problem_parameters = dict(sorted(problem_parameters.items()))
 
@@ -224,27 +207,28 @@ def main(
                 problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"]
                 + problem_parameters["mu_2"] * problem_parameters["num_of_servers_2"]
             ),
-            num=30,
+            num=10,
         )
         lambda_1_1_values = np.linspace(
             start=0,
             stop=problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"],
-            num=20,
+            num=5,
         )
         lambda_1_2_values = np.linspace(
             start=0,
             stop=problem_parameters["mu_2"] * problem_parameters["num_of_servers_2"],
-            num=20,
+            num=5,
         )
-        alpha_values = np.linspace(
-            start=0,
-            stop=1,
-            num=21,
+        alpha_values = np.concatenate(
+            (
+                np.linspace(start=0, stop=0.9, num=4),
+                np.linspace(start=0.95, stop=1, num=6),
+            )
         )
         target_values = np.linspace(
             start=0,
             stop=10,
-            num=20,
+            num=11,
         )
 
         for lambda_2, lambda_1_1, lambda_1_2, alpha, target in itertools.product(

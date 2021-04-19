@@ -12,18 +12,18 @@ To run the experiments run in the command line:
 
 This creates the `data` directory that is structured in the following way:
 
-    |-- parameters
+    |-- _parameters/
         |-- main.csv
         |-- README.md
-    |-- <set_of_parameters_1>
-        |-- main.csv
-        |-- main.npz
-        |-- README.md
-    |-- <set_of_parameters_2>
+    |-- <set_of_parameters_1>/
         |-- main.csv
         |-- main.npz
         |-- README.md
-    |-- <set_of_parameters_3>
+    |-- <set_of_parameters_2>/
+        |-- main.csv
+        |-- main.npz
+        |-- README.md
+    |-- <set_of_parameters_3>/
         |-- main.csv
         |-- main.npz
         |-- README.md

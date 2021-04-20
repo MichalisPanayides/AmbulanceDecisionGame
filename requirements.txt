@@ -6,3 +6,4 @@ seaborn
 scipy
 ciw==2.1.0
 nashpy
+dask[complete]

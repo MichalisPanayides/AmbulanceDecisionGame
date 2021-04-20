@@ -1,8 +1,10 @@
 import functools
 import itertools
 
+import dask as da
 import nashpy as nash
 import numpy as np
+from numpy.core.fromnumeric import shape
 import scipy.optimize
 
 from .markov.blocking import get_mean_blocking_time_using_markov_state_probabilities
@@ -353,7 +355,157 @@ def get_routing_matrix(
     return routing_matrix
 
 
-@functools.lru_cache(maxsize=None)
+@da.delayed
+def get_individual_entries_of_matrices(
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    alpha,
+    target,
+    alternative_utility=False,
+):
+    """
+    Gets the (i,j)th entry of the payoff matrices and the routing matrix where
+    i=threshold_1 and j=threshold_2. This function is wrapped by the dask.delayed
+    decorator and returns the output of the function as a dask task
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1_1 : float
+    lambda_1_2 : float
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+    alpha : float
+    target : float
+    alternative_utility : bool, optional
+
+    Returns
+    -------
+    tuple
+        A tuple of the form (i, j, R[i,j], A[i,j], B[i,j])
+    """
+    prop_to_hospital_1 = calculate_class_2_individuals_best_response(
+        lambda_2=lambda_2,
+        lambda_1_1=lambda_1_1,
+        lambda_1_2=lambda_1_2,
+        mu_1=mu_1,
+        mu_2=mu_2,
+        num_of_servers_1=num_of_servers_1,
+        num_of_servers_2=num_of_servers_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        alpha=alpha,
+    )
+    prop_to_hospital_2 = 1 - prop_to_hospital_1
+
+    proportion_within_target_1 = (
+        proportion_within_target_using_markov_state_probabilities(
+            lambda_2=lambda_2 * prop_to_hospital_1,
+            lambda_1=lambda_1_1,
+            mu=mu_1,
+            num_of_servers=num_of_servers_1,
+            threshold=threshold_1,
+            system_capacity=system_capacity_1,
+            buffer_capacity=buffer_capacity_1,
+            class_type=None,
+            target=target,
+        )
+    )
+    proportion_within_target_2 = (
+        proportion_within_target_using_markov_state_probabilities(
+            lambda_2=lambda_2 * prop_to_hospital_2,
+            lambda_1=lambda_1_2,
+            mu=mu_2,
+            num_of_servers=num_of_servers_2,
+            threshold=threshold_2,
+            system_capacity=system_capacity_2,
+            buffer_capacity=buffer_capacity_2,
+            class_type=None,
+            target=target,
+        )
+    )
+    if alternative_utility:
+        utility_1 = proportion_within_target_1
+        utility_2 = proportion_within_target_2
+    else:
+        utility_1 = -((proportion_within_target_1 - 0.95) ** 2)
+        utility_2 = -((proportion_within_target_2 - 0.95) ** 2)
+
+    return threshold_1, threshold_2, prop_to_hospital_1, utility_1, utility_2
+
+
+def compute_tasks(tasks, processes):
+    """
+    Compute all dask tasks
+    """
+    if processes is None:
+        out = da.compute(*tasks, scheduler="single-threaded")
+    else:
+        out = da.compute(*tasks, num_workers=processes)
+    return out
+
+
+def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
+    """
+    Using the computed tasks builds the utility matrix of the row and the column
+    players and the routing matrix.
+
+    Parameters
+    ----------
+    computed_tasks : tuple
+        A tuple of tuples of the form (i, j, R[i,j], A[i,j], B[i,j])
+    N_1 : int
+        The number of rows for all matrices
+    N_2 : int
+        The number of columns for all matrices
+
+    Returns
+    -------
+    numpy array, numpy array, numpy array
+        The routing matrix and the two payoff matrices
+    """
+    routing_matrix = np.zeros((N_1, N_2))
+    utility_matrix_1 = np.zeros((N_1, N_2))
+    utility_matrix_2 = np.zeros((N_1, N_2))
+
+    for (
+        threshold_1,
+        threshold_2,
+        routing_entry,
+        utility_1_entry,
+        utility_2_entry,
+    ) in computed_tasks:
+        row_index, col_index = threshold_1 - 1, threshold_2 - 1
+        routing_matrix[row_index, col_index] = routing_entry
+        utility_matrix_1[row_index, col_index] = utility_1_entry
+        utility_matrix_2[row_index, col_index] = utility_2_entry
+
+    return routing_matrix, utility_matrix_1, utility_matrix_2
+
+
 def get_payoff_matrices(
     lambda_2,
     lambda_1_1,
@@ -368,9 +520,8 @@ def get_payoff_matrices(
     buffer_capacity_2,
     target,
     alternative_utility=False,
-    routing_matrix=None,
-    routing_function=get_weighted_mean_blocking_difference_between_two_systems,
     alpha=0,
+    processes=None,
 ):
     """
     The function uses the distribution array (that is the array that holds the
@@ -408,8 +559,8 @@ def get_payoff_matrices(
     numpy.array, numpy.array
         The payoff matrices of the game
     """
-    if routing_matrix is None:
-        routing_matrix = get_routing_matrix(
+    tasks = (
+        get_individual_entries_of_matrices(
             lambda_2=lambda_2,
             lambda_1_1=lambda_1_1,
             lambda_1_2=lambda_1_2,
@@ -417,53 +568,29 @@ def get_payoff_matrices(
             mu_2=mu_2,
             num_of_servers_1=num_of_servers_1,
             num_of_servers_2=num_of_servers_2,
+            threshold_1=threshold_1,
+            threshold_2=threshold_2,
             system_capacity_1=system_capacity_1,
             system_capacity_2=system_capacity_2,
             buffer_capacity_1=buffer_capacity_1,
             buffer_capacity_2=buffer_capacity_2,
-            routing_function=routing_function,
             alpha=alpha,
-        )
-    utility_matrix_1 = np.zeros((system_capacity_1, system_capacity_2))
-    utility_matrix_2 = np.zeros((system_capacity_1, system_capacity_2))
-    for threshold_1, threshold_2 in itertools.product(
-        range(1, system_capacity_1 + 1), range(1, system_capacity_2 + 1)
-    ):
-        p1 = routing_matrix[threshold_1 - 1, threshold_2 - 1]
-        p2 = 1 - p1
-        prop_1 = proportion_within_target_using_markov_state_probabilities(
-            lambda_2=lambda_2 * p1,
-            lambda_1=lambda_1_1,
-            mu=mu_1,
-            num_of_servers=num_of_servers_1,
-            threshold=threshold_1,
-            system_capacity=system_capacity_1,
-            buffer_capacity=buffer_capacity_1,
-            class_type=None,
             target=target,
+            alternative_utility=alternative_utility,
         )
-        prop_2 = proportion_within_target_using_markov_state_probabilities(
-            lambda_2=lambda_2 * p2,
-            lambda_1=lambda_1_2,
-            mu=mu_2,
-            num_of_servers=num_of_servers_2,
-            threshold=threshold_2,
-            system_capacity=system_capacity_2,
-            buffer_capacity=buffer_capacity_2,
-            class_type=None,
-            target=target,
+        for threshold_1, threshold_2 in itertools.product(
+            range(1, system_capacity_1 + 1), range(1, system_capacity_2 + 1)
         )
-        if alternative_utility:
-            u_1 = prop_1
-            u_2 = prop_2
-        else:
-            u_1 = -((prop_1 - 0.95) ** 2)
-            u_2 = -((prop_2 - 0.95) ** 2)
-
-        utility_matrix_1[threshold_1 - 1, threshold_2 - 1] = u_1
-        utility_matrix_2[threshold_1 - 1, threshold_2 - 1] = u_2
-
-    return (utility_matrix_1, utility_matrix_2)
+    )
+    computed_tasks = compute_tasks(tasks=tasks, processes=processes)
+    (
+        routing_matrix,
+        utility_matrix_1,
+        utility_matrix_2,
+    ) = build_matrices_from_computed_tasks(
+        computed_tasks=computed_tasks, N_1=system_capacity_1, N_2=system_capacity_2
+    )
+    return utility_matrix_1, utility_matrix_2, routing_matrix
 
 
 @functools.lru_cache(maxsize=None)
@@ -512,7 +639,7 @@ def build_game_using_payoff_matrices(
         the game with the constructed or given payoff matrices
     """
     if payoff_matrix_A == None or payoff_matrix_B == None:
-        payoff_matrix_A, payoff_matrix_B = get_payoff_matrices(
+        payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
             lambda_2=lambda_2,
             lambda_1_1=lambda_1_1,
             lambda_1_2=lambda_1_2,
@@ -525,10 +652,8 @@ def build_game_using_payoff_matrices(
             buffer_capacity_1=buffer_capacity_1,
             buffer_capacity_2=buffer_capacity_2,
             target=target,
-            alternative_utility=alternative_utility,
-            routing_matrix=None,
-            routing_function=get_weighted_mean_blocking_difference_between_two_systems,
             alpha=alpha,
+            alternative_utility=alternative_utility,
         )
 
     game = nash.Game(payoff_matrix_A, payoff_matrix_B)

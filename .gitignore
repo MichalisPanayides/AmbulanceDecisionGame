@@ -14,3 +14,6 @@ src/ambulance_game.egg-info/
 *.bcf
 *.blg
 *.run.xml
+dask-worker-space
+data/game_data/data
+data/game_data/nbs

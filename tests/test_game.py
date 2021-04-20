@@ -1,12 +1,18 @@
+import dask as da
 import numpy as np
+from hypothesis import given, settings
+from hypothesis.strategies import floats
 
 from ambulance_game.game import (
-    get_accepting_proportion_of_class_2_individuals,
-    get_weighted_mean_blocking_difference_between_two_systems,
-    calculate_class_2_individuals_best_response,
-    get_routing_matrix,
-    get_payoff_matrices,
     build_game_using_payoff_matrices,
+    build_matrices_from_computed_tasks,
+    calculate_class_2_individuals_best_response,
+    compute_tasks,
+    get_accepting_proportion_of_class_2_individuals,
+    get_individual_entries_of_matrices,
+    get_payoff_matrices,
+    get_routing_matrix,
+    get_weighted_mean_blocking_difference_between_two_systems,
 )
 
 number_of_digits_to_round = 8
@@ -403,11 +409,83 @@ def test_get_routing_matrix_example_3():
     )
 
 
+def test_get_individual_entries_of_matrices_example():
+    """
+    Tests that the function returns a dask task and that the computed task
+    returns the expected tuple
+    """
+    task = get_individual_entries_of_matrices(
+        lambda_2=2,
+        lambda_1_1=2,
+        lambda_1_2=2,
+        mu_1=2,
+        mu_2=2,
+        num_of_servers_1=2,
+        num_of_servers_2=2,
+        threshold_1=2,
+        threshold_2=2,
+        system_capacity_1=4,
+        system_capacity_2=4,
+        buffer_capacity_1=2,
+        buffer_capacity_2=2,
+        alpha=0.5,
+        target=2,
+    )
+
+    assert da.is_dask_collection(task)
+    values = da.compute(task)
+    assert np.allclose(
+        values, ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+    )
+
+
+@settings(max_examples=20)
+@given(
+    x=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    y=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+)
+def test_compute_tasks(x, y):
+    """
+    Tests that dask tasks are computed as expected
+    """
+
+    @da.delayed
+    def inc(x):
+        return x + 1
+
+    @da.delayed
+    def double(x):
+        return x * 2
+
+    tasks = tuple((inc(x), double(y)))
+    assert compute_tasks(tasks, processes=None) == (x + 1, 2 * y)
+
+
+def test_build_matrices_from_computed_tasks():
+    """
+    Tests the matrices that are generated from computed tasks (tuple)
+    """
+    computed_tasks = tuple(
+        (
+            (1, 1, 1, 2, 3),
+            (1, 2, 10, 20, 30),
+            (2, 1, 100, 200, 300),
+            (2, 2, 1000, 2000, 3000),
+        )
+    )
+    routing, utility_1, utility_2 = build_matrices_from_computed_tasks(
+        computed_tasks=computed_tasks, N_1=2, N_2=2
+    )
+    assert np.allclose(routing, np.array([[1, 10], [100, 1000]]))
+    assert np.allclose(utility_1, np.array([[2, 20], [200, 2000]]))
+    assert np.allclose(utility_2, np.array([[3, 30], [300, 3000]]))
+
+
 def test_get_payoff_matrices_example_1():
     """
     Test for payoff matrices of the game
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,
@@ -432,9 +510,9 @@ def test_get_payoff_matrices_example_1():
 
 def test_get_payoff_matrices_example_2():
     """
-    Test for payoff matrices of the game
+    Test for payoff matrices of the game using 2 processes
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=2,
         lambda_1_1=2,
         lambda_1_2=2,
@@ -447,6 +525,7 @@ def test_get_payoff_matrices_example_2():
         buffer_capacity_1=4,
         buffer_capacity_2=4,
         target=2,
+        processes=2,
     )
 
     assert np.allclose(
@@ -478,7 +557,7 @@ def test_get_payoff_matrices_example_3():
     """
     Test for payoff matrices of the game when the alternative utility is used
     """
-    A, B = get_payoff_matrices(
+    A, B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,

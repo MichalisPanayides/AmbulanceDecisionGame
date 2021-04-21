@@ -16,3 +16,7 @@ src/ambulance_game.egg-info/
 *.run.xml
 dask-worker-space
 data/game_data/data
+data/game_data/nbs/*
+!data/game_data/nbs/_main
+!data/game_data/nbs/main.py
+!data/game_data/nbs/main.ipynb

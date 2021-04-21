@@ -188,56 +188,44 @@ def get_performance_measure_for_given_strategies(
     return performance_measure_1 + performance_measure_2
 
 
-def find_best_performance_measure(routing, parameters, performance_measure_function):
+def build_performance_values_array(routing, parameters, performance_measure_function):
     """
-    Find the minimum possible value of the performance_measure_function from all set of strategies
+    Get all the values for the current investigated performance measure
     """
-    min_performance_measure = None
-    for threshold_1, threshold_2 in itertools.product(
-        range(parameters["system_capacity_1"]),
-        range(parameters["system_capacity_2"]),
+    all_performance_values = np.zeros(routing.shape)
+    for strategy_A, strategy_B in itertools.product(
+        range(routing.shape[0]), range(routing.shape[1])
     ):
-        current_performance_measure = get_performance_measure_for_given_strategies(
-            strategy_A=threshold_1,
-            strategy_B=threshold_2,
-            routing=routing,
-            parameters=parameters,
-            performance_measure_function=performance_measure_function,
-        )
-        if (
-            min_performance_measure is None
-            or current_performance_measure < min_performance_measure
-        ):
-            min_performance_measure = current_performance_measure
-    return min_performance_measure
-
-
-def find_worst_nash_equilibrium_measure(
-    all_nash_equilibrias,
-    routing,
-    parameters,
-    performance_measure_function,
-):
-    """
-    Get the maximum value of the performance measure out of all possible
-    equilibria
-    """
-    max_performance_measure = None
-    for equilibria in all_nash_equilibrias:
-        strategy_A = np.argmax(equilibria[0])
-        strategy_B = np.argmax(equilibria[1])
-        equilibria_value = get_performance_measure_for_given_strategies(
+        all_performance_values[
+            strategy_A, strategy_B
+        ] = get_performance_measure_for_given_strategies(
             strategy_A=strategy_A,
             strategy_B=strategy_B,
             routing=routing,
             parameters=parameters,
             performance_measure_function=performance_measure_function,
         )
+    return all_performance_values
+
+
+def find_worst_nash_equilibrium_measure(
+    all_nash_equilibrias,
+    performance_values_array,
+):
+    """
+    Get the maximum value of the performance measure out of all possible
+    equilibria
+    """
+    max_performance_measure = None
+    for row_strategies, col_strategies in all_nash_equilibrias:
+        current_performance_measure = (
+            row_strategies @ performance_values_array @ col_strategies
+        )
         if (
             max_performance_measure is None
-            or equilibria_value > max_performance_measure
+            or current_performance_measure > max_performance_measure
         ):
-            max_performance_measure = equilibria_value
+            max_performance_measure = current_performance_measure
     return max_performance_measure
 
 
@@ -256,16 +244,16 @@ def get_price_of_anarchy(performance_measure_function):
     #     else:
     #         equilibria = get_lemke_howson_outcome()
     equilibria = get_lemke_howson_outcome()
-    minimum_value = find_best_performance_measure(
+
+    performance_values_array = build_performance_values_array(
         routing=routing,
         parameters=parameters,
         performance_measure_function=performance_measure_function,
     )
+    minimum_value = np.min(performance_values_array)
     worst_equilib_value = find_worst_nash_equilibrium_measure(
         all_nash_equilibrias=equilibria,
-        routing=routing,
-        parameters=parameters,
-        performance_measure_function=performance_measure_function,
+        performance_values_array=performance_values_array,
     )
     price_of_anarchy = worst_equilib_value / minimum_value
     return price_of_anarchy

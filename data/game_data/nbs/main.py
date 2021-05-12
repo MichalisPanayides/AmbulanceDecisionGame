@@ -1,11 +1,58 @@
 import csv
 import itertools
+import os
 import pathlib
 
+import matplotlib.pyplot as plt
 import nashpy as nash
 import numpy as np
+import pandas as pd
 
 import ambulance_game as abg
+from nashpy.algorithms.lemke_howson_lex import lemke_howson_lex
+
+
+def get_index_of_values(problem_parameters, data, atol=1e-08, rtol=1e-05):
+    """
+    Get the indices of the rows that match the given parameters' values
+    """
+    index = data.index
+    condition = (
+        np.isclose(
+            data["lambda_2"], problem_parameters["lambda_2"], atol=atol, rtol=rtol
+        )
+        & np.isclose(
+            data["lambda_1_1"], problem_parameters["lambda_1_1"], atol=atol, rtol=rtol
+        )
+        & np.isclose(
+            data["lambda_1_2"], problem_parameters["lambda_1_2"], atol=atol, rtol=rtol
+        )
+        & np.isclose(data["mu_1"], problem_parameters["mu_1"], atol=atol, rtol=rtol)
+        & np.isclose(data["mu_2"], problem_parameters["mu_2"], atol=atol, rtol=rtol)
+        & np.isclose(data["num_of_servers_1"], problem_parameters["num_of_servers_1"])
+        & np.isclose(data["num_of_servers_2"], problem_parameters["num_of_servers_2"])
+        & np.isclose(data["system_capacity_1"], problem_parameters["system_capacity_1"])
+        & np.isclose(data["system_capacity_2"], problem_parameters["system_capacity_2"])
+        & np.isclose(data["buffer_capacity_1"], problem_parameters["buffer_capacity_1"])
+        & np.isclose(data["buffer_capacity_2"], problem_parameters["buffer_capacity_2"])
+        & np.isclose(data["alpha"], problem_parameters["alpha"])
+        & np.isclose(data["target"], problem_parameters["target"], atol=atol, rtol=rtol)
+    )
+    indices = index[condition]
+    return indices
+
+
+def create_directory_with_notebook(data, index_value):
+    """
+    Create the directory with main.ipynb that contains a brief analysis for that scenario
+    """
+    hash_value = data[index_value : index_value + 1]["hash_value"]
+    dirname = hash_value.to_string(index=False)[1:]
+    new_dir = pathlib.Path() / dirname
+    new_dir.mkdir(exist_ok=True)
+    command = "copy _main\main.ipynb " + dirname + "\\"
+    os.system(command)
+    return dirname
 
 
 def looks_degenerate(A, B):
@@ -36,7 +83,7 @@ def get_path_of_experiment():
     return target_path
 
 
-def get_parameters():
+def get_parameters(target_path=None):
     """
     Get the values of the parameters for this experiment
     """
@@ -55,7 +102,10 @@ def get_parameters():
         "system_capacity_2",
         "target",
     ]
-    target_path = get_path_of_experiment()
+    if target_path is None:
+        target_path = get_path_of_experiment()
+    else:
+        target_path = pathlib.Path("../data") / target_path
     path = pathlib.Path(target_path) / "main.csv"
     with open(path, "r") as file:
         reader = csv.reader(file)
@@ -67,11 +117,14 @@ def get_parameters():
     return parameters
 
 
-def get_matrices():
+def get_matrices(target_path=None):
     """
     Get the generated matrices for this experiment
     """
-    target_path = get_path_of_experiment()
+    if target_path is None:
+        target_path = get_path_of_experiment()
+    else:
+        target_path = pathlib.Path("../data") / target_path
     matrices = np.load(target_path / "main.npz")
     R = matrices["routing_matrix"]
     A = matrices["payoff_matrix_A"]
@@ -79,75 +132,80 @@ def get_matrices():
     return R, A, B
 
 
-def get_lemke_howson_outcome():
+def remove_duplicate_entries(tuple_of_arrays):
     """
-    Get all unique outputs of the Lemke Howson algorithm for all dropped labels
+    Given a tuple of arrays remove the duplicate ones
     """
-    _, A, B = get_matrices()
+    strat_1_count = len(tuple_of_arrays[0][0])
+    unique_vectors = np.unique(
+        np.array([np.concatenate((i, j)) for i, j in tuple_of_arrays]), axis=0
+    )
+    unique_bi_vectors = tuple(
+        tuple((vec[:strat_1_count], vec[strat_1_count:])) for vec in unique_vectors
+    )
+    return unique_bi_vectors
+
+
+def get_evolutionary_stable_strategies(
+    A, B, method=None, learning_repetitions=10, **kwargs
+):
+    """
+    Get all unique ESS using one of the following functions:
+    nash.Game.lemke_howson_enumeration(),
+    nash.Game.fictitious_play(),
+    nash.Game.stochastic_fictitious_play(),
+    nash.Game.asymmetric_replicator_dynamics(),
+
+    Parameters
+    ----------
+    A : numpy array
+    B : numpy array
+    method : function, optional
+    learning_repetitions : int, optional
+
+    Additional parameters (kwargs)
+    ------------------------------
+    iterations : int
+        required parameter for fictitious_play() and stochastic_fictitious_play()
+    play_counts : bi-tuple
+        optional parameter for fictitious_play() and stochastic_fictitious_play()
+    etha : float
+        optional parameter for stochastic_fictitious_play()
+    epsilon : float
+        optional parameter for stochastic_fictitious_play()
+    timepoints : numpy array
+        optional parameter for asymmetric_replicator_dynamics()
+    x0 : numpy array
+        optional parameter for asymmetric_replicator_dynamics()
+    y0 : numpy array
+        optional parameter for asymmetric_replicator_dynamics()
+
+    Returns
+    -------
+    tuple of numpy arrays
+        all ESS strategies from the specified method
+    """
     game = nash.Game(A, B)
-    all_equilibs = tuple(game.lemke_howson_enumeration())
-    unique_equilibs = None
-    for current_equilib in all_equilibs:
-        if unique_equilibs is None:
-            unique_equilibs = (current_equilib,)
-            continue
-        for check_equilib in unique_equilibs:
-            if np.allclose(
-                current_equilib[0], check_equilib[0], atol=1e-2
-            ) and np.allclose(current_equilib[1], check_equilib[1], atol=1e-2):
-                include = False
-                break
-            if include:
-                unique_equilibs += (current_equilib,)
+    if method is None or method == nash.Game.lemke_howson_enumeration:
+        all_equilibs = tuple(nash.Game.lemke_howson_enumeration(game))
+        unique_equilibs = remove_duplicate_entries(all_equilibs)
+    elif method == nash.Game.asymmetric_replicator_dynamics:
+        xs, ys = method(game, **kwargs)
+        unique_equilibs = (tuple((np.round(xs[-1], 2), np.round(ys[-1], 2))),)
+    else:
+        all_equilibs = ()
+        for _ in range(learning_repetitions):
+            *_, last_iteration = method(game, **kwargs)
+            unnormalised_iteration = (
+                last_iteration[0] if type(last_iteration) == tuple else last_iteration
+            )
+            normalised_iteration = [
+                np.round(arr / np.sum(unnormalised_iteration[0]), 2)
+                for arr in unnormalised_iteration
+            ]
+            all_equilibs += (normalised_iteration,)
+        unique_equilibs = remove_duplicate_entries(all_equilibs)
     return unique_equilibs
-
-
-def get_fictitious_play_outcome(iterations=1000, repetitions=10):
-    """
-    Get the outputs of the fictitious play algorithm for a number of iterations.
-    """
-    _, A, B = get_matrices()
-    game = nash.Game(A, B)
-    all_outcomes = None
-    for _ in range(repetitions):
-        current_rep = tuple(game.fictitious_play(iterations))[-1]
-        current_rep = tuple(i / np.sum(i) for i in current_rep)
-        if all_outcomes is None:
-            all_outcomes = (current_rep,)
-            continue
-        include = True
-        for check_rep in all_outcomes:
-            if np.allclose(current_rep[0], check_rep[0], atol=1e-1) and np.allclose(
-                current_rep[1], check_rep[1], atol=1e-1
-            ):
-                include = False
-                break
-        if include:
-            all_outcomes += (current_rep,)
-    return all_outcomes
-
-
-def get_stochastic_fictitious_play_outcome(iterations=10000, repetitions=10):
-    """
-    Get the outputs of the stochastic fictitious play algorithm for a number of iterations.
-    """
-    _, A, B = get_matrices()
-    game = nash.Game(A, B)
-    all_outcomes = None
-    for _ in range(repetitions):
-        current_rep = tuple(game.stochastic_fictitious_play(iterations))[-1][-1]
-        if all_outcomes == None:
-            all_outcomes = (current_rep,)
-        include = True
-        for check_rep in all_outcomes:
-            if np.allclose(current_rep[0], check_rep[0], atol=1e-1) and np.allclose(
-                current_rep[1], check_rep[1], atol=1e-1
-            ):
-                include = False
-                break
-        if include:
-            all_outcomes += (current_rep,)
-    return all_outcomes
 
 
 def get_performance_measure_for_given_strategies(
@@ -226,10 +284,18 @@ def find_worst_nash_equilibrium_measure(
             or current_performance_measure > max_performance_measure
         ):
             max_performance_measure = current_performance_measure
-    return max_performance_measure
+            max_row = row_strategies
+            max_col = col_strategies
+    return max_performance_measure, max_row, max_col
 
 
-def get_price_of_anarchy(performance_measure_function):
+def get_price_of_anarchy(
+    performance_measure_function,
+    equilib_method=nash.Game.lemke_howson_enumeration,
+    target_path=None,
+    scalar=1,
+    **kwargs,
+):
     """
     Get the price of anarchy for the performance measure function given. Possible
     performance_measure_functions:
@@ -237,23 +303,136 @@ def get_price_of_anarchy(performance_measure_function):
         - Mean Waiting Time
         - Proportion of lost class 2 individuals
     """
-    parameters = get_parameters()
-    routing, A, B = get_matrices()
+    parameters = get_parameters(target_path=target_path)
+    routing, A, B = get_matrices(target_path=target_path)
+    A, B = A * scalar, B * scalar
     #     if looks_degenerate(A, B):
     #         equilibria = get_fictitious_play_outcome()
     #     else:
     #         equilibria = get_lemke_howson_outcome()
-    equilibria = get_lemke_howson_outcome()
+    try:
+        equilibria = get_evolutionary_stable_strategies(
+            A=A,
+            B=B,
+            method=equilib_method,
+            **kwargs,
+        )
+        performance_values_array = build_performance_values_array(
+            routing=routing,
+            parameters=parameters,
+            performance_measure_function=performance_measure_function,
+        )
+        minimum_value = np.min(performance_values_array)
+        worst_equilib_value, max_row, max_col = find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=equilibria,
+            performance_values_array=performance_values_array,
+        )
+        price_of_anarchy = worst_equilib_value / minimum_value
+        return price_of_anarchy, max_row, max_col
+    except:
+        return None
 
-    performance_values_array = build_performance_values_array(
-        routing=routing,
-        parameters=parameters,
-        performance_measure_function=performance_measure_function,
+
+def get_x_range(problem_parameters):
+    """
+    Get the range of values for lambda_2 that is generated by the code
+    """
+    stop = 2 * (
+        problem_parameters["mu_1"] * problem_parameters["num_of_servers_1"]
+        + problem_parameters["mu_2"] * problem_parameters["num_of_servers_2"]
     )
-    minimum_value = np.min(performance_values_array)
-    worst_equilib_value = find_worst_nash_equilibrium_measure(
-        all_nash_equilibrias=equilibria,
-        performance_values_array=performance_values_array,
+    x_range = np.linspace(start=0.1, stop=stop, num=10)
+    return x_range
+
+
+def get_poa_list(
+    data,
+    problem_parameters,
+    x_range,
+    key_name,
+    equilib_method=nash.Game.lemke_howson_enumeration,
+    **kwargs,
+):
+    """
+    Get a list of lists that each contain the value of the price of anarchy for
+    the mean waiting time, the mean blocking time and the proportion of
+    individuals lost for different values of key_name.
+
+    Also add the equilibrium value for the particular game. Note that only
+    the worst set of strategies is recorded even if there are more
+    """
+    price_of_anarchy_list = []
+    for x_value in x_range:
+        problem_parameters[key_name] = x_value
+        index = get_index_of_values(problem_parameters, atol=1e-1, data=data)
+        dirname = data.iloc[index[0]]["hash_value"]
+        poa_waiting, equilibs_1, equilibs_2 = get_price_of_anarchy(
+            performance_measure_function=abg.markov.get_mean_waiting_time_using_markov_state_probabilities,
+            equilib_method=equilib_method,
+            target_path=dirname,
+            **kwargs,
+        )
+        poa_blocking, _, _ = get_price_of_anarchy(
+            performance_measure_function=abg.markov.get_mean_blocking_time_using_markov_state_probabilities,
+            equilib_method=equilib_method,
+            target_path=dirname,
+            **kwargs,
+        )
+        poa_lost, _, _ = get_price_of_anarchy(
+            performance_measure_function=abg.markov.get_accepting_proportion_of_class_2_individuals,
+            equilib_method=equilib_method,
+            target_path=dirname,
+            **kwargs,
+        )
+        price_of_anarchy_list += [
+            [poa_waiting, poa_blocking, poa_lost, equilibs_1, equilibs_2]
+        ]
+    return price_of_anarchy_list
+
+
+def get_poa_plot(
+    data,
+    problem_parameters,
+    x_range,
+    key_name,
+    equilib_method=None,
+    poa_list=None,
+    y_min=None,
+    y_max=None,
+    annotate=False,
+    **kwargs,
+):
+    """
+    Plot the price of anarchy list generated in get_poa_list()
+    """
+    if poa_list is None:
+        poa_list = get_poa_list(
+            data=data,
+            problem_parameters=problem_parameters,
+            x_range=x_range,
+            key_name=key_name,
+            equilib_method=equilib_method,
+            **kwargs,
+        )
+    poa_array = np.asarray(poa_list, dtype=object)
+    waiting_poa_array = poa_array[:, 0]
+    blocking_poa_array = poa_array[:, 1]
+    lost_poa_array = poa_array[:, 2]
+    equils = np.array(
+        [[np.argmax(index[3]) + 1, np.argmax(index[4]) + 1] for index in poa_array]
     )
-    price_of_anarchy = worst_equilib_value / minimum_value
-    return price_of_anarchy
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(x_range, waiting_poa_array)
+    plt.plot(x_range, blocking_poa_array)
+    plt.plot(x_range, lost_poa_array)
+    if annotate:
+        for index, x in enumerate(x_range):
+            eq_cords = tuple(equils[index])
+            plt.annotate(eq_cords, (x_range[index], lost_poa_array[index]))
+    plt.title("Prices of Anarchy")
+    plt.xlabel(key_name)
+    plt.ylim(bottom=y_min, top=y_max)
+    plt.legend(("Waiting", "Blocking", "Lost"))
+    plt.show()
+    return poa_list

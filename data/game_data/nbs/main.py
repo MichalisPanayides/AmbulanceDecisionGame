@@ -3,13 +3,15 @@ import itertools
 import os
 import pathlib
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import nashpy as nash
 import numpy as np
 import pandas as pd
 
 import ambulance_game as abg
-from nashpy.algorithms.lemke_howson_lex import lemke_howson_lex
+
+# from nashpy.algorithms.lemke_howson_lex import lemke_howson_lex
 
 
 def get_index_of_values(problem_parameters, data, atol=1e-08, rtol=1e-05):
@@ -242,28 +244,30 @@ def get_performance_measure_for_given_strategies(
         performance_measure_function
         == abg.markov.get_accepting_proportion_of_class_2_individuals
     ):
-        return 2 - performance_measure_1 - performance_measure_2
-    return performance_measure_1 + performance_measure_2
+        performance_measure_1 = 1 - performance_measure_1
+        performance_measure_2 = 1 - performance_measure_2
+    return performance_measure_1, performance_measure_2
 
 
 def build_performance_values_array(routing, parameters, performance_measure_function):
     """
     Get all the values for the current investigated performance measure
     """
-    all_performance_values = np.zeros(routing.shape)
+    all_performance_values_A = np.zeros(routing.shape)
+    all_performance_values_B = np.zeros(routing.shape)
     for strategy_A, strategy_B in itertools.product(
         range(routing.shape[0]), range(routing.shape[1])
     ):
-        all_performance_values[
-            strategy_A, strategy_B
-        ] = get_performance_measure_for_given_strategies(
+        measure_A, measure_B = get_performance_measure_for_given_strategies(
             strategy_A=strategy_A,
             strategy_B=strategy_B,
             routing=routing,
             parameters=parameters,
             performance_measure_function=performance_measure_function,
         )
-    return all_performance_values
+        all_performance_values_A[strategy_A, strategy_B] = measure_A
+        all_performance_values_B[strategy_A, strategy_B] = measure_B
+    return all_performance_values_A, all_performance_values_B
 
 
 def find_worst_nash_equilibrium_measure(
@@ -317,10 +321,16 @@ def get_price_of_anarchy(
             method=equilib_method,
             **kwargs,
         )
-        performance_values_array = build_performance_values_array(
+        (
+            performance_values_array_A,
+            performance_values_array_B,
+        ) = build_performance_values_array(
             routing=routing,
             parameters=parameters,
             performance_measure_function=performance_measure_function,
+        )
+        performance_values_array = (
+            performance_values_array_A + performance_values_array_B
         )
         minimum_value = np.min(performance_values_array)
         worst_equilib_value, max_row, max_col = find_worst_nash_equilibrium_measure(
@@ -330,7 +340,7 @@ def get_price_of_anarchy(
         price_of_anarchy = worst_equilib_value / minimum_value
         return price_of_anarchy, max_row, max_col
     except:
-        return None
+        return np.nan, np.nan, np.nan
 
 
 def get_x_range(problem_parameters):
@@ -399,7 +409,9 @@ def get_poa_plot(
     poa_list=None,
     y_min=None,
     y_max=None,
+    show_strats=True,
     annotate=False,
+    bar_sep=None,
     **kwargs,
 ):
     """
@@ -426,13 +438,392 @@ def get_poa_plot(
     plt.plot(x_range, waiting_poa_array)
     plt.plot(x_range, blocking_poa_array)
     plt.plot(x_range, lost_poa_array)
-    if annotate:
-        for index, x in enumerate(x_range):
-            eq_cords = tuple(equils[index])
-            plt.annotate(eq_cords, (x_range[index], lost_poa_array[index]))
     plt.title("Prices of Anarchy")
     plt.xlabel(key_name)
     plt.ylim(bottom=y_min, top=y_max)
     plt.legend(("Waiting", "Blocking", "Lost"))
+    if annotate:
+        for index, x in enumerate(x_range):
+            eq_cords = tuple(equils[index])
+            plt.annotate(eq_cords, (x_range[index], lost_poa_array[index]))
+    if show_strats:
+        plt.figure(figsize=(10, 5))
+        num_of_strats = tuple((len(poa_list[0][3]), len(poa_list[0][4])))
+        if bar_sep is None:
+            bar_sep = np.max(x_range) / (6 * len(x_range))
+        for lambda_2, poa_values in zip(x_range, poa_list):
+            np.random.seed(10)
+            try:
+                chromata = np.random.choice(
+                    list(mcolors.TABLEAU_COLORS), np.max(num_of_strats), replace=False
+                )
+            except ValueError:
+                chromata = np.random.choice(
+                    list(mcolors.cnames), len(poa_values[3]), replace=False
+                )
+            for lambda_2, poa_values in zip(x_range, poa_list):
+                player_2_more_strats = num_of_strats[0] < num_of_strats[1]
+                player_order = np.linspace(
+                    player_2_more_strats, not player_2_more_strats, 2, dtype=int
+                )
+                for player in player_order:
+                    bottom_bar = 0
+                    for index, strat in enumerate(poa_values[3 + player]):
+                        plt.bar(
+                            lambda_2 - bar_sep + (2 * player * bar_sep),
+                            strat,
+                            bottom=bottom_bar,
+                            edgecolor="black",
+                            color=chromata[index],
+                        )
+                        bottom_bar += strat
+        plt.legend(labels=[f"$S_{i + 1}$" for i in range(max(num_of_strats))], loc=3)
+        plt.xticks(x_range, np.round(x_range, 1))
     plt.show()
     return poa_list
+
+
+def get_poa_values_for_given_strategies(
+    all_xs, all_ys, poa_span, routing, problem_parameters, performance_measure_function
+):
+    """Get the price of anarchy values of all_xs and all_ys"""
+    (
+        performance_values_array_A,
+        performance_values_array_B,
+    ) = build_performance_values_array(
+        routing=routing,
+        parameters=problem_parameters,
+        performance_measure_function=performance_measure_function,
+    )
+
+    minimum_value_A = np.min(performance_values_array_A)
+    minimum_value_B = np.min(performance_values_array_B)
+
+    performace_measure_poa_list_A = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(tuple((all_xs[i], all_ys[i])),),
+            performance_values_array=performance_values_array_A,
+        )[0]
+        / minimum_value_A
+        for i in poa_span
+    ]
+    performace_measure_poa_list_B = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(tuple((all_xs[i], all_ys[i])),),
+            performance_values_array=performance_values_array_B,
+        )[0]
+        / minimum_value_B
+        for i in poa_span
+    ]
+    return performace_measure_poa_list_A, performace_measure_poa_list_B
+
+
+def run_replicator_dynamics_with_penalty(
+    A, B, timepoints, penalty=None, x_init=None, y_init=None
+):
+    player_A = A.copy()
+    player_B = B.copy()
+    game = nash.Game(player_A, player_B)
+    break_point = int(len(timepoints) / 2)
+    if penalty is None:
+        break_point = int(len(timepoints))
+    all_xs, all_ys = game.asymmetric_replicator_dynamics(
+        timepoints=timepoints[:break_point], x0=x_init, y0=y_init
+    )
+    if penalty is not None:
+        player_A[np.argmax(all_xs[-1]), :] *= penalty
+        player_B[:, np.argmax(all_ys[-1])] *= penalty
+        penalised_game = nash.Game(player_A, player_B)
+        new_xs, new_ys = penalised_game.asymmetric_replicator_dynamics(
+            timepoints=timepoints[break_point:], x0=all_xs[-1], y0=all_ys[-1]
+        )
+        all_xs = np.concatenate((all_xs, new_xs))
+        all_ys = np.concatenate((all_ys, new_ys))
+    return all_xs, all_ys
+
+
+def plot_asymmetric_replicator_dynamics_with_penalty(
+    R,
+    A,
+    B,
+    problem_parameters,
+    penalty=None,
+    x_init=None,
+    y_init=None,
+    timepoints=None,
+    poa_plot_max=None,
+    poa_plot_min=None,
+    performance_measure_function=abg.markov.get_mean_blocking_time_using_markov_state_probabilities,
+):
+    all_xs, all_ys = run_replicator_dynamics_with_penalty(
+        A=A,
+        B=B,
+        penalty=penalty,
+        timepoints=timepoints,
+        x_init=x_init,
+        y_init=y_init,
+    )
+    poa_span = np.linspace(0, len(all_xs) - 1, 10, dtype=int)
+    (
+        performance_value_poa_A,
+        performance_value_poa_B,
+    ) = get_poa_values_for_given_strategies(
+        all_xs=all_xs,
+        all_ys=all_ys,
+        poa_span=poa_span,
+        routing=R,
+        problem_parameters=problem_parameters,
+        performance_measure_function=performance_measure_function,
+    )
+
+    plt.figure(figsize=(15, 10))
+    plt.subplot(2, 2, 1)
+    plt.plot(all_xs)
+    plt.xlabel("Timepoints")
+    plt.ylabel("Probability")
+    plt.title("Row player")
+    plt.legend([f"$s_{i + 1}$" for i in range(len(all_xs[0]))])
+    if penalty is not None:
+        plt.plot(
+            [len(all_xs) / 2, len(all_xs) / 2],
+            [-0.1, 1.1],
+            linewidth=1,
+            linestyle=":",
+            color="green",
+        )
+        plt.annotate("Penalty", (len(all_xs) / 2, 1.1), ha="center")
+
+    plt.subplot(2, 2, 2)
+    plt.plot(all_ys)
+    plt.xlabel("Timepoints")
+    plt.ylabel("Probability")
+    plt.title("Column player")
+    plt.legend([f"$s_{i + 1}$" for i in range(len(all_ys[0]))])
+    if penalty is not None:
+        plt.plot(
+            [len(all_ys) / 2, len(all_ys) / 2],
+            [-0.1, 1.1],
+            linewidth=1,
+            linestyle=":",
+            color="green",
+        )
+        plt.annotate("Penalty", (len(all_ys) / 2, 1.1), ha="center")
+
+    plt.subplot(2, 2, 3)
+    plt.title("Row player - PoA")
+    plt.plot(poa_span, performance_value_poa_A, color="black", linewidth=6)
+    plt.ylim(top=poa_plot_max, bottom=poa_plot_min)
+
+    plt.subplot(2, 2, 4)
+    plt.title("Column player - PoA")
+    plt.plot(poa_span, performance_value_poa_B, color="black", linewidth=6)
+    plt.ylim(top=poa_plot_max, bottom=poa_plot_min)
+
+
+def run_replicator_dynamics_with_dual_parameters(
+    A1, B1, A2, B2, timepoints, divide=2, x_init=None, y_init=None
+):
+    player_A = A1.copy()
+    player_B = B1.copy()
+    game = nash.Game(player_A, player_B)
+    break_point = int(len(timepoints) / divide)
+    xs_1, ys_1 = game.asymmetric_replicator_dynamics(
+        timepoints=timepoints[:break_point], x0=x_init, y0=y_init
+    )
+
+    if A1.shape != A2.shape:
+        added_strats_1 = A2.shape[0] - A1.shape[0]
+        added_strats_2 = A2.shape[1] - A1.shape[1]
+
+        xs_1 = [
+            np.hstack((entry, np.array([0 for _ in range(added_strats_1)])))
+            for entry in xs_1
+        ]
+        ys_1 = [
+            np.hstack((entry, np.array([0 for _ in range(added_strats_2)])))
+            for entry in ys_1
+        ]
+    player_A = A2.copy()
+    player_B = B2.copy()
+    new_game = nash.Game(player_A, player_B)
+    xs_2, ys_2 = new_game.asymmetric_replicator_dynamics(
+        timepoints=timepoints[break_point:],
+        x0=np.array(xs_1[-1]),
+        y0=np.array(ys_1[-1]),
+    )
+    return xs_1, xs_2, ys_1, ys_2
+
+
+def get_poa_values_for_given_strategies_dual_parameters(
+    all_xs,
+    all_ys,
+    poa_span_1,
+    poa_span_2,
+    routing_1,
+    routing_2,
+    problem_parameters_1,
+    problem_parameters_2,
+    performance_measure_function,
+):
+    (
+        performance_values_array_A_1,
+        performance_values_array_B_1,
+    ) = build_performance_values_array(
+        routing=routing_1,
+        parameters=problem_parameters_1,
+        performance_measure_function=performance_measure_function,
+    )
+    (
+        performance_values_array_A_2,
+        performance_values_array_B_2,
+    ) = build_performance_values_array(
+        routing=routing_2,
+        parameters=problem_parameters_2,
+        performance_measure_function=performance_measure_function,
+    )
+
+    minimum_value_A_1 = np.min(performance_values_array_A_1)
+    minimum_value_B_1 = np.min(performance_values_array_B_1)
+    minimum_value_A_2 = np.min(performance_values_array_A_2)
+    minimum_value_B_2 = np.min(performance_values_array_B_2)
+
+    performace_measure_poa_list_A_1 = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(
+                tuple(
+                    (all_xs[i][: routing_1.shape[0]], all_ys[i][: routing_1.shape[1]])
+                ),
+            ),
+            performance_values_array=performance_values_array_A_1,
+        )[0]
+        / minimum_value_A_1
+        for i in poa_span_1
+    ]
+
+    performace_measure_poa_list_A_2 = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(tuple((all_xs[i], all_ys[i])),),
+            performance_values_array=performance_values_array_A_2,
+        )[0]
+        / minimum_value_A_2
+        for i in poa_span_2
+    ]
+
+    performace_measure_poa_list_B_1 = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(
+                tuple(
+                    (all_xs[i][: routing_1.shape[0]], all_ys[i][: routing_1.shape[1]])
+                ),
+            ),
+            performance_values_array=performance_values_array_B_1,
+        )[0]
+        / minimum_value_B_1
+        for i in poa_span_1
+    ]
+    performace_measure_poa_list_B_2 = [
+        find_worst_nash_equilibrium_measure(
+            all_nash_equilibrias=(tuple((all_xs[i], all_ys[i])),),
+            performance_values_array=performance_values_array_B_2,
+        )[0]
+        / minimum_value_B_2
+        for i in poa_span_2
+    ]
+
+    return np.concatenate(
+        (performace_measure_poa_list_A_1, performace_measure_poa_list_A_2)
+    ), np.concatenate(
+        (performace_measure_poa_list_B_1, performace_measure_poa_list_B_2)
+    )
+
+
+def plot_asymmetric_replicator_dynamics_with_dual_parameters(
+    R1,
+    A1,
+    B1,
+    R2,
+    A2,
+    B2,
+    problem_parameters_1,
+    problem_parameters_2,
+    timepoints,
+    divide=2,
+    x_init=None,
+    y_init=None,
+    poa_plot_max=None,
+    poa_plot_min=None,
+    performance_measure_function=abg.markov.get_mean_blocking_time_using_markov_state_probabilities,
+):
+    xs_1, xs_2, ys_1, ys_2 = run_replicator_dynamics_with_dual_parameters(
+        A1=A1,
+        B1=B1,
+        A2=A2,
+        B2=B2,
+        timepoints=timepoints,
+        divide=divide,
+        x_init=x_init,
+        y_init=y_init,
+    )
+    all_xs = np.concatenate((xs_1, xs_2))
+    all_ys = np.concatenate((ys_1, ys_2))
+
+    break_point = int(10 / divide)
+    poa_span_1 = np.linspace(0, len(all_xs) - 1, 10, dtype=int)[:break_point]
+    poa_span_2 = np.linspace(0, len(all_xs) - 1, 10, dtype=int)[break_point:]
+
+    (
+        performace_measures_A,
+        performace_measures_B,
+    ) = get_poa_values_for_given_strategies_dual_parameters(
+        all_xs=all_xs,
+        all_ys=all_ys,
+        poa_span_1=poa_span_1,
+        poa_span_2=poa_span_2,
+        routing_1=R1,
+        routing_2=R2,
+        problem_parameters_1=problem_parameters_1,
+        problem_parameters_2=problem_parameters_2,
+        performance_measure_function=performance_measure_function,
+    )
+
+    plt.figure(figsize=(15, 10))
+    plt.subplot(2, 2, 1)
+    plt.plot(all_xs)
+    plt.xlabel("Timepoints")
+    plt.ylabel("Probability")
+    plt.title("Row player")
+    plt.legend([f"$s_{{{i + 1}}}$" for i in range(len(all_xs[0]))])
+    plt.plot(
+        [len(all_xs) / divide, len(all_xs) / divide],
+        [-0.1, 1.1],
+        linewidth=1,
+        linestyle=":",
+        color="green",
+    )
+    plt.annotate("Parameter increase", (len(all_xs) / divide, 1.1), ha="center")
+
+    plt.subplot(2, 2, 2)
+    plt.plot(all_ys)
+    plt.xlabel("Timepoints")
+    plt.ylabel("Probability")
+    plt.title("Column player")
+    plt.legend([f"$s_{{{i + 1}}}$" for i in range(len(all_ys[0]))])
+    plt.plot(
+        [len(all_ys) / divide, len(all_ys) / divide],
+        [-0.1, 1.1],
+        linewidth=1,
+        linestyle=":",
+        color="green",
+    )
+    plt.annotate("Parameter increase", (len(all_ys) / divide, 1.1), ha="center")
+
+    poa_span = np.hstack((poa_span_1, poa_span_2))
+    plt.subplot(2, 2, 3)
+    plt.title("Row player - PoA")
+    plt.plot(poa_span, performace_measures_A, color="black", linewidth=6)
+    plt.ylim(top=poa_plot_max, bottom=poa_plot_min)
+
+    plt.subplot(2, 2, 4)
+    plt.title("Column player - PoA")
+    plt.plot(poa_span, performace_measures_B, color="black", linewidth=6)
+    plt.ylim(top=poa_plot_max, bottom=poa_plot_min)

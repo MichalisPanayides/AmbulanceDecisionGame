@@ -4,4 +4,6 @@ sympy
 pandas
 seaborn
 scipy
-ciw
+ciw==2.1.0
+nashpy
+dask[complete]

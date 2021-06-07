@@ -1,30 +1,22 @@
-import numpy as np
 import functools
 
+import numpy as np
 from ambulance_game.markov.graphical import (
-    reset_L_and_R_in_array,
+    check_permutation_is_valid,
     find_next_permutation_over,
     find_next_permutation_over_L_and_R,
     generate_next_permutation_of_edges,
-    check_permutation_is_valid,
-    get_rate_of_state_00_graphically,
     get_all_permutations,
-    get_permutations_ending_in_R,
+    get_coefficient,
     get_permutations_ending_in_D_where_any_RL_exists,
     get_permutations_ending_in_L_where_any_RL_exists,
+    get_permutations_ending_in_R,
     get_permutations_ending_in_RL_where_RL_exists_only_at_the_end,
-    get_coefficient,
+    get_rate_of_state_00_graphically,
+    reset_L_and_R_in_array,
 )
-
-from hypothesis import (
-    given,
-    settings,
-)
-from hypothesis.strategies import (
-    floats,
-    integers,
-    booleans,
-)
+from hypothesis import given, settings
+from hypothesis.strategies import booleans, floats, integers
 
 
 def test_reset_L_and_R_in_array():

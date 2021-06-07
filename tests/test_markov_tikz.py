@@ -1,8 +1,8 @@
 from ambulance_game.markov.tikz import (
-    generate_code_for_tikz_figure,
     build_body_of_tikz_spanning_tree,
-    get_tikz_code_for_permutation,
+    generate_code_for_tikz_figure,
     generate_code_for_tikz_spanning_trees_rooted_at_00,
+    get_tikz_code_for_permutation,
 )
 
 

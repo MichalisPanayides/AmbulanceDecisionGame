@@ -1,17 +1,17 @@
-import numpy as np
 import functools
 
-from .utils import (
-    is_waiting_state,
-    is_accepting_state,
-    expected_time_in_markov_state_ignoring_arrivals,
-)
+import numpy as np
 
 from .markov import (
     build_states,
-    get_transition_matrix,
-    get_steady_state_algebraically,
     get_markov_state_probabilities,
+    get_steady_state_algebraically,
+    get_transition_matrix,
+)
+from .utils import (
+    expected_time_in_markov_state_ignoring_arrivals,
+    is_accepting_state,
+    is_waiting_state,
 )
 
 
@@ -298,9 +298,8 @@ def overall_waiting_time_formula(
     ----------
     all_states : list
     pi : array
-    class_type : int
-    lambda_2 : float
     lambda_1 : float
+    lambda_2 : float
     mu : float
     num_of_servers : int
     threshold : int

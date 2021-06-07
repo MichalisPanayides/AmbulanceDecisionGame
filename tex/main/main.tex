@@ -1,7 +1,8 @@
 \documentclass{article}
 
-\usepackage{amsmath}
+\usepackage{amsmath} % For writing mathematics (align, split environments etc.)
 \usepackage{mathtools}
+% \usepackage{amsthm} % For the proof environment
 \usepackage{amsfonts} 
 \usepackage{geometry}
 \usepackage{float}
@@ -14,6 +15,9 @@
 
 \usetikzlibrary{calc, automata, chains, arrows.meta, math}
 \setcounter{MaxMatrixCols}{20}
+
+\usepackage{biblatex}
+\addbibresource{bibliography.bib}
 
 
 \title{A game theoretic model of the behavioural gaming that takes place at the EMS - ED interface}
@@ -64,6 +68,6 @@
 \input{Miscellaneous/Formulas/main.tex}
 
 \newpage
-\input{bibliography.tex}
+\printbibliography[title={References}]
 
 \end{document}

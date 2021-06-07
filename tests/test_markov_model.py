@@ -1,37 +1,27 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-import sympy as sym
+import numpy as np
 import scipy as sci
-
-from hypothesis import (
-    given,
-    settings,
-    HealthCheck,
-)
-from hypothesis.strategies import (
-    floats,
-    integers,
-    booleans,
-)
-from hypothesis.extra.numpy import arrays
-
+import sympy as sym
 from ambulance_game.markov.markov import (
+    augment_Q,
     build_states,
-    visualise_markov_chain,
-    get_transition_matrix_entry,
+    convert_symbolic_transition_matrix,
+    get_markov_state_probabilities,
+    get_mean_number_of_individuals_in_buffer_center,
+    get_mean_number_of_individuals_in_service_area,
+    get_mean_number_of_individuals_in_system,
+    get_steady_state_algebraically,
+    get_steady_state_numerically,
     get_symbolic_transition_matrix,
     get_transition_matrix,
-    convert_symbolic_transition_matrix,
+    get_transition_matrix_entry,
     is_steady_state,
-    get_steady_state_numerically,
-    augment_Q,
-    get_steady_state_algebraically,
-    get_markov_state_probabilities,
-    get_mean_number_of_individuals_in_system,
-    get_mean_number_of_individuals_in_service_area,
-    get_mean_number_of_individuals_in_buffer_center,
+    visualise_markov_chain,
 )
+from hypothesis import HealthCheck, given, settings
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import booleans, floats, integers
 
 number_of_digits_to_round = 8
 
@@ -331,6 +321,7 @@ def test_is_steady_state_examples():
     e=floats(min_value=1, max_value=10),
     f=floats(min_value=1, max_value=10),
 )
+@settings(deadline=None)
 def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
     """
     Ensures that getting the steady state numerically using scipy's odeint integration

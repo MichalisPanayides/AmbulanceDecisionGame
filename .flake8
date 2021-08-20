@@ -1,0 +1,5 @@
+[flake8]
+ignore = E203, W503
+max-line-length = 88
+max-complexity = 11
+per-file-ignores = __init__.py:F401, test_markov_tikz.py:E501, proportion.py:E741, test_markov_proportion.py:E741

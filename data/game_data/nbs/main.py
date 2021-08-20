@@ -563,7 +563,7 @@ def plot_asymmetric_replicator_dynamics_with_penalty(
         x_init=x_init,
         y_init=y_init,
     )
-    poa_span = np.linspace(0, len(all_xs) - 1, 10, dtype=int)
+    poa_span = np.linspace(0, len(all_xs) - 1, 100, dtype=int)
     (
         performance_value_poa_A,
         performance_value_poa_B,
@@ -591,7 +591,7 @@ def plot_asymmetric_replicator_dynamics_with_penalty(
             linestyle=":",
             color="green",
         )
-        plt.annotate("Penalty", (len(all_xs) / 2, 1.1), ha="center")
+        plt.annotate("Incentives", (len(all_xs) / 2, 1.1), ha="center")
 
     plt.subplot(2, 2, 2)
     plt.plot(all_ys)
@@ -607,7 +607,7 @@ def plot_asymmetric_replicator_dynamics_with_penalty(
             linestyle=":",
             color="green",
         )
-        plt.annotate("Penalty", (len(all_ys) / 2, 1.1), ha="center")
+        plt.annotate("Incentives", (len(all_ys) / 2, 1.1), ha="center")
 
     plt.subplot(2, 2, 3)
     plt.title("Row player - PoA")
@@ -767,9 +767,9 @@ def plot_asymmetric_replicator_dynamics_with_dual_parameters(
     all_xs = np.concatenate((xs_1, xs_2))
     all_ys = np.concatenate((ys_1, ys_2))
 
-    break_point = int(10 / divide)
-    poa_span_1 = np.linspace(0, len(all_xs) - 1, 10, dtype=int)[:break_point]
-    poa_span_2 = np.linspace(0, len(all_xs) - 1, 10, dtype=int)[break_point:]
+    break_point = int(100 / divide)
+    poa_span_1 = np.linspace(0, len(all_xs) - 1, 100, dtype=int)[:break_point]
+    poa_span_2 = np.linspace(0, len(all_xs) - 1, 100, dtype=int)[break_point:]
 
     (
         performace_measures_A,

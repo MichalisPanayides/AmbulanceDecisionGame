@@ -344,8 +344,9 @@ def test_get_steady_state_numerically_odeint(a, b, c, d, e, f):
 )
 def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
     """
-    Ensures that getting the steady state numerically using scipy's solve_ivp integration
-    function returns the steady state for different transition-like matrices
+    Ensures that getting the steady state numerically using scipy's solve_ivp
+    integration function returns the steady state for different transition-like
+    matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
     steady = get_steady_state_numerically(

@@ -108,10 +108,11 @@ def get_blocking_time_linear_system(
     the column vector b that are required. Here M is denoted as "all_coefficients_array"
     and b as "constant_column".
 
-    The function stacks the outputs of get_coefficients_row_of_array_associated_with_state()
-    for all blocking states (i.e. those where u>0) together. In essence all outputs
-    are stacked together to form a square matrix (M) and equivalently a column
-    vector (b) that will be used to find X s.t. M*X=b
+    The function stacks the outputs of
+    get_coefficients_row_of_array_associated_with_state() for all blocking states
+    (i.e. those where u>0) together. In essence all outputs are stacked together
+    to form a square matrix (M) and equivalently a column vector (b) that will
+    be used to find X s.t. M*X=b
 
     Parameters
     ----------

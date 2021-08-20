@@ -161,7 +161,8 @@ def simulate_model(
     Parameters
     ----------
     seed_num : [float], optional
-        A seed number in order to be able to replicate results, by default random.random()
+        A seed number in order to be able to replicate results,
+        by default random.random()
 
     Returns
     -------
@@ -178,7 +179,7 @@ def simulate_model(
         buffer_capacity = 1
         # TODO: Different approach to handle this situation
 
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
     model = build_model(
         lambda_2=lambda_2,
@@ -214,7 +215,8 @@ def get_simulated_state_probabilities(
     Returns
     -------
     dictionary OR np.ndarray
-        - A dictionary with the Markov states as keys and the equivalent probabilities as values
+        - A dictionary with the Markov states as keys and the equivalent probabilities
+          as values
         - A numpy.ndarray Π where: Π(i,j) = probability of being in state (i,j)
     """
     state_probabilities_dictionary = (
@@ -223,11 +225,11 @@ def get_simulated_state_probabilities(
     if output == dict:
         return state_probabilities_dictionary
     elif output == np.ndarray:
-        if buffer_capacity == None:
+        if buffer_capacity is None:
             buffer_capacity = max(
                 [state[0] for state in state_probabilities_dictionary.keys()]
             )
-        if system_capacity == None:
+        if system_capacity is None:
             system_capacity = max(
                 [state[1] for state in state_probabilities_dictionary.keys()]
             )
@@ -262,7 +264,7 @@ def get_average_simulated_state_probabilities(
     output : type, optional
         The format of the output state probabilities, by default np.ndarray
     """
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
 
     if output == dict:
@@ -394,7 +396,8 @@ def get_list_of_results(results):
     Returns
     -------
     list, list, list
-        Three lists that include all waits, services and blocks of all runs of all individuals
+        Three lists that include all waits, services and blocks of all runs of
+        all individuals
     """
     all_waits = [w.waiting_times for w in results]
     all_services = [s.service_times for s in results]
@@ -441,7 +444,7 @@ def get_multiple_runs_results(
         returns three lists with all waiting, service and blocking times
 
     """
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
     records = collections.namedtuple(
         "records", "waiting_times service_times blocking_times"
@@ -780,7 +783,7 @@ def get_mean_proportion_of_individuals_within_target_for_multiple_runs(
     class_1_proportions = []
     combined_proportions = []
 
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
 
     for trial in range(num_of_trials):

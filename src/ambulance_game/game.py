@@ -4,7 +4,6 @@ import itertools
 import dask as da
 import nashpy as nash
 import numpy as np
-from numpy.core.fromnumeric import shape
 import scipy.optimize
 
 from .markov.blocking import get_mean_blocking_time_using_markov_state_probabilities
@@ -638,7 +637,7 @@ def build_game_using_payoff_matrices(
     nashpy.Game
         the game with the constructed or given payoff matrices
     """
-    if payoff_matrix_A == None or payoff_matrix_B == None:
+    if payoff_matrix_A is None or payoff_matrix_B is None:
         payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
             lambda_2=lambda_2,
             lambda_1_1=lambda_1_1,

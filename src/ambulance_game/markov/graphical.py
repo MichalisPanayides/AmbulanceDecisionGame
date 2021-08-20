@@ -29,7 +29,7 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
     """Finds the next permutation of an array (edges) by permuting a specific
     element of the array (direction) over another specified element of the array
     (permute_over).
-    [X, X, Y, Y]->[X, Y, X, Y]->[X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
+    [X, X, Y, Y] -> [X, Y, X, Y] -> [X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
 
     This function is used in the following cases:
         - If the array consists only of elements "L" and "D" (direction="L"):
@@ -83,7 +83,6 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
         for pos, element in enumerate(edges[:-1]):
             if (element == "L" or element == "R") and edges[pos + 1] == permute_over:
                 target_position = pos
-
         pos_last_D = len(edges) - edges[::-1].index(permute_over) - 1
         edges_to_be_swapped = len(edges) - pos_last_D
         edges[target_position] = permute_over
@@ -95,7 +94,6 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
             if i >= edges_to_be_swapped - rights:
                 direction = "R"
             edges[target_position + 1 + i] = direction
-
     else:
         for pos, element in enumerate(edges[:-1]):
             if element == direction and edges[pos + 1] == permute_over:
@@ -431,7 +429,8 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
     "L" somewhere.
 
     This can be calculated by:
-        Σ_(i=1)^(min(R,L-1)) (-1)^(i+1) [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i-1)! * (i)!)]
+        Σ_(i=1)^(min(R,L-1)) (-1)^(i+1)
+                * [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i-1)! * (i)!)]
 
     Parameters
     ----------

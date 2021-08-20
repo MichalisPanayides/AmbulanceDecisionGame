@@ -570,7 +570,7 @@ def test_calculate_class_2_individuals_best_response_equal_split():
     assert np.isclose(equal_split, 0.5)
 
 
-def test_extract_total_individuals_and_the_ones_within_target_for_both_classes_example():
+def test_extract_total_individuals_and_the_ones_within_target_example():
     inds = simulate_model(
         lambda_2=2,
         lambda_1=2,
@@ -588,7 +588,7 @@ def test_extract_total_individuals_and_the_ones_within_target_for_both_classes_e
     ) == (394, 212, 372, 192)
 
 
-def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_wwith_0_target():
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_1():
     """
     Test that for any random seed number there are no individuals that exit the
     system in less than 0 time (all individuals have a non-negative mean).
@@ -615,7 +615,7 @@ def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_wwit
     assert np.all(prop == 0 for prop in props[2])
 
 
-def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example():
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_2():
     """
     Test the mean proportion of individuals for a given set of parameters
     """

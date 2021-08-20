@@ -268,7 +268,8 @@ def get_proportion_of_individuals_within_time_target(
 ):
     """
     Gets the probability that a certain class of individuals is within a given
-    time target. This functions runs for every state the function get_probability_of_waiting_time_in_system_less_than_target_for_state() and
+    time target. This functions runs for every state the function
+    get_probability_of_waiting_time_in_system_less_than_target_for_state() and
     by using the state probabilities to get the average proportion of individuals
     within target.
 

@@ -54,7 +54,7 @@ def test_get_waiting_time_of_each_state_recursively_class_2_property():
             assert wait_on_state == 1 / 6, (u, v)
 
 
-def test_mean_waiting_time_formula_using_recursive_approach_for_class_1_individuals_example():
+def test_mean_waiting_time_formula_using_recursive_for_class_1_individuals_example():
     """
     Test for the recursive formula for the mean waiting time for class 1 individuals
     """
@@ -97,7 +97,7 @@ def test_mean_waiting_time_formula_using_recursive_approach_for_class_1_individu
     )
 
 
-def test_mean_waiting_time_formula_using_recursive_approach_for_class_2_individuals_example():
+def test_mean_waiting_time_formula_using_recursive_for_class_2_individuals_example():
     """
     Test for the recursive formula for the mean waiting time for class 2 individuals
     """
@@ -138,7 +138,7 @@ def test_mean_waiting_time_formula_using_recursive_approach_for_class_2_individu
 
 
 # TODO: Make test once closed form formula is found
-def test_mean_waiting_time_formula_using_direct_approach_for_class_1_individuals_example():
+def test_mean_waiting_time_formula_using_direct_for_class_1_individuals_example():
     """
     Test for the direct formula for the mean waiting time for class 1 individuals
     """
@@ -158,7 +158,7 @@ def test_mean_waiting_time_formula_using_direct_approach_for_class_1_individuals
 
 
 # TODO: Make test once closed form formula is found
-def test_mean_waiting_time_formula_using_direct_approach_for_class_2_individuals_example():
+def test_mean_waiting_time_formula_using_direct_for_class_2_individuals_example():
     """
     Test for the direct formula for the mean waiting time for class 2 individuals
     """
@@ -177,7 +177,7 @@ def test_mean_waiting_time_formula_using_direct_approach_for_class_2_individuals
         )
 
 
-def test_mean_waiting_time_formula_using_closed_form_approach_for_class_1_individuals_example():
+def test_mean_waiting_time_formula_using_closed_form_for_class_1_individuals_example():
     """
     Test for the closed-form formula for the mean waiting time for class 1 individuals
     """
@@ -216,7 +216,7 @@ def test_mean_waiting_time_formula_using_closed_form_approach_for_class_1_indivi
     )
 
 
-def test_mean_waiting_time_formula_using_closed_form_approach_for_class_2_individuals_example():
+def test_mean_waiting_time_formula_using_closed_form_for_class_2_individuals_example():
     """
     Test for the closed-form formula for the mean waiting time for class 2 individuals
     """

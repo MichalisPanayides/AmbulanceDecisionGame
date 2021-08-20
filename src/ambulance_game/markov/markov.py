@@ -344,8 +344,10 @@ def get_steady_state_numerically(
         - Get the state vector and check if it is a steady state
         - if not repeat
 
-    -> odeint(): https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html
-    -> solve_ivp(): https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp
+    -> odeint():
+        https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html
+    -> solve_ivp():
+        https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html
 
     Parameters
     ----------
@@ -415,17 +417,21 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     numpy.linalg.lstsq(). For both methods the following steps are taken:
         - Get M and b from the augment_Q() function
         - Using solve() -> find π such that Mπ=b
-        - Using lstsq() -> find π such that the squared Euclidean 2-norm between Mπ and b is minimised
+        - Using lstsq() -> find π such that the squared Euclidean 2-norm between Mπ and
+                           b is minimised
 
-    -> solve(): https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html
-    -> lstsq(): https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
+    -> solve():
+        https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.solve.html
+    -> lstsq():
+        https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
 
     Parameters
     ----------
     Q : numpy.ndarray
         Transition matrix
     algebraic_function : function, optional
-        The function to be used to solve the algebraic problem, by default np.linalg.solve
+        The function to be used to solve the algebraic problem,
+        by default np.linalg.solve
 
     Returns
     -------
@@ -444,7 +450,8 @@ def get_markov_state_probabilities(
     pi, all_states, output=np.ndarray, system_capacity=None, buffer_capacity=None
 ):
     """Calculates the vector pi in a dictionary format where the values are the
-    probabilities that the system is in a current state (listed as key of the dictionary).
+    probabilities that the system is in a current state (listed as key of the
+    dictionary).
 
     Returns
     -------
@@ -458,9 +465,9 @@ def get_markov_state_probabilities(
             states_probabilities_dictionary[all_states[i]] = pi[i]
         return states_probabilities_dictionary
     elif output == np.ndarray:
-        if buffer_capacity == None:
+        if buffer_capacity is None:
             buffer_capacity = max([state[0] for state in all_states])
-        if system_capacity == None:
+        if system_capacity is None:
             system_capacity = max([state[1] for state in all_states])
         states_probabilities_array = np.full(
             (buffer_capacity + 1, system_capacity + 1), np.NaN

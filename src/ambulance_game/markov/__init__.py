@@ -55,6 +55,7 @@ from .utils import (
     expected_time_in_markov_state_ignoring_arrivals,
     expected_time_in_markov_state_ignoring_class_2_arrivals,
     get_accepting_proportion_of_class_2_individuals,
+    get_accepting_proportion_of_individuals,
     get_probability_of_accepting,
     get_proportion_of_individuals_not_lost,
     is_accepting_state,

@@ -10,3 +10,19 @@ home-page = "https://github.com/11michalis11/ambulance_game"
 requires-python = ">=3.8"
 classifiers = [ "License :: OSI Approved :: MIT License",]
 description-file = "README.md"
+
+[[tool.mypy.overrides]]
+module = [
+    "numpy",
+    "matplotlib",
+    "matplotlib.pyplot",
+    "scipy",
+    "scipy.integrate",
+    "scipy.optimize",
+    "networkx",
+    "sympy",
+    "ciw",
+    "dask",
+    "nashpy",
+]
+ignore_missing_imports = true

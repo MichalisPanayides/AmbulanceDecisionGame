@@ -1,0 +1,12 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "ambulance_game"
+author = "Michalis Panayides"
+author-email = "PanayidesM@cardiff.ac.uk"
+home-page = "https://github.com/11michalis11/ambulance_game"
+requires-python = ">=3.8"
+classifiers = [ "License :: OSI Approved :: MIT License",]
+description-file = "README.md"

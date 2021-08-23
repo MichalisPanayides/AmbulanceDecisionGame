@@ -31,6 +31,7 @@ ignore_missing_imports = true
 max-line-length = 88
 disable = ["missing-module-docstring", "fixme", "too-many-locals", "too-many-arguments", 
            "comparison-with-callable", "duplicate-code"]
-good-names = ["a", "b", "i", "j", "k", "l", "M", "n", "Q", "t", "u", "v", "x", "mu", 
-              "pi", "Q_sym", "Lambda", "sym_Lambda", "augment_Q", "payoff_matrix_A", 
-              "payoff_matrix_B"]
+good-names = ["a", "b", "c", "d", "e", "f", "i", "j", "k", "l", "M", "n", "Q", 
+              "t", "u", "v", "x", "mu", "pi", "Q_sym", "Lambda", "sym_Lambda", 
+              "augment_Q", "payoff_matrix_A", "payoff_matrix_B"
+            ]

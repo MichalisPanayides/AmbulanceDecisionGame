@@ -1,4 +1,9 @@
+# pylint: disable=invalid-name
+
 import functools
+
+from hypothesis import given
+from hypothesis.strategies import integers
 
 from ambulance_game.markov.graphical import (
     check_permutation_is_valid,
@@ -14,8 +19,6 @@ from ambulance_game.markov.graphical import (
     get_rate_of_state_00_graphically,
     reset_L_and_R_in_array,
 )
-from hypothesis import given
-from hypothesis.strategies import integers
 
 
 def test_reset_L_and_R_in_array():
@@ -234,18 +237,30 @@ def test_get_permutations_ending_in_L_where_any_RL_exists_examples():
 
 def test_get_permutations_ending_in_RL_where_RL_exists_only_at_the_end_examples():
     """Test on specific examples for the function"""
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
-        D=100, R=0, L=200
-    ) == 0
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
-        D=100, R=200, L=0
-    ) == 0
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=1, L=1) == 1
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=2, L=3) == 6
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=3, R=4, L=2) == 80
-    get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(
-        D=5, R=6, L=4
-    ) == 14112
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=100, R=0, L=200)
+        == 0
+    )
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=100, R=200, L=0)
+        == 0
+    )
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=1, L=1)
+        == 1
+    )
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=1, R=2, L=3)
+        == 6
+    )
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=3, R=4, L=2)
+        == 80
+    )
+    assert (
+        get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D=5, R=6, L=4)
+        == 14112
+    )
 
 
 def test_get_coefficient_known_examples():
@@ -397,8 +412,7 @@ def test_get_coefficient_using_matrix_tree_theorem():
             return 3 * spanning_trees_based_on_matrix_tree_theorem(
                 n - 1
             ) - spanning_trees_based_on_matrix_tree_theorem(n - 2)
-        else:
-            return 1
+        return 1
 
     def spanning_trees_generated_from_permutation_algorithm(number_of_states):
         total_number_of_spanning_trees = 0

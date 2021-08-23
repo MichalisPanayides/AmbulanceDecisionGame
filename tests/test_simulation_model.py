@@ -1,6 +1,10 @@
 import ciw
 import numpy as np
 import pytest
+
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
+
 from ambulance_game.simulation.simulation import (
     build_custom_node,
     build_model,
@@ -13,10 +17,8 @@ from ambulance_game.simulation.simulation import (
     extract_total_individuals_and_the_ones_within_target_for_both_classes,
     get_mean_proportion_of_individuals_within_target_for_multiple_runs,
 )
-from hypothesis import given, settings
-from hypothesis.strategies import floats, integers
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 @given(
@@ -31,7 +33,7 @@ def test_build_model(lambda_2, lambda_1, mu, c):
     """
     result = build_model(lambda_2, lambda_1, mu, c)
 
-    assert type(result) == ciw.network.Network
+    assert isinstance(result, ciw.network.Network)
 
 
 def test_example_model():
@@ -46,8 +48,8 @@ def test_example_model():
     blocks = [r.time_blocked for r in records]
 
     assert len(records) == 290
-    assert round(sum(wait), number_of_digits_to_round) == round(
-        1089.854729732795, number_of_digits_to_round
+    assert round(sum(wait), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1089.854729732795, NUMBER_OF_DIGITS_TO_ROUND
     )
     assert sum(blocks) == 0
 
@@ -102,11 +104,11 @@ def test_example_build_custom_node():
     blocks = [r.time_blocked for r in records]
 
     assert len(records) == 274
-    assert round(sum(wait), number_of_digits_to_round) == round(
-        521.0071454616575, number_of_digits_to_round
+    assert round(sum(wait), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        521.0071454616575, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(sum(blocks), number_of_digits_to_round) == round(
-        546.9988970370749, number_of_digits_to_round
+    assert round(sum(blocks), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        546.9988970370749, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -134,20 +136,20 @@ def test_simulate_model_unconstrained():
         waits = waits + sum([w.waiting_time for w in rec])
         services = services + sum([s.service_time for s in rec])
 
-    assert type(simulation) == ciw.simulation.Simulation
+    assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 474
     assert len(sim_results[1]) == 490
     assert len(sim_results[2]) == 491
     assert len(sim_results[3]) == 486
     assert len(sim_results[4]) == 458
-    assert round(blocks, number_of_digits_to_round) == round(
-        171712.5200250419, number_of_digits_to_round
+    assert round(blocks, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        171712.5200250419, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(waits, number_of_digits_to_round) == round(
-        580.0884411214596, number_of_digits_to_round
+    assert round(waits, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        580.0884411214596, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(services, number_of_digits_to_round) == round(
-        37134.74895651618, number_of_digits_to_round
+    assert round(services, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        37134.74895651618, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -177,20 +179,20 @@ def test_simulate_model_constrained():
         waits = waits + sum([w.waiting_time for w in rec])
         services = services + sum([s.service_time for s in rec])
 
-    assert type(simulation) == ciw.simulation.Simulation
+    assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 504
     assert len(sim_results[1]) == 449
     assert len(sim_results[2]) == 466
     assert len(sim_results[3]) == 453
     assert len(sim_results[4]) == 437
-    assert round(blocks, number_of_digits_to_round) == round(
-        27926.12213659, number_of_digits_to_round
+    assert round(blocks, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        27926.12213659, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(waits, number_of_digits_to_round) == round(
-        253.16063529519664, number_of_digits_to_round
+    assert round(waits, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        253.16063529519664, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(services, number_of_digits_to_round) == round(
-        36826.38173021053, number_of_digits_to_round
+    assert round(services, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        36826.38173021053, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -273,7 +275,7 @@ def test_get_state_probabilities_dict():
         tracker=tracker,
     )
     pi_dictionary = get_simulated_state_probabilities(simulation_object=Q, output=dict)
-    assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
+    assert round(sum(pi_dictionary.values()), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
 def test_get_state_probabilities_array():
@@ -304,7 +306,7 @@ def test_get_state_probabilities_array():
         tracker=tracker,
     )
     pi_array = get_simulated_state_probabilities(simulation_object=Q, output=np.ndarray)
-    assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+    assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
 def test_get_average_state_probabilities_array():
@@ -335,10 +337,14 @@ def test_get_average_state_probabilities_array():
         num_of_trials=num_of_trials,
     )
 
-    assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+    assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
 def test_get_multiple_results():
+    """
+    Test that the get_multiple_results function returns the correct
+    number of results.
+    """
     mult_results_1 = get_multiple_runs_results(
         lambda_2=0.15,
         lambda_1=0.2,
@@ -358,17 +364,17 @@ def test_get_multiple_results():
         seed_num=1,
         output_type="list",
     )
-    assert type(mult_results_1) == list
+    assert isinstance(mult_results_1, list)
     for trial in range(5):
-        assert type(mult_results_1[trial]) != list
-        assert type(mult_results_1[trial].waiting_times) == list
-        assert type(mult_results_1[trial].service_times) == list
-        assert type(mult_results_1[trial].blocking_times) == list
+        assert not isinstance(mult_results_1[trial], list)
+        assert isinstance(mult_results_1[trial].waiting_times, list)
+        assert isinstance(mult_results_1[trial].service_times, list)
+        assert isinstance(mult_results_1[trial].blocking_times, list)
 
-    assert type(mult_results_2) == list
+    assert isinstance(mult_results_2, list)
     for times in range(3):
         for trial in range(5):
-            assert type(mult_results_2[times][trial]) == list
+            assert isinstance(mult_results_2[times][trial], list)
 
 
 def test_example_get_multiple_results():
@@ -388,14 +394,14 @@ def test_example_get_multiple_results():
     all_servs = [np.mean(s.service_times) for s in mult_results]
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
 
-    assert round(np.mean(all_waits), number_of_digits_to_round) == round(
-        0.40499090339103355, number_of_digits_to_round
+    assert round(np.mean(all_waits), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.40499090339103355, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(np.mean(all_servs), number_of_digits_to_round) == round(
-        19.47582689268173, number_of_digits_to_round
+    assert round(np.mean(all_servs), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        19.47582689268173, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(np.mean(all_blocks), number_of_digits_to_round) == round(
-        432.68444649763916, number_of_digits_to_round
+    assert round(np.mean(all_blocks), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        432.68444649763916, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -451,7 +457,7 @@ def test_example_get_multiple_results_for_different_individuals_classes():
     assert int(np.mean(all_servs_class_2)) == int(np.mean(all_servs))
     assert all_blocks_class_2 == all_blocks
 
-    assert round(np.mean(all_waits_class_1), number_of_digits_to_round) == 0.53027998
+    assert round(np.mean(all_waits_class_1), NUMBER_OF_DIGITS_TO_ROUND) == 0.53027998
     assert int(np.mean(all_servs_class_1)) == int(np.mean(all_servs))
     assert all(np.isnan(b) for b in all_blocks_class_1)
 
@@ -571,6 +577,10 @@ def test_calculate_class_2_individuals_best_response_equal_split():
 
 
 def test_extract_total_individuals_and_the_ones_within_target_example():
+    """
+    Test that ensures that the function that extracts the total number of
+    individuals and those within target works as expected.
+    """
     inds = simulate_model(
         lambda_2=2,
         lambda_1=2,
@@ -633,12 +643,12 @@ def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_exam
         target=2,
     )
 
-    assert round(np.mean(props[0]), number_of_digits_to_round) == round(
-        0.6085194375516956, number_of_digits_to_round
+    assert round(np.mean(props[0]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6085194375516956, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(np.mean(props[1]), number_of_digits_to_round) == round(
-        0.6043700088731145, number_of_digits_to_round
+    assert round(np.mean(props[1]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6043700088731145, NUMBER_OF_DIGITS_TO_ROUND
     )
-    assert round(np.mean(props[2]), number_of_digits_to_round) == round(
-        0.6124698398771661, number_of_digits_to_round
+    assert round(np.mean(props[2]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6124698398771661, NUMBER_OF_DIGITS_TO_ROUND
     )

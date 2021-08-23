@@ -3,6 +3,11 @@ import networkx as nx
 import numpy as np
 import scipy as sci
 import sympy as sym
+
+from hypothesis import HealthCheck, given, settings
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import booleans, floats, integers
+
 from ambulance_game.markov.markov import (
     augment_Q,
     build_states,
@@ -19,11 +24,8 @@ from ambulance_game.markov.markov import (
     is_steady_state,
     visualise_markov_chain,
 )
-from hypothesis import HealthCheck, given, settings
-from hypothesis.extra.numpy import arrays
-from hypothesis.strategies import booleans, floats, integers
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 @given(
@@ -46,8 +48,8 @@ def test_build_states(threshold, system_capacity, buffer_capacity):
         assert len(states) == system_capacity + 1  # +2
     else:
         states_after_threshold = system_capacity - threshold + 1
-        size_of_S2 = states_after_threshold if states_after_threshold >= 0 else 0
-        all_states_size = size_of_S2 * (buffer_capacity + 1) + threshold
+        size_of_s2 = states_after_threshold if states_after_threshold >= 0 else 0
+        all_states_size = size_of_s2 * (buffer_capacity + 1) + threshold
         assert len(states) == all_states_size
 
 
@@ -81,7 +83,7 @@ def test_visualise_markov_chain(
     )
     set_of_nodes = set(markov_chain_plot.nodes)
 
-    assert type(markov_chain_plot) == nx.classes.multidigraph.DiGraph
+    assert isinstance(markov_chain_plot, nx.classes.multidigraph.DiGraph)
     assert set_of_all_states == set_of_nodes
     plt.close()  # TODO Investigate if it's possible to remove this line
 
@@ -193,8 +195,8 @@ def test_get_symbolic_transition_matrix(
     Test that ensures the symbolic matrix function outputs the correct size matrix
     """
     states_after_threshold = system_capacity - threshold + 1
-    S_2_size = states_after_threshold if states_after_threshold >= 0 else 0
-    matrix_size = S_2_size * (buffer_capacity + 1) + threshold
+    s_2_size = states_after_threshold if states_after_threshold >= 0 else 0
+    matrix_size = s_2_size * (buffer_capacity + 1) + threshold
     result = get_symbolic_transition_matrix(
         num_of_servers=num_of_servers,
         threshold=threshold,
@@ -230,8 +232,8 @@ def test_get_transition_matrix(
     threshold = 8
 
     states_after_threshold = system_capacity - threshold + 1
-    S_2_size = states_after_threshold if states_after_threshold >= 0 else 0
-    matrix_size = S_2_size * (buffer_capacity + 1) + threshold
+    s_2_size = states_after_threshold if states_after_threshold >= 0 else 0
+    matrix_size = s_2_size * (buffer_capacity + 1) + threshold
 
     transition_matrix = get_transition_matrix(
         lambda_2=lambda_2,
@@ -356,7 +358,7 @@ def test_get_steady_state_numerically_solve_ivp(a, b, c, d, e, f):
 
 
 @given(Q=arrays(np.int8, (10, 10)))
-def test_augment_Q(Q):
+def test_augment_q(Q):
     """
     Tests that the array M that is returned has the same dimensions as Q and that
     the vector b is a one dimensional array of length equivalent to Q that consists
@@ -430,7 +432,7 @@ def test_get_state_probabilities_dict():
         pi=pi, all_states=all_states, output=dict
     )
 
-    assert round(sum(pi_dictionary.values()), number_of_digits_to_round) == 1
+    assert round(sum(pi_dictionary.values()), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
 def test_get_state_probabilities_array():
@@ -458,7 +460,7 @@ def test_get_state_probabilities_array():
         pi=pi, all_states=all_states, output=np.ndarray
     )
 
-    assert round(np.nansum(pi_array), number_of_digits_to_round) == 1
+    assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
 def test_get_mean_number_of_individuals_examples():
@@ -481,21 +483,21 @@ def test_get_mean_number_of_individuals_examples():
     assert (
         round(
             get_mean_number_of_individuals_in_system(pi=pi, states=all_states),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 2.88827497
     )
     assert (
         round(
             get_mean_number_of_individuals_in_service_area(pi=pi, states=all_states),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 2.44439504
     )
     assert (
         round(
             get_mean_number_of_individuals_in_buffer_center(pi=pi, states=all_states),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 0.44387993
     )

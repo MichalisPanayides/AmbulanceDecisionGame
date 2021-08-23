@@ -9,7 +9,7 @@ from ambulance_game.markov.waiting import (
     overall_waiting_time_formula,
 )
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 def test_get_waiting_time_of_each_state_recursively_class_1_property():
@@ -92,8 +92,8 @@ def test_mean_waiting_time_formula_using_recursive_for_class_1_individuals_examp
         buffer_capacity=3,
     )
 
-    assert round(mean_wait, number_of_digits_to_round) == round(
-        0.31506849396134357, number_of_digits_to_round
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.31506849396134357, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -132,8 +132,8 @@ def test_mean_waiting_time_formula_using_recursive_for_class_2_individuals_examp
         buffer_capacity=3,
     )
 
-    assert round(mean_wait, number_of_digits_to_round) == round(
-        0.32352941297577853, number_of_digits_to_round
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.32352941297577853, NUMBER_OF_DIGITS_TO_ROUND
     ), mean_wait
 
 
@@ -211,8 +211,8 @@ def test_mean_waiting_time_formula_using_closed_form_for_class_1_individuals_exa
         system_capacity=4,
         buffer_capacity=2,
     )
-    assert round(mean_wait, number_of_digits_to_round) == round(
-        0.5714285731887755, number_of_digits_to_round
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.5714285731887755, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -248,8 +248,8 @@ def test_mean_waiting_time_formula_using_closed_form_for_class_2_individuals_exa
         system_capacity=4,
         buffer_capacity=2,
     )
-    assert round(mean_wait, number_of_digits_to_round) == round(
-        0.59999999895, number_of_digits_to_round
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.59999999895, NUMBER_OF_DIGITS_TO_ROUND
     ), mean_wait
 
 
@@ -301,9 +301,9 @@ def test_overall_waiting_time_formula_example():
     )
 
     assert (
-        round(mean_overall_recursive_wait, number_of_digits_to_round)
-        == round(mean_overall_closed_form_wait, number_of_digits_to_round)
-        == round(0.5555555540432099, number_of_digits_to_round)
+        round(mean_overall_recursive_wait, NUMBER_OF_DIGITS_TO_ROUND)
+        == round(mean_overall_closed_form_wait, NUMBER_OF_DIGITS_TO_ROUND)
+        == round(0.5555555540432099, NUMBER_OF_DIGITS_TO_ROUND)
     ), (mean_overall_recursive_wait, mean_overall_closed_form_wait)
 
 
@@ -322,8 +322,8 @@ def test_get_mean_waiting_time_example_1():
         class_type=0,
         waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        1.472071670896375, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.472071670896375, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -342,8 +342,8 @@ def test_get_mean_waiting_time_example_2():
         class_type=1,
         waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        0.7377914457854086, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.7377914457854086, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -380,8 +380,8 @@ def test_get_mean_waiting_time_example_4():
         class_type=None,
         waiting_formula=mean_waiting_time_formula_using_recursive_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        1.1051493390764142, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.1051493390764142, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -400,8 +400,8 @@ def test_get_mean_waiting_time_example_5():
         class_type=0,
         waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        1.4720716708963748, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.4720716708963748, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -420,8 +420,8 @@ def test_get_mean_waiting_time_example_6():
         class_type=1,
         waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        0.7377914457854088, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.7377914457854088, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -458,6 +458,6 @@ def test_get_mean_waiting_time_example_8():
         class_type=None,
         waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        1.1051493390764142, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.1051493390764142, NUMBER_OF_DIGITS_TO_ROUND
     )

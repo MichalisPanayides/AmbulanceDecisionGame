@@ -1,5 +1,9 @@
 import numpy as np
 import pytest
+
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
+
 from ambulance_game.comparisons import (
     get_heatmaps,
     get_mean_blocking_time_from_simulation_state_probabilities,
@@ -7,10 +11,8 @@ from ambulance_game.comparisons import (
     get_proportion_within_target_from_simulation_state_probabilities,
     plot_output_comparisons,
 )
-from hypothesis import given, settings
-from hypothesis.strategies import floats, integers
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 def test_get_heatmaps_example_1():
@@ -190,8 +192,8 @@ def test_get_mean_waiting_time_from_simulation_state_probabilities():
         runtime=2000,
         num_of_trials=1,
     )
-    assert round(mean_waiting_time, number_of_digits_to_round) == round(
-        1.3988142785295379, number_of_digits_to_round
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.3988142785295379, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -212,12 +214,16 @@ def test_get_mean_blocking_time_from_simulation_state_probabilities():
         num_of_trials=1,
         runtime=1000,
     )
-    assert round(mean_blocking_time, number_of_digits_to_round) == round(
-        0.6247616245889802, number_of_digits_to_round
+    assert round(mean_blocking_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6247616245889802, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
 def test_get_proportion_within_target_from_simulation_state_probabilities():
+    """
+    Test for the proportion of customers that are within the target waiting
+    time using the Markov formula and the simulation state probabilities
+    """
     mean_proportion = get_proportion_within_target_from_simulation_state_probabilities(
         lambda_1=1,
         lambda_2=1,
@@ -233,8 +239,8 @@ def test_get_proportion_within_target_from_simulation_state_probabilities():
         runtime=100,
     )
 
-    assert round(mean_proportion, number_of_digits_to_round) == round(
-        0.9605868280871762, number_of_digits_to_round
+    assert round(mean_proportion, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.9605868280871762, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -672,6 +678,13 @@ def test_plot_output_comparisons_blocking_property(
 
 
 def test_plot_of_proportion_within_target_class_1():
+    """
+    Test the values to be plotted by the function for the mean proportion of
+    individuals for class 1 are as expected for all methods used:
+        - Markov formula and simulation state probabilities
+        - Markov formula and Markov state probabilities
+        - Simulation
+    """
     (
         range_space,
         simulation_props_using_markov_formula,
@@ -734,6 +747,13 @@ def test_plot_of_proportion_within_target_class_1():
 
 
 def test_plot_of_proportion_within_target_class_2():
+    """
+    Test the values to be plotted by the function for the mean proportion of
+    individuals for class 2 are as expected for all methods used:
+        - Markov formula and simulation state probabilities
+        - Markov formula and Markov state probabilities
+        - Simulation
+    """
     (
         range_space,
         simulation_props_using_markov_formula,
@@ -796,6 +816,13 @@ def test_plot_of_proportion_within_target_class_2():
 
 
 def test_plot_of_proportion_within_target_both_classes():
+    """
+    Test the values to be plotted by the function for the mean proportion of
+    individuals for both classes are as expected for all methods used:
+        - Markov formula and simulation state probabilities
+        - Markov formula and Markov state probabilities
+        - Simulation
+    """
     (
         range_space,
         simulation_props_using_markov_formula,

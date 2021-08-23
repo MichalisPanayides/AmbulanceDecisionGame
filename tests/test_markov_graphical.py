@@ -1,3 +1,8 @@
+"""
+Tests for the permutation functions to get the closed form formula for the
+state probabilites
+"""
+
 # pylint: disable=invalid-name
 
 import functools

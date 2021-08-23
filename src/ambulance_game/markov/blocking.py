@@ -1,3 +1,6 @@
+"""
+Code to calculate the expected blocking time.
+"""
 import numpy as np
 
 from .markov import (

@@ -1,3 +1,7 @@
+"""
+Simulation module
+"""
+
 from .simulation import (
     calculate_class_2_individuals_best_response,
     extract_total_individuals_and_the_ones_within_target_for_both_classes,

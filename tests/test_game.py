@@ -1,3 +1,7 @@
+"""
+Tests for the game.py module
+"""
+
 import dask as da
 import numpy as np
 from hypothesis import given, settings

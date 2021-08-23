@@ -1,3 +1,7 @@
+"""
+Code to get the closed form state probabilites of the Markov Chain
+"""
+
 # pylint: disable=invalid-name
 
 import numpy as np

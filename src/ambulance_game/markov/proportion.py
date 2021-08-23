@@ -1,3 +1,7 @@
+"""
+Code to get the proportion of individuals within a given time target.
+"""
+
 import math
 import operator
 from functools import reduce

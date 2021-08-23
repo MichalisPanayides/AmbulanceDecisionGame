@@ -1,3 +1,7 @@
+"""
+Code to calculate the mean waiting time.
+"""
+
 import functools
 
 import numpy as np

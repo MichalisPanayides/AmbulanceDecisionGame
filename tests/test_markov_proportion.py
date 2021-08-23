@@ -1,3 +1,7 @@
+"""
+Tests for the functionality of the proportion of individuals within target.
+"""
+
 import numpy as np
 
 from ambulance_game.markov.proportion import (

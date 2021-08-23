@@ -1,3 +1,6 @@
+"""
+Tests for the simulation functionality
+"""
 import ciw
 import numpy as np
 import pytest

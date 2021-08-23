@@ -1,3 +1,7 @@
+"""
+Tests for the blocking time functionality
+"""
+
 import numpy as np
 import pytest
 from ambulance_game.markov.blocking import (

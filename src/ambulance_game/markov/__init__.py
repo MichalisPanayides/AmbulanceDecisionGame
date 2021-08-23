@@ -1,3 +1,6 @@
+"""
+Markov chain module.
+"""
 from .blocking import (
     convert_solution_to_correct_array_format,
     get_blocking_time_linear_system,

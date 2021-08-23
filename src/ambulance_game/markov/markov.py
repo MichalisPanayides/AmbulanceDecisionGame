@@ -1,3 +1,7 @@
+"""
+Code to create the Markov chain model.
+"""
+
 import itertools
 
 import matplotlib.pyplot as plt

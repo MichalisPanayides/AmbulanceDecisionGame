@@ -1,3 +1,6 @@
+"""
+Tests for the waiting time functionality
+"""
 import numpy as np
 import pytest
 from ambulance_game.markov.waiting import (

@@ -1,3 +1,7 @@
+"""
+Code for the simulation of the model.
+"""
+
 import collections
 import random
 

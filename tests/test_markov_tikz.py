@@ -1,3 +1,7 @@
+"""
+Tests for generating tikz code for markov chains.
+"""
+
 # pylint: disable=line-too-long
 
 from ambulance_game.markov.tikz import (

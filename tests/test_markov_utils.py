@@ -1,3 +1,7 @@
+"""
+Tests for the utils.py module
+"""
+
 import random
 
 import numpy as np

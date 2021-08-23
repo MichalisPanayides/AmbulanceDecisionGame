@@ -1,3 +1,6 @@
+"""
+Code to generate the tikz code for the markov chain and its spanning trees
+"""
 import numpy as np
 
 from .graphical import (

@@ -1,3 +1,7 @@
+"""
+Tests for comparisons of the Markov model and the simulation
+"""
+
 import numpy as np
 import pytest
 

@@ -1,3 +1,7 @@
+"""
+Code for the game between two queueing systems and a distributor
+"""
+
 import functools
 import itertools
 

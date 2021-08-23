@@ -18,8 +18,8 @@ from .utils import (
 def get_coefficients_row_of_array_associated_with_state(
     state, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
-    """Constructs a row of the coefficients matrix. The row to be constructed corresponds
-    to the blocking time equation for a given state (u,v) where:
+    """Constructs a row of the coefficients matrix. The row to be constructed
+    corresponds to the blocking time equation for a given state (u,v) where:
 
     b(u,v) = c(u,v) + p_s(u,v) * b(u,v−1) + p_o(u,v) * b(u,v+1)
 
@@ -292,7 +292,10 @@ def mean_blocking_time_formula_using_closed_form_approach(
     system_capacity,
     buffer_capacity,
 ):
-    # Build closed-form formula
+    """
+    Get the mean blocking time using the closed form solution.
+    """
+    # TODO: Build closed-form formula
     raise NotImplementedError("To be implemented")
 
 

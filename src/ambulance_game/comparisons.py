@@ -309,6 +309,33 @@ def get_proportion_within_target_from_simulation_state_probabilities(
     runtime=2000,
     psi_func=specific_psi_function,
 ):
+    """
+    An alternative approach to obtaining the proportion of individuals in the
+    target class from the simulation. This function gets the proportion of
+    individuals in the target class from the simulation's state probabilities.
+    This is mainly used in comparing the simulation results with the Markov ones.
+
+    Parameters
+    ----------
+    lambda_1 : float]
+    lambda_2 : float]
+    mu : float]
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+    target : float
+    class_type : int, optional
+    seed_num : float, optional
+    num_of_trials : int, optional
+    runtime : int, optional
+    psi_func : func, optional
+
+    Returns
+    -------
+    float
+        The proportion of individuals that are within the target waiting time
+    """
     pi = get_average_simulated_state_probabilities(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -361,7 +388,9 @@ def get_waiting_time_comparisons(
     class_type=None,
     warm_up_time=0,
 ):
-
+    """
+    Get the waiting time using both the simulation and the Markov approach.
+    """
     times = get_multiple_runs_results(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -417,6 +446,9 @@ def get_blocking_time_comparisons(
     class_type=None,
     warm_up_time=0,
 ):
+    """
+    Get the blocking time using both the simulation and the Markov approach.
+    """
     if class_type == 0:
         raise Exception("Blocking does not occur for class 1 individuals")
 
@@ -474,6 +506,10 @@ def get_proportion_comparison(
     num_of_trials=10,
     runtime=2000,
 ):
+    """
+    Get the proportion of individuals within target using both the simulation
+    and the Markov approach.
+    """
     if class_type is None:
         index = 0
     else:
@@ -538,6 +574,9 @@ def get_simulation_and_markov_outputs(
     class_type=None,
     warm_up_time=0,
 ):
+    """
+    Get the simulation and Markov outputs for a given measure.
+    """
     if measure_to_compare == "waiting":
         (
             simulation_times,

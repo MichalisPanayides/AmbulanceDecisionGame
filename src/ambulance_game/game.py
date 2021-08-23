@@ -467,7 +467,7 @@ def compute_tasks(tasks, processes):
     return out
 
 
-def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
+def build_matrices_from_computed_tasks(computed_tasks, n_1, n_2):
     """
     Using the computed tasks builds the utility matrix of the row and the column
     players and the routing matrix.
@@ -476,9 +476,9 @@ def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
     ----------
     computed_tasks : tuple
         A tuple of tuples of the form (i, j, R[i,j], A[i,j], B[i,j])
-    N_1 : int
+    n_1 : int
         The number of rows for all matrices
-    N_2 : int
+    n_2 : int
         The number of columns for all matrices
 
     Returns
@@ -486,9 +486,9 @@ def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
     numpy array, numpy array, numpy array
         The routing matrix and the two payoff matrices
     """
-    routing_matrix = np.zeros((N_1, N_2))
-    utility_matrix_1 = np.zeros((N_1, N_2))
-    utility_matrix_2 = np.zeros((N_1, N_2))
+    routing_matrix = np.zeros((n_1, n_2))
+    utility_matrix_1 = np.zeros((n_1, n_2))
+    utility_matrix_2 = np.zeros((n_1, n_2))
 
     for (
         threshold_1,
@@ -587,7 +587,7 @@ def get_payoff_matrices(
         utility_matrix_1,
         utility_matrix_2,
     ) = build_matrices_from_computed_tasks(
-        computed_tasks=computed_tasks, N_1=system_capacity_1, N_2=system_capacity_2
+        computed_tasks=computed_tasks, n_1=system_capacity_1, n_2=system_capacity_2
     )
     return utility_matrix_1, utility_matrix_2, routing_matrix
 

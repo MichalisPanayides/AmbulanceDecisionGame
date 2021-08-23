@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name
+
 import numpy as np
 
 
@@ -16,7 +18,7 @@ def reset_L_and_R_in_array(edges, lefts):
 
     L_count = 0
     for pos, element in enumerate(edges):
-        reset_this_entry = element == "L" or element == "R"
+        reset_this_entry = element in ("L", "R")
         if reset_this_entry and L_count < lefts:
             edges[pos] = "L"
             L_count += 1
@@ -81,7 +83,7 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
     """
     if direction == "LR":
         for pos, element in enumerate(edges[:-1]):
-            if (element == "L" or element == "R") and edges[pos + 1] == permute_over:
+            if (element in ("L", "R")) and edges[pos + 1] == permute_over:
                 target_position = pos
         pos_last_D = len(edges) - edges[::-1].index(permute_over) - 1
         edges_to_be_swapped = len(edges) - pos_last_D
@@ -122,7 +124,7 @@ def find_next_permutation_over_L_and_R(edges):
     only_LR_edges = []
     only_LR_positions = []
     for pos, element in enumerate(edges):
-        if element == "L" or element == "R":
+        if element in ("L", "R"):
             only_LR_edges.append(element)
             only_LR_positions.append(pos)
 
@@ -173,10 +175,9 @@ def generate_next_permutation_of_edges(edges, downs, lefts, rights):
             pos_last_D = len(edges) - edges[::-1].index("D") - 1
             if pos_last_D == (downs - 1):
                 return []
-            else:
-                edges = find_next_permutation_over(
-                    edges=edges, direction="LR", rights=rights
-                )
+            edges = find_next_permutation_over(
+                edges=edges, direction="LR", rights=rights
+            )
 
     elif "L" in edges:
         pos_last_D = len(edges) - edges[::-1].index("D") - 1
@@ -373,8 +374,7 @@ def get_permutations_ending_in_R(D, R, L):
         return np.math.factorial(D + R + L - 1) // (
             np.math.factorial(D) * np.math.factorial(R - 1) * np.math.factorial(L)
         )
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
@@ -418,8 +418,7 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
                 )
             )
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
@@ -464,8 +463,7 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
                 )
             )
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
@@ -510,8 +508,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
             )
             perms += num_RL_perms
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_coefficient(D, R, L):

@@ -69,6 +69,11 @@ def build_custom_node(threshold=float("inf")):
     """
 
     class CustomNode(ciw.Node):
+        """
+        Overrides the default release_blocked_individual and finish_service
+        methods of the ciw.Node class
+        """
+
         def release_blocked_individual(self):
             """
             Releases an individual who becomes unblocked when
@@ -224,22 +229,22 @@ def get_simulated_state_probabilities(
     )
     if output == dict:
         return state_probabilities_dictionary
-    elif output == np.ndarray:
-        if buffer_capacity is None:
-            buffer_capacity = max(
-                [state[0] for state in state_probabilities_dictionary.keys()]
-            )
-        if system_capacity is None:
-            system_capacity = max(
-                [state[1] for state in state_probabilities_dictionary.keys()]
-            )
-        state_probabilities_array = np.full(
-            (buffer_capacity + 1, system_capacity + 1), np.NaN
+
+    if buffer_capacity is None:
+        buffer_capacity = max(
+            [state[0] for state in state_probabilities_dictionary.keys()]
         )
-        for key, value in state_probabilities_dictionary.items():
-            if value > 0:
-                state_probabilities_array[key] = value
-        return state_probabilities_array
+    if system_capacity is None:
+        system_capacity = max(
+            [state[1] for state in state_probabilities_dictionary.keys()]
+        )
+    state_probabilities_array = np.full(
+        (buffer_capacity + 1, system_capacity + 1), np.NaN
+    )
+    for key, value in state_probabilities_dictionary.items():
+        if value > 0:
+            state_probabilities_array[key] = value
+    return state_probabilities_array
 
 
 def get_average_simulated_state_probabilities(
@@ -269,35 +274,53 @@ def get_average_simulated_state_probabilities(
 
     if output == dict:
         average_state_probabilities = {}
+        for trial in range(num_of_trials):
+            simulation_object = simulate_model(
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                seed_num=seed_num + trial,
+                runtime=runtime,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            state_probabilities = get_simulated_state_probabilities(
+                simulation_object=simulation_object,
+                output=output,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            if len(average_state_probabilities) == 0:
+                average_state_probabilities = state_probabilities
+            else:
+                for key in average_state_probabilities:
+                    average_state_probabilities[key] += state_probabilities[key]
+        for key, value in average_state_probabilities.items():
+            average_state_probabilities[key] = value / num_of_trials
     else:
         average_state_probabilities = np.full(
             (buffer_capacity + 1, system_capacity + 1), np.NaN
         )
-    for trial in range(num_of_trials):
-        simulation_object = simulate_model(
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            seed_num=seed_num + trial,
-            runtime=runtime,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-        state_probabilities = get_simulated_state_probabilities(
-            simulation_object=simulation_object,
-            output=output,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-        if output == dict:
-            if len(average_state_probabilities) == 0:
-                average_state_probabilities = state_probabilities
-            else:
-                for key in average_state_probabilities.keys():
-                    average_state_probabilities[key] += state_probabilities[key]
-        else:
+        for trial in range(num_of_trials):
+            simulation_object = simulate_model(
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                seed_num=seed_num + trial,
+                runtime=runtime,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            state_probabilities = get_simulated_state_probabilities(
+                simulation_object=simulation_object,
+                output=output,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
             for row in range(buffer_capacity + 1):
                 for col in range(system_capacity + 1):
                     updated_entry = np.nansum(
@@ -309,10 +332,6 @@ def get_average_simulated_state_probabilities(
                     average_state_probabilities[row, col] = (
                         updated_entry if updated_entry != 0 else np.NaN
                     )
-    if output == dict:
-        for key, value in average_state_probabilities.items():
-            average_state_probabilities[key] = value / num_of_trials
-    else:
         average_state_probabilities /= num_of_trials
 
     return average_state_probabilities

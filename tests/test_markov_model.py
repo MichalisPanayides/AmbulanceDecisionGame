@@ -58,10 +58,10 @@ def test_build_states(threshold, system_capacity, buffer_capacity):
 
 
 @given(
-    num_of_servers=integers(min_value=2, max_value=10),
-    threshold=integers(min_value=2, max_value=10),
-    buffer_capacity=integers(min_value=2, max_value=10),
-    system_capacity=integers(min_value=2, max_value=10),
+    num_of_servers=integers(min_value=2, max_value=8),
+    threshold=integers(min_value=2, max_value=8),
+    buffer_capacity=integers(min_value=2, max_value=8),
+    system_capacity=integers(min_value=2, max_value=8),
 )
 @settings(deadline=None)
 def test_visualise_markov_chain(

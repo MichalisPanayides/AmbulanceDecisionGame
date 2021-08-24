@@ -8,6 +8,16 @@ author = "Michalis Panayides"
 author-email = "PanayidesM@cardiff.ac.uk"
 home-page = "https://github.com/11michalis11/ambulance_game"
 requires-python = ">=3.8"
+requires = [
+    "numpy==1.19.2",
+    "matplotlib==3.3.2",
+    "scipy==1.7.1",
+    "networkx==2.4",
+    "sympy==1.5.1",
+    "ciw==2.1.0",
+    "dask==2021.3.0",
+    "nashpy==0.0.23"
+]
 classifiers = [ "License :: OSI Approved :: MIT License",]
 description-file = "README.md"
 
@@ -33,5 +43,4 @@ disable = ["fixme", "too-many-locals", "too-many-arguments",
            "comparison-with-callable", "duplicate-code"]
 good-names = ["a", "b", "c", "d", "e", "f", "i", "j", "k", "l", "M", "n", "Q", 
               "t", "u", "v", "x", "mu", "pi", "Q_sym", "Lambda", "sym_Lambda", 
-              "augment_Q", "payoff_matrix_A", "payoff_matrix_B"
-            ]
+              "augment_Q", "payoff_matrix_A", "payoff_matrix_B"]

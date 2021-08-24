@@ -9,7 +9,7 @@ author-email = "PanayidesM@cardiff.ac.uk"
 home-page = "https://github.com/11michalis11/ambulance_game"
 requires-python = ">=3.8"
 requires = [
-    "numpy==1.19.2",
+    "numpy==1.18.0",
     "matplotlib==3.4.3",
     "scipy==1.7.1",
     "networkx==2.4",

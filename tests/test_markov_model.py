@@ -2,9 +2,12 @@
 Tests for the functions in the Markov model module
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+import pytest
 import scipy as sci
 import sympy as sym
 
@@ -393,6 +396,10 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
     assert is_steady_state(state=steady, Q=Q)
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
+    reason="Skipping on macOS and Python 3.9",
+)
 @given(
     a=floats(min_value=1, max_value=10),
     b=floats(min_value=1, max_value=10),
@@ -411,6 +418,10 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     assert is_steady_state(state=steady, Q=Q)
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
+    reason="Skipping on macOS and Python 3.9",
+)
 def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
@@ -439,6 +450,10 @@ def test_get_state_probabilities_dict():
     assert round(sum(pi_dictionary.values()), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
+    reason="Skipping on macOS and Python 3.9",
+)
 def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
@@ -467,6 +482,10 @@ def test_get_state_probabilities_array():
     assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
+    reason="Skipping on macOS and Python 3.9",
+)
 def test_get_mean_number_of_individuals_examples():
     """
     Some examples to ensure that the correct mean number of individuals are output

@@ -10,12 +10,12 @@ home-page = "https://github.com/11michalis11/ambulance_game"
 requires-python = ">=3.8"
 requires = [
     "numpy==1.19.2",
-    "matplotlib==3.3.2",
+    "matplotlib==3.4.3",
     "scipy==1.7.1",
     "networkx==2.4",
     "sympy==1.5.1",
     "ciw==2.1.0",
-    "dask==2021.3.0",
+    "dask==2021.08.1",
     "nashpy==0.0.23"
 ]
 classifiers = [ "License :: OSI Approved :: MIT License",]

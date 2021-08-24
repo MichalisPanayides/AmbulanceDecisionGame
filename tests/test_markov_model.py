@@ -222,7 +222,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
-@settings(deadline=None)
+@settings(deadline=None, max_examples=20)
 def test_get_transition_matrix(
     system_capacity, buffer_capacity, lambda_2, lambda_1, mu
 ):

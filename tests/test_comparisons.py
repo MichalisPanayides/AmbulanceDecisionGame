@@ -37,6 +37,7 @@ def test_get_heatmaps_example_1():
         runtime=100,
         num_of_trials=10,
         linear_positioning=False,
+        algebraic_function=np.linalg.solve,
     )
     sim_expected_probs, markov_expected_probs, diff_expected_probs = (
         np.array(
@@ -111,6 +112,7 @@ def test_get_heatmaps_example_2():
         runtime=150,
         num_of_trials=5,
         linear_positioning=True,
+        algebraic_function=np.linalg.solve,
     )
 
     sim_expected_probs, markov_expected_probs, diff_expected_probs = (

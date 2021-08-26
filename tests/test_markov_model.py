@@ -409,10 +409,6 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
     assert is_steady_state(state=steady, Q=Q)
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 @given(
     a=floats(min_value=1, max_value=10),
     b=floats(min_value=1, max_value=10),
@@ -427,14 +423,10 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     lstsq function returns the steady state for different transition-like matrices
     """
     Q = np.array([[-a - b, a, b], [c, -c - d, d], [e, f, -e - f]])
-    steady = get_steady_state_algebraically(Q=Q, algebraic_function=np.linalg.lstsq)
+    steady = get_steady_state_algebraically(Q=Q, algebraic_function=np.linalg.solve)
     assert is_steady_state(state=steady, Q=Q)
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
@@ -454,7 +446,7 @@ def test_get_state_probabilities_dict():
         buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi_dictionary = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=dict
@@ -463,10 +455,6 @@ def test_get_state_probabilities_dict():
     assert round(sum(pi_dictionary.values()), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
@@ -486,7 +474,7 @@ def test_get_state_probabilities_array():
         buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi_array = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=np.ndarray
@@ -503,10 +491,6 @@ def test_get_state_probabilities_invalid():
         get_markov_state_probabilities(pi=None, all_states=None, output="invalid")
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 def test_get_mean_number_of_individuals_examples():
     """
     Some examples to ensure that the correct mean number of individuals are output
@@ -522,7 +506,7 @@ def test_get_mean_number_of_individuals_examples():
         buffer_capacity=20,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     assert (
         round(

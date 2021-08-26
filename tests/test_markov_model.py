@@ -60,13 +60,26 @@ def test_build_states(threshold, system_capacity, buffer_capacity):
         assert len(states) == all_states_size
 
 
+def test_build_states_invalid_buffer_capacity():
+    """
+    Test to ensure that the build_states function raises an error if the buffer
+    capacity is less than 1
+    """
+    with pytest.raises(ValueError):
+        build_states(
+            threshold=None,
+            system_capacity=None,
+            buffer_capacity=0,
+        )
+
+
 @given(
     num_of_servers=integers(min_value=2, max_value=8),
     threshold=integers(min_value=2, max_value=8),
     buffer_capacity=integers(min_value=2, max_value=8),
     system_capacity=integers(min_value=2, max_value=8),
 )
-@settings(deadline=None)
+@settings(deadline=None, max_examples=20)
 def test_visualise_markov_chain(
     num_of_servers, threshold, system_capacity, buffer_capacity
 ):
@@ -225,7 +238,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
-@settings(deadline=None, max_examples=20)
+@settings(deadline=None, max_examples=10)
 def test_get_transition_matrix(
     system_capacity, buffer_capacity, lambda_2, lambda_1, mu
 ):
@@ -480,6 +493,14 @@ def test_get_state_probabilities_array():
     )
 
     assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
+
+
+def test_get_state_probabilities_invalid():
+    """
+    Test to ensure that passing an invalid output type raises an error
+    """
+    with pytest.raises(ValueError):
+        get_markov_state_probabilities(pi=None, all_states=None, output="invalid")
 
 
 @pytest.mark.skipif(

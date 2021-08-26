@@ -479,7 +479,7 @@ def get_markov_state_probabilities(
         for index, _ in enumerate(all_states):
             states_probabilities_array[all_states[index]] = pi[index]
         return states_probabilities_array
-    return None
+    raise ValueError("output must be either dict or np.ndarray")
 
 
 def get_mean_number_of_individuals_in_system(pi, states):

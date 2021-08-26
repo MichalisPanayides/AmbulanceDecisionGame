@@ -899,3 +899,21 @@ def test_plot_of_proportion_within_target_both_classes():
     )
     assert np.allclose(markov_props, expected_markov_props)
     assert np.allclose(simulation_props, expected_sim_props)
+
+
+def test_plot_output_comparisons_invalid_measure():
+
+    with pytest.raises(ValueError):
+        plot_output_comparisons(
+            lambda_1=None,
+            lambda_2=0.1,
+            mu=None,
+            num_of_servers=None,
+            threshold=None,
+            system_capacity=None,
+            buffer_capacity=None,
+            seed_num=None,
+            num_of_trials=None,
+            runtime=None,
+            measure_to_compare="invalid_measure",
+        )

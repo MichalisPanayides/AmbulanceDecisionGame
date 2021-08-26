@@ -445,7 +445,7 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     M, b = augment_Q(Q)
     if algebraic_function == np.linalg.solve:
         state = algebraic_function(M, b).transpose()[0]
-    elif algebraic_function == np.linalg.lstsq:
+    elif algebraic_function == np.linalg.lstsq:  # pragma: no cover
         state = algebraic_function(M, b, rcond=None)[0][:, 0]
     return state
 

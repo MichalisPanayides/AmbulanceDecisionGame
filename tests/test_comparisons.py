@@ -902,7 +902,10 @@ def test_plot_of_proportion_within_target_both_classes():
 
 
 def test_plot_output_comparisons_invalid_measure():
-
+    """
+    Test that an error is raised when an invalid measure is passed to the
+    function.
+    """
     with pytest.raises(ValueError):
         plot_output_comparisons(
             lambda_1=None,

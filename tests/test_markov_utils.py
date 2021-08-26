@@ -16,6 +16,8 @@ from ambulance_game.markov.utils import (
     prob_service,
     get_probability_of_accepting,
     get_proportion_of_individuals_not_lost,
+    get_accepting_proportion_of_class_2_individuals,
+    get_accepting_proportion_of_individuals,
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
@@ -315,4 +317,40 @@ def test_get_proportion_of_individuals_not_lost_example():
             buffer_capacity=2,
         ),
         [0.5853658536585366, 0.4146341463414634],
+    )
+
+
+def test_get_accepting_proportion_of_class_2_individuals():
+    """
+    Tests that the proportion of class 2 individuals that are accepted is as expected
+    """
+    assert (
+        get_accepting_proportion_of_class_2_individuals(
+            lambda_1=1,
+            lambda_2=1,
+            mu=1,
+            num_of_servers=1,
+            threshold=1,
+            system_capacity=1,
+            buffer_capacity=1,
+        )
+        == 0.6
+    )
+
+
+def test_get_accepting_proportion_of_individuals():
+    """
+    Tests that the proportion of individuals that are accepted is as expected
+    """
+    assert np.allclose(
+        get_accepting_proportion_of_individuals(
+            lambda_1=1,
+            lambda_2=1,
+            mu=1,
+            num_of_servers=1,
+            threshold=1,
+            system_capacity=1,
+            buffer_capacity=1,
+        ),
+        [0.2, 0.6],
     )

@@ -267,7 +267,7 @@ def get_rate_of_state_00_graphically(
     """
 
     if num_of_servers != 1:
-        return "Unable to calculate for cases where number of servers is not 1"
+        raise NotImplementedError("Function only implemented for num_of_servers = 1")
 
     P00_rate = 0
     for down_edges in np.linspace(

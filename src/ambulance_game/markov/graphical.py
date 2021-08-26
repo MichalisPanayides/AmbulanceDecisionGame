@@ -409,7 +409,7 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             perms += (
                 sign
@@ -454,7 +454,7 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             perms += (
                 sign
@@ -498,7 +498,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             num_RL_perms = (
                 sign

@@ -1,3 +1,7 @@
+"""
+Tests for the utils.py module
+"""
+
 import random
 
 import numpy as np
@@ -14,7 +18,7 @@ from ambulance_game.markov.utils import (
     get_proportion_of_individuals_not_lost,
 )
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 def test_is_waiting_state():
@@ -174,7 +178,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
             expected_time_in_markov_state_ignoring_class_2_arrivals(
                 state=(1, 3), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == round(
             expected_time_in_markov_state_ignoring_class_2_arrivals(
@@ -184,7 +188,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
                 num_of_servers=4,
                 system_capacity=5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 0.25
     )
@@ -194,7 +198,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
             expected_time_in_markov_state_ignoring_class_2_arrivals(
                 state=(1, 5), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == round(
             expected_time_in_markov_state_ignoring_class_2_arrivals(
@@ -204,7 +208,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
                 num_of_servers=4,
                 system_capacity=5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 0.20833333
     )

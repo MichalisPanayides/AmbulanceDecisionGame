@@ -1,3 +1,7 @@
+"""
+Code for general usage across the main directory
+"""
+
 import functools
 
 import numpy as np

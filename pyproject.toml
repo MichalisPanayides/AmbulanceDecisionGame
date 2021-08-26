@@ -1,0 +1,46 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "ambulance_game"
+author = "Michalis Panayides"
+author-email = "PanayidesM@cardiff.ac.uk"
+home-page = "https://github.com/11michalis11/ambulance_game"
+requires-python = ">=3.8"
+requires = [
+    "numpy==1.18.0",
+    "matplotlib==3.4.3",
+    "scipy==1.7.1",
+    "networkx==2.4",
+    "sympy==1.5.1",
+    "ciw==2.1.0",
+    "dask==2021.08.1",
+    "nashpy==0.0.23"
+]
+classifiers = [ "License :: OSI Approved :: MIT License",]
+description-file = "README.md"
+
+[[tool.mypy.overrides]]
+module = [
+    "numpy",
+    "matplotlib",
+    "matplotlib.pyplot",
+    "scipy",
+    "scipy.integrate",
+    "scipy.optimize",
+    "networkx",
+    "sympy",
+    "ciw",
+    "dask",
+    "nashpy",
+]
+ignore_missing_imports = true
+
+[tool.pylint.messages_control]
+max-line-length = 88
+disable = ["fixme", "too-many-locals", "too-many-arguments", 
+           "comparison-with-callable", "duplicate-code"]
+good-names = ["a", "b", "c", "d", "e", "f", "i", "j", "k", "l", "M", "n", "Q", 
+              "t", "u", "v", "x", "mu", "pi", "Q_sym", "Lambda", "sym_Lambda", 
+              "augment_Q", "payoff_matrix_A", "payoff_matrix_B"]

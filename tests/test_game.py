@@ -1,3 +1,7 @@
+"""
+Tests for the game.py module
+"""
+
 import dask as da
 import numpy as np
 from hypothesis import given, settings
@@ -15,7 +19,7 @@ from ambulance_game.game import (
     get_weighted_mean_blocking_difference_between_two_systems,
 )
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 def test_get_accepting_proportion_of_class_2_individuals_examples():
@@ -46,9 +50,9 @@ def test_get_accepting_proportion_of_class_2_individuals_examples():
                 system_capacity=2,
                 buffer_capacity=2,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.9230769230769231, number_of_digits_to_round)
+        == round(0.9230769230769231, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
     assert (
@@ -62,9 +66,9 @@ def test_get_accepting_proportion_of_class_2_individuals_examples():
                 system_capacity=5,
                 buffer_capacity=5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.8523592984113859, number_of_digits_to_round)
+        == round(0.8523592984113859, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
 
@@ -92,9 +96,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
                 buffer_capacity_2=4,
                 alpha=0,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.3786808388674136, number_of_digits_to_round)
+        == round(0.3786808388674136, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
     assert (
@@ -116,9 +120,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
                 buffer_capacity_2=4,
                 alpha=0.5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.1946865334809922, number_of_digits_to_round)
+        == round(0.1946865334809922, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
     assert (
@@ -140,9 +144,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
                 buffer_capacity_2=4,
                 alpha=1,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.010692228094570821, number_of_digits_to_round)
+        == round(0.010692228094570821, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
 
@@ -170,9 +174,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
                 buffer_capacity_2=3,
                 alpha=0,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.039826434411056905, number_of_digits_to_round)
+        == round(0.039826434411056905, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
     assert (
@@ -194,9 +198,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
                 buffer_capacity_2=3,
                 alpha=0.5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.024201250377136538, number_of_digits_to_round)
+        == round(0.024201250377136538, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
     assert (
@@ -218,9 +222,9 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
                 buffer_capacity_2=3,
                 alpha=1,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.008576066343216171, number_of_digits_to_round)
+        == round(0.008576066343216171, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
 
@@ -271,9 +275,9 @@ def test_calculate_class_2_individuals_best_response_example_2():
                 buffer_capacity_1=10,
                 buffer_capacity_2=10,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
-        == round(0.8224704160104401, number_of_digits_to_round)
+        == round(0.8224704160104401, NUMBER_OF_DIGITS_TO_ROUND)
     )
 
 
@@ -441,24 +445,24 @@ def test_get_individual_entries_of_matrices_example():
 
 @settings(max_examples=20)
 @given(
-    x=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
-    y=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    float_1=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
+    float_2=floats(min_value=0, max_value=100, allow_nan=False, allow_infinity=False),
 )
-def test_compute_tasks(x, y):
+def test_compute_tasks(float_1, float_2):
     """
     Tests that dask tasks are computed as expected
     """
 
     @da.delayed
-    def inc(x):
-        return x + 1
+    def inc(num):
+        return num + 1
 
     @da.delayed
-    def double(x):
-        return x * 2
+    def double(num):
+        return num * 2
 
-    tasks = tuple((inc(x), double(y)))
-    assert compute_tasks(tasks, processes=None) == (x + 1, 2 * y)
+    tasks = tuple((inc(float_1), double(float_2)))
+    assert compute_tasks(tasks, processes=None) == (float_1 + 1, 2 * float_2)
 
 
 def test_build_matrices_from_computed_tasks():
@@ -474,7 +478,7 @@ def test_build_matrices_from_computed_tasks():
         )
     )
     routing, utility_1, utility_2 = build_matrices_from_computed_tasks(
-        computed_tasks=computed_tasks, N_1=2, N_2=2
+        computed_tasks=computed_tasks, n_1=2, n_2=2
     )
     assert np.allclose(routing, np.array([[1, 10], [100, 1000]]))
     assert np.allclose(utility_1, np.array([[2, 20], [200, 2000]]))
@@ -485,7 +489,7 @@ def test_get_payoff_matrices_example_1():
     """
     Test for payoff matrices of the game
     """
-    A, B, _ = get_payoff_matrices(
+    payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,
@@ -500,11 +504,13 @@ def test_get_payoff_matrices_example_1():
         target=1,
     )
     assert np.allclose(
-        A, np.array([[-0.25182247, -0.25182247], [-0.40094816, -0.34137716]])
+        payoff_matrix_A,
+        np.array([[-0.25182247, -0.25182247], [-0.40094816, -0.34137716]]),
     )
 
     assert np.allclose(
-        B, np.array([[-0.25182247, -0.40094816], [-0.25182247, -0.34137716]])
+        payoff_matrix_B,
+        np.array([[-0.25182247, -0.40094816], [-0.25182247, -0.34137716]]),
     )
 
 
@@ -512,7 +518,7 @@ def test_get_payoff_matrices_example_2():
     """
     Test for payoff matrices of the game using 2 processes
     """
-    A, B, _ = get_payoff_matrices(
+    payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
         lambda_2=2,
         lambda_1_1=2,
         lambda_1_2=2,
@@ -529,7 +535,7 @@ def test_get_payoff_matrices_example_2():
     )
 
     assert np.allclose(
-        A,
+        payoff_matrix_A,
         np.array(
             [
                 [-5.64325041e-04, -5.64325041e-04, -5.64325041e-04, -5.64325041e-04],
@@ -541,7 +547,7 @@ def test_get_payoff_matrices_example_2():
     )
 
     assert np.allclose(
-        B,
+        payoff_matrix_B,
         np.array(
             [
                 [-5.64325041e-04, -4.11252209e-04, -1.02850193e-04, -2.75913690e-05],
@@ -557,7 +563,7 @@ def test_get_payoff_matrices_example_3():
     """
     Test for payoff matrices of the game when the alternative utility is used
     """
-    A, B, _ = get_payoff_matrices(
+    payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
         lambda_2=1,
         lambda_1_1=1,
         lambda_1_2=1,
@@ -572,9 +578,13 @@ def test_get_payoff_matrices_example_3():
         target=1,
         alternative_utility=True,
     )
-    assert np.allclose(A, np.array([[0.44818084, 0.44818084], [0.31679532, 0.3657251]]))
+    assert np.allclose(
+        payoff_matrix_A, np.array([[0.44818084, 0.44818084], [0.31679532, 0.3657251]])
+    )
 
-    assert np.allclose(B, np.array([[0.44818084, 0.31679532], [0.44818084, 0.3657251]]))
+    assert np.allclose(
+        payoff_matrix_B, np.array([[0.44818084, 0.31679532], [0.44818084, 0.3657251]])
+    )
 
 
 def test_build_game_using_payoff_matrices_example_1():

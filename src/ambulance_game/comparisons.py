@@ -1,3 +1,7 @@
+"""
+Code for comparing the simulation and Markov chain outputs.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -60,7 +64,8 @@ def get_heatmaps(
     runtime : int, optional
     num_of_trials : int, optional
     linear_positioning : Boolean, optional
-        To distinguish between the two position formats of the heatmaps, by default False
+        To distinguish between the two position formats of the heatmaps,
+        by default False
     """
     all_states = build_states(
         threshold=threshold,
@@ -308,6 +313,33 @@ def get_proportion_within_target_from_simulation_state_probabilities(
     runtime=2000,
     psi_func=specific_psi_function,
 ):
+    """
+    An alternative approach to obtaining the proportion of individuals in the
+    target class from the simulation. This function gets the proportion of
+    individuals in the target class from the simulation's state probabilities.
+    This is mainly used in comparing the simulation results with the Markov ones.
+
+    Parameters
+    ----------
+    lambda_1 : float]
+    lambda_2 : float]
+    mu : float]
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+    target : float
+    class_type : int, optional
+    seed_num : float, optional
+    num_of_trials : int, optional
+    runtime : int, optional
+    psi_func : func, optional
+
+    Returns
+    -------
+    float
+        The proportion of individuals that are within the target waiting time
+    """
     pi = get_average_simulated_state_probabilities(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -344,6 +376,272 @@ def get_proportion_within_target_from_simulation_state_probabilities(
         psi_func=psi_func,
     )
     return prop
+
+
+def get_waiting_time_comparisons(
+    lambda_2,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+    class_type=None,
+    warm_up_time=0,
+):
+    """
+    Get the waiting time using both the simulation and the Markov approach.
+    """
+    times = get_multiple_runs_results(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        num_of_trials=num_of_trials,
+        seed_num=seed_num,
+        runtime=runtime,
+        warm_up_time=warm_up_time,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        class_type=class_type,
+    )
+    simulation_times = [np.mean(w.waiting_times) for w in times]
+    mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=seed_num,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
+        class_type=class_type,
+    )
+    mean_time_markov = get_mean_waiting_time_using_markov_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        class_type=class_type,
+    )
+    return simulation_times, mean_time_sim, mean_time_markov
+
+
+def get_blocking_time_comparisons(
+    lambda_2,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+    class_type=None,
+    warm_up_time=0,
+):
+    """
+    Get the blocking time using both the simulation and the Markov approach.
+    """
+    if class_type == 0:
+        raise Exception("Blocking does not occur for class 1 individuals")
+
+    times = get_multiple_runs_results(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        num_of_trials=num_of_trials,
+        seed_num=seed_num,
+        runtime=runtime,
+        warm_up_time=warm_up_time,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        class_type=class_type,
+    )
+
+    simulation_times = [np.mean(b.blocking_times) for b in times]
+    mean_time_sim = get_mean_blocking_time_from_simulation_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        num_of_trials=num_of_trials,
+        seed_num=seed_num,
+        runtime=runtime,
+    )
+    mean_time_markov = get_mean_blocking_time_using_markov_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    return simulation_times, mean_time_sim, mean_time_markov
+
+
+def get_proportion_comparison(
+    lambda_2,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    target,
+    class_type=None,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+):
+    """
+    Get the proportion of individuals within target using both the simulation
+    and the Markov approach.
+    """
+    if class_type is None:
+        index = 0
+    else:
+        index = class_type + 1
+
+    simulation_times = (
+        get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+            lambda_1=lambda_1,
+            lambda_2=lambda_2,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            seed_num=seed_num,
+            num_of_trials=num_of_trials,
+            runtime=runtime,
+            target=target,
+        )[index]
+    )
+    mean_time_markov = proportion_within_target_using_markov_state_probabilities(
+        lambda_1=lambda_1,
+        lambda_2=lambda_2,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        target=target,
+        class_type=class_type,
+    )
+    mean_time_sim = get_proportion_within_target_from_simulation_state_probabilities(
+        lambda_1=lambda_1,
+        lambda_2=lambda_2,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        target=target,
+        class_type=class_type,
+        seed_num=seed_num,
+        num_of_trials=num_of_trials,
+        runtime=runtime,
+    )
+    return simulation_times, mean_time_sim, mean_time_markov
+
+
+def get_simulation_and_markov_outputs(
+    lambda_2,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    measure_to_compare,
+    target=1,
+    seed_num=None,
+    num_of_trials=10,
+    runtime=2000,
+    class_type=None,
+    warm_up_time=0,
+):
+    """
+    Get the simulation and Markov outputs for a given measure.
+    """
+    if measure_to_compare == "waiting":
+        (
+            simulation_times,
+            mean_time_sim,
+            mean_time_markov,
+        ) = get_waiting_time_comparisons(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            seed_num=seed_num,
+            num_of_trials=num_of_trials,
+            runtime=runtime,
+            class_type=class_type,
+            warm_up_time=warm_up_time,
+        )
+    elif measure_to_compare == "blocking":
+        (
+            simulation_times,
+            mean_time_sim,
+            mean_time_markov,
+        ) = get_blocking_time_comparisons(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            seed_num=seed_num,
+            num_of_trials=num_of_trials,
+            runtime=runtime,
+            class_type=class_type,
+            warm_up_time=warm_up_time,
+        )
+    elif measure_to_compare == "proportion":
+        (
+            simulation_times,
+            mean_time_sim,
+            mean_time_markov,
+        ) = get_proportion_comparison(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            seed_num=seed_num,
+            num_of_trials=num_of_trials,
+            runtime=runtime,
+            class_type=class_type,
+            target=target,
+        )
+    else:
+        raise ValueError("Invalid measure_to_compare")
+
+    return simulation_times, mean_time_sim, mean_time_markov
 
 
 def plot_output_comparisons(
@@ -390,7 +688,8 @@ def plot_output_comparisons(
     max_parameter_value : float, optional
         The maximum value of the parameter to plot over, by default 1
     accuracy : int, optional
-        The number of iterations between the minimum and maximum number of the parameter, by default None
+        The number of iterations between the minimum and maximum number of the
+        parameter, by default None
 
     Plots
     -------
@@ -414,7 +713,7 @@ def plot_output_comparisons(
     all_times_sim = []
     all_mean_times_sim = []
     all_mean_times_markov = []
-    if accuracy == None or accuracy <= 1:
+    if accuracy is None or accuracy <= 1:
         accuracy = 5
 
     starting_value = locals()[plot_over]
@@ -436,121 +735,27 @@ def plot_output_comparisons(
         elif plot_over == "buffer_capacity":
             buffer_capacity = int(parameter)
 
-        times = get_multiple_runs_results(
+        # TODO: Get rid of measure_to_compare variable
+        (
+            simulation_times,
+            mean_time_sim,
+            mean_time_markov,
+        ) = get_simulation_and_markov_outputs(
             lambda_2=lambda_2,
             lambda_1=lambda_1,
             mu=mu,
             num_of_servers=num_of_servers,
             threshold=threshold,
-            num_of_trials=num_of_trials,
-            seed_num=seed_num,
-            runtime=runtime,
-            warm_up_time=warm_up_time,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
+            measure_to_compare=measure_to_compare,
+            target=target,
+            seed_num=seed_num,
+            num_of_trials=num_of_trials,
+            runtime=runtime,
             class_type=class_type,
+            warm_up_time=warm_up_time,
         )
-        # TODO: Get rid of measure_to_compare variable
-        if measure_to_compare == "waiting":
-            simulation_times = [np.mean(w.waiting_times) for w in times]
-            mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
-                lambda_2=lambda_2,
-                lambda_1=lambda_1,
-                mu=mu,
-                num_of_servers=num_of_servers,
-                threshold=threshold,
-                system_capacity=system_capacity,
-                buffer_capacity=buffer_capacity,
-                seed_num=seed_num,
-                runtime=runtime,
-                num_of_trials=num_of_trials,
-                class_type=class_type,
-            )
-            mean_time_markov = get_mean_waiting_time_using_markov_state_probabilities(
-                lambda_2=lambda_2,
-                lambda_1=lambda_1,
-                mu=mu,
-                num_of_servers=num_of_servers,
-                threshold=threshold,
-                system_capacity=system_capacity,
-                buffer_capacity=buffer_capacity,
-                class_type=class_type,
-            )
-        elif measure_to_compare == "blocking":
-            if class_type == 0:
-                raise Exception("Blocking does not occur for class 1 individuals")
-            simulation_times = [np.mean(b.blocking_times) for b in times]
-            mean_time_sim = get_mean_blocking_time_from_simulation_state_probabilities(
-                lambda_2=lambda_2,
-                lambda_1=lambda_1,
-                mu=mu,
-                num_of_servers=num_of_servers,
-                threshold=threshold,
-                system_capacity=system_capacity,
-                buffer_capacity=buffer_capacity,
-                num_of_trials=num_of_trials,
-                seed_num=seed_num,
-                runtime=runtime,
-            )
-            mean_time_markov = get_mean_blocking_time_using_markov_state_probabilities(
-                lambda_2=lambda_2,
-                lambda_1=lambda_1,
-                mu=mu,
-                num_of_servers=num_of_servers,
-                threshold=threshold,
-                system_capacity=system_capacity,
-                buffer_capacity=buffer_capacity,
-            )
-        elif measure_to_compare == "proportion":
-            if class_type == None:
-                index = 0
-            else:
-                index = class_type + 1
-
-            simulation_times = (
-                get_mean_proportion_of_individuals_within_target_for_multiple_runs(
-                    lambda_1=lambda_1,
-                    lambda_2=lambda_2,
-                    mu=mu,
-                    num_of_servers=num_of_servers,
-                    threshold=threshold,
-                    system_capacity=system_capacity,
-                    buffer_capacity=buffer_capacity,
-                    seed_num=seed_num,
-                    num_of_trials=num_of_trials,
-                    runtime=runtime,
-                    target=target,
-                )[index]
-            )
-            mean_time_markov = (
-                proportion_within_target_using_markov_state_probabilities(
-                    lambda_1=lambda_1,
-                    lambda_2=lambda_2,
-                    mu=mu,
-                    num_of_servers=num_of_servers,
-                    threshold=threshold,
-                    system_capacity=system_capacity,
-                    buffer_capacity=buffer_capacity,
-                    target=target,
-                    class_type=class_type,
-                )
-            )
-            mean_time_sim = (
-                get_proportion_within_target_from_simulation_state_probabilities(
-                    lambda_1=lambda_1,
-                    lambda_2=lambda_2,
-                    mu=mu,
-                    num_of_servers=num_of_servers,
-                    threshold=threshold,
-                    system_capacity=system_capacity,
-                    buffer_capacity=buffer_capacity,
-                    target=target,
-                    class_type=class_type,
-                    seed_num=seed_num,
-                    num_of_trials=num_of_trials,
-                    runtime=runtime,
-                )
-            )
 
         all_times_sim.append(simulation_times)
         all_mean_times_sim.append(mean_time_sim)

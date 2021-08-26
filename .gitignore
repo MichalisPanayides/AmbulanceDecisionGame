@@ -21,3 +21,5 @@ data/game_data/nbs/*
 !data/game_data/nbs/_main
 !data/game_data/nbs/main.py
 !data/game_data/nbs/**.ipynb
+.tox
+dist

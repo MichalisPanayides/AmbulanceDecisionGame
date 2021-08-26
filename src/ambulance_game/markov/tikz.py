@@ -1,11 +1,11 @@
+"""
+Code to generate the tikz code for the markov chain and its spanning trees
+"""
 import numpy as np
 
 from .graphical import (
     check_permutation_is_valid,
-    find_next_permutation_over,
-    find_next_permutation_over_L_and_R,
     generate_next_permutation_of_edges,
-    reset_L_and_R_in_array,
 )
 
 
@@ -382,8 +382,10 @@ def generate_code_for_tikz_spanning_trees_rooted_at_00(
     """Builds a string of latex code that generates tikz pictures of all spanning
     trees of the Markov chain that are rooted at node (0,0). The function considers
     the Markov chain with the given parameters and performs the following steps:
-        - FOR a specific combination of edges (e.g. 2 x down_edges, 3 x right_edges and 2 x left_edges):
-            - Initialise an array with the corresponding values i.e. ["L","L","R","R","R","D","D"]
+        - FOR a specific combination of edges (e.g. 2 x down_edges,
+          3 x right_edges and 2 x left_edges):
+            - Initialise an array with the corresponding values
+              i.e. ["L","L","R","R","R","D","D"]
             - WHILE more trees exist with these specific values:
                 - if the array can be translated into a valid spanning tree (no cycles):
                     - Generate tikz code for that array

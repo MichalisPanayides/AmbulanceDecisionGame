@@ -216,7 +216,7 @@ def test_get_probability_of_waiting_time_in_system_less_than_target_for_state_cl
     )
 
 
-def test_get_probability_of_waiting_time_in_system_less_than_target_for_class_None():
+def test_get_probability_of_waiting_time_in_system_less_than_target_for_class_none():
     """
     Test that an error is raised when the class type is None for this function.
     """

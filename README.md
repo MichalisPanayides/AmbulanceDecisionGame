@@ -36,7 +36,8 @@ The `ambulance_game` library is used to model:
 
 Install a development version of this library with the command:
 
-    $ python setup.py develop
+    $ python -m pip install flit
+    $ python -m flit install --symlink
 
 
 <!-- TESTS EXAMPLES -->

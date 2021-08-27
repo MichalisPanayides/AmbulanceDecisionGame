@@ -36,7 +36,8 @@ The `ambulance_game` library is used to model:
 
 Install a development version of this library with the command:
 
-    $ python setup.py develop
+    $ python -m pip install flit
+    $ python -m flit install --symlink
 
 
 <!-- TESTS EXAMPLES -->
@@ -75,7 +76,7 @@ Project Link: [AmbulanceDecisionGame](https://github.com/11michalis11/AmbulanceD
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [tests-shield]: https://img.shields.io/badge/Tests-passing-GREEN.svg
 [tests-url]: https://github.com/11michalis11/AmbulanceDecisionGame/actions
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg
+[issues-shield]: https://img.shields.io/github/issues/11michalis11/AmbulanceDecisionGame.svg
 [issues-url]: https://github.com/11michalis11/AmbulanceDecisionGame/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg
 [license-url]: https://github.com/11michalis11/AmbulanceDecisionGame/blob/master/LICENSE.txt

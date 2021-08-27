@@ -343,6 +343,38 @@ def test_get_average_state_probabilities_array():
     assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
+def test_get_average_state_probabilities_dict():
+    """
+    Test to ensure that the sum of elements of the average pi array equate to 1
+    """
+    lambda_2 = 0.1
+    lambda_1 = 0.2
+    mu = 0.2
+    num_of_servers = 3
+    threshold = 3
+    system_capacity = 5
+    buffer_capacity = 4
+    seed_num = None
+    runtime = 2000
+    num_of_trials = 5
+
+    pi_dict = get_average_simulated_state_probabilities(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=seed_num,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
+        output=dict,
+    )
+
+    assert round(np.sum(tuple(pi_dict.values())), NUMBER_OF_DIGITS_TO_ROUND) == 1
+
+
 def test_get_multiple_results():
     """
     Test that the get_multiple_results function returns the correct
@@ -380,7 +412,7 @@ def test_get_multiple_results():
             assert isinstance(mult_results_2[times][trial], list)
 
 
-def test_example_get_multiple_results():
+def test_get_multiple_results_example():
     """
     Test that multiple results function works with specific values
     """
@@ -577,6 +609,56 @@ def test_calculate_class_2_individuals_best_response_equal_split():
     )
 
     assert np.isclose(equal_split, 0.5)
+
+
+def test_calculate_class_2_individuals_best_response_all_individuals_in_one():
+    """
+    Ensuring that the function is sends 100% of individuals to the first system
+    when the second system is very busy and vise versa.
+    """
+    all_individuals_to_first = calculate_class_2_individuals_best_response(
+        lambda_2=0.3,
+        lambda_1_1=0.1,
+        lambda_1_2=3,
+        mu_1=10,
+        mu_2=2,
+        num_of_servers_1=8,
+        num_of_servers_2=4,
+        threshold_1=6,
+        threshold_2=3,
+        seed_num_1=10,
+        seed_num_2=10,
+        num_of_trials=5,
+        warm_up_time=100,
+        runtime=500,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
+    )
+    assert all_individuals_to_first == 1
+
+    all_individuals_to_second = calculate_class_2_individuals_best_response(
+        lambda_2=0.3,
+        lambda_1_1=3,
+        lambda_1_2=0.1,
+        mu_1=2,
+        mu_2=10,
+        num_of_servers_1=4,
+        num_of_servers_2=8,
+        threshold_1=3,
+        threshold_2=6,
+        seed_num_1=10,
+        seed_num_2=10,
+        num_of_trials=5,
+        warm_up_time=100,
+        runtime=500,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
+    )
+    assert all_individuals_to_second == 0
 
 
 def test_extract_total_individuals_and_the_ones_within_target_example():

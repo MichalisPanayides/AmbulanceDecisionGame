@@ -6,6 +6,7 @@ state probabilites
 # pylint: disable=invalid-name
 
 import functools
+import pytest
 
 from hypothesis import given
 from hypothesis.strategies import integers
@@ -178,6 +179,22 @@ def test_get_rate_of_state_00_graphically():
         assert P00_rate == value ** 2
 
         system_capacity += 1
+
+
+def test_get_rate_of_state_00_graphically_num_of_servers_not_1():
+    """
+    Test that for num_of_servers != 1 an error is raised.
+    """
+    with pytest.raises(NotImplementedError):
+        get_rate_of_state_00_graphically(
+            lambda_2=None,
+            lambda_1=None,
+            mu=None,
+            num_of_servers=2,
+            threshold=None,
+            system_capacity=None,
+            buffer_capacity=None,
+        )
 
 
 def test_get_all_permutations_examples():

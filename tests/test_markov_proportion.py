@@ -3,6 +3,7 @@ Tests for the functionality of the proportion of individuals within target.
 """
 
 import numpy as np
+import pytest
 
 from ambulance_game.markov.proportion import (
     general_psi_function,
@@ -96,6 +97,11 @@ def test_specific_psi_function_examples():
             NUMBER_OF_DIGITS_TO_ROUND,
         )
         == round(-0.009534359306064256, NUMBER_OF_DIGITS_TO_ROUND)
+    )
+
+    assert (
+        specific_psi_function(arg=None, k=3, l=None, exp_rates=None, freq=None, a=None)
+        == 0
     )
 
 
@@ -208,6 +214,22 @@ def test_get_probability_of_waiting_time_in_system_less_than_target_for_state_cl
     assert round(prob, NUMBER_OF_DIGITS_TO_ROUND) == round(
         0.9974529800821392, NUMBER_OF_DIGITS_TO_ROUND
     )
+
+
+def test_get_probability_of_waiting_time_in_system_less_than_target_for_class_none():
+    """
+    Test that an error is raised when the class type is None for this function.
+    """
+    with pytest.raises(ValueError):
+        get_probability_of_waiting_time_in_system_less_than_target_for_state(
+            state=None,
+            class_type=None,
+            mu=None,
+            num_of_servers=None,
+            threshold=None,
+            target=None,
+            psi_func=None,
+        )
 
 
 def test_get_proportion_of_individuals_within_time_target_class_1():

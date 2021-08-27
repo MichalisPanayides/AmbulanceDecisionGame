@@ -1,7 +1,6 @@
 """
 Tests for the functions in the Markov model module
 """
-
 import sys
 
 import matplotlib.pyplot as plt
@@ -60,13 +59,26 @@ def test_build_states(threshold, system_capacity, buffer_capacity):
         assert len(states) == all_states_size
 
 
+def test_build_states_invalid_buffer_capacity():
+    """
+    Test to ensure that the build_states function raises an error if the buffer
+    capacity is less than 1
+    """
+    with pytest.raises(ValueError):
+        build_states(
+            threshold=None,
+            system_capacity=None,
+            buffer_capacity=0,
+        )
+
+
 @given(
     num_of_servers=integers(min_value=2, max_value=8),
     threshold=integers(min_value=2, max_value=8),
     buffer_capacity=integers(min_value=2, max_value=8),
     system_capacity=integers(min_value=2, max_value=8),
 )
-@settings(deadline=None)
+@settings(deadline=None, max_examples=20)
 def test_visualise_markov_chain(
     num_of_servers, threshold, system_capacity, buffer_capacity
 ):
@@ -225,7 +237,7 @@ def test_get_symbolic_transition_matrix(
     ),
     mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
 )
-@settings(deadline=None, max_examples=20)
+@settings(deadline=None, max_examples=10)
 def test_get_transition_matrix(
     system_capacity, buffer_capacity, lambda_2, lambda_1, mu
 ):
@@ -398,7 +410,7 @@ def test_get_steady_state_algebraically_solve(a, b, c, d, e, f):
 
 @pytest.mark.skipif(
     sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
+    reason="Skipping on macOS and Python 3.9 because of numpy.linalg.lstsq issue",
 )
 @given(
     a=floats(min_value=1, max_value=10),
@@ -418,10 +430,6 @@ def test_get_steady_state_algebraically_lstsq(a, b, c, d, e, f):
     assert is_steady_state(state=steady, Q=Q)
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 def test_get_state_probabilities_dict():
     """
     Test to ensure that sum of the values of the pi dictionary equate to 1
@@ -441,7 +449,7 @@ def test_get_state_probabilities_dict():
         buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi_dictionary = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=dict
@@ -450,10 +458,6 @@ def test_get_state_probabilities_dict():
     assert round(sum(pi_dictionary.values()), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
 def test_get_state_probabilities_array():
     """
     Test to ensure that the sum of elements of the pi array equate to 1
@@ -473,7 +477,7 @@ def test_get_state_probabilities_array():
         buffer_capacity=4,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     pi_array = get_markov_state_probabilities(
         pi=pi, all_states=all_states, output=np.ndarray
@@ -482,10 +486,14 @@ def test_get_state_probabilities_array():
     assert round(np.nansum(pi_array), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("darwin") and sys.version.startswith("3.9"),
-    reason="Skipping on macOS and Python 3.9",
-)
+def test_get_state_probabilities_invalid():
+    """
+    Test to ensure that passing an invalid output type raises an error
+    """
+    with pytest.raises(ValueError):
+        get_markov_state_probabilities(pi=None, all_states=None, output="invalid")
+
+
 def test_get_mean_number_of_individuals_examples():
     """
     Some examples to ensure that the correct mean number of individuals are output
@@ -501,7 +509,7 @@ def test_get_mean_number_of_individuals_examples():
         buffer_capacity=20,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=np.linalg.solve
     )
     assert (
         round(

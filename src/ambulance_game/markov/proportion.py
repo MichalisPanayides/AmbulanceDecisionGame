@@ -243,7 +243,7 @@ def get_probability_of_waiting_time_in_system_less_than_target_for_state(
         )
         rep = min(state[1], threshold) - num_of_servers
     else:
-        return ValueError("Class type bust be 0, 1 or None")
+        raise ValueError("Class type bust be 0 or 1")
 
     if arrive_on_waiting_space:
         if num_of_servers == 1:

@@ -3,6 +3,7 @@ Code for the simulation of the model.
 """
 
 import collections
+import itertools
 import random
 
 import ciw
@@ -107,7 +108,7 @@ def build_custom_node(threshold=float("inf")):
                 ]
                 self.blocked_queue.pop(0)
                 self.len_blocked_queue -= 1
-                if individual_to_receive.interrupted:
+                if individual_to_receive.interrupted:  # pragma: no cover
                     individual_to_receive.interrupted = False
                     node_to_receive_from.interrupted_individuals.remove(
                         individual_to_receive
@@ -299,8 +300,11 @@ def get_average_simulated_state_probabilities(
             if len(average_state_probabilities) == 0:
                 average_state_probabilities = state_probabilities
             else:
-                for key in average_state_probabilities:
-                    average_state_probabilities[key] += state_probabilities[key]
+                for key in state_probabilities:
+                    if key in average_state_probabilities:
+                        average_state_probabilities[key] += state_probabilities[key]
+                    else:
+                        average_state_probabilities[key] = state_probabilities[key]
         for key, value in average_state_probabilities.items():
             average_state_probabilities[key] = value / num_of_trials
     else:
@@ -325,17 +329,18 @@ def get_average_simulated_state_probabilities(
                 system_capacity=system_capacity,
                 buffer_capacity=buffer_capacity,
             )
-            for row in range(buffer_capacity + 1):
-                for col in range(system_capacity + 1):
-                    updated_entry = np.nansum(
-                        [
-                            average_state_probabilities[row, col],
-                            state_probabilities[row, col],
-                        ]
-                    )
-                    average_state_probabilities[row, col] = (
-                        updated_entry if updated_entry != 0 else np.NaN
-                    )
+            for row, col in itertools.product(
+                range(buffer_capacity + 1), range(system_capacity + 1)
+            ):
+                updated_entry = np.nansum(
+                    [
+                        average_state_probabilities[row, col],
+                        state_probabilities[row, col],
+                    ]
+                )
+                average_state_probabilities[row, col] = (
+                    updated_entry if updated_entry != 0 else np.NaN
+                )
         average_state_probabilities /= num_of_trials
 
     return average_state_probabilities
@@ -465,9 +470,8 @@ def get_multiple_runs_results(
         A list of records where each record consists of the waiting, service and
         blocking times of one trial. Alternatively if the output_type = "list" then
         returns three lists with all waiting, service and blocking times
-
     """
-    if seed_num is None:
+    if seed_num is None:  # pragma: no cover
         seed_num = random.random()
     records = collections.namedtuple(
         "records", "waiting_times service_times blocking_times"

@@ -45,6 +45,7 @@ def get_heatmaps(
     runtime=1440,
     num_of_trials=10,
     linear_positioning=False,
+    algebraic_function=np.linalg.lstsq,
 ):
     """Get heatmaps plot that compare the state probabilities of the simulation
     and Markov state probabilities. In total three heatmaps are generated; one for
@@ -82,7 +83,7 @@ def get_heatmaps(
         buffer_capacity=buffer_capacity,
     )
     pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.lstsq
+        Q=transition_matrix, algebraic_function=algebraic_function
     )
 
     sim_state_probabilities_array = get_average_simulated_state_probabilities(

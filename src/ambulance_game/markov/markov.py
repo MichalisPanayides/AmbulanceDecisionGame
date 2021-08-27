@@ -445,7 +445,7 @@ def get_steady_state_algebraically(Q, algebraic_function=np.linalg.solve):
     M, b = augment_Q(Q)
     if algebraic_function == np.linalg.solve:
         state = algebraic_function(M, b).transpose()[0]
-    elif algebraic_function == np.linalg.lstsq:
+    elif algebraic_function == np.linalg.lstsq:  # pragma: no cover
         state = algebraic_function(M, b, rcond=None)[0][:, 0]
     return state
 
@@ -479,7 +479,7 @@ def get_markov_state_probabilities(
         for index, _ in enumerate(all_states):
             states_probabilities_array[all_states[index]] = pi[index]
         return states_probabilities_array
-    return None
+    raise ValueError("output must be either dict or np.ndarray")
 
 
 def get_mean_number_of_individuals_in_system(pi, states):

@@ -298,7 +298,8 @@ def get_accepting_proportion_of_individuals(
     lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """
-    Get the proportion of class 2 individuals that are not lost to the system
+    Get the proportion of individuals for both clasees that are not lost to the
+    system
 
     Parameters
     ----------

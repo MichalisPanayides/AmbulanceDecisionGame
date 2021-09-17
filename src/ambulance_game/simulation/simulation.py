@@ -164,7 +164,6 @@ def simulate_model(
     the buffer capacity is forced to be 1 because otherwise, when the service area
     gets full, class 2 individuals will flood the buffer area which is not what
     should happen in this particular scenario.
-    TODO: use different approach to handle this scenario
 
     Additionally, the buffer capacity should always be greater or equal to 1
 
@@ -382,9 +381,7 @@ def extract_times_from_records(simulation_records, warm_up_time):
     return waiting_times, serving_times, blocking_times
 
 
-def extract_times_from_individuals(
-    individuals, warm_up_time, first_node_to_visit, total_node_visits
-):
+def extract_times_from_individuals(individuals, warm_up_time, class_type):
     """
     Extract waiting times and service times for all individuals and proceed to extract
     blocking times for just class 2 individuals. The function uses individual's records
@@ -394,6 +391,9 @@ def extract_times_from_individuals(
     waiting_times = []
     serving_times = []
     blocking_times = []
+
+    first_node_to_visit = 2 - class_type
+    total_node_visits = class_type + 1
 
     for ind in individuals:
         if (
@@ -497,7 +497,7 @@ def get_multiple_runs_results(
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 
-        if class_type == 1:
+        if class_type == 0 or class_type == 1:
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,
@@ -506,22 +506,7 @@ def get_multiple_runs_results(
             ) = extract_times_from_individuals(
                 individuals=individuals,
                 warm_up_time=warm_up_time,
-                first_node_to_visit=1,
-                total_node_visits=2,
-            )
-            results.append(records(waiting_times, serving_times, blocking_times))
-        # TODO: Put class_type == 1 and class_type == 2 in one else statement
-        if class_type == 0:
-            individuals = simulation.get_all_individuals()
-            (
-                waiting_times,
-                serving_times,
-                blocking_times,
-            ) = extract_times_from_individuals(
-                individuals=individuals,
-                warm_up_time=warm_up_time,
-                first_node_to_visit=2,
-                total_node_visits=1,
+                class_type=class_type,
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 

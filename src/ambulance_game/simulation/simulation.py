@@ -497,7 +497,7 @@ def get_multiple_runs_results(
             )
             results.append(records(waiting_times, serving_times, blocking_times))
 
-        if class_type == 0 or class_type == 1:
+        if class_type in (0, 1):
             individuals = simulation.get_all_individuals()
             (
                 waiting_times,

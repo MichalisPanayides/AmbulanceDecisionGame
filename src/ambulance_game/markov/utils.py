@@ -1,3 +1,7 @@
+"""
+Code for general usage across the main directory
+"""
+
 import functools
 
 import numpy as np
@@ -287,3 +291,56 @@ def get_accepting_proportion_of_class_2_individuals(
         buffer_capacity=buffer_capacity,
     )
     return prob_accept[1]
+
+
+@functools.lru_cache(maxsize=None)
+def get_accepting_proportion_of_individuals(
+    lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+):
+    """
+    Get the proportion of individuals for both clasees that are not lost to the
+    system
+
+    Parameters
+    ----------
+    lambda_1 : float
+    lambda_2 : float
+    mu : float
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+
+    Returns
+    -------
+    float
+        The probability that an individual entering will not be lost to the
+        system
+    """
+    transition_matrix = get_transition_matrix(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    pi = get_steady_state_algebraically(
+        Q=transition_matrix, algebraic_function=np.linalg.solve
+    )
+    pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
+
+    prob_accept = get_probability_of_accepting(
+        all_states=all_states,
+        pi=pi,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    return prob_accept

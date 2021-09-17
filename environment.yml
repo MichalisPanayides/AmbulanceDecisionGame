@@ -3,18 +3,17 @@ channels:
   - defaults
 dependencies:
   - pip==20.2.4
-  - sympy==1.5.1
-  - scipy==1.4.1
-  - numpy==1.19.2
   - python==3.8.1
-  - notebook==6.0.3
-  - pylint==2.4.4
-  - matplotlib==3.3.2
-  - seaborn==0.10.0
   - ipykernel==5.3.4
+  - notebook==6.0.3
+  - numpy==1.18.0
+  - matplotlib==3.4.3
+  - scipy==1.7.1
   - networkx==2.4
-  - dask==2021.3.0
+  - sympy==1.5.1
+  - dask==2021.08.1
   - pip:
+      - flit==3.2.0
       - ciw==2.1.0
-      - nashpy==0.0.19
+      - nashpy==0.0.23
 prefix: C:\Users\micha\Anaconda3\envs\AmbulanceGame

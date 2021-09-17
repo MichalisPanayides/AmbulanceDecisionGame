@@ -1,3 +1,9 @@
+"""
+Code to get the closed form state probabilites of the Markov Chain
+"""
+
+# pylint: disable=invalid-name
+
 import numpy as np
 
 
@@ -16,7 +22,7 @@ def reset_L_and_R_in_array(edges, lefts):
 
     L_count = 0
     for pos, element in enumerate(edges):
-        reset_this_entry = element == "L" or element == "R"
+        reset_this_entry = element in ("L", "R")
         if reset_this_entry and L_count < lefts:
             edges[pos] = "L"
             L_count += 1
@@ -29,7 +35,7 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
     """Finds the next permutation of an array (edges) by permuting a specific
     element of the array (direction) over another specified element of the array
     (permute_over).
-    [X, X, Y, Y]->[X, Y, X, Y]->[X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
+    [X, X, Y, Y] -> [X, Y, X, Y] -> [X, Y, Y, X] -> [Y, X, X, Y] ... -> [Y, Y, X, X]
 
     This function is used in the following cases:
         - If the array consists only of elements "L" and "D" (direction="L"):
@@ -81,9 +87,8 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
     """
     if direction == "LR":
         for pos, element in enumerate(edges[:-1]):
-            if (element == "L" or element == "R") and edges[pos + 1] == permute_over:
+            if (element in ("L", "R")) and edges[pos + 1] == permute_over:
                 target_position = pos
-
         pos_last_D = len(edges) - edges[::-1].index(permute_over) - 1
         edges_to_be_swapped = len(edges) - pos_last_D
         edges[target_position] = permute_over
@@ -95,7 +100,6 @@ def find_next_permutation_over(edges, direction, rights=0, permute_over="D"):
             if i >= edges_to_be_swapped - rights:
                 direction = "R"
             edges[target_position + 1 + i] = direction
-
     else:
         for pos, element in enumerate(edges[:-1]):
             if element == direction and edges[pos + 1] == permute_over:
@@ -124,7 +128,7 @@ def find_next_permutation_over_L_and_R(edges):
     only_LR_edges = []
     only_LR_positions = []
     for pos, element in enumerate(edges):
-        if element == "L" or element == "R":
+        if element in ("L", "R"):
             only_LR_edges.append(element)
             only_LR_positions.append(pos)
 
@@ -175,10 +179,9 @@ def generate_next_permutation_of_edges(edges, downs, lefts, rights):
             pos_last_D = len(edges) - edges[::-1].index("D") - 1
             if pos_last_D == (downs - 1):
                 return []
-            else:
-                edges = find_next_permutation_over(
-                    edges=edges, direction="LR", rights=rights
-                )
+            edges = find_next_permutation_over(
+                edges=edges, direction="LR", rights=rights
+            )
 
     elif "L" in edges:
         pos_last_D = len(edges) - edges[::-1].index("D") - 1
@@ -264,7 +267,7 @@ def get_rate_of_state_00_graphically(
     """
 
     if num_of_servers != 1:
-        return "Unable to calculate for cases where number of servers is not 1"
+        raise NotImplementedError("Function only implemented for num_of_servers = 1")
 
     P00_rate = 0
     for down_edges in np.linspace(
@@ -375,8 +378,7 @@ def get_permutations_ending_in_R(D, R, L):
         return np.math.factorial(D + R + L - 1) // (
             np.math.factorial(D) * np.math.factorial(R - 1) * np.math.factorial(L)
         )
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
@@ -407,7 +409,7 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             perms += (
                 sign
@@ -420,8 +422,7 @@ def get_permutations_ending_in_D_where_any_RL_exists(D, R, L):
                 )
             )
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
@@ -431,7 +432,8 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
     "L" somewhere.
 
     This can be calculated by:
-        Σ_(i=1)^(min(R,L-1)) (-1)^(i+1) [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i-1)! * (i)!)]
+        Σ_(i=1)^(min(R,L-1)) (-1)^(i+1)
+                * [(D+R+L-i-1)! / ((D)! * (R-i)! * (L-i-1)! * (i)!)]
 
     Parameters
     ----------
@@ -452,7 +454,7 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             perms += (
                 sign
@@ -465,8 +467,7 @@ def get_permutations_ending_in_L_where_any_RL_exists(D, R, L):
                 )
             )
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
@@ -497,7 +498,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
     if max_RL > 0:
         sign = -1
         perms = 0
-        for num_RL in np.linspace(1, max_RL, max_RL):
+        for num_RL in np.linspace(1, max_RL, max_RL, dtype=int):
             sign *= -1
             num_RL_perms = (
                 sign
@@ -511,8 +512,7 @@ def get_permutations_ending_in_RL_where_RL_exists_only_at_the_end(D, R, L):
             )
             perms += num_RL_perms
         return perms
-    else:
-        return 0
+    return 0
 
 
 def get_coefficient(D, R, L):

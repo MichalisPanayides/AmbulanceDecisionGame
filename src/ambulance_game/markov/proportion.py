@@ -1,3 +1,7 @@
+"""
+Code to get the proportion of individuals within a given time target.
+"""
+
 import math
 import operator
 from functools import reduce
@@ -15,6 +19,9 @@ from .utils import get_proportion_of_individuals_not_lost, is_accepting_state
 
 
 def product_of_all_elements(iterable):
+    """
+    Returns the product of all elements in iterable.
+    """
     return reduce(operator.mul, iterable, 1)
 
 
@@ -55,7 +62,9 @@ def general_psi_function(arg, k, l, exp_rates, freq, a):
     return float(psi_val)
 
 
-def specific_psi_function(arg, k, l, exp_rates, freq, a):
+def specific_psi_function(
+    arg, k, l, exp_rates, freq, a
+):  # pylint: disable=unused-argument
     """
     The specific version of the Ψ function that is used for the purpose of
     this study. This function is a simplification of the general_psi_function
@@ -96,6 +105,7 @@ def specific_psi_function(arg, k, l, exp_rates, freq, a):
     if k == 2:
         psi_val = -1 / (arg * (arg + exp_rates[1]) ** freq[1])
         return psi_val
+    return 0
 
 
 def hypoexponential_cdf(x, exp_rates, freq, psi_func=specific_psi_function):
@@ -233,7 +243,7 @@ def get_probability_of_waiting_time_in_system_less_than_target_for_state(
         )
         rep = min(state[1], threshold) - num_of_servers
     else:
-        return ValueError("Class type bust be 0, 1 or None")
+        raise ValueError("Class type bust be 0 or 1")
 
     if arrive_on_waiting_space:
         if num_of_servers == 1:
@@ -263,12 +273,12 @@ def get_proportion_of_individuals_within_time_target(
     buffer_capacity,
     target,
     psi_func=specific_psi_function,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
     """
     Gets the probability that a certain class of individuals is within a given
-    time target. This functions runs for every state the function get_probability_of_waiting_time_in_system_less_than_target_for_state() and
+    time target. This functions runs for every state the function
+    get_probability_of_waiting_time_in_system_less_than_target_for_state() and
     by using the state probabilities to get the average proportion of individuals
     within target.
 
@@ -333,8 +343,7 @@ def overall_proportion_of_individuals_within_time_target(
     buffer_capacity,
     target,
     psi_func=specific_psi_function,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
     """
     The function gets the overall proportion of both classes of individuals by

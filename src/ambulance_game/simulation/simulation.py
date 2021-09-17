@@ -1,4 +1,9 @@
+"""
+Code for the simulation of the model.
+"""
+
 import collections
+import itertools
 import random
 
 import ciw
@@ -69,6 +74,11 @@ def build_custom_node(threshold=float("inf")):
     """
 
     class CustomNode(ciw.Node):
+        """
+        Overrides the default release_blocked_individual and finish_service
+        methods of the ciw.Node class
+        """
+
         def release_blocked_individual(self):
             """
             Releases an individual who becomes unblocked when
@@ -98,7 +108,7 @@ def build_custom_node(threshold=float("inf")):
                 ]
                 self.blocked_queue.pop(0)
                 self.len_blocked_queue -= 1
-                if individual_to_receive.interrupted:
+                if individual_to_receive.interrupted:  # pragma: no cover
                     individual_to_receive.interrupted = False
                     node_to_receive_from.interrupted_individuals.remove(
                         individual_to_receive
@@ -161,7 +171,8 @@ def simulate_model(
     Parameters
     ----------
     seed_num : [float], optional
-        A seed number in order to be able to replicate results, by default random.random()
+        A seed number in order to be able to replicate results,
+        by default random.random()
 
     Returns
     -------
@@ -178,7 +189,7 @@ def simulate_model(
         buffer_capacity = 1
         # TODO: Different approach to handle this situation
 
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
     model = build_model(
         lambda_2=lambda_2,
@@ -214,7 +225,8 @@ def get_simulated_state_probabilities(
     Returns
     -------
     dictionary OR np.ndarray
-        - A dictionary with the Markov states as keys and the equivalent probabilities as values
+        - A dictionary with the Markov states as keys and the equivalent probabilities
+          as values
         - A numpy.ndarray Π where: Π(i,j) = probability of being in state (i,j)
     """
     state_probabilities_dictionary = (
@@ -222,22 +234,22 @@ def get_simulated_state_probabilities(
     )
     if output == dict:
         return state_probabilities_dictionary
-    elif output == np.ndarray:
-        if buffer_capacity == None:
-            buffer_capacity = max(
-                [state[0] for state in state_probabilities_dictionary.keys()]
-            )
-        if system_capacity == None:
-            system_capacity = max(
-                [state[1] for state in state_probabilities_dictionary.keys()]
-            )
-        state_probabilities_array = np.full(
-            (buffer_capacity + 1, system_capacity + 1), np.NaN
+
+    if buffer_capacity is None:
+        buffer_capacity = max(
+            [state[0] for state in state_probabilities_dictionary.keys()]
         )
-        for key, value in state_probabilities_dictionary.items():
-            if value > 0:
-                state_probabilities_array[key] = value
-        return state_probabilities_array
+    if system_capacity is None:
+        system_capacity = max(
+            [state[1] for state in state_probabilities_dictionary.keys()]
+        )
+    state_probabilities_array = np.full(
+        (buffer_capacity + 1, system_capacity + 1), np.NaN
+    )
+    for key, value in state_probabilities_dictionary.items():
+        if value > 0:
+            state_probabilities_array[key] = value
+    return state_probabilities_array
 
 
 def get_average_simulated_state_probabilities(
@@ -262,55 +274,73 @@ def get_average_simulated_state_probabilities(
     output : type, optional
         The format of the output state probabilities, by default np.ndarray
     """
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
 
     if output == dict:
         average_state_probabilities = {}
+        for trial in range(num_of_trials):
+            simulation_object = simulate_model(
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                seed_num=seed_num + trial,
+                runtime=runtime,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            state_probabilities = get_simulated_state_probabilities(
+                simulation_object=simulation_object,
+                output=output,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            if len(average_state_probabilities) == 0:
+                average_state_probabilities = state_probabilities
+            else:
+                for key in state_probabilities:
+                    if key in average_state_probabilities:
+                        average_state_probabilities[key] += state_probabilities[key]
+                    else:
+                        average_state_probabilities[key] = state_probabilities[key]
+        for key, value in average_state_probabilities.items():
+            average_state_probabilities[key] = value / num_of_trials
     else:
         average_state_probabilities = np.full(
             (buffer_capacity + 1, system_capacity + 1), np.NaN
         )
-    for trial in range(num_of_trials):
-        simulation_object = simulate_model(
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            seed_num=seed_num + trial,
-            runtime=runtime,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-        state_probabilities = get_simulated_state_probabilities(
-            simulation_object=simulation_object,
-            output=output,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-        )
-        if output == dict:
-            if len(average_state_probabilities) == 0:
-                average_state_probabilities = state_probabilities
-            else:
-                for key in average_state_probabilities.keys():
-                    average_state_probabilities[key] += state_probabilities[key]
-        else:
-            for row in range(buffer_capacity + 1):
-                for col in range(system_capacity + 1):
-                    updated_entry = np.nansum(
-                        [
-                            average_state_probabilities[row, col],
-                            state_probabilities[row, col],
-                        ]
-                    )
-                    average_state_probabilities[row, col] = (
-                        updated_entry if updated_entry != 0 else np.NaN
-                    )
-    if output == dict:
-        for key, value in average_state_probabilities.items():
-            average_state_probabilities[key] = value / num_of_trials
-    else:
+        for trial in range(num_of_trials):
+            simulation_object = simulate_model(
+                lambda_2=lambda_2,
+                lambda_1=lambda_1,
+                mu=mu,
+                num_of_servers=num_of_servers,
+                threshold=threshold,
+                seed_num=seed_num + trial,
+                runtime=runtime,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            state_probabilities = get_simulated_state_probabilities(
+                simulation_object=simulation_object,
+                output=output,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+            for row, col in itertools.product(
+                range(buffer_capacity + 1), range(system_capacity + 1)
+            ):
+                updated_entry = np.nansum(
+                    [
+                        average_state_probabilities[row, col],
+                        state_probabilities[row, col],
+                    ]
+                )
+                average_state_probabilities[row, col] = (
+                    updated_entry if updated_entry != 0 else np.NaN
+                )
         average_state_probabilities /= num_of_trials
 
     return average_state_probabilities
@@ -394,7 +424,8 @@ def get_list_of_results(results):
     Returns
     -------
     list, list, list
-        Three lists that include all waits, services and blocks of all runs of all individuals
+        Three lists that include all waits, services and blocks of all runs of
+        all individuals
     """
     all_waits = [w.waiting_times for w in results]
     all_services = [s.service_times for s in results]
@@ -439,9 +470,8 @@ def get_multiple_runs_results(
         A list of records where each record consists of the waiting, service and
         blocking times of one trial. Alternatively if the output_type = "list" then
         returns three lists with all waiting, service and blocking times
-
     """
-    if seed_num == None:
+    if seed_num is None:  # pragma: no cover
         seed_num = random.random()
     records = collections.namedtuple(
         "records", "waiting_times service_times blocking_times"
@@ -780,7 +810,7 @@ def get_mean_proportion_of_individuals_within_target_for_multiple_runs(
     class_1_proportions = []
     combined_proportions = []
 
-    if seed_num == None:
+    if seed_num is None:
         seed_num = random.random()
 
     for trial in range(num_of_trials):

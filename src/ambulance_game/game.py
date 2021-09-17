@@ -1,10 +1,13 @@
+"""
+Code for the game between two queueing systems and a distributor
+"""
+
 import functools
 import itertools
 
 import dask as da
 import nashpy as nash
 import numpy as np
-from numpy.core.fromnumeric import shape
 import scipy.optimize
 
 from .markov.blocking import get_mean_blocking_time_using_markov_state_probabilities
@@ -468,7 +471,7 @@ def compute_tasks(tasks, processes):
     return out
 
 
-def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
+def build_matrices_from_computed_tasks(computed_tasks, n_1, n_2):
     """
     Using the computed tasks builds the utility matrix of the row and the column
     players and the routing matrix.
@@ -477,9 +480,9 @@ def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
     ----------
     computed_tasks : tuple
         A tuple of tuples of the form (i, j, R[i,j], A[i,j], B[i,j])
-    N_1 : int
+    n_1 : int
         The number of rows for all matrices
-    N_2 : int
+    n_2 : int
         The number of columns for all matrices
 
     Returns
@@ -487,9 +490,9 @@ def build_matrices_from_computed_tasks(computed_tasks, N_1, N_2):
     numpy array, numpy array, numpy array
         The routing matrix and the two payoff matrices
     """
-    routing_matrix = np.zeros((N_1, N_2))
-    utility_matrix_1 = np.zeros((N_1, N_2))
-    utility_matrix_2 = np.zeros((N_1, N_2))
+    routing_matrix = np.zeros((n_1, n_2))
+    utility_matrix_1 = np.zeros((n_1, n_2))
+    utility_matrix_2 = np.zeros((n_1, n_2))
 
     for (
         threshold_1,
@@ -588,7 +591,7 @@ def get_payoff_matrices(
         utility_matrix_1,
         utility_matrix_2,
     ) = build_matrices_from_computed_tasks(
-        computed_tasks=computed_tasks, N_1=system_capacity_1, N_2=system_capacity_2
+        computed_tasks=computed_tasks, n_1=system_capacity_1, n_2=system_capacity_2
     )
     return utility_matrix_1, utility_matrix_2, routing_matrix
 
@@ -638,7 +641,7 @@ def build_game_using_payoff_matrices(
     nashpy.Game
         the game with the constructed or given payoff matrices
     """
-    if payoff_matrix_A == None or payoff_matrix_B == None:
+    if payoff_matrix_A is None or payoff_matrix_B is None:
         payoff_matrix_A, payoff_matrix_B, _ = get_payoff_matrices(
             lambda_2=lambda_2,
             lambda_1_1=lambda_1_1,

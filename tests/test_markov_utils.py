@@ -1,3 +1,7 @@
+"""
+Tests for the utils.py module
+"""
+
 import random
 
 import numpy as np
@@ -12,9 +16,11 @@ from ambulance_game.markov.utils import (
     prob_service,
     get_probability_of_accepting,
     get_proportion_of_individuals_not_lost,
+    get_accepting_proportion_of_class_2_individuals,
+    get_accepting_proportion_of_individuals,
 )
 
-number_of_digits_to_round = 8
+NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
 def test_is_waiting_state():
@@ -174,7 +180,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
             expected_time_in_markov_state_ignoring_class_2_arrivals(
                 state=(1, 3), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == round(
             expected_time_in_markov_state_ignoring_class_2_arrivals(
@@ -184,7 +190,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
                 num_of_servers=4,
                 system_capacity=5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 0.25
     )
@@ -194,7 +200,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
             expected_time_in_markov_state_ignoring_class_2_arrivals(
                 state=(1, 5), lambda_1=0.4, mu=1.2, num_of_servers=4, system_capacity=5
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == round(
             expected_time_in_markov_state_ignoring_class_2_arrivals(
@@ -204,7 +210,7 @@ def test_expected_time_in_markov_state_ignoring_class_2_arrivals():
                 num_of_servers=4,
                 system_capacity=5,
             ),
-            number_of_digits_to_round,
+            NUMBER_OF_DIGITS_TO_ROUND,
         )
         == 0.20833333
     )
@@ -311,4 +317,40 @@ def test_get_proportion_of_individuals_not_lost_example():
             buffer_capacity=2,
         ),
         [0.5853658536585366, 0.4146341463414634],
+    )
+
+
+def test_get_accepting_proportion_of_class_2_individuals():
+    """
+    Tests that the proportion of class 2 individuals that are accepted is as expected
+    """
+    assert (
+        get_accepting_proportion_of_class_2_individuals(
+            lambda_1=1,
+            lambda_2=1,
+            mu=1,
+            num_of_servers=1,
+            threshold=1,
+            system_capacity=1,
+            buffer_capacity=1,
+        )
+        == 0.6
+    )
+
+
+def test_get_accepting_proportion_of_individuals():
+    """
+    Tests that the proportion of individuals that are accepted is as expected
+    """
+    assert np.allclose(
+        get_accepting_proportion_of_individuals(
+            lambda_1=1,
+            lambda_2=1,
+            mu=1,
+            num_of_servers=1,
+            threshold=1,
+            system_capacity=1,
+            buffer_capacity=1,
+        ),
+        [0.2, 0.6],
     )

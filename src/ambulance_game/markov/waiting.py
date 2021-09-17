@@ -1,3 +1,7 @@
+"""
+Code to calculate the mean waiting time.
+"""
+
 import functools
 
 import numpy as np
@@ -104,8 +108,7 @@ def mean_waiting_time_formula_using_recursive_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
     """
     Get the mean waiting time by using a recursive formula.
@@ -178,9 +181,11 @@ def mean_waiting_time_formula_using_direct_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
+    """
+    Get the mean waiting time by using a direct approach.
+    """
     raise NotImplementedError("To be implemented")
 
 
@@ -193,8 +198,7 @@ def mean_waiting_time_formula_using_closed_form_approach(
     threshold,
     system_capacity,
     buffer_capacity,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
     """
     Get the mean waiting time by using a closed-form formula.
@@ -286,8 +290,7 @@ def overall_waiting_time_formula(
     system_capacity,
     buffer_capacity,
     waiting_formula,
-    *args,
-    **kwargs,
+    **kwargs,  # pylint: disable=unused-argument
 ):
     """
     Gets the overall waiting time for all individuals by calculating both class 1

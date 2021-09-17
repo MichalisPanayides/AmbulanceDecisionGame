@@ -1,3 +1,6 @@
+"""
+Code to calculate the expected blocking time.
+"""
 import numpy as np
 
 from .markov import (
@@ -18,8 +21,8 @@ from .utils import (
 def get_coefficients_row_of_array_associated_with_state(
     state, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
-    """Constructs a row of the coefficients matrix. The row to be constructed corresponds
-    to the blocking time equation for a given state (u,v) where:
+    """Constructs a row of the coefficients matrix. The row to be constructed
+    corresponds to the blocking time equation for a given state (u,v) where:
 
     b(u,v) = c(u,v) + p_s(u,v) * b(u,v−1) + p_o(u,v) * b(u,v+1)
 
@@ -108,10 +111,11 @@ def get_blocking_time_linear_system(
     the column vector b that are required. Here M is denoted as "all_coefficients_array"
     and b as "constant_column".
 
-    The function stacks the outputs of get_coefficients_row_of_array_associated_with_state()
-    for all blocking states (i.e. those where u>0) together. In essence all outputs
-    are stacked together to form a square matrix (M) and equivalently a column
-    vector (b) that will be used to find X s.t. M*X=b
+    The function stacks the outputs of
+    get_coefficients_row_of_array_associated_with_state() for all blocking states
+    (i.e. those where u>0) together. In essence all outputs are stacked together
+    to form a square matrix (M) and equivalently a column vector (b) that will
+    be used to find X s.t. M*X=b
 
     Parameters
     ----------
@@ -291,7 +295,10 @@ def mean_blocking_time_formula_using_closed_form_approach(
     system_capacity,
     buffer_capacity,
 ):
-    # Build closed-form formula
+    """
+    Get the mean blocking time using the closed form solution.
+    """
+    # TODO: Build closed-form formula
     raise NotImplementedError("To be implemented")
 
 

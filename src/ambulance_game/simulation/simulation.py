@@ -430,7 +430,8 @@ def get_list_of_results(results):
     all_waits = [w.waiting_times for w in results]
     all_services = [s.service_times for s in results]
     all_blocks = [b.blocking_times for b in results]
-    return all_waits, all_services, all_blocks
+    all_props = [p.proportion_within_target for p in results]
+    return all_waits, all_services, all_blocks, all_props
 
 
 def extract_total_individuals_and_the_ones_within_target_for_both_classes(
@@ -563,6 +564,7 @@ def get_multiple_runs_results(
     mu,
     num_of_servers,
     threshold,
+    target=1,
     seed_num=None,
     warm_up_time=100,
     num_of_trials=10,
@@ -598,7 +600,7 @@ def get_multiple_runs_results(
     if seed_num is None:  # pragma: no cover
         seed_num = random.random()
     records = collections.namedtuple(
-        "records", "waiting_times service_times blocking_times"
+        "records", "waiting_times service_times blocking_times proportion_within_target"
     )
     results = []
     for trial in range(num_of_trials):
@@ -619,10 +621,9 @@ def get_multiple_runs_results(
             waiting_times, serving_times, blocking_times = extract_times_from_records(
                 sim_results, warm_up_time
             )
-            results.append(records(waiting_times, serving_times, blocking_times))
 
+        individuals = simulation.get_all_individuals()
         if class_type in (0, 1):
-            individuals = simulation.get_all_individuals()
             (
                 waiting_times,
                 serving_times,
@@ -632,12 +633,34 @@ def get_multiple_runs_results(
                 warm_up_time=warm_up_time,
                 class_type=class_type,
             )
-            results.append(records(waiting_times, serving_times, blocking_times))
+
+        (
+            class_2_inds,
+            class_2_inds_within_target,
+            class_1_inds,
+            class_1_inds_within_target,
+        ) = extract_total_individuals_and_the_ones_within_target_for_both_classes(
+            individuals=individuals, target=target
+        )
+
+        if class_type is None:
+            proportion_within_target = (
+                class_1_inds_within_target + class_2_inds_within_target
+            ) / (class_1_inds + class_2_inds)
+        elif class_type == 0:
+            proportion_within_target = class_1_inds_within_target / class_1_inds
+        elif class_type == 1:
+            proportion_within_target = class_2_inds_within_target / class_2_inds
+
+        results.append(
+            records(
+                waiting_times, serving_times, blocking_times, proportion_within_target
+            )
+        )
 
     if output_type == "list":
-        all_waits, all_services, all_blocks = get_list_of_results(results)
-        return [all_waits, all_services, all_blocks]
-
+        all_waits, all_services, all_blocks, all_props = get_list_of_results(results)
+        return [all_waits, all_services, all_blocks, all_props]
     return results
 
 

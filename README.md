@@ -1,6 +1,7 @@
 [![Tests][tests-shield]][tests-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+[![DOI][doi-shield]][doi-url]
 
 Ambulance Decision Game: A python library that attempts to explore a game theoretic approach to the EMS - ED interface
 =======================================================================
@@ -74,6 +75,8 @@ Project Link: [AmbulanceDecisionGame](https://github.com/11michalis11/AmbulanceD
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[doi-shield]: https://zenodo.org/badge/242940822.svg
+[doi-url]: https://zenodo.org/badge/latestdoi/242940822
 [tests-shield]: https://img.shields.io/badge/Tests-passing-GREEN.svg
 [tests-url]: https://github.com/11michalis11/AmbulanceDecisionGame/actions
 [issues-shield]: https://img.shields.io/github/issues/11michalis11/AmbulanceDecisionGame.svg

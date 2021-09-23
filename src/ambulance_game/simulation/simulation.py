@@ -156,6 +156,7 @@ def simulate_model(
     runtime=1440,
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
+    num_of_trials=1,
     tracker=ciw.trackers.NodePopulation(),
 ):
     """Simulate the model by using the custom node and returning the simulation object.
@@ -190,19 +191,24 @@ def simulate_model(
 
     if seed_num is None:
         seed_num = random.random()
-    model = build_model(
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    node = build_custom_node(threshold)
-    ciw.seed(seed_num)
-    simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
-    simulation.simulate_until_max_time(runtime)
-    return simulation
+
+    all_simulations = []
+    for trial in range(num_of_trials):
+        model = build_model(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        )
+        node = build_custom_node(threshold)
+        ciw.seed(seed_num + trial)
+        simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
+        simulation.simulate_until_max_time(runtime)
+        all_simulations.append(simulation)
+
+    return all_simulations if len(all_simulations) > 1 else all_simulations[0]
 
 
 def get_simulated_state_probabilities(

@@ -156,6 +156,7 @@ def simulate_model(
     runtime=1440,
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
+    num_of_trials=1,
     tracker=ciw.trackers.NodePopulation(),
 ):
     """Simulate the model by using the custom node and returning the simulation object.
@@ -164,7 +165,6 @@ def simulate_model(
     the buffer capacity is forced to be 1 because otherwise, when the service area
     gets full, class 2 individuals will flood the buffer area which is not what
     should happen in this particular scenario.
-    TODO: use different approach to handle this scenario
 
     Additionally, the buffer capacity should always be greater or equal to 1
 
@@ -191,19 +191,24 @@ def simulate_model(
 
     if seed_num is None:
         seed_num = random.random()
-    model = build_model(
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    node = build_custom_node(threshold)
-    ciw.seed(seed_num)
-    simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
-    simulation.simulate_until_max_time(runtime)
-    return simulation
+
+    all_simulations = []
+    for trial in range(num_of_trials):
+        model = build_model(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        )
+        node = build_custom_node(threshold)
+        ciw.seed(seed_num + trial)
+        simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
+        simulation.simulate_until_max_time(runtime)
+        all_simulations.append(simulation)
+
+    return all_simulations if len(all_simulations) > 1 else all_simulations[0]
 
 
 def get_simulated_state_probabilities(
@@ -382,9 +387,7 @@ def extract_times_from_records(simulation_records, warm_up_time):
     return waiting_times, serving_times, blocking_times
 
 
-def extract_times_from_individuals(
-    individuals, warm_up_time, first_node_to_visit, total_node_visits
-):
+def extract_times_from_individuals(individuals, warm_up_time, class_type):
     """
     Extract waiting times and service times for all individuals and proceed to extract
     blocking times for just class 2 individuals. The function uses individual's records
@@ -394,6 +397,9 @@ def extract_times_from_individuals(
     waiting_times = []
     serving_times = []
     blocking_times = []
+
+    first_node_to_visit = 2 - class_type
+    total_node_visits = class_type + 1
 
     for ind in individuals:
         if (
@@ -430,7 +436,132 @@ def get_list_of_results(results):
     all_waits = [w.waiting_times for w in results]
     all_services = [s.service_times for s in results]
     all_blocks = [b.blocking_times for b in results]
-    return all_waits, all_services, all_blocks
+    all_props = [p.proportion_within_target for p in results]
+    return all_waits, all_services, all_blocks, all_props
+
+
+def extract_total_individuals_and_the_ones_within_target_for_both_classes(
+    individuals, target
+):
+    """
+    Extract the total number of individuals that pass through the model and the
+    total number of individuals that exit the model within the given target.
+
+    Parameters
+    ----------
+    individuals : list of ciw.individual.Individual objects
+    target : float
+
+    Returns
+    -------
+    int, int, int, int
+        - The number of class 2 individuals that pass through the model
+        - The number of class 2 individuals that pass through within the target
+        - The number of class 1 individuals that pass through the model
+        - The number of class 1 individuals that pass through within the target
+    """
+    class_2_inds, class_2_inds_within_target = 0, 0
+    class_1_inds, class_1_inds_within_target = 0, 0
+    for individual in individuals:
+        ind_class = len(individual.data_records) - 1
+        rec = individual.data_records[-1]
+        if rec.node == 2 and ind_class == 0:
+            class_1_inds += 1
+            if rec.waiting_time + rec.service_time < target:
+                class_1_inds_within_target += 1
+        elif rec.node == 2 and ind_class == 1:
+            class_2_inds += 1
+            if rec.waiting_time + rec.service_time < target:
+                class_2_inds_within_target += 1
+
+    return (
+        class_2_inds,
+        class_2_inds_within_target,
+        class_1_inds,
+        class_1_inds_within_target,
+    )
+
+
+def get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+    lambda_2,
+    lambda_1,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+    seed_num,
+    num_of_trials,
+    runtime,
+    target,
+):
+    """
+    Get the average proportion of individuals within target by running the
+    simulation multiple times
+
+    Parameters
+    ----------
+    lambda_2 : float
+    lambda_1 : float
+    mu : float
+    num_of_servers : int
+    threshold : int
+    system_capacity : int
+    buffer_capacity : int
+    seed_num : float
+    num_of_trials : int
+    runtime : int
+    target : int
+
+    Returns
+    -------
+    float, float, float
+        - The combined mean proportion of individuals within target
+        - The mean proportion of class 1 individuals within target
+        - The mean proportion of class 2 individuals within target
+    """
+    class_2_proportions = []
+    class_1_proportions = []
+    combined_proportions = []
+
+    if seed_num is None:
+        seed_num = random.random()
+
+    for trial in range(num_of_trials):
+        individuals = simulate_model(
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+            seed_num=seed_num + trial,
+            runtime=runtime,
+        ).get_all_individuals()
+        (
+            class_2_inds,
+            class_2_inds_within_target,
+            class_1_inds,
+            class_1_inds_within_target,
+        ) = extract_total_individuals_and_the_ones_within_target_for_both_classes(
+            individuals, target
+        )
+
+        class_2_proportions.append(
+            (class_2_inds_within_target / class_2_inds) if class_2_inds != 0 else 1
+        )
+        class_1_proportions.append(
+            (class_1_inds_within_target / class_1_inds) if class_1_inds != 0 else 1
+        )
+        combined_proportions.append(
+            (class_2_inds_within_target + class_1_inds_within_target)
+            / (class_2_inds + class_1_inds)
+            if (class_2_inds + class_1_inds) != 0
+            else 1
+        )
+
+    return combined_proportions, class_1_proportions, class_2_proportions
 
 
 def get_multiple_runs_results(
@@ -439,6 +570,7 @@ def get_multiple_runs_results(
     mu,
     num_of_servers,
     threshold,
+    target=1,
     seed_num=None,
     warm_up_time=100,
     num_of_trials=10,
@@ -474,7 +606,7 @@ def get_multiple_runs_results(
     if seed_num is None:  # pragma: no cover
         seed_num = random.random()
     records = collections.namedtuple(
-        "records", "waiting_times service_times blocking_times"
+        "records", "waiting_times service_times blocking_times proportion_within_target"
     )
     results = []
     for trial in range(num_of_trials):
@@ -495,10 +627,9 @@ def get_multiple_runs_results(
             waiting_times, serving_times, blocking_times = extract_times_from_records(
                 sim_results, warm_up_time
             )
-            results.append(records(waiting_times, serving_times, blocking_times))
 
-        if class_type == 1:
-            individuals = simulation.get_all_individuals()
+        individuals = simulation.get_all_individuals()
+        if class_type in (0, 1):
             (
                 waiting_times,
                 serving_times,
@@ -506,29 +637,36 @@ def get_multiple_runs_results(
             ) = extract_times_from_individuals(
                 individuals=individuals,
                 warm_up_time=warm_up_time,
-                first_node_to_visit=1,
-                total_node_visits=2,
+                class_type=class_type,
             )
-            results.append(records(waiting_times, serving_times, blocking_times))
-        # TODO: Put class_type == 1 and class_type == 2 in one else statement
-        if class_type == 0:
-            individuals = simulation.get_all_individuals()
-            (
-                waiting_times,
-                serving_times,
-                blocking_times,
-            ) = extract_times_from_individuals(
-                individuals=individuals,
-                warm_up_time=warm_up_time,
-                first_node_to_visit=2,
-                total_node_visits=1,
+
+        (
+            class_2_inds,
+            class_2_inds_within_target,
+            class_1_inds,
+            class_1_inds_within_target,
+        ) = extract_total_individuals_and_the_ones_within_target_for_both_classes(
+            individuals=individuals, target=target
+        )
+
+        if class_type is None:
+            proportion_within_target = (
+                class_1_inds_within_target + class_2_inds_within_target
+            ) / (class_1_inds + class_2_inds)
+        elif class_type == 0:
+            proportion_within_target = class_1_inds_within_target / class_1_inds
+        elif class_type == 1:
+            proportion_within_target = class_2_inds_within_target / class_2_inds
+
+        results.append(
+            records(
+                waiting_times, serving_times, blocking_times, proportion_within_target
             )
-            results.append(records(waiting_times, serving_times, blocking_times))
+        )
 
     if output_type == "list":
-        all_waits, all_services, all_blocks = get_list_of_results(results)
-        return [all_waits, all_services, all_blocks]
-
+        all_waits, all_services, all_blocks, all_props = get_list_of_results(results)
+        return [all_waits, all_services, all_blocks, all_props]
     return results
 
 
@@ -724,127 +862,3 @@ def calculate_class_2_individuals_best_response(
         ),
     )
     return optimal_prop
-
-
-def extract_total_individuals_and_the_ones_within_target_for_both_classes(
-    individuals, target
-):
-    """
-    Extract the total number of individuals that pass through the model and the
-    total number of individuals that exit the model within the given target.
-
-    Parameters
-    ----------
-    individuals : list of ciw.individual.Individual objects
-    target : float
-
-    Returns
-    -------
-    int, int, int, int
-        - The number of class 2 individuals that pass through the model
-        - The number of class 2 individuals that pass through within the target
-        - The number of class 1 individuals that pass through the model
-        - The number of class 1 individuals that pass through within the target
-    """
-    class_2_inds, class_2_inds_within_target = 0, 0
-    class_1_inds, class_1_inds_within_target = 0, 0
-    for individual in individuals:
-        ind_class = len(individual.data_records) - 1
-        rec = individual.data_records[-1]
-        if rec.node == 2 and ind_class == 0:
-            class_1_inds += 1
-            if rec.waiting_time + rec.service_time < target:
-                class_1_inds_within_target += 1
-        elif rec.node == 2 and ind_class == 1:
-            class_2_inds += 1
-            if rec.waiting_time + rec.service_time < target:
-                class_2_inds_within_target += 1
-
-    return (
-        class_2_inds,
-        class_2_inds_within_target,
-        class_1_inds,
-        class_1_inds_within_target,
-    )
-
-
-def get_mean_proportion_of_individuals_within_target_for_multiple_runs(
-    lambda_2,
-    lambda_1,
-    mu,
-    num_of_servers,
-    threshold,
-    system_capacity,
-    buffer_capacity,
-    seed_num,
-    num_of_trials,
-    runtime,
-    target,
-):
-    """
-    Get the average proportion of individuals within target by running the
-    simulation multiple times
-
-    Parameters
-    ----------
-    lambda_2 : float
-    lambda_1 : float
-    mu : float
-    num_of_servers : int
-    threshold : int
-    system_capacity : int
-    buffer_capacity : int
-    seed_num : float
-    num_of_trials : int
-    runtime : int
-    target : int
-
-    Returns
-    -------
-    float, float, float
-        - The combined mean proportion of individuals within target
-        - The mean proportion of class 1 individuals within target
-        - The mean proportion of class 2 individuals within target
-    """
-    class_2_proportions = []
-    class_1_proportions = []
-    combined_proportions = []
-
-    if seed_num is None:
-        seed_num = random.random()
-
-    for trial in range(num_of_trials):
-        individuals = simulate_model(
-            lambda_2=lambda_2,
-            lambda_1=lambda_1,
-            mu=mu,
-            num_of_servers=num_of_servers,
-            threshold=threshold,
-            system_capacity=system_capacity,
-            buffer_capacity=buffer_capacity,
-            seed_num=seed_num + trial,
-            runtime=runtime,
-        ).get_all_individuals()
-        (
-            class_2_inds,
-            class_2_inds_within_target,
-            class_1_inds,
-            class_1_inds_within_target,
-        ) = extract_total_individuals_and_the_ones_within_target_for_both_classes(
-            individuals, target
-        )
-
-        class_2_proportions.append(
-            (class_2_inds_within_target / class_2_inds) if class_2_inds != 0 else 1
-        )
-        class_1_proportions.append(
-            (class_1_inds_within_target / class_1_inds) if class_1_inds != 0 else 1
-        )
-        combined_proportions.append(
-            (class_2_inds_within_target + class_1_inds_within_target)
-            / (class_2_inds + class_1_inds)
-            if (class_2_inds + class_1_inds) != 0
-            else 1
-        )
-
-    return combined_proportions, class_1_proportions, class_2_proportions

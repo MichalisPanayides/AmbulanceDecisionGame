@@ -375,6 +375,84 @@ def test_get_average_state_probabilities_dict():
     assert round(np.sum(tuple(pi_dict.values())), NUMBER_OF_DIGITS_TO_ROUND) == 1
 
 
+def test_extract_total_individuals_and_the_ones_within_target_example():
+    """
+    Test that ensures that the function that extracts the total number of
+    individuals and those within target works as expected.
+    """
+    inds = simulate_model(
+        lambda_2=2,
+        lambda_1=2,
+        mu=1,
+        num_of_servers=5,
+        threshold=8,
+        system_capacity=20,
+        buffer_capacity=10,
+        seed_num=0,
+        runtime=200,
+    ).get_all_individuals()
+
+    assert extract_total_individuals_and_the_ones_within_target_for_both_classes(
+        individuals=inds, target=1
+    ) == (394, 212, 372, 192)
+
+
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_1():
+    """
+    Test that for any random seed number there are no individuals that exit the
+    system in less than 0 time (all individuals have a non-negative mean).
+
+    i.e. Ensure that the proportion of individuals that spend less than 0 time
+    in the simulation is 0%
+    """
+    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+        lambda_2=1,
+        lambda_1=1,
+        mu=0.5,
+        num_of_servers=6,
+        threshold=5,
+        system_capacity=10,
+        buffer_capacity=5,
+        seed_num=None,
+        num_of_trials=5,
+        runtime=100,
+        target=0,
+    )
+
+    assert np.all(prop == 0 for prop in props[0])
+    assert np.all(prop == 0 for prop in props[1])
+    assert np.all(prop == 0 for prop in props[2])
+
+
+def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_2():
+    """
+    Test the mean proportion of individuals for a given set of parameters
+    """
+    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+        lambda_2=1,
+        lambda_1=1,
+        mu=0.5,
+        num_of_servers=6,
+        threshold=5,
+        system_capacity=10,
+        buffer_capacity=5,
+        seed_num=0,
+        num_of_trials=2,
+        runtime=100,
+        target=2,
+    )
+
+    assert round(np.mean(props[0]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6085194375516956, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(np.mean(props[1]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6043700088731145, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(np.mean(props[2]), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.6124698398771661, NUMBER_OF_DIGITS_TO_ROUND
+    )
+
+
 def test_get_multiple_results():
     """
     Test that the get_multiple_results function returns the correct
@@ -405,11 +483,13 @@ def test_get_multiple_results():
         assert isinstance(mult_results_1[trial].waiting_times, list)
         assert isinstance(mult_results_1[trial].service_times, list)
         assert isinstance(mult_results_1[trial].blocking_times, list)
+        assert isinstance(mult_results_1[trial].proportion_within_target, float)
 
     assert isinstance(mult_results_2, list)
-    for times in range(3):
-        for trial in range(5):
+    for trial in range(5):
+        for times in range(3):
             assert isinstance(mult_results_2[times][trial], list)
+        assert isinstance(mult_results_2[3][trial], float)
 
 
 def test_get_multiple_results_example():
@@ -428,6 +508,7 @@ def test_get_multiple_results_example():
     all_waits = [np.mean(w.waiting_times) for w in mult_results]
     all_servs = [np.mean(s.service_times) for s in mult_results]
     all_blocks = [np.mean(b.blocking_times) for b in mult_results]
+    all_props = [p.proportion_within_target for p in mult_results]
 
     assert round(np.mean(all_waits), NUMBER_OF_DIGITS_TO_ROUND) == round(
         0.40499090339103355, NUMBER_OF_DIGITS_TO_ROUND
@@ -437,6 +518,10 @@ def test_get_multiple_results_example():
     )
     assert round(np.mean(all_blocks), NUMBER_OF_DIGITS_TO_ROUND) == round(
         432.68444649763916, NUMBER_OF_DIGITS_TO_ROUND
+    )
+
+    assert round(np.mean(all_props), NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.04980480556080065, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -659,81 +744,3 @@ def test_calculate_class_2_individuals_best_response_all_individuals_in_one():
         buffer_capacity_2=float("inf"),
     )
     assert all_individuals_to_second == 0
-
-
-def test_extract_total_individuals_and_the_ones_within_target_example():
-    """
-    Test that ensures that the function that extracts the total number of
-    individuals and those within target works as expected.
-    """
-    inds = simulate_model(
-        lambda_2=2,
-        lambda_1=2,
-        mu=1,
-        num_of_servers=5,
-        threshold=8,
-        system_capacity=20,
-        buffer_capacity=10,
-        seed_num=0,
-        runtime=200,
-    ).get_all_individuals()
-
-    assert extract_total_individuals_and_the_ones_within_target_for_both_classes(
-        individuals=inds, target=1
-    ) == (394, 212, 372, 192)
-
-
-def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_1():
-    """
-    Test that for any random seed number there are no individuals that exit the
-    system in less than 0 time (all individuals have a non-negative mean).
-
-    i.e. Ensure that the proportion of individuals that spend less than 0 time
-    in the simulation is 0%
-    """
-    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
-        lambda_2=1,
-        lambda_1=1,
-        mu=0.5,
-        num_of_servers=6,
-        threshold=5,
-        system_capacity=10,
-        buffer_capacity=5,
-        seed_num=None,
-        num_of_trials=5,
-        runtime=100,
-        target=0,
-    )
-
-    assert np.all(prop == 0 for prop in props[0])
-    assert np.all(prop == 0 for prop in props[1])
-    assert np.all(prop == 0 for prop in props[2])
-
-
-def test_get_mean_proportion_of_individuals_within_target_for_multiple_runs_example_2():
-    """
-    Test the mean proportion of individuals for a given set of parameters
-    """
-    props = get_mean_proportion_of_individuals_within_target_for_multiple_runs(
-        lambda_2=1,
-        lambda_1=1,
-        mu=0.5,
-        num_of_servers=6,
-        threshold=5,
-        system_capacity=10,
-        buffer_capacity=5,
-        seed_num=0,
-        num_of_trials=2,
-        runtime=100,
-        target=2,
-    )
-
-    assert round(np.mean(props[0]), NUMBER_OF_DIGITS_TO_ROUND) == round(
-        0.6085194375516956, NUMBER_OF_DIGITS_TO_ROUND
-    )
-    assert round(np.mean(props[1]), NUMBER_OF_DIGITS_TO_ROUND) == round(
-        0.6043700088731145, NUMBER_OF_DIGITS_TO_ROUND
-    )
-    assert round(np.mean(props[2]), NUMBER_OF_DIGITS_TO_ROUND) == round(
-        0.6124698398771661, NUMBER_OF_DIGITS_TO_ROUND
-    )

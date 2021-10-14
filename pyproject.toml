@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 module = "ambulance_game"
 author = "Michalis Panayides"
 author-email = "PanayidesM@cardiff.ac.uk"
-home-page = "https://github.com/11michalis11/ambulance_game"
+home-page = "https://github.com/11michalis11/AmbulanceDecisionGame"
 requires-python = ">=3.8"
 requires = [
     "numpy==1.18.0",

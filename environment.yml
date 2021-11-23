@@ -2,7 +2,7 @@ name: AmbulanceGame
 channels:
   - defaults
 dependencies:
-  - pip==20.2.4
+  - pip==21.3.1
   - python==3.8.1
   - ipykernel==5.3.4
   - notebook==6.0.3

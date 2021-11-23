@@ -41,12 +41,12 @@ def test_get_heatmaps_example_1():
     sim_expected_probs, markov_expected_probs, diff_expected_probs = (
         np.array(
             [
-                [0.15657134, 0.23662749, 0.16391817, 0.13420543, 0.02070944, 0.0036757],
-                [np.nan, np.nan, np.nan, 0.08165133, 0.02249408, 0.00498913],
-                [np.nan, np.nan, np.nan, 0.05124684, 0.01655216, 0.00379816],
-                [np.nan, np.nan, np.nan, 0.03741792, 0.01048049, 0.00129502],
-                [np.nan, np.nan, np.nan, 0.02189239, 0.00640466, 0.00116072],
-                [np.nan, np.nan, np.nan, 0.01507139, 0.00871438, 0.00112376],
+                [0.15656507, 0.23661613, 0.16390972, 0.13419901, 0.02070828, 0.0036757],
+                [np.nan, np.nan, np.nan, 0.08169654, 0.0224934, 0.00498891],
+                [np.nan, np.nan, np.nan, 0.05124368, 0.01655089, 0.00379769],
+                [np.nan, np.nan, np.nan, 0.03741663, 0.01047972, 0.00129497],
+                [np.nan, np.nan, np.nan, 0.02189117, 0.00640445, 0.00116072],
+                [np.nan, np.nan, np.nan, 0.01506984, 0.00871372, 0.00112376],
             ]
         ),
         np.array(
@@ -69,18 +69,18 @@ def test_get_heatmaps_example_1():
         np.array(
             [
                 [
-                    0.00197225,
-                    0.00472886,
-                    -0.0100058,
-                    0.00376245,
-                    0.00011318,
+                    0.00196599,
+                    0.0047175,
+                    -0.01001426,
+                    0.00375603,
+                    0.00011202,
                     0.00024299,
                 ],
-                [np.nan, np.nan, np.nan, 0.00441536, 0.00307217, 0.0006079],
-                [np.nan, np.nan, np.nan, 0.00072728, 0.00151979, -0.00016765],
-                [np.nan, np.nan, np.nan, 0.00265906, -0.00058972, -0.00187194],
-                [np.nan, np.nan, np.nan, -0.00260564, -0.00162603, -0.00123339],
-                [np.nan, np.nan, np.nan, -0.00239002, -0.00086337, -0.00246773],
+                [np.nan, np.nan, np.nan, 0.00446056, 0.00307149, 0.00060769],
+                [np.nan, np.nan, np.nan, 0.00072412, 0.00151852, -0.00016812],
+                [np.nan, np.nan, np.nan, 0.00265777, -0.00059049, -0.00187199],
+                [np.nan, np.nan, np.nan, -0.00260686, -0.00162624, -0.00123339],
+                [np.nan, np.nan, np.nan, -0.00239157, -0.00086403, -0.00246773],
             ]
         ),
     )
@@ -114,22 +114,22 @@ def test_get_heatmaps_example_2():
         np.array(
             [
                 [
-                    0.31415055,
-                    0.22936987,
-                    0.17661768,
-                    0.04897618,
-                    0.01226239,
-                    0.00191243,
-                    0.00063125,
+                    0.31369063,
+                    0.22899628,
+                    0.17639283,
+                    0.04891193,
+                    0.0122469,
+                    0.00190905,
+                    0.00062919,
                 ],
                 [
                     np.nan,
                     np.nan,
-                    0.09676506,
-                    0.06857442,
-                    0.0296508,
-                    0.01747934,
-                    0.00361002,
+                    0.09807799,
+                    0.06847139,
+                    0.02961054,
+                    0.01745829,
+                    0.00360498,
                 ],
             ]
         ),
@@ -158,22 +158,22 @@ def test_get_heatmaps_example_2():
         np.array(
             [
                 [
-                    -0.00948526,
-                    -0.01335698,
-                    -0.00542746,
-                    0.00344539,
-                    0.00085043,
-                    -0.00098445,
-                    -0.00015881,
+                    -0.00994518,
+                    -0.01373057,
+                    -0.00565231,
+                    0.00338114,
+                    0.00083494,
+                    -0.00098783,
+                    -0.00016087,
                 ],
                 [
                     np.nan,
                     np.nan,
-                    0.005762,
-                    0.01171214,
-                    0.00266535,
-                    0.0059772,
-                    -0.00099956,
+                    0.00707492,
+                    0.01160911,
+                    0.00262509,
+                    0.00595614,
+                    -0.0010046,
                 ],
             ]
         ),
@@ -225,7 +225,7 @@ def test_get_mean_blocking_time_from_simulation_state_probabilities():
         runtime=1000,
     )
     assert round(mean_blocking_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
-        0.6247616245889802, NUMBER_OF_DIGITS_TO_ROUND
+        0.6247626042471683, NUMBER_OF_DIGITS_TO_ROUND
     )
 
 
@@ -420,13 +420,15 @@ def test_plot_output_comparisons_waiting_both_classes():
         8,
         9,
     ]
-    expected_sim_times_using_formula = [
-        1.4383683274990688,
-        1.6172139699602939,
-        1.7871674638990411,
-        1.902900393648282,
-        2.0799187425189745,
-    ]
+    expected_sim_times_using_formula = (
+        [
+            1.4383683274990688,
+            1.6172139699602939,
+            1.7871674638990405,
+            1.902953640568348,
+            2.079546013987979,
+        ],
+    )
     expected_markov_times = [
         1.4997317350805834,
         1.6663508613218276,
@@ -515,9 +517,9 @@ def test_plot_output_comparisons_blocking_class_2():
     expected_sim_times_using_formula = [
         0.09939633736936365,
         0.3428086786668058,
-        1.258688113496702,
-        1.550748270791677,
-        2.4490455912594884,
+        1.258688113496703,
+        1.5510437610794483,
+        2.4480598024079474,
     ]
     expected_markov_times = [
         0.25749828422874693,
@@ -647,7 +649,7 @@ def test_plot_output_comparisons_blocking_property(
         buffer_capacity=buffer_capacity,
         seed_num=0,
         num_of_trials=1,
-        runtime=100,
+        runtime=150,
         measure_to_compare="blocking",
         class_type=1,
         plot_over="buffer_capacity",
@@ -670,7 +672,7 @@ def test_plot_output_comparisons_blocking_property(
         buffer_capacity=buffer_capacity,
         seed_num=0,
         num_of_trials=1,
-        runtime=100,
+        runtime=150,
         measure_to_compare="blocking",
         class_type=None,
         plot_over="buffer_capacity",

@@ -651,12 +651,23 @@ def get_multiple_runs_results(
 
         if class_type is None:
             proportion_within_target = (
-                class_1_inds_within_target + class_2_inds_within_target
-            ) / (class_1_inds + class_2_inds)
+                (class_1_inds_within_target + class_2_inds_within_target)
+                / (class_1_inds + class_2_inds)
+                if class_1_inds + class_2_inds != 0
+                else np.nan
+            )
         elif class_type == 0:
-            proportion_within_target = class_1_inds_within_target / class_1_inds
+            proportion_within_target = (
+                class_1_inds_within_target / class_1_inds
+                if class_1_inds != 0
+                else np.nan
+            )
         elif class_type == 1:
-            proportion_within_target = class_2_inds_within_target / class_2_inds
+            proportion_within_target = (
+                class_2_inds_within_target / class_2_inds
+                if class_2_inds != 0
+                else np.nan
+            )
 
         results.append(
             records(

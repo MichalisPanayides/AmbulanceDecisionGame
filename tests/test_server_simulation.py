@@ -1,9 +1,14 @@
+"""
+Tests for agent based extension functionality
+"""
+import pytest
+
 import ambulance_game as abg
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
-def test_simulate_model_with_non_state_dependent_property_based():
+def test_simulate_state_dependent_model_with_non_state_dependent_property_based():
     """
     Propert based test with state dependent service rate. Ensures that for
     different values of lambda_1, lambda_2, and threshold, the simulation
@@ -43,7 +48,7 @@ def test_simulate_model_with_non_state_dependent_property_based():
     )
 
 
-def test_simulate_model_example_1():
+def test_simulate_state_dependent_model_example_1():
     """
     Example 1 for the simulation with state dependent rates
     """
@@ -89,7 +94,7 @@ def test_simulate_model_example_1():
     )
 
 
-def test_simulate_model_example_2():
+def test_simulate_state_dependent_model_example_2():
     """
     Example 2 for the simulation with state dependent rates
     """
@@ -125,3 +130,88 @@ def test_simulate_model_example_2():
         )
         == round(497.47902606711347, NUMBER_OF_DIGITS_TO_ROUND)
     )
+
+
+def test_simulate_state_dependent_model_when_threshold_more_than_system_capacity():
+    """
+    Tests the following scenarios where specific cases occur:
+        - when buffer_capacity is less than 1 -> an error is raised
+        - when threshold is greater than system capacity the
+          model forces threshold=system_capacity and buffer_capacity=1
+    """
+    sim_results_normal = []
+    sim_results_forced = []
+    for seed in range(5):
+        simulation = abg.simulation.simulate_state_dependent_model(
+            lambda_2=0.15,
+            lambda_1=0.2,
+            rates={(i, j): 0.05 for i in range(10) for j in range(10)},
+            num_of_servers=8,
+            threshold=10,
+            seed_num=seed,
+            system_capacity=10,
+            buffer_capacity=1,
+            runtime=100,
+        )
+        rec = simulation.get_all_records()
+        sim_results_normal.append(rec)
+
+    for seed in range(5):
+        simulation = abg.simulation.simulate_state_dependent_model(
+            lambda_2=0.15,
+            lambda_1=0.2,
+            rates={(i, j): 0.05 for i in range(10) for j in range(10)},
+            num_of_servers=8,
+            threshold=12,
+            seed_num=seed,
+            system_capacity=10,
+            buffer_capacity=5,
+            runtime=100,
+        )
+        rec = simulation.get_all_records()
+        sim_results_forced.append(rec)
+    assert sim_results_normal == sim_results_forced
+
+
+def test_simulate_state_dependent_model_when_buffer_capacity_less_than_1():
+    """
+    Test that an error is raised when buffer_capacity is less than 1
+    """
+    with pytest.raises(ValueError):
+        abg.simulation.simulate_state_dependent_model(
+            lambda_2=0.15,
+            lambda_1=0.2,
+            rates=None,
+            num_of_servers=8,
+            threshold=4,
+            seed_num=0,
+            system_capacity=10,
+            buffer_capacity=0,
+        )
+
+
+def test_simulate_state_dependent_model_for_negative_and_0_rates():
+    """
+    Test that an error is raised when rates are negative or 0
+    """
+    with pytest.raises(ValueError):
+        abg.simulation.simulate_state_dependent_model(
+            lambda_2=0.15,
+            lambda_1=0.2,
+            rates={(i, j): -0.05 for i in range(10) for j in range(10)},
+            num_of_servers=8,
+            threshold=4,
+            system_capacity=10,
+            buffer_capacity=3,
+        )
+
+    with pytest.raises(ValueError):
+        abg.simulation.simulate_state_dependent_model(
+            lambda_2=0.15,
+            lambda_1=0.2,
+            rates={(i, j): 0 for i in range(10) for j in range(10)},
+            num_of_servers=8,
+            threshold=4,
+            system_capacity=10,
+            buffer_capacity=3,
+        )

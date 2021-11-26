@@ -1,3 +1,7 @@
+"""
+Code for the agent based extension of the simulation model
+"""
+
 import random
 
 import ciw
@@ -5,7 +9,9 @@ import ciw
 from .simulation import build_custom_node
 
 
-class StateDependentExponential(ciw.dists.Distribution):
+class StateDependentExponential(
+    ciw.dists.Distribution
+):  # pylint: disable=too-few-public-methods
     """
     A class that inherits from the `Distribution` class in the ciw module. This
     class is meant to be used in the simulation module as a state dependent

@@ -2,22 +2,36 @@
 Tests for agent based extension functionality
 """
 import pytest
+from hypothesis import given, settings
+from hypothesis.strategies import floats, integers
+
 
 import ambulance_game as abg
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
-def test_simulate_state_dependent_model_with_non_state_dependent_property_based():
+@given(
+    lambda_2=floats(min_value=0.1, max_value=1.0),
+    lambda_1=floats(min_value=0.1, max_value=1.0),
+    mu=floats(min_value=0.5, max_value=2.0),
+    num_of_servers=integers(min_value=1, max_value=10),
+)
+@settings(max_examples=10)
+def test_simulate_state_dependent_model_with_non_state_dependent_property_based(
+    lambda_2, lambda_1, mu, num_of_servers
+):
     """
-    Propert based test with state dependent service rate. Ensures that for
-    different values of lambda_1, lambda_2, and threshold, the simulation
+    Property based test with state dependent service rate. Ensures that for
+    different values of lambda_1, lambda_2, mu and num_of_servers, the results
+    of the state dependent and non-state dependent simulation are the same when
+    the rates of the state-depndednt one are all set to `mu`
     """
     simulation = abg.simulation.simulate_model(
-        lambda_2=0.15,
-        lambda_1=0.2,
-        mu=0.05,
-        num_of_servers=8,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
         threshold=4,
         seed_num=0,
         runtime=100,
@@ -25,12 +39,12 @@ def test_simulate_state_dependent_model_with_non_state_dependent_property_based(
         buffer_capacity=10,
     )
 
-    rates = {(i, j): 0.05 for i in range(10) for j in range(10)}
+    rates = {(i, j): mu for i in range(11) for j in range(11)}
     simulation_extension = abg.simulation.simulate_state_dependent_model(
-        lambda_2=0.15,
-        lambda_1=0.2,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
         rates=rates,
-        num_of_servers=8,
+        num_of_servers=num_of_servers,
         threshold=4,
         seed_num=0,
         runtime=100,

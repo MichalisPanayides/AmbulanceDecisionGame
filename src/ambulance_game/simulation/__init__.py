@@ -12,3 +12,9 @@ from .simulation import (
     get_simulated_state_probabilities,
     simulate_model,
 )
+
+
+from .server_simulation import (
+    build_state_dependent_model,
+    simulate_state_dependent_model,
+)

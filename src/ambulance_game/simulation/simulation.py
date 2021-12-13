@@ -10,6 +10,8 @@ import ciw
 import numpy as np
 import scipy.optimize
 
+from .dists import get_service_distribution
+
 
 def build_model(
     lambda_2,
@@ -24,11 +26,18 @@ def build_model(
     service area and at the buffer space with rates that follow the exponential
     distribution of λ_1 and λ_2 respectively. The service distribution follows
     a constant distribution of 0 for the buffer space and an exponential
-    distribution with a rate of μ for the service area. The variables "num_of_servers"
+    distribution with a rate of μ (mu) for the service area. The variables "num_of_servers"
     and "buffer_capacity" indicate the capacities of the two centres. Finally,
     the queue capacity is set to the difference between the number of servers and
     the system capacity for the service area centre and for the buffer space it is
     set to zero, as there should not occur any waiting there, just blockage.
+
+    This function has been updated such that the type of `mu` defines the service
+    rate distribution:
+        - `int`, `float`: Exponential distribution with rate `mu`
+        - `dict` {(u,v): mu_(u,v)}: State dependent exponential distribution
+        - `dict` {k: mu_k}: Server dependent exponential distribution
+        - `dict` {k: {(u,v): mu_(uv)^k}}: State and server dependent exponential
 
     Parameters
     ----------
@@ -36,18 +45,18 @@ def build_model(
         Arrival rate of class 2 individuals
     lambda_1 : float
         Arrival rate of class 1 individuals
-    mu : float
+    mu : float, dict
         Service rate of service area
     num_of_servers : integer
         The num_of_servers of the service area
     """
-
+    service_dist = get_service_distribution(mu)
     model = ciw.create_network(
         arrival_distributions=[
             ciw.dists.Exponential(lambda_2),
             ciw.dists.Exponential(lambda_1),
         ],
-        service_distributions=[ciw.dists.Deterministic(0), ciw.dists.Exponential(mu)],
+        service_distributions=[ciw.dists.Deterministic(0), service_dist],
         routing=[[0.0, 1.0], [0.0, 0.0]],
         number_of_servers=[buffer_capacity, num_of_servers],
         queue_capacities=[0, system_capacity - num_of_servers],

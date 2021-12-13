@@ -26,10 +26,10 @@ def build_model(
     service area and at the buffer space with rates that follow the exponential
     distribution of λ_1 and λ_2 respectively. The service distribution follows
     a constant distribution of 0 for the buffer space and an exponential
-    distribution with a rate of μ (mu) for the service area. The variables "num_of_servers"
-    and "buffer_capacity" indicate the capacities of the two centres. Finally,
-    the queue capacity is set to the difference between the number of servers and
-    the system capacity for the service area centre and for the buffer space it is
+    distribution with a rate of μ (mu) for the service area. The variables
+    "num_of_servers" and "buffer_capacity" indicate the capacities of the two centres.
+    Finally, the queue capacity is set to the difference between the number of servers
+    and the system capacity for the service area centre and for the buffer space it is
     set to zero, as there should not occur any waiting there, just blockage.
 
     This function has been updated such that the type of `mu` defines the service

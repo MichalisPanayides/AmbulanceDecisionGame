@@ -12,3 +12,11 @@ from .simulation import (
     get_simulated_state_probabilities,
     simulate_model,
 )
+
+from .dists import (
+    StateDependentExponential,
+    is_mu_state_dependent,
+    is_mu_server_dependent,
+    is_mu_state_server_dependent,
+    get_service_distribution,
+)

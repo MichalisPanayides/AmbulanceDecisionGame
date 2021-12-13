@@ -36,13 +36,18 @@ class StateDependentExponential(
         return random.expovariate(rate)
 
 
-def is_mu_state_dependent(mu):
+def is_mu_state_dependent(mu: dict):
     """
     Check if mu is a dictionary with keys that are states and values that are
     service rates.
     """
     for key in mu.keys():
-        if len(key) != 2 or not isinstance(key[0], int) or not isinstance(key[1], int):
+        if (
+            not isinstance(key, tuple)
+            or len(key) != 2
+            or not isinstance(key[0], int)
+            or not isinstance(key[1], int)
+        ):
             return False
     return True
 
@@ -52,7 +57,7 @@ def is_mu_server_dependent():
     Checks if mu is a dictionary with keys that are servers and values that are
     service rates.
     """
-    return False
+    raise NotImplementedError("Server dependent service rates are not yet implemented.")
 
 
 def is_mu_state_server_dependent():
@@ -61,7 +66,9 @@ def is_mu_state_server_dependent():
     the values are another dictionary with keys the states and values the
     service rates.
     """
-    return False
+    raise NotImplementedError(
+        "State and server dependent distributions are not implemented yet."
+    )
 
 
 def get_service_distribution(mu):
@@ -77,11 +84,11 @@ def get_service_distribution(mu):
     if isinstance(mu, dict):
         if is_mu_state_dependent(mu):
             return StateDependentExponential(mu)
-        elif is_mu_server_dependent():
+        if is_mu_server_dependent():
             raise NotImplementedError(
                 "Server dependent service rates are not yet implemented."
             )
-        elif is_mu_state_server_dependent():
+        if is_mu_state_server_dependent():
             raise NotImplementedError(
                 "State and server dependent distributions are not implemented yet."
             )

@@ -36,39 +36,44 @@ class StateDependentExponential(
         return random.expovariate(rate)
 
 
-def is_mu_state_dependent(mu: dict):
+def is_state_dependent(mu: dict):
     """
-    Check if mu is a dictionary with keys that are states and values that are
-    service rates.
+    Check if mu is a dictionary with keys that are tuples of 2 integers and values
+    that are floats or integers.
     """
-    for key in mu.keys():
+    for key, value in mu.items():
         if (
             not isinstance(key, tuple)
             or len(key) != 2
             or not isinstance(key[0], int)
             or not isinstance(key[1], int)
+            or not isinstance(value, (float, int))
         ):
             return False
     return True
 
 
-def is_mu_server_dependent():
+def is_server_dependent(mu: dict):
     """
     Checks if mu is a dictionary with keys that are servers and values that are
     service rates.
     """
-    raise NotImplementedError("Server dependent service rates are not yet implemented.")
+    for key, value in mu.items():
+        if not isinstance(key, int) or not isinstance(value, (float, int)):
+            return False
+    return True
 
 
-def is_mu_state_server_dependent():
+def is_state_server_dependent(mu: dict):
     """
     Checks if mu is a dictionary of distionaries. The keys are servers id and
     the values are another dictionary with keys the states and values the
     service rates.
     """
-    raise NotImplementedError(
-        "State and server dependent distributions are not implemented yet."
-    )
+    for key, value in mu.items():
+        if not isinstance(key, int) or not is_state_dependent(value):
+            return False
+    return True
 
 
 def get_service_distribution(mu):
@@ -82,13 +87,13 @@ def get_service_distribution(mu):
     if isinstance(mu, (float, int)):
         return ciw.dists.Exponential(mu)
     if isinstance(mu, dict):
-        if is_mu_state_dependent(mu):
+        if is_state_dependent(mu):
             return StateDependentExponential(mu)
-        if is_mu_server_dependent():
+        if is_server_dependent(mu):
             raise NotImplementedError(
                 "Server dependent service rates are not yet implemented."
             )
-        if is_mu_state_server_dependent():
+        if is_state_server_dependent(mu):
             raise NotImplementedError(
                 "State and server dependent distributions are not implemented yet."
             )

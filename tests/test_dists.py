@@ -17,19 +17,19 @@ def test_class_state_dependent_exponential_value_error():
         dists.StateDependentExponential(rates)
 
 
-def test_is_mu_state_dependent():
+def test_is_state_dependent():
     """
-    Tests that the is_mu_state_dependent function returns True when the
+    Tests that the is_state_dependent function returns True when the
     dictionary given is of the form {(i, j): mu}.
     """
     rates = {(i, j): i + j for i in range(10) for j in range(10)}
-    assert dists.is_mu_state_dependent(rates)
+    assert dists.is_state_dependent(rates)
 
-    rates = {i: j for i in range(10) for j in range(10)}
-    assert not dists.is_mu_state_dependent(rates)
+    rates = {i: 0.3 for i in range(10)}
+    assert not dists.is_state_dependent(rates)
 
 
-def test_is_mu_server_dependent():
+def test_is_server_dependent():
     """
     Tests that the is_mu_state_dependent function returns a value error when
     the dictionary given is of the form {i: mu}.
@@ -38,7 +38,8 @@ def test_is_mu_server_dependent():
         dists.is_mu_server_dependent()
 
 
-def test_is_mu_state_server_dependent():
+
+def test_is_state_server_dependent():
     """
     Tests that the is_mu_state_dependent function returns a value error when
     the dictionary given is of the form {i: mu}.
@@ -54,7 +55,7 @@ def test_get_service_distribution(mu):
     """
     assert isinstance(dists.get_service_distribution(mu), ciw.dists.Exponential)
 
-    rates = {(i, j): mu for i in range(10) for j in range(10)}
+    rates = {(u, v): mu for u in range(10) for v in range(10)}
     assert isinstance(
         dists.get_service_distribution(rates), dists.StateDependentExponential
     )

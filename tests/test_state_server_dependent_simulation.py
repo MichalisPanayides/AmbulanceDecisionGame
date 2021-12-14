@@ -1,5 +1,5 @@
 """
-Tests for agent based extension functionality
+Tests for the state and server dependent part of the simulation
 """
 import pytest
 from hypothesis import given, settings
@@ -228,3 +228,56 @@ def test_simulate_state_dependent_model_for_negative_and_0_rates():
             system_capacity=10,
             buffer_capacity=3,
         )
+
+
+@given(
+    lambda_2=floats(min_value=0.1, max_value=1.0),
+    lambda_1=floats(min_value=0.1, max_value=1.0),
+    mu=floats(min_value=0.5, max_value=2.0),
+    num_of_servers=integers(min_value=1, max_value=10),
+)
+def test_server_dependent_model_property_based(lambda_2, lambda_1, mu, num_of_servers):
+    """
+    Example 1 for the simulation with server dependent rates
+    """
+    simulation = simulate_model(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=4,
+        seed_num=0,
+        runtime=100,
+    )
+
+    server_dependent_simulation = simulate_model(
+        lambda_2=0.1,
+        lambda_1=0.5,
+        mu={k: 0.3 for k in range(1, 4)},
+        num_of_servers=3,
+        threshold=4,
+        seed_num=0,
+        runtime=100,
+    )
+
+    assert round(
+        sum([w.waiting_time for w in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([w.waiting_time for w in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    )
+    assert round(
+        sum([b.time_blocked for b in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([b.time_blocked for b in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    )
+    assert round(
+        sum([s.service_time for s in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    )

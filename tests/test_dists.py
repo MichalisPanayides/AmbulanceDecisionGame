@@ -31,21 +31,26 @@ def test_is_state_dependent():
 
 def test_is_server_dependent():
     """
-    Tests that the is_mu_state_dependent function returns a value error when
-    the dictionary given is of the form {i: mu}.
+    Tests that the is_state_dependent function returns True when the dictionary
+    given is of the form {i: mu} and False when of the form {(i,j): mu}.
     """
-    with pytest.raises(NotImplementedError):
-        dists.is_mu_server_dependent()
+    rates = {i: 0.3 for i in range(10)}
+    assert dists.is_server_dependent(rates)
 
+    rates = {(i, j): i + j for i in range(10) for j in range(10)}
+    assert not dists.is_server_dependent(rates)
 
 
 def test_is_state_server_dependent():
     """
-    Tests that the is_mu_state_dependent function returns a value error when
+    Tests that the is_state_dependent function returns a value error when
     the dictionary given is of the form {i: mu}.
     """
-    with pytest.raises(NotImplementedError):
-        dists.is_mu_state_server_dependent()
+    rates = {}
+    for server in range(3):
+        rates[server] = {(u, v): 0.5 for u in range(2) for v in range(4)}
+
+    assert dists.is_state_server_dependent(rates)
 
 
 @given(mu=floats(min_value=0.1, max_value=3))
@@ -58,4 +63,9 @@ def test_get_service_distribution(mu):
     rates = {(u, v): mu for u in range(10) for v in range(10)}
     assert isinstance(
         dists.get_service_distribution(rates), dists.StateDependentExponential
+    )
+
+    rates = {server: mu for server in range(5)}
+    assert isinstance(
+        dists.get_service_distribution(rates), dists.ServerDependentExponential
     )

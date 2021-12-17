@@ -36,6 +36,36 @@ class StateDependentExponential(
         return random.expovariate(rate)
 
 
+class ServerDependentExponential(
+    ciw.dists.Distribution
+):  # pylint: disable=too-few-public-methods
+    """
+    A class that inherits from the `Distribution` class in the ciw module. This
+    class is meant to be used in the simulation module as a server dependent
+    distribution for the service of individuals.
+
+    This distribution takes `rates` as an argument; a disctionary with keys
+    server `k` and values the service rate for that server.
+    """
+
+    def __init__(self, rates):
+        if any(rate <= 0 for rate in rates.values()):
+            raise ValueError(
+                "Exponential distribution must sample positive numbers only."
+            )
+        self.simulation = None
+        self.rates = rates
+
+    def sample(self, t=None, ind=None):
+        """
+        This method is used to sample the service time for an individual based
+        on the server that the individual is assigned to
+        """
+        server = ind.server.id_number
+        rate = self.rates[server]
+        return random.expovariate(rate)
+
+
 def is_state_dependent(mu: dict):
     """
     Check if mu is a dictionary with keys that are tuples of 2 integers and values
@@ -90,9 +120,7 @@ def get_service_distribution(mu):
         if is_state_dependent(mu):
             return StateDependentExponential(mu)
         if is_server_dependent(mu):
-            raise NotImplementedError(
-                "Server dependent service rates are not yet implemented."
-            )
+            return ServerDependentExponential(mu)
         if is_state_server_dependent(mu):
             raise NotImplementedError(
                 "State and server dependent distributions are not implemented yet."

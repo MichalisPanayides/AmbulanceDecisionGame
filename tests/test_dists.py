@@ -17,6 +17,16 @@ def test_class_state_dependent_exponential_value_error():
         dists.StateDependentExponential(rates)
 
 
+def test_class_server_dependent_exponential_value_error():
+    """
+    Test that the exponential distribution returns a value error when the
+    rate is negative.
+    """
+    rates = {(i, j): -0.05 for i in range(10) for j in range(10)}
+    with pytest.raises(ValueError):
+        dists.ServerDependentExponential(rates)
+
+
 def test_is_state_dependent():
     """
     Tests that the is_state_dependent function returns True when the

@@ -1,6 +1,7 @@
 """
 Tests for the state and server dependent part of the simulation
 """
+import numpy as np
 import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import floats, integers
@@ -236,9 +237,14 @@ def test_simulate_state_dependent_model_for_negative_and_0_rates():
     mu=floats(min_value=0.5, max_value=2.0),
     num_of_servers=integers(min_value=1, max_value=10),
 )
+@settings(max_examples=10)
 def test_server_dependent_model_property_based(lambda_2, lambda_1, mu, num_of_servers):
     """
-    Example 1 for the simulation with server dependent rates
+    Property based test for the simulation with server dependent rates. For
+    different values of lambda_1, lambda_2, mu and num_of_servers checks
+    that the simulation outputs the same results when:
+        - mu = mu
+        - mu = {k: mu for k in range(1, num_of_servers + 1)}
     """
     simulation = simulate_model(
         lambda_2=lambda_2,
@@ -251,10 +257,10 @@ def test_server_dependent_model_property_based(lambda_2, lambda_1, mu, num_of_se
     )
 
     server_dependent_simulation = simulate_model(
-        lambda_2=0.1,
-        lambda_1=0.5,
-        mu={k: 0.3 for k in range(1, 4)},
-        num_of_servers=3,
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu={k: mu for k in range(1, num_of_servers + 1)},
+        num_of_servers=num_of_servers,
         threshold=4,
         seed_num=0,
         runtime=100,
@@ -280,4 +286,76 @@ def test_server_dependent_model_property_based(lambda_2, lambda_1, mu, num_of_se
     ) == round(
         sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
         NUMBER_OF_DIGITS_TO_ROUND,
+    )
+
+
+def test_server_dependent_simulation_example_1():
+    """
+    Example 1 for server dependent simulation
+    """
+    server_dependent_simulation = simulate_model(
+        lambda_1=4,
+        lambda_2=2,
+        mu={1: 1, 2: 1.5, 3: 2, 4: 2.5},
+        num_of_servers=4,
+        threshold=4,
+        seed_num=0,
+        runtime=100,
+    )
+
+    mean_wait = np.mean(
+        [w.waiting_time for w in server_dependent_simulation.get_all_records()]
+    )
+    mean_block = np.mean(
+        [b.time_blocked for b in server_dependent_simulation.get_all_records()]
+    )
+    mean_service = np.mean(
+        [s.service_time for s in server_dependent_simulation.get_all_records()]
+    )
+
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.11021530720155796, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(mean_block, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.49569480054255816, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(mean_service, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.4326597402401585, NUMBER_OF_DIGITS_TO_ROUND
+    )
+
+
+def test_server_dependent_simulation_example_2():
+    """
+    Example 2 for server dependent simulation
+    """
+    server_dependent_simulation = simulate_model(
+        lambda_1=10,
+        lambda_2=20,
+        mu={1: 1, 2: 1.5, 3: 2, 4: 2.5, 5: 3, 6: 3.5, 7: 4, 8: 4.5, 9: 5, 10: 5.5},
+        num_of_servers=10,
+        threshold=15,
+        system_capacity=20,
+        buffer_capacity=5,
+        seed_num=0,
+        runtime=100,
+    )
+
+    mean_wait = np.mean(
+        [w.waiting_time for w in server_dependent_simulation.get_all_records()]
+    )
+    mean_block = np.mean(
+        [b.time_blocked for b in server_dependent_simulation.get_all_records()]
+    )
+    mean_service = np.mean(
+        [s.service_time for s in server_dependent_simulation.get_all_records()]
+    )
+
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.0504065681590924, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(mean_block, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.016470674877055978, NUMBER_OF_DIGITS_TO_ROUND
+    )
+    assert round(mean_service, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.1931311883483223, NUMBER_OF_DIGITS_TO_ROUND
     )

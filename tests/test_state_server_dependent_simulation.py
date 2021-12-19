@@ -18,7 +18,7 @@ NUMBER_OF_DIGITS_TO_ROUND = 8
     num_of_servers=integers(min_value=1, max_value=10),
 )
 @settings(max_examples=10)
-def test_simulate_state_dependent_model_with_non_state_dependent_property_based(
+def test_compare_state_dependent_model_with_non_state_dependent_property_based(
     lambda_2, lambda_1, mu, num_of_servers
 ):
     """
@@ -238,7 +238,9 @@ def test_simulate_state_dependent_model_for_negative_and_0_rates():
     num_of_servers=integers(min_value=1, max_value=10),
 )
 @settings(max_examples=10)
-def test_server_dependent_model_property_based(lambda_2, lambda_1, mu, num_of_servers):
+def test_compare_server_dependent_model_with_non_state_dependent_property_based(
+    lambda_2, lambda_1, mu, num_of_servers
+):
     """
     Property based test for the simulation with server dependent rates. For
     different values of lambda_1, lambda_2, mu and num_of_servers checks
@@ -358,4 +360,67 @@ def test_server_dependent_simulation_example_2():
     )
     assert round(mean_service, NUMBER_OF_DIGITS_TO_ROUND) == round(
         0.1931311883483223, NUMBER_OF_DIGITS_TO_ROUND
+    )
+
+
+@given(
+    lambda_2=floats(min_value=0.1, max_value=1.0),
+    lambda_1=floats(min_value=0.1, max_value=1.0),
+    mu=floats(min_value=0.5, max_value=2.0),
+    num_of_servers=integers(min_value=1, max_value=10),
+)
+@settings(max_examples=10)
+def test_compare_state_server_dependent_model_with_normal_property_based(
+    lambda_2, lambda_1, mu, num_of_servers
+):
+    """
+    Property based test for the simulation when using both state and server
+    dependent rates. For different values of lambda_1, lambda_2, mu and
+    num_of_servers checks that the simulation outputs the same results when:
+        - mu = mu
+        - mu = {k: {(i,j): mu}} -> dictionary of dictionaries
+    """
+    simulation = simulate_model(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=4,
+        seed_num=0,
+        runtime=100,
+    )
+
+    rates = {}
+    for server in range(1, num_of_servers + 1):
+        rates[server] = {(u, v): mu for u in range(10) for v in range(10)}
+    server_dependent_simulation = simulate_model(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=rates,
+        num_of_servers=num_of_servers,
+        threshold=4,
+        seed_num=0,
+        runtime=100,
+    )
+
+    assert round(
+        sum([w.waiting_time for w in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([w.waiting_time for w in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    )
+    assert round(
+        sum([b.time_blocked for b in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([b.time_blocked for b in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    )
+    assert round(
+        sum([s.service_time for s in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(
+        sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
     )

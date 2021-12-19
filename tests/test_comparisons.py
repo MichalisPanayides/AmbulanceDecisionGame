@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from hypothesis import given, settings
-from hypothesis.strategies import floats, integers
+from hypothesis.strategies import integers
 
 from ambulance_game.comparisons import (
     get_heatmaps,

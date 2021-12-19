@@ -366,10 +366,10 @@ def test_server_dependent_simulation_example_2():
 @given(
     lambda_2=floats(min_value=0.1, max_value=1.0),
     lambda_1=floats(min_value=0.1, max_value=1.0),
-    mu=floats(min_value=0.5, max_value=2.0),
+    mu=floats(min_value=2.0, max_value=3.0),
     num_of_servers=integers(min_value=1, max_value=10),
 )
-@settings(max_examples=10)
+@settings(max_examples=5, deadline=None)
 def test_compare_state_server_dependent_model_with_normal_property_based(
     lambda_2, lambda_1, mu, num_of_servers
 ):

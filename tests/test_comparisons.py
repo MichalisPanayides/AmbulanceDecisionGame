@@ -616,12 +616,10 @@ def test_plot_output_comparisons_blocking_both_classes():
     mu=integers(min_value=1, max_value=3),
     num_of_servers=integers(min_value=2, max_value=5),
     threshold=integers(min_value=2, max_value=10),
-    system_capacity=integers(min_value=10, max_value=20),
-    buffer_capacity=integers(min_value=2, max_value=10),
 )
 @settings(max_examples=3, deadline=None)
 def test_plot_output_comparisons_blocking_property(
-    lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+    lambda_1, lambda_2, mu, num_of_servers, threshold
 ):
     """
     Test that the values to be plotted by the function for the mean blocking time
@@ -645,8 +643,8 @@ def test_plot_output_comparisons_blocking_property(
         mu=mu,
         num_of_servers=num_of_servers,
         threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
+        system_capacity=10,
+        buffer_capacity=5,
         seed_num=0,
         num_of_trials=1,
         runtime=500,
@@ -668,11 +666,11 @@ def test_plot_output_comparisons_blocking_property(
         mu=mu,
         num_of_servers=num_of_servers,
         threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
+        system_capacity=10,
+        buffer_capacity=5,
         seed_num=0,
         num_of_trials=1,
-        runtime=300,
+        runtime=500,
         measure_to_compare="blocking",
         class_type=None,
         plot_over="buffer_capacity",

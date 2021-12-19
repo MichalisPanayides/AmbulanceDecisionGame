@@ -611,9 +611,9 @@ def test_plot_output_comparisons_blocking_both_classes():
 
 
 @given(
-    lambda_1=floats(min_value=1, max_value=3),
-    lambda_2=floats(min_value=1, max_value=3),
-    mu=floats(min_value=1, max_value=3),
+    lambda_1=integers(min_value=1, max_value=3),
+    lambda_2=integers(min_value=1, max_value=3),
+    mu=integers(min_value=1, max_value=3),
     num_of_servers=integers(min_value=2, max_value=5),
     threshold=integers(min_value=2, max_value=10),
     system_capacity=integers(min_value=10, max_value=20),

@@ -410,7 +410,7 @@ def get_waiting_time_comparisons(
         buffer_capacity=buffer_capacity,
         class_type=class_type,
     )
-    simulation_times = [np.mean(w.waiting_times) for w in times]
+    simulation_times = [np.nanmean(w.waiting_times) for w in times]
     mean_time_sim = get_mean_waiting_time_from_simulation_state_probabilities(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
@@ -472,7 +472,7 @@ def get_blocking_time_comparisons(
         class_type=class_type,
     )
 
-    simulation_times = [np.mean(b.blocking_times) for b in times]
+    simulation_times = [np.nanmean(b.blocking_times) for b in times]
     mean_time_sim = get_mean_blocking_time_from_simulation_state_probabilities(
         lambda_2=lambda_2,
         lambda_1=lambda_1,

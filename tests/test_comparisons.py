@@ -619,7 +619,7 @@ def test_plot_output_comparisons_blocking_both_classes():
     system_capacity=integers(min_value=10, max_value=20),
     buffer_capacity=integers(min_value=2, max_value=10),
 )
-@settings(max_examples=5, deadline=None)
+@settings(max_examples=3, deadline=None)
 def test_plot_output_comparisons_blocking_property(
     lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
@@ -649,7 +649,7 @@ def test_plot_output_comparisons_blocking_property(
         buffer_capacity=buffer_capacity,
         seed_num=0,
         num_of_trials=1,
-        runtime=300,
+        runtime=500,
         measure_to_compare="blocking",
         class_type=1,
         plot_over="buffer_capacity",

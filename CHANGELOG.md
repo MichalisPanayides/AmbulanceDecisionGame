@@ -1,3 +1,6 @@
+# v0.0.4
+Object oriented implementation
+
 # v0.0.3
 Implement state-dependent and server-dependent distributions for simulation
 

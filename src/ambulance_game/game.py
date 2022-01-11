@@ -11,66 +11,8 @@ import numpy as np
 import scipy.optimize
 
 from .markov.blocking import get_mean_blocking_time_using_markov_state_probabilities
-from .markov.markov import (
-    build_states,
-    get_markov_state_probabilities,
-    get_steady_state_algebraically,
-    get_transition_matrix,
-)
 from .markov.proportion import proportion_within_target_using_markov_state_probabilities
-from .markov.utils import get_probability_of_accepting
-
-
-@functools.lru_cache(maxsize=None)
-def get_accepting_proportion_of_class_2_individuals(
-    lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
-):
-    """
-    Get the proportion of class 2 individuals that are not lost to the system
-
-    Parameters
-    ----------
-    lambda_1 : float
-    lambda_2 : float
-    mu : float
-    num_of_servers : int
-    threshold : int
-    system_capacity : int
-    buffer_capacity : int
-
-    Returns
-    -------
-    float
-        The probability that an individual entering will not be lost to the
-        system
-    """
-    transition_matrix = get_transition_matrix(
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    all_states = build_states(
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.solve
-    )
-    pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
-
-    prob_accept = get_probability_of_accepting(
-        all_states=all_states,
-        pi=pi,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    return prob_accept[1]
+from .markov.utils import get_accepting_proportion_of_class_2_individuals
 
 
 @functools.lru_cache(maxsize=None)
@@ -164,7 +106,6 @@ def get_weighted_mean_blocking_difference_between_two_systems(
     )
 
     decision_value_1 = alpha * (1 - prob_accept_1) + (1 - alpha) * mean_blocking_time_1
-
     decision_value_2 = alpha * (1 - prob_accept_2) + (1 - alpha) * mean_blocking_time_2
 
     return decision_value_1 - decision_value_2

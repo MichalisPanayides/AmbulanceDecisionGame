@@ -12,7 +12,6 @@ from ambulance_game.game import (
     build_matrices_from_computed_tasks,
     calculate_class_2_individuals_best_response,
     compute_tasks,
-    get_accepting_proportion_of_class_2_individuals,
     get_individual_entries_of_matrices,
     get_payoff_matrices,
     get_routing_matrix,
@@ -20,56 +19,6 @@ from ambulance_game.game import (
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
-
-
-def test_get_accepting_proportion_of_class_2_individuals_examples():
-    """
-    Test for getting the proportion of class 2 individuals
-    """
-    assert (
-        get_accepting_proportion_of_class_2_individuals(
-            lambda_1=1,
-            lambda_2=1,
-            mu=1,
-            num_of_servers=1,
-            threshold=1,
-            system_capacity=1,
-            buffer_capacity=1,
-        )
-        == 0.6
-    )
-
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=2,
-                lambda_2=2,
-                mu=2,
-                num_of_servers=2,
-                threshold=2,
-                system_capacity=2,
-                buffer_capacity=2,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.9230769230769231, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=10,
-                lambda_2=10,
-                mu=2,
-                num_of_servers=5,
-                threshold=5,
-                system_capacity=5,
-                buffer_capacity=5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.8523592984113859, NUMBER_OF_DIGITS_TO_ROUND)
-    )
 
 
 def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():

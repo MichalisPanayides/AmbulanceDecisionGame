@@ -369,24 +369,24 @@ def get_average_simulated_state_probabilities_from_simulations(
         (buffer_capacity + 1, system_capacity + 1), np.NaN
     )
     for simulation in simulations:
-            state_probabilities = get_simulated_state_probabilities(
+        state_probabilities = get_simulated_state_probabilities(
             simulation_object=simulation,
-                output=output,
-                system_capacity=system_capacity,
-                buffer_capacity=buffer_capacity,
+            output=output,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        )
+        for row, col in itertools.product(
+            range(buffer_capacity + 1), range(system_capacity + 1)
+        ):
+            updated_entry = np.nansum(
+                [
+                    average_state_probabilities[row, col],
+                    state_probabilities[row, col],
+                ]
             )
-            for row, col in itertools.product(
-                range(buffer_capacity + 1), range(system_capacity + 1)
-            ):
-                updated_entry = np.nansum(
-                    [
-                        average_state_probabilities[row, col],
-                        state_probabilities[row, col],
-                    ]
-                )
-                average_state_probabilities[row, col] = (
-                    updated_entry if updated_entry != 0 else np.NaN
-                )
+            average_state_probabilities[row, col] = (
+                updated_entry if updated_entry != 0 else np.NaN
+            )
     average_state_probabilities /= len(simulations)
 
     return average_state_probabilities

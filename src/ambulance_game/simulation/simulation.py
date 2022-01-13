@@ -3,6 +3,7 @@ Code for the simulation of the model.
 """
 
 import collections
+import copy
 import itertools
 import random
 
@@ -215,7 +216,7 @@ def simulate_model(
         ciw.seed(seed_num + trial)
         simulation = ciw.Simulation(model, node_class=node, tracker=tracker)
         simulation.simulate_until_max_time(runtime)
-        all_simulations.append(simulation)
+        all_simulations.append(copy.deepcopy(simulation))
 
     return all_simulations if len(all_simulations) > 1 else all_simulations[0]
 
@@ -322,9 +323,7 @@ def get_average_simulated_state_probabilities(
         for key, value in average_state_probabilities.items():
             average_state_probabilities[key] = value / num_of_trials
     else:
-        average_state_probabilities = np.full(
-            (buffer_capacity + 1, system_capacity + 1), np.NaN
-        )
+        all_simulations = []
         for trial in range(num_of_trials):
             simulation_object = simulate_model(
                 lambda_2=lambda_2,
@@ -337,8 +336,41 @@ def get_average_simulated_state_probabilities(
                 system_capacity=system_capacity,
                 buffer_capacity=buffer_capacity,
             )
+            all_simulations.append(copy.deepcopy(simulation_object))
+
+        average_state_probabilities = (
+            get_average_simulated_state_probabilities_from_simulations(
+                simulations=all_simulations,
+                system_capacity=system_capacity,
+                buffer_capacity=buffer_capacity,
+            )
+        )
+
+    return average_state_probabilities
+
+
+def get_average_simulated_state_probabilities_from_simulations(
+    simulations,
+    system_capacity,
+    buffer_capacity,
+    output=np.ndarray,
+):
+    """
+    This function runs the get_simulated_state_probabilities() for multiple iterations
+    to eliminate any stochasticity from the results
+
+    Parameters
+    ----------
+    output : type, optional
+        The format of the output state probabilities, by default np.ndarray
+    """
+    # TODO: Implement output = dict
+    average_state_probabilities = np.full(
+        (buffer_capacity + 1, system_capacity + 1), np.NaN
+    )
+    for simulation in simulations:
             state_probabilities = get_simulated_state_probabilities(
-                simulation_object=simulation_object,
+            simulation_object=simulation,
                 output=output,
                 system_capacity=system_capacity,
                 buffer_capacity=buffer_capacity,
@@ -355,7 +387,7 @@ def get_average_simulated_state_probabilities(
                 average_state_probabilities[row, col] = (
                     updated_entry if updated_entry != 0 else np.NaN
                 )
-        average_state_probabilities /= num_of_trials
+    average_state_probabilities /= len(simulations)
 
     return average_state_probabilities
 
@@ -614,10 +646,8 @@ def get_multiple_runs_results(
     """
     if seed_num is None:  # pragma: no cover
         seed_num = random.random()
-    records = collections.namedtuple(
-        "records", "waiting_times service_times blocking_times proportion_within_target"
-    )
-    results = []
+
+    all_simulations = []
     for trial in range(num_of_trials):
         simulation = simulate_model(
             lambda_2=lambda_2,
@@ -630,13 +660,59 @@ def get_multiple_runs_results(
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
         )
+        all_simulations.append(copy.deepcopy(simulation))
 
+    results = get_multiple_runs_results_from_simulations(
+        simulations=all_simulations,
+        target=target,
+        warm_up_time=warm_up_time,
+        class_type=class_type,
+    )
+
+    if output_type == "list":
+        all_waits, all_services, all_blocks, all_props = get_list_of_results(results)
+        return [all_waits, all_services, all_blocks, all_props]
+    return results
+
+
+def get_multiple_runs_results_from_simulations(
+    simulations, target, class_type=None, warm_up_time=100
+):
+    """Get the waiting times, service times and blocking times for the given
+    simulations. The function may return the times for class 2 individuals,
+    class 1 individuals or the aggregated total of the two.
+
+    Parameters
+    ----------
+    simulations : list
+        A list of all simulation objects
+    target : float
+        The target value to get the proportion of individuals within
+    warm_up_time : int, optional
+        Time to start collecting results, by default 100
+    class_type : int, optional
+        An integer to identify what type of class to get the times for, where
+        class_type=(0,1,None) to denote class 1, class 2 or both
+
+    Returns
+    -------
+    list
+        A list of records where each record consists of the waiting, service and
+        blocking times of one trial
+    """
+    records = collections.namedtuple(
+        "records", "waiting_times service_times blocking_times proportion_within_target"
+    )
+    results = []
+    if isinstance(simulations, ciw.Simulation):
+        simulations = [simulations]
+
+    for simulation in simulations:
         if class_type is None:
             sim_results = simulation.get_all_records()
             waiting_times, serving_times, blocking_times = extract_times_from_records(
                 sim_results, warm_up_time
             )
-
         individuals = simulation.get_all_individuals()
         if class_type in (0, 1):
             (
@@ -648,7 +724,6 @@ def get_multiple_runs_results(
                 warm_up_time=warm_up_time,
                 class_type=class_type,
             )
-
         (
             class_2_inds,
             class_2_inds_within_target,
@@ -657,7 +732,6 @@ def get_multiple_runs_results(
         ) = extract_total_individuals_and_the_ones_within_target_for_both_classes(
             individuals=individuals, target=target
         )
-
         if class_type is None:
             proportion_within_target = (
                 (class_1_inds_within_target + class_2_inds_within_target)
@@ -677,16 +751,11 @@ def get_multiple_runs_results(
                 if class_2_inds != 0
                 else np.nan
             )
-
         results.append(
             records(
                 waiting_times, serving_times, blocking_times, proportion_within_target
             )
         )
-
-    if output_type == "list":
-        all_waits, all_services, all_blocks, all_props = get_list_of_results(results)
-        return [all_waits, all_services, all_blocks, all_props]
     return results
 
 

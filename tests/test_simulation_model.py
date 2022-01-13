@@ -598,7 +598,7 @@ def test_get_mean_blocking_difference_between_two_systems_equal_split(
     is precisely what the function checks. This test runs the function with a
     proportion variable of 0.5 (meaning equally distributing class 2 individuals
     between the two systems) and ensures that the difference is 0, given any
-    values of λ^α and λ^ο_1 = λ^ο_2 = λ^ο
+    values of lambda_2 and lambda_1_1 = lambda_1_2 = lambda_1.
 
     Note here that due to the ciw.seed() function it was possible to eliminate any
     randomness and make both systems identical, in terms of arrivals, services
@@ -682,8 +682,8 @@ def test_calculate_class_2_individuals_best_response_equal_split():
         num_of_servers_2=4,
         threshold_1=3,
         threshold_2=3,
-        seed_num_1=10,
-        seed_num_2=10,
+        seed_num_1=0,
+        seed_num_2=0,
         num_of_trials=5,
         warm_up_time=100,
         runtime=500,

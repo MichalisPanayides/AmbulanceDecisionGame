@@ -12,7 +12,6 @@ from ambulance_game.simulation.simulation import (
     build_custom_node,
     build_model,
     simulate_model,
-    calculate_class_2_individuals_best_response,
     get_average_simulated_state_probabilities,
     get_mean_blocking_difference_using_simulation,
     get_multiple_runs_results,
@@ -659,86 +658,37 @@ def test_get_mean_blocking_difference_using_simulation_increasing():
     assert is_increasing
 
 
-#  TODO Investigate making it a property based test
-def test_calculate_class_2_individuals_best_response_equal_split():
-    """Make sure that the brentq() function that is used suggests that when two
-    identical systems are considered the individuals will be split equally between
-    them (50% - 50%)
-
-    Note here that due to the ciw.seed() function it was possible to eliminate any
-    randomness and make both systems identical, in terms of arrivals, services
-    and any other stochasticity that the simulation models incorporates.
-    """
-    lambda_2 = 0.3
-    equal_split = calculate_class_2_individuals_best_response(
-        lambda_2=lambda_2,
-        lambda_1_1=0.3,
-        lambda_1_2=0.3,
-        mu_1=0.2,
-        mu_2=0.2,
-        num_of_servers_1=4,
-        num_of_servers_2=4,
-        threshold_1=3,
-        threshold_2=3,
-        seed_num_1=0,
-        seed_num_2=0,
-        num_of_trials=5,
-        warm_up_time=100,
-        runtime=500,
-        system_capacity_1=float("inf"),
-        system_capacity_2=float("inf"),
-        buffer_capacity_1=float("inf"),
-        buffer_capacity_2=float("inf"),
-    )
-
-    assert np.isclose(equal_split, 0.5)
-
-
-def test_calculate_class_2_individuals_best_response_all_individuals_in_one():
-    """
-    Ensuring that the function is sends 100% of individuals to the first system
-    when the second system is very busy and vise versa.
-    """
-    all_individuals_to_first = calculate_class_2_individuals_best_response(
-        lambda_2=0.3,
-        lambda_1_1=0.1,
-        lambda_1_2=3,
-        mu_1=10,
-        mu_2=2,
-        num_of_servers_1=8,
-        num_of_servers_2=4,
-        threshold_1=6,
-        threshold_2=3,
-        seed_num_1=10,
-        seed_num_2=10,
-        num_of_trials=5,
-        warm_up_time=100,
-        runtime=500,
-        system_capacity_1=float("inf"),
-        system_capacity_2=float("inf"),
-        buffer_capacity_1=float("inf"),
-        buffer_capacity_2=float("inf"),
-    )
-    assert all_individuals_to_first == 1
-
-    all_individuals_to_second = calculate_class_2_individuals_best_response(
-        lambda_2=0.3,
-        lambda_1_1=3,
-        lambda_1_2=0.1,
-        mu_1=2,
-        mu_2=10,
-        num_of_servers_1=4,
-        num_of_servers_2=8,
-        threshold_1=3,
-        threshold_2=6,
-        seed_num_1=10,
-        seed_num_2=10,
-        num_of_trials=5,
-        warm_up_time=100,
-        runtime=500,
-        system_capacity_1=float("inf"),
-        system_capacity_2=float("inf"),
-        buffer_capacity_1=float("inf"),
-        buffer_capacity_2=float("inf"),
-    )
-    assert all_individuals_to_second == 0
+def test_get_mean_blocking_difference_using_bounded_simulation_increasing():
+    """Ensuring that the function is increasing for specific inputs"""
+    expected_out = [
+        -5.920904907479688,
+        -2.1671852642543246,
+        2.7733256111964444,
+        7.009536618576061,
+    ]
+    proportions = np.linspace(0.2, 0.8, 4)
+    for index, prop in enumerate(proportions):
+        mean_diff = get_mean_blocking_difference_using_simulation(
+            prop_1=prop,
+            lambda_2=0.15,
+            lambda_1_1=0.08,
+            lambda_1_2=0.08,
+            mu_1=0.05,
+            mu_2=0.05,
+            num_of_servers_1=6,
+            num_of_servers_2=6,
+            threshold_1=5,
+            threshold_2=5,
+            seed_num_1=2,
+            seed_num_2=2,
+            num_of_trials=100,
+            warm_up_time=100,
+            runtime=500,
+            system_capacity_1=10,
+            system_capacity_2=15,
+            buffer_capacity_1=8,
+            buffer_capacity_2=6,
+        )
+        assert round(mean_diff, NUMBER_OF_DIGITS_TO_ROUND) == round(
+            expected_out[index], NUMBER_OF_DIGITS_TO_ROUND
+        )

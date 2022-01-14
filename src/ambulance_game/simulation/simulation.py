@@ -9,7 +9,6 @@ import random
 
 import ciw
 import numpy as np
-import scipy.optimize
 
 from .dists import get_service_distribution
 
@@ -865,12 +864,12 @@ def get_mean_blocking_difference_using_simulation(
     system_capacity_2,
     buffer_capacity_1,
     buffer_capacity_2,
-    seed_num_1,
-    seed_num_2,
-    num_of_trials,
-    warm_up_time,
-    runtime,
     alpha=0,
+    seed_num_1=None,
+    seed_num_2=None,
+    num_of_trials=10,
+    warm_up_time=100,
+    runtime=1440,
 ):
     """Given a predefined proportion of class's 2 arrival rate calculate the
     mean difference between blocking times of two systems with given set of parameters.
@@ -939,116 +938,3 @@ def get_mean_blocking_difference_using_simulation(
     )
 
     return decision_value_1 - decision_value_2
-
-
-def calculate_class_2_individuals_best_response(
-    lambda_2,
-    lambda_1_1,
-    lambda_1_2,
-    mu_1,
-    mu_2,
-    num_of_servers_1,
-    num_of_servers_2,
-    threshold_1,
-    threshold_2,
-    system_capacity_1,
-    system_capacity_2,
-    buffer_capacity_1,
-    buffer_capacity_2,
-    seed_num_1,
-    seed_num_2,
-    num_of_trials,
-    warm_up_time,
-    runtime,
-    lower_bound=0.01,
-    upper_bound=0.99,
-):
-    """Obtains the optimal distribution of class 2 individuals such that the
-    blocking times in the two systems are identical and thus optimal(minimised).
-
-    The brentq function is used which is an algorithm created to find the root of
-    a function that combines root bracketing, bisection, and inverse quadratic
-    interpolation. In this specific example the root to be found is the difference
-    between the blocking times of two systems. In essence the brentq algorithm
-    attempts to find the value of "prop_1" where the "diff" is zero
-    (see function: get_mean_blocking_difference_between_two_systems).
-
-    Returns
-    -------
-    float
-        The optimal proportion where the systems have identical blocking times
-    """
-    check_1 = get_mean_blocking_difference_between_two_systems(
-        prop_1=lower_bound,
-        lambda_2=lambda_2,
-        lambda_1_1=lambda_1_1,
-        lambda_1_2=lambda_1_2,
-        mu_1=mu_1,
-        mu_2=mu_2,
-        num_of_servers_1=num_of_servers_1,
-        num_of_servers_2=num_of_servers_2,
-        threshold_1=threshold_1,
-        threshold_2=threshold_2,
-        system_capacity_1=system_capacity_1,
-        system_capacity_2=system_capacity_2,
-        buffer_capacity_1=buffer_capacity_1,
-        buffer_capacity_2=buffer_capacity_2,
-        seed_num_1=seed_num_1,
-        seed_num_2=seed_num_2,
-        num_of_trials=num_of_trials,
-        warm_up_time=warm_up_time,
-        runtime=runtime,
-    )
-    check_2 = get_mean_blocking_difference_between_two_systems(
-        prop_1=upper_bound,
-        lambda_2=lambda_2,
-        lambda_1_1=lambda_1_1,
-        lambda_1_2=lambda_1_2,
-        mu_1=mu_1,
-        mu_2=mu_2,
-        num_of_servers_1=num_of_servers_1,
-        num_of_servers_2=num_of_servers_2,
-        threshold_1=threshold_1,
-        threshold_2=threshold_2,
-        system_capacity_1=system_capacity_1,
-        system_capacity_2=system_capacity_2,
-        buffer_capacity_1=buffer_capacity_1,
-        buffer_capacity_2=buffer_capacity_2,
-        seed_num_1=seed_num_1,
-        seed_num_2=seed_num_2,
-        num_of_trials=num_of_trials,
-        warm_up_time=warm_up_time,
-        runtime=runtime,
-    )
-
-    if check_1 >= 0 and check_2 >= 0:
-        return 0
-    if check_1 <= 0 and check_2 <= 0:
-        return 1
-
-    optimal_prop = scipy.optimize.brentq(
-        get_mean_blocking_difference_between_two_systems,
-        a=lower_bound,
-        b=upper_bound,
-        args=(
-            lambda_2,
-            lambda_1_1,
-            lambda_1_2,
-            mu_1,
-            mu_2,
-            num_of_servers_1,
-            num_of_servers_2,
-            threshold_1,
-            threshold_2,
-            system_capacity_1,
-            system_capacity_2,
-            buffer_capacity_1,
-            buffer_capacity_2,
-            seed_num_1,
-            seed_num_2,
-            num_of_trials,
-            warm_up_time,
-            runtime,
-        ),
-    )
-    return optimal_prop

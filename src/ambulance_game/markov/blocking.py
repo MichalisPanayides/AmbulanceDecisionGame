@@ -1,6 +1,8 @@
 """
 Code to calculate the expected blocking time.
 """
+import functools
+
 import numpy as np
 
 from .markov import (
@@ -11,6 +13,7 @@ from .markov import (
 )
 from .utils import (
     expected_time_in_markov_state_ignoring_class_2_arrivals,
+    get_accepting_proportion_of_class_2_individuals,
     is_accepting_state,
     is_blocking_state,
     prob_class_1_arrival,
@@ -359,3 +362,103 @@ def get_mean_blocking_time_using_markov_state_probabilities(
         buffer_capacity=buffer_capacity,
     )
     return mean_blocking_time
+
+
+@functools.lru_cache(maxsize=None)
+def get_mean_blocking_difference_using_markov(
+    prop_1,
+    lambda_2,
+    lambda_1_1,
+    lambda_1_2,
+    mu_1,
+    mu_2,
+    num_of_servers_1,
+    num_of_servers_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    alpha=0,
+    **kwargs,  # pylint: disable=unused-argument
+):
+    """
+    Get a weighted mean blocking difference between two systems. This
+    function is to be used as a routing function to find the point at
+    which it is set to 0. This function calculates:
+        - a*(1 - P(A_1)) + (1 - a)*B_1
+        - a*(1 - P(A_2)) + (1 - a)*B_2
+    and returns their difference.
+
+    Parameters
+    ----------
+    prop_1 : float
+        The proportion of class 2 individuals to distribute to the first system
+    lambda_2 : float
+        The overall arrival rate of class 2 individuals for both systems
+    lambda_1_1 : float
+        The arrival rate of class 1 individuals in the first system
+    lambda_1_2 : float
+        The arrival rate of class 1 individuals in the second system
+    mu_1 : float
+    mu_2 : float
+    num_of_servers_1 : int
+    num_of_servers_2 : int
+    threshold_1 : int
+    threshold_2 : int
+    system_capacity_1 : int
+    system_capacity_2 : int
+    buffer_capacity_1 : int
+    buffer_capacity_2 : int
+
+    Returns
+    -------
+    float
+        The weighted mean difference between the decision values of the two
+        systems
+    """
+    lambda_2_1 = prop_1 * lambda_2
+    lambda_2_2 = (1 - prop_1) * lambda_2
+
+    mean_blocking_time_1 = get_mean_blocking_time_using_markov_state_probabilities(
+        lambda_2=lambda_2_1,
+        lambda_1=lambda_1_1,
+        mu=mu_1,
+        num_of_servers=num_of_servers_1,
+        threshold=threshold_1,
+        system_capacity=system_capacity_1,
+        buffer_capacity=buffer_capacity_1,
+    )
+    mean_blocking_time_2 = get_mean_blocking_time_using_markov_state_probabilities(
+        lambda_2=lambda_2_2,
+        lambda_1=lambda_1_2,
+        mu=mu_2,
+        num_of_servers=num_of_servers_2,
+        threshold=threshold_2,
+        system_capacity=system_capacity_2,
+        buffer_capacity=buffer_capacity_2,
+    )
+    prob_accept_1 = get_accepting_proportion_of_class_2_individuals(
+        lambda_1=lambda_1_1,
+        lambda_2=lambda_2_1,
+        mu=mu_1,
+        num_of_servers=num_of_servers_1,
+        threshold=threshold_1,
+        system_capacity=system_capacity_1,
+        buffer_capacity=buffer_capacity_1,
+    )
+    prob_accept_2 = get_accepting_proportion_of_class_2_individuals(
+        lambda_1=lambda_1_2,
+        lambda_2=lambda_2_2,
+        mu=mu_2,
+        num_of_servers=num_of_servers_2,
+        threshold=threshold_2,
+        system_capacity=system_capacity_2,
+        buffer_capacity=buffer_capacity_2,
+    )
+
+    decision_value_1 = alpha * (1 - prob_accept_1) + (1 - alpha) * mean_blocking_time_1
+    decision_value_2 = alpha * (1 - prob_accept_2) + (1 - alpha) * mean_blocking_time_2
+
+    return decision_value_1 - decision_value_2

@@ -759,6 +759,97 @@ def get_multiple_runs_results_from_simulations(
     return results
 
 
+def get_decision_values(
+    simulations_1,
+    simulations_2,
+    threshold_1,
+    threshold_2,
+    system_capacity_1,
+    system_capacity_2,
+    buffer_capacity_1,
+    buffer_capacity_2,
+    warm_up_time=100,
+    alpha=0,
+):
+    """
+    Gets the weighted decision values that will be used to calculate the split
+    between individuals. The decision values are calculated as the weighted
+    average of the blocking times and the proportion of individuals lost to
+    the system.
+
+    Parameters
+    ----------
+    simulations_1 : list
+        A list of all simulation objects for the first system
+    simulations_2 : list
+        A list of all simulation objects for the second system
+    warm_up_time : float, optional
+    alpha : int, optional
+        The weight to give to the blocking times and to lost individuals, by
+        default 0
+
+    Returns
+    -------
+    float, float
+        The two decision values for the first system and the second system
+    """
+    all_blocking_times_1 = []
+    all_blocking_times_2 = []
+    for sim_1, sim_2 in zip(simulations_1, simulations_2):
+        blocking_times_1 = [
+            r.time_blocked
+            for r in sim_1.get_all_records()
+            if r.arrival_date > warm_up_time and r.node == 1
+        ]
+        all_blocking_times_1.append(blocking_times_1)
+        blocking_times_2 = [
+            r.time_blocked
+            for r in sim_2.get_all_records()
+            if r.arrival_date > warm_up_time and r.node == 1
+        ]
+        all_blocking_times_2.append(blocking_times_2)
+    mean_blocking_time_1 = np.nanmean([np.nanmean(b) for b in all_blocking_times_1])
+    mean_blocking_time_2 = np.nanmean([np.nanmean(b) for b in all_blocking_times_2])
+
+    if np.isinf(system_capacity_1):
+        prob_lost_1 = 0
+    else:
+        state_probs_1 = get_average_simulated_state_probabilities_from_simulations(
+            simulations_1,
+            system_capacity=system_capacity_1,
+            buffer_capacity=buffer_capacity_1,
+        )
+        prob_lost_1 = (
+            np.nansum(state_probs_1[-1])
+            if threshold_1 <= threshold_2
+            else np.nansum(state_probs_1[:, -1])
+        )
+
+    if np.isinf(system_capacity_2):
+        prob_lost_2 = 0
+    else:
+        state_probs_2 = get_average_simulated_state_probabilities_from_simulations(
+            simulations_2,
+            system_capacity=system_capacity_2,
+            buffer_capacity=buffer_capacity_2,
+        )
+
+        prob_lost_2 = (
+            np.nansum(state_probs_2[-1])
+            if threshold_1 <= threshold_2
+            else np.nansum(state_probs_2[:, -1])
+        )
+
+    decision_value_1 = alpha * (prob_lost_1) + (1 - alpha) * np.mean(
+        mean_blocking_time_1
+    )
+    decision_value_2 = alpha * (prob_lost_2) + (1 - alpha) * np.mean(
+        mean_blocking_time_2
+    )
+
+    return decision_value_1, decision_value_2
+
+
 def get_mean_blocking_difference_between_two_systems(
     prop_1,
     lambda_2,
@@ -779,6 +870,7 @@ def get_mean_blocking_difference_between_two_systems(
     num_of_trials,
     warm_up_time,
     runtime,
+    alpha=0,
 ):
     """Given a predefined proportion of class's 2 arrival rate calculate the
     mean difference between blocking times of two systems with given set of parameters.
@@ -800,44 +892,53 @@ def get_mean_blocking_difference_between_two_systems(
     lambda_2_1 = prop_1 * lambda_2
     lambda_2_2 = (1 - prop_1) * lambda_2
 
-    res_1 = get_multiple_runs_results(
+    simulations_1 = simulate_model(
         lambda_2=lambda_2_1,
         lambda_1=lambda_1_1,
         mu=mu_1,
         num_of_servers=num_of_servers_1,
         threshold=threshold_1,
-        seed_num=seed_num_1,
-        warm_up_time=warm_up_time,
-        num_of_trials=num_of_trials,
-        output_type="tuple",
-        runtime=runtime,
         system_capacity=system_capacity_1,
         buffer_capacity=buffer_capacity_1,
+        seed_num=seed_num_1,
+        num_of_trials=num_of_trials,
+        runtime=runtime,
     )
-    res_2 = get_multiple_runs_results(
+
+    simulations_2 = simulate_model(
         lambda_2=lambda_2_2,
         lambda_1=lambda_1_2,
         mu=mu_2,
         num_of_servers=num_of_servers_2,
         threshold=threshold_2,
-        seed_num=seed_num_2,
-        warm_up_time=warm_up_time,
-        num_of_trials=num_of_trials,
-        output_type="tuple",
-        runtime=runtime,
         system_capacity=system_capacity_2,
         buffer_capacity=buffer_capacity_2,
+        seed_num=seed_num_2,
+        num_of_trials=num_of_trials,
+        runtime=runtime,
     )
 
-    system_1_blockages = [
-        np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_1
-    ]
-    system_2_blockages = [
-        np.nanmean(b.blocking_times) if len(b.blocking_times) != 0 else 0 for b in res_2
-    ]
-    diff = np.mean(system_1_blockages) - np.mean(system_2_blockages)
+    simulations_1 = (
+        [simulations_1] if isinstance(simulations_1, ciw.Simulation) else simulations_1
+    )
+    simulations_2 = (
+        [simulations_2] if isinstance(simulations_2, ciw.Simulation) else simulations_2
+    )
 
-    return diff
+    decision_value_1, decision_value_2 = get_decision_values(
+        simulations_1=simulations_1,
+        simulations_2=simulations_2,
+        threshold_1=threshold_1,
+        threshold_2=threshold_2,
+        system_capacity_1=system_capacity_1,
+        system_capacity_2=system_capacity_2,
+        buffer_capacity_1=buffer_capacity_1,
+        buffer_capacity_2=buffer_capacity_2,
+        warm_up_time=warm_up_time,
+        alpha=alpha,
+    )
+
+    return decision_value_1 - decision_value_2
 
 
 def calculate_class_2_individuals_best_response(

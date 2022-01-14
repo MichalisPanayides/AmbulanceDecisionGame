@@ -14,7 +14,7 @@ from ambulance_game.simulation.simulation import (
     simulate_model,
     calculate_class_2_individuals_best_response,
     get_average_simulated_state_probabilities,
-    get_mean_blocking_difference_between_two_systems,
+    get_mean_blocking_difference_using_simulation,
     get_multiple_runs_results,
     get_simulated_state_probabilities,
     extract_total_individuals_and_the_ones_within_target_for_both_classes,
@@ -587,9 +587,7 @@ def test_example_get_multiple_results_for_different_individuals_classes():
     lambda_1=floats(min_value=0.1, max_value=0.4),
 )
 @settings(deadline=None)
-def test_get_mean_blocking_difference_between_two_systems_equal_split(
-    lambda_2, lambda_1
-):
+def test_get_mean_blocking_difference_using_simulation_equal_split(lambda_2, lambda_1):
     """
     Test that ensures that the function that finds the optimal distribution of
     class 2 individuals in two identical systems returns a solution that
@@ -604,7 +602,7 @@ def test_get_mean_blocking_difference_between_two_systems_equal_split(
     randomness and make both systems identical, in terms of arrivals, services
     and any other stochasticity that the simulation models incorporates.
     """
-    diff = get_mean_blocking_difference_between_two_systems(
+    diff = get_mean_blocking_difference_using_simulation(
         prop_1=0.5,
         lambda_2=lambda_2,
         lambda_1_1=lambda_1,
@@ -629,13 +627,13 @@ def test_get_mean_blocking_difference_between_two_systems_equal_split(
 
 
 # TODO Investigate making this a property based test
-def test_get_mean_blocking_difference_between_two_systems_increasing():
+def test_get_mean_blocking_difference_using_simulation_increasing():
     """Ensuring that the function is increasing for specific inputs"""
     diff_list = []
     proportions = np.linspace(0.1, 0.9, 9)
     for prop in proportions:
         diff_list.append(
-            get_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_simulation(
                 prop_1=prop,
                 lambda_2=0.15,
                 lambda_1_1=0.08,

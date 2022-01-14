@@ -15,20 +15,20 @@ from ambulance_game.game import (
     get_individual_entries_of_matrices,
     get_payoff_matrices,
     get_routing_matrix,
-    get_weighted_mean_blocking_difference_between_two_systems,
+    get_mean_blocking_difference_using_markov,
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
-def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
+def test_get_mean_blocking_difference_using_markov_example_1():
     """
     Test for getting the weighted mean blocking difference between two systems
     for different values of alpha
     """
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.5,
                 lambda_2=2,
                 lambda_1_1=2,
@@ -52,7 +52,7 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
 
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.5,
                 lambda_2=2,
                 lambda_1_1=2,
@@ -76,7 +76,7 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
 
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.5,
                 lambda_2=2,
                 lambda_1_1=2,
@@ -99,14 +99,14 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
     )
 
 
-def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
+def test_get_mean_blocking_difference_using_markov_example_2():
     """
     Test for getting the weighted mean blocking difference between two systems
     for different values of alpha
     """
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.8,
                 lambda_2=4,
                 lambda_1_1=3,
@@ -130,7 +130,7 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
 
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.8,
                 lambda_2=4,
                 lambda_1_1=3,
@@ -154,7 +154,7 @@ def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
 
     assert (
         round(
-            get_weighted_mean_blocking_difference_between_two_systems(
+            get_mean_blocking_difference_using_markov(
                 prop_1=0.8,
                 lambda_2=4,
                 lambda_1_1=3,

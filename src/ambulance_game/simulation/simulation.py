@@ -850,7 +850,7 @@ def get_decision_values(
     return decision_value_1, decision_value_2
 
 
-def get_mean_blocking_difference_between_two_systems(
+def get_mean_blocking_difference_using_simulation(
     prop_1,
     lambda_2,
     lambda_1_1,

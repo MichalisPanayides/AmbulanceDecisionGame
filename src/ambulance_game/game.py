@@ -16,7 +16,7 @@ from .markov.utils import get_accepting_proportion_of_class_2_individuals
 
 
 @functools.lru_cache(maxsize=None)
-def get_weighted_mean_blocking_difference_between_two_systems(
+def get_mean_blocking_difference_using_markov(
     prop_1,
     lambda_2,
     lambda_1_1,
@@ -128,7 +128,7 @@ def calculate_class_2_individuals_best_response(
     buffer_capacity_2,
     lower_bound=0.01,
     upper_bound=0.99,
-    routing_function=get_weighted_mean_blocking_difference_between_two_systems,
+    routing_function=get_mean_blocking_difference_using_markov,
     alpha=0,
     xtol=1e-04,
     rtol=8.9e-16,
@@ -243,7 +243,7 @@ def get_routing_matrix(
     system_capacity_2,
     buffer_capacity_1,
     buffer_capacity_2,
-    routing_function=get_weighted_mean_blocking_difference_between_two_systems,
+    routing_function=get_mean_blocking_difference_using_markov,
     alpha=0,
 ):
     """

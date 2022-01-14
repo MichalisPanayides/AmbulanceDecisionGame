@@ -12,7 +12,10 @@ import scipy.optimize
 
 from .markov import get_mean_blocking_difference_using_markov
 from .markov import proportion_within_target_using_markov_state_probabilities
-from .simulation import get_mean_blocking_difference_using_simulation
+from .simulation import (
+    get_mean_blocking_difference_using_simulation,
+    get_mean_proportion_of_individuals_within_target_for_multiple_runs,
+)
 
 
 @functools.lru_cache(maxsize=None)
@@ -117,8 +120,6 @@ def calculate_class_2_individuals_best_response(
         seed_num_2=seed_num_2,
     )
 
-    print(check_1, check_2)
-
     if check_1 >= 0 and check_2 >= 0:
         return 0
     if check_1 <= 0 and check_2 <= 0:
@@ -148,7 +149,6 @@ def calculate_class_2_individuals_best_response(
             warm_up_time,
             runtime,
         )
-    print(brentq_arguments)
     optimal_prop = scipy.optimize.brentq(
         routing_function,
         a=lower_bound,
@@ -318,9 +318,8 @@ def get_individual_entries_of_matrices(
     prop_to_hospital_2 = 1 - prop_to_hospital_1
 
     if use_simulation:
-        # TODO: Fix this ASAP
         proportion_within_target_1 = (
-            proportion_within_target_using_markov_state_probabilities(
+            get_mean_proportion_of_individuals_within_target_for_multiple_runs(
                 lambda_2=lambda_2 * prop_to_hospital_1,
                 lambda_1=lambda_1_1,
                 mu=mu_1,
@@ -328,12 +327,14 @@ def get_individual_entries_of_matrices(
                 threshold=threshold_1,
                 system_capacity=system_capacity_1,
                 buffer_capacity=buffer_capacity_1,
-                class_type=None,
                 target=target,
-            )
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                seed_num=seed_num_1,
+            )[0]
         )
         proportion_within_target_2 = (
-            proportion_within_target_using_markov_state_probabilities(
+            get_mean_proportion_of_individuals_within_target_for_multiple_runs(
                 lambda_2=lambda_2 * prop_to_hospital_2,
                 lambda_1=lambda_1_2,
                 mu=mu_2,
@@ -341,9 +342,11 @@ def get_individual_entries_of_matrices(
                 threshold=threshold_2,
                 system_capacity=system_capacity_2,
                 buffer_capacity=buffer_capacity_2,
-                class_type=None,
                 target=target,
-            )
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                seed_num=seed_num_2,
+            )[0]
         )
     else:
         proportion_within_target_1 = (
@@ -376,8 +379,8 @@ def get_individual_entries_of_matrices(
         utility_1 = proportion_within_target_1
         utility_2 = proportion_within_target_2
     else:
-        utility_1 = -((proportion_within_target_1 - 0.95) ** 2)
-        utility_2 = -((proportion_within_target_2 - 0.95) ** 2)
+        utility_1 = -((np.nanmean(proportion_within_target_1) - 0.95) ** 2)
+        utility_2 = -((np.nanmean(proportion_within_target_2) - 0.95) ** 2)
 
     return threshold_1, threshold_2, prop_to_hospital_1, utility_1, utility_2
 

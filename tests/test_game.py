@@ -293,10 +293,10 @@ def test_get_routing_matrix_example_3():
     )
 
 
-def test_get_individual_entries_of_matrices_example():
+def test_get_individual_entries_of_matrices_markov_example():
     """
     Tests that the function returns a dask task and that the computed task
-    returns the expected tuple
+    returns the expected tuple while using the markov model
     """
     task = get_individual_entries_of_matrices(
         lambda_2=2,
@@ -320,6 +320,43 @@ def test_get_individual_entries_of_matrices_example():
     values = da.compute(task)
     assert np.allclose(
         values, ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+    )
+
+
+def test_get_individual_entries_of_matrices_simulation_example():
+    """
+    Tests that the function returns a dask task and that the computed task
+    returns the expected tuple while using the simuation
+    """
+    task = get_individual_entries_of_matrices(
+        lambda_2=2,
+        lambda_1_1=0.1,
+        lambda_1_2=0.5,
+        mu_1=2,
+        mu_2=1,
+        num_of_servers_1=2,
+        num_of_servers_2=2,
+        threshold_1=3,
+        threshold_2=5,
+        system_capacity_1=4,
+        system_capacity_2=6,
+        buffer_capacity_1=2,
+        buffer_capacity_2=2,
+        target=2,
+        alpha=0.5,
+        use_simulation=True,
+        runtime=300,
+        num_of_trials=3,
+        warm_up_time=5,
+        seed_num_1=0,
+        seed_num_2=0,
+    )
+
+    assert da.is_dask_collection(task)
+    values = da.compute(task)
+    assert np.allclose(
+        values,
+        ((3, 5, 0.7613063676529543, -0.0006520260736895711, -0.027937014444158834),),
     )
 
 

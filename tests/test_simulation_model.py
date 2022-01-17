@@ -12,6 +12,7 @@ from ambulance_game.simulation.simulation import (
     build_custom_node,
     build_model,
     simulate_model,
+    get_arrival_distribution,
     get_average_simulated_state_probabilities,
     get_mean_blocking_difference_using_simulation,
     get_multiple_runs_results,
@@ -21,6 +22,33 @@ from ambulance_game.simulation.simulation import (
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
+
+
+@given(
+    arrival_rate=floats(min_value=0, exclude_min=True),
+)
+def test_get_arrival_distribution_exponential(arrival_rate):
+    """
+    Test that an Exponential distribution object form the ciw library is
+    returned given a positive arrival rate
+    """
+    assert isinstance(get_arrival_distribution(arrival_rate), ciw.dists.Exponential)
+
+
+def test_get_arrival_distribution_no_arrivals():
+    """
+    Test that a NoArrivals distribution object form the ciw library is
+    returned given a zero arrival rate
+    """
+    assert isinstance(get_arrival_distribution(0), ciw.dists.NoArrivals)
+
+
+def test_get_arrival_distribution_value_error():
+    """
+    Test that a ValueError is raised when a negative number is given
+    """
+    with pytest.raises(ValueError):
+        get_arrival_distribution(-2)
 
 
 @given(

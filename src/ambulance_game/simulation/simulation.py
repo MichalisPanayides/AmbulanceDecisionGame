@@ -13,6 +13,29 @@ import numpy as np
 from .dists import get_service_distribution
 
 
+def get_arrival_distribution(arrival_rate):
+    """
+    Get the arrival distribution given the arrival rate. This function was
+    created in case the arrival rate is zero. In such a case we need to
+    specify a distribution that does not generate any arrivals.
+
+    Parameters
+    ----------
+    arrival_rate : float
+        The arrival rate of the model
+
+    Returns
+    -------
+    object
+        A ciw object that contains the arrival distribution of the model
+    """
+    if arrival_rate > 0:
+        return ciw.dists.Exponential(arrival_rate)
+    if arrival_rate == 0:
+        return ciw.dists.NoArrivals()
+    raise ValueError("Arrival rate must be a positive number")
+
+
 def build_model(
     lambda_2,
     lambda_1,
@@ -51,10 +74,14 @@ def build_model(
         The num_of_servers of the service area
     """
     service_dist = get_service_distribution(mu)
+
+    arrival_dist_1 = get_arrival_distribution(lambda_1)
+    arrival_dist_2 = get_arrival_distribution(lambda_2)
+
     model = ciw.create_network(
         arrival_distributions=[
-            ciw.dists.Exponential(lambda_2),
-            ciw.dists.Exponential(lambda_1),
+            arrival_dist_2,
+            arrival_dist_1,
         ],
         service_distributions=[ciw.dists.Deterministic(0), service_dist],
         routing=[[0.0, 1.0], [0.0, 0.0]],

@@ -27,7 +27,7 @@ def get_coefficients_row_of_array_associated_with_state(
     """Constructs a row of the coefficients matrix. The row to be constructed
     corresponds to the blocking time equation for a given state (u,v) where:
 
-    b(u,v) = c(u,v) + p_s(u,v) * b(u,v−1) + p_o(u,v) * b(u,v+1)
+    b(u,v) = c(u,v) + p_s(u,v) * b(u,v-1) + p_o(u,v) * b(u,v+1)
 
     i.e. the blocking time for state (u,v) is equal to:
         -> the sojourn time of that state PLUS
@@ -44,7 +44,7 @@ def get_coefficients_row_of_array_associated_with_state(
                 -> otherwise:   b(u,v) = c(u,v) + b(u, v-1)
 
     The main equation can also be written as:
-        p_s(u,v) * b(u,v−1) - b(u,v) + p_o(u,v) * b(u,v+1) = -c(u,v)
+        p_s(u,v) * b(u,v-1) - b(u,v) + p_o(u,v) * b(u,v+1) = -c(u,v)
     where all b(u,v) are considered as unknown variables and
         X = [b(1,T), ... ,b(1,N), b(2,T), ... ,b(2,N), ... , b(M,T), ... , b(M,N)]
 

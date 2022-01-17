@@ -8,7 +8,7 @@ import numpy as np
 from .simulation import (
     simulate_model,
     get_simulated_state_probabilities,
-    get_multiple_runs_results,
+    get_multiple_runs_results_from_simulations,
 )
 from .markov import (
     build_states,
@@ -88,11 +88,8 @@ class Queue:
     def simulation_main_performance_measures(
         self,
         target=1,
-        warm_up_time=0,
+        warm_up_time=100,
         class_type=None,
-        num_of_trials=1,
-        seed_num=None,
-        runtime=1440,
     ):
         """
         Get the waiting time the blolcking time and the proportion of
@@ -101,20 +98,11 @@ class Queue:
         Note that this method is simulates the system again so it might give
         different results than the simulate method if no seed_num is given.
         """
-        results = get_multiple_runs_results(
-            lambda_1=self.parameters["lambda_1"],
-            lambda_2=self.parameters["lambda_2"],
-            mu=self.parameters["mu"],
-            num_of_servers=self.parameters["num_of_servers"],
-            threshold=self.parameters["threshold"],
-            system_capacity=self.parameters["system_capacity"],
-            buffer_capacity=self.parameters["buffer_capacity"],
-            num_of_trials=num_of_trials,
-            seed_num=seed_num,
-            runtime=runtime,
+        results = get_multiple_runs_results_from_simulations(
+            simulations=self.simulation,
             target=target,
-            warm_up_time=warm_up_time,
             class_type=class_type,
+            warm_up_time=warm_up_time,
         )
         waiting_times = [np.mean(w.waiting_times) for w in results]
         blocking_times = [np.mean(w.blocking_times) for w in results]

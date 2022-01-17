@@ -10,164 +10,12 @@ import nashpy as nash
 import numpy as np
 import scipy.optimize
 
-from .markov.blocking import get_mean_blocking_time_using_markov_state_probabilities
-from .markov.markov import (
-    build_states,
-    get_markov_state_probabilities,
-    get_steady_state_algebraically,
-    get_transition_matrix,
+from .markov import get_mean_blocking_difference_using_markov
+from .markov import proportion_within_target_using_markov_state_probabilities
+from .simulation import (
+    get_mean_blocking_difference_using_simulation,
+    get_mean_proportion_of_individuals_within_target_for_multiple_runs,
 )
-from .markov.proportion import proportion_within_target_using_markov_state_probabilities
-from .markov.utils import get_probability_of_accepting
-
-
-@functools.lru_cache(maxsize=None)
-def get_accepting_proportion_of_class_2_individuals(
-    lambda_1, lambda_2, mu, num_of_servers, threshold, system_capacity, buffer_capacity
-):
-    """
-    Get the proportion of class 2 individuals that are not lost to the system
-
-    Parameters
-    ----------
-    lambda_1 : float
-    lambda_2 : float
-    mu : float
-    num_of_servers : int
-    threshold : int
-    system_capacity : int
-    buffer_capacity : int
-
-    Returns
-    -------
-    float
-        The probability that an individual entering will not be lost to the
-        system
-    """
-    transition_matrix = get_transition_matrix(
-        lambda_2=lambda_2,
-        lambda_1=lambda_1,
-        mu=mu,
-        num_of_servers=num_of_servers,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    all_states = build_states(
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    pi = get_steady_state_algebraically(
-        Q=transition_matrix, algebraic_function=np.linalg.solve
-    )
-    pi = get_markov_state_probabilities(pi, all_states, output=np.ndarray)
-
-    prob_accept = get_probability_of_accepting(
-        all_states=all_states,
-        pi=pi,
-        threshold=threshold,
-        system_capacity=system_capacity,
-        buffer_capacity=buffer_capacity,
-    )
-    return prob_accept[1]
-
-
-@functools.lru_cache(maxsize=None)
-def get_weighted_mean_blocking_difference_between_two_systems(
-    prop_1,
-    lambda_2,
-    lambda_1_1,
-    lambda_1_2,
-    mu_1,
-    mu_2,
-    num_of_servers_1,
-    num_of_servers_2,
-    threshold_1,
-    threshold_2,
-    system_capacity_1,
-    system_capacity_2,
-    buffer_capacity_1,
-    buffer_capacity_2,
-    alpha=0,
-):
-    """
-    Get a weighted mean blocking difference between two systems. This
-    function is to be used as a routing function to find the point at
-    which it is set to 0. This function calculates:
-    a*(1 - P(A_1)) + (1 - a)*B_1 = a*(1 - P(A_2)) + (1 - a)*B_2
-
-    Parameters
-    ----------
-    prop_1 : float
-        The proportion of class 2 individuals to distribute to the first system
-    lambda_2 : float
-        The overall arrival rate of class 2 individuals for both systems
-    lambda_1_1 : float
-        The arrival rate of class 1 individuals in the first system
-    lambda_1_2 : float
-        The arrival rate of class 1 individuals in the second system
-    mu_1 : float
-    mu_2 : float
-    num_of_servers_1 : int
-    num_of_servers_2 : int
-    threshold_1 : int
-    threshold_2 : int
-    system_capacity_1 : int
-    system_capacity_2 : int
-    buffer_capacity_1 : int
-    buffer_capacity_2 : int
-
-    Returns
-    -------
-    float
-        The mean blocking difference B_1 - B_2
-    """
-    lambda_2_1 = prop_1 * lambda_2
-    lambda_2_2 = (1 - prop_1) * lambda_2
-
-    mean_blocking_time_1 = get_mean_blocking_time_using_markov_state_probabilities(
-        lambda_2=lambda_2_1,
-        lambda_1=lambda_1_1,
-        mu=mu_1,
-        num_of_servers=num_of_servers_1,
-        threshold=threshold_1,
-        system_capacity=system_capacity_1,
-        buffer_capacity=buffer_capacity_1,
-    )
-    mean_blocking_time_2 = get_mean_blocking_time_using_markov_state_probabilities(
-        lambda_2=lambda_2_2,
-        lambda_1=lambda_1_2,
-        mu=mu_2,
-        num_of_servers=num_of_servers_2,
-        threshold=threshold_2,
-        system_capacity=system_capacity_2,
-        buffer_capacity=buffer_capacity_2,
-    )
-    prob_accept_1 = get_accepting_proportion_of_class_2_individuals(
-        lambda_1=lambda_1_1,
-        lambda_2=lambda_2_1,
-        mu=mu_1,
-        num_of_servers=num_of_servers_1,
-        threshold=threshold_1,
-        system_capacity=system_capacity_1,
-        buffer_capacity=buffer_capacity_1,
-    )
-    prob_accept_2 = get_accepting_proportion_of_class_2_individuals(
-        lambda_1=lambda_1_2,
-        lambda_2=lambda_2_2,
-        mu=mu_2,
-        num_of_servers=num_of_servers_2,
-        threshold=threshold_2,
-        system_capacity=system_capacity_2,
-        buffer_capacity=buffer_capacity_2,
-    )
-
-    decision_value_1 = alpha * (1 - prob_accept_1) + (1 - alpha) * mean_blocking_time_1
-
-    decision_value_2 = alpha * (1 - prob_accept_2) + (1 - alpha) * mean_blocking_time_2
-
-    return decision_value_1 - decision_value_2
 
 
 @functools.lru_cache(maxsize=None)
@@ -185,32 +33,30 @@ def calculate_class_2_individuals_best_response(
     system_capacity_2,
     buffer_capacity_1,
     buffer_capacity_2,
+    use_simulation=False,
+    runtime=1440,
+    num_of_trials=10,
+    warm_up_time=100,
+    seed_num_1=None,
+    seed_num_2=None,
     lower_bound=0.01,
     upper_bound=0.99,
-    routing_function=get_weighted_mean_blocking_difference_between_two_systems,
     alpha=0,
     xtol=1e-04,
     rtol=8.9e-16,
 ):
     """
-    Get the best distribution of individuals (i.e. p_1, p_2) such that the
-    the routing function given is 0.
+    Obtains the optimal distribution of class 2 individuals such that the
+    blocking times in the two systems are identical and thus optimal(minimised).
+
+    The brentq function is used which is an algorithm created to find the root of
+    a function that combines root bracketing, bisection, and inverse quadratic
+    interpolation. In this specific example the root to be found is the difference
+    between the blocking times of two systems. In essence the brentq algorithm
+    attempts to find the value of "prop_1" where the "diff" is zero.
 
     Parameters
     ----------
-    lambda_2 : float
-    lambda_1_1 : float
-    lambda_1_2 : float
-    mu_1 : float
-    mu_2 : float
-    num_of_servers_1 : float
-    num_of_servers_2 : float
-    threshold_1 : float
-    threshold_2 : float
-    system_capacity_1 : float
-    system_capacity_2 : float
-    buffer_capacity_1 : float
-    buffer_capacity_2 : float
     lower_bound : float, optional
         The lower bound of p_1, by default 0.01
     upper_bound : float, optional
@@ -223,6 +69,12 @@ def calculate_class_2_individuals_best_response(
     float
         The value of p_1 such that routing_function = 0
     """
+
+    if use_simulation:
+        routing_function = get_mean_blocking_difference_using_simulation
+    else:
+        routing_function = get_mean_blocking_difference_using_markov
+
     check_1 = routing_function(
         prop_1=lower_bound,
         lambda_2=lambda_2,
@@ -239,6 +91,11 @@ def calculate_class_2_individuals_best_response(
         buffer_capacity_1=buffer_capacity_1,
         buffer_capacity_2=buffer_capacity_2,
         alpha=alpha,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
+        warm_up_time=warm_up_time,
+        seed_num_1=seed_num_1,
+        seed_num_2=seed_num_2,
     )
     check_2 = routing_function(
         prop_1=upper_bound,
@@ -256,6 +113,11 @@ def calculate_class_2_individuals_best_response(
         buffer_capacity_1=buffer_capacity_1,
         buffer_capacity_2=buffer_capacity_2,
         alpha=alpha,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
+        warm_up_time=warm_up_time,
+        seed_num_1=seed_num_1,
+        seed_num_2=seed_num_2,
     )
 
     if check_1 >= 0 and check_2 >= 0:
@@ -263,26 +125,35 @@ def calculate_class_2_individuals_best_response(
     if check_1 <= 0 and check_2 <= 0:
         return 1
 
+    brentq_arguments = (
+        lambda_2,
+        lambda_1_1,
+        lambda_1_2,
+        mu_1,
+        mu_2,
+        num_of_servers_1,
+        num_of_servers_2,
+        threshold_1,
+        threshold_2,
+        system_capacity_1,
+        system_capacity_2,
+        buffer_capacity_1,
+        buffer_capacity_2,
+        alpha,
+    )
+    if use_simulation:
+        brentq_arguments += (
+            seed_num_1,
+            seed_num_2,
+            num_of_trials,
+            warm_up_time,
+            runtime,
+        )
     optimal_prop = scipy.optimize.brentq(
         routing_function,
         a=lower_bound,
         b=upper_bound,
-        args=(
-            lambda_2,
-            lambda_1_1,
-            lambda_1_2,
-            mu_1,
-            mu_2,
-            num_of_servers_1,
-            num_of_servers_2,
-            threshold_1,
-            threshold_2,
-            system_capacity_1,
-            system_capacity_2,
-            buffer_capacity_1,
-            buffer_capacity_2,
-            alpha,
-        ),
+        args=brentq_arguments,
         xtol=xtol,
         rtol=rtol,
     )
@@ -302,8 +173,13 @@ def get_routing_matrix(
     system_capacity_2,
     buffer_capacity_1,
     buffer_capacity_2,
-    routing_function=get_weighted_mean_blocking_difference_between_two_systems,
     alpha=0,
+    use_simulation=False,
+    runtime=1440,
+    num_of_trials=10,
+    warm_up_time=100,
+    seed_num_1=None,
+    seed_num_2=None,
 ):
     """
     Get the optimal distribution matrix that consists of the proportion of
@@ -351,8 +227,13 @@ def get_routing_matrix(
             buffer_capacity_2=buffer_capacity_2,
             threshold_1=threshold_1,
             threshold_2=threshold_2,
-            routing_function=routing_function,
             alpha=alpha,
+            use_simulation=use_simulation,
+            runtime=runtime,
+            num_of_trials=num_of_trials,
+            warm_up_time=warm_up_time,
+            seed_num_1=seed_num_1,
+            seed_num_2=seed_num_2,
         )
         routing_matrix[threshold_1 - 1, threshold_2 - 1] = opt
     return routing_matrix
@@ -376,6 +257,12 @@ def get_individual_entries_of_matrices(
     alpha,
     target,
     alternative_utility=False,
+    use_simulation=False,
+    runtime=1440,
+    num_of_trials=10,
+    warm_up_time=100,
+    seed_num_1=None,
+    seed_num_2=None,
 ):
     """
     Gets the (i,j)th entry of the payoff matrices and the routing matrix where
@@ -421,41 +308,79 @@ def get_individual_entries_of_matrices(
         threshold_1=threshold_1,
         threshold_2=threshold_2,
         alpha=alpha,
+        use_simulation=use_simulation,
+        runtime=runtime,
+        num_of_trials=num_of_trials,
+        warm_up_time=warm_up_time,
+        seed_num_1=seed_num_1,
+        seed_num_2=seed_num_2,
     )
     prop_to_hospital_2 = 1 - prop_to_hospital_1
 
-    proportion_within_target_1 = (
-        proportion_within_target_using_markov_state_probabilities(
-            lambda_2=lambda_2 * prop_to_hospital_1,
-            lambda_1=lambda_1_1,
-            mu=mu_1,
-            num_of_servers=num_of_servers_1,
-            threshold=threshold_1,
-            system_capacity=system_capacity_1,
-            buffer_capacity=buffer_capacity_1,
-            class_type=None,
-            target=target,
+    if use_simulation:
+        proportion_within_target_1 = (
+            get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+                lambda_2=lambda_2 * prop_to_hospital_1,
+                lambda_1=lambda_1_1,
+                mu=mu_1,
+                num_of_servers=num_of_servers_1,
+                threshold=threshold_1,
+                system_capacity=system_capacity_1,
+                buffer_capacity=buffer_capacity_1,
+                target=target,
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                seed_num=seed_num_1,
+            )[0]
         )
-    )
-    proportion_within_target_2 = (
-        proportion_within_target_using_markov_state_probabilities(
-            lambda_2=lambda_2 * prop_to_hospital_2,
-            lambda_1=lambda_1_2,
-            mu=mu_2,
-            num_of_servers=num_of_servers_2,
-            threshold=threshold_2,
-            system_capacity=system_capacity_2,
-            buffer_capacity=buffer_capacity_2,
-            class_type=None,
-            target=target,
+        proportion_within_target_2 = (
+            get_mean_proportion_of_individuals_within_target_for_multiple_runs(
+                lambda_2=lambda_2 * prop_to_hospital_2,
+                lambda_1=lambda_1_2,
+                mu=mu_2,
+                num_of_servers=num_of_servers_2,
+                threshold=threshold_2,
+                system_capacity=system_capacity_2,
+                buffer_capacity=buffer_capacity_2,
+                target=target,
+                runtime=runtime,
+                num_of_trials=num_of_trials,
+                seed_num=seed_num_2,
+            )[0]
         )
-    )
+    else:
+        proportion_within_target_1 = (
+            proportion_within_target_using_markov_state_probabilities(
+                lambda_2=lambda_2 * prop_to_hospital_1,
+                lambda_1=lambda_1_1,
+                mu=mu_1,
+                num_of_servers=num_of_servers_1,
+                threshold=threshold_1,
+                system_capacity=system_capacity_1,
+                buffer_capacity=buffer_capacity_1,
+                class_type=None,
+                target=target,
+            )
+        )
+        proportion_within_target_2 = (
+            proportion_within_target_using_markov_state_probabilities(
+                lambda_2=lambda_2 * prop_to_hospital_2,
+                lambda_1=lambda_1_2,
+                mu=mu_2,
+                num_of_servers=num_of_servers_2,
+                threshold=threshold_2,
+                system_capacity=system_capacity_2,
+                buffer_capacity=buffer_capacity_2,
+                class_type=None,
+                target=target,
+            )
+        )
     if alternative_utility:
         utility_1 = proportion_within_target_1
         utility_2 = proportion_within_target_2
     else:
-        utility_1 = -((proportion_within_target_1 - 0.95) ** 2)
-        utility_2 = -((proportion_within_target_2 - 0.95) ** 2)
+        utility_1 = -((np.nanmean(proportion_within_target_1) - 0.95) ** 2)
+        utility_2 = -((np.nanmean(proportion_within_target_2) - 0.95) ** 2)
 
     return threshold_1, threshold_2, prop_to_hospital_1, utility_1, utility_2
 
@@ -525,6 +450,12 @@ def get_payoff_matrices(
     alternative_utility=False,
     alpha=0,
     processes=None,
+    use_simulation=False,
+    runtime=1440,
+    num_of_trials=10,
+    warm_up_time=100,
+    seed_num_1=None,
+    seed_num_2=None,
 ):
     """
     The function uses the distribution array (that is the array that holds the
@@ -580,6 +511,12 @@ def get_payoff_matrices(
             alpha=alpha,
             target=target,
             alternative_utility=alternative_utility,
+            use_simulation=use_simulation,
+            runtime=runtime,
+            num_of_trials=num_of_trials,
+            warm_up_time=warm_up_time,
+            seed_num_1=seed_num_1,
+            seed_num_2=seed_num_2,
         )
         for threshold_1, threshold_2 in itertools.product(
             range(1, system_capacity_1 + 1), range(1, system_capacity_2 + 1)
@@ -614,6 +551,12 @@ def build_game_using_payoff_matrices(
     payoff_matrix_B=None,
     alternative_utility=False,
     alpha=0,
+    use_simulation=False,
+    runtime=1440,
+    num_of_trials=10,
+    warm_up_time=100,
+    seed_num_1=None,
+    seed_num_2=None,
 ):
     """
     Build the game theoretic model either by building the payoff matrices or by
@@ -657,6 +600,12 @@ def build_game_using_payoff_matrices(
             target=target,
             alpha=alpha,
             alternative_utility=alternative_utility,
+            use_simulation=use_simulation,
+            runtime=runtime,
+            num_of_trials=num_of_trials,
+            warm_up_time=warm_up_time,
+            seed_num_1=seed_num_1,
+            seed_num_2=seed_num_2,
         )
 
     game = nash.Game(payoff_matrix_A, payoff_matrix_B)

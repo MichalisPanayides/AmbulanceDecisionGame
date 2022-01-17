@@ -120,32 +120,24 @@ class TestQueue(unittest.TestCase):
             np.array(
                 [
                     [
-                        0.19345697,
-                        0.35856713,
-                        0.23898119,
-                        0.1141801,
-                        0.04629752,
-                        0.02284553,
-                        0.00266527,
-                        0.00214411,
+                        2.12374846e-01,
+                        3.34653646e-01,
+                        2.18374152e-01,
+                        1.27256564e-01,
+                        5.99124393e-02,
+                        1.92215239e-02,
+                        1.43346584e-02,
+                        4.90561998e-03,
+                        1.81825150e-04,
                     ],
                     [
                         np.nan,
                         np.nan,
                         np.nan,
                         np.nan,
-                        0.00981092,
-                        0.00410901,
-                        0.00303729,
-                        0.00072347,
-                    ],
-                    [
-                        np.nan,
-                        np.nan,
-                        np.nan,
-                        np.nan,
-                        0.00215636,
-                        0.00102515,
+                        5.56314354e-03,
+                        2.76434181e-03,
+                        4.57239050e-04,
                         np.nan,
                         np.nan,
                     ],
@@ -154,32 +146,22 @@ class TestQueue(unittest.TestCase):
             np.array(
                 [
                     [
-                        0.19345697,
-                        0.35856713,
-                        0.23898119,
-                        0.1141801,
-                        0.04629752,
-                        0.02284553,
-                        0.00266527,
-                        0.00214411,
+                        0.22547787,
+                        0.3207305,
+                        0.27631,
+                        0.09573695,
+                        0.04559114,
+                        0.02185994,
+                        0.00318989,
+                        0.00055252,
                     ],
                     [
                         np.nan,
                         np.nan,
                         np.nan,
                         np.nan,
-                        0.00981092,
-                        0.00410901,
-                        0.00303729,
-                        0.00072347,
-                    ],
-                    [
-                        np.nan,
-                        np.nan,
-                        np.nan,
-                        np.nan,
-                        0.00215636,
-                        0.00102515,
+                        0.01002919,
+                        0.00052199,
                         np.nan,
                         np.nan,
                     ],
@@ -233,7 +215,10 @@ class TestQueue(unittest.TestCase):
         works as expected
         """
         Q = Queue(2, 1, 2, 3, 4, system_capacity=8, buffer_capacity=6)
-        Q.simulation_main_performance_measures(seed_num=0)
+        Q.simulate(runtime=1440, seed_num=0, num_of_trials=1)
+        Q.simulation_main_performance_measures(
+            target=1, class_type=None, warm_up_time=0
+        )
         self.assertEqual(
             Q.simulation_main_results["waiting_times"][0],
             0.05471029486451625,

@@ -6,6 +6,7 @@ from .blocking import (
     get_blocking_time_linear_system,
     get_blocking_times_of_all_states_using_direct_approach,
     get_coefficients_row_of_array_associated_with_state,
+    get_mean_blocking_difference_using_markov,
     get_mean_blocking_time_using_markov_state_probabilities,
     mean_blocking_time_formula_using_closed_form_approach,
     mean_blocking_time_formula_using_direct_approach,

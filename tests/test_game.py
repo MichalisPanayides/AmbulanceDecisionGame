@@ -12,223 +12,15 @@ from ambulance_game.game import (
     build_matrices_from_computed_tasks,
     calculate_class_2_individuals_best_response,
     compute_tasks,
-    get_accepting_proportion_of_class_2_individuals,
     get_individual_entries_of_matrices,
     get_payoff_matrices,
     get_routing_matrix,
-    get_weighted_mean_blocking_difference_between_two_systems,
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
 
 
-def test_get_accepting_proportion_of_class_2_individuals_examples():
-    """
-    Test for getting the proportion of class 2 individuals
-    """
-    assert (
-        get_accepting_proportion_of_class_2_individuals(
-            lambda_1=1,
-            lambda_2=1,
-            mu=1,
-            num_of_servers=1,
-            threshold=1,
-            system_capacity=1,
-            buffer_capacity=1,
-        )
-        == 0.6
-    )
-
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=2,
-                lambda_2=2,
-                mu=2,
-                num_of_servers=2,
-                threshold=2,
-                system_capacity=2,
-                buffer_capacity=2,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.9230769230769231, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=10,
-                lambda_2=10,
-                mu=2,
-                num_of_servers=5,
-                threshold=5,
-                system_capacity=5,
-                buffer_capacity=5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.8523592984113859, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-
-def test_get_weighted_mean_blocking_difference_between_two_systems_example_1():
-    """
-    Test for getting the weighted mean blocking difference between two systems
-    for different values of alpha
-    """
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=0,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.3786808388674136, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=0.5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.1946865334809922, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=1,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.010692228094570821, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-
-def test_get_weighted_mean_blocking_difference_between_two_systems_example_2():
-    """
-    Test for getting the weighted mean blocking difference between two systems
-    for different values of alpha
-    """
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=0,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.039826434411056905, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=0.5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.024201250377136538, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-    assert (
-        round(
-            get_weighted_mean_blocking_difference_between_two_systems(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=1,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.008576066343216171, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-
-
-def test_calculate_class_2_individuals_best_response_example_1():
+def test_calculate_class_2_individuals_best_response_markov_example_1():
     """
     Test for calculating the best response of distributing class 2 individuals
     with same parameter systems
@@ -253,7 +45,7 @@ def test_calculate_class_2_individuals_best_response_example_1():
     )
 
 
-def test_calculate_class_2_individuals_best_response_example_2():
+def test_calculate_class_2_individuals_best_response_markov_example_2():
     """
     Test for calculating the best response of distributing class 2 individuals
     for slightly larger model.
@@ -281,7 +73,7 @@ def test_calculate_class_2_individuals_best_response_example_2():
     )
 
 
-def test_calculate_class_2_individuals_best_response_upper_and_lower_bounds():
+def test_calculate_class_2_individuals_best_response_markov_upper_and_lower_bounds():
     """
     Tests that when both the lower and upper bound of the routing function have
     the same sign, then the output is either 0 (when positive) and 1 (when
@@ -328,6 +120,94 @@ def test_calculate_class_2_individuals_best_response_upper_and_lower_bounds():
         )
         == 0
     )
+
+
+#  TODO Investigate making it a property based test
+def test_calculate_class_2_individuals_best_response_simulation_equal_split():
+    """Make sure that the brentq() function that is used suggests that when two
+    identical systems are considered the individuals will be split equally between
+    them (50% - 50%)
+
+    Note here that due to the ciw.seed() function it was possible to eliminate any
+    randomness and make both systems identical, in terms of arrivals, services
+    and any other stochasticity that the simulation models incorporates.
+    """
+    lambda_2 = 0.3
+    equal_split = calculate_class_2_individuals_best_response(
+        lambda_2=lambda_2,
+        lambda_1_1=0.3,
+        lambda_1_2=0.3,
+        mu_1=0.2,
+        mu_2=0.2,
+        num_of_servers_1=4,
+        num_of_servers_2=4,
+        threshold_1=3,
+        threshold_2=3,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
+        use_simulation=True,
+        runtime=500,
+        num_of_trials=5,
+        warm_up_time=100,
+        seed_num_1=0,
+        seed_num_2=0,
+    )
+
+    assert np.isclose(equal_split, 0.5)
+
+
+def test_calculate_class_2_individuals_best_response_simulation_all_inds_in_one():
+    """
+    Ensuring that the function is sends 100% of individuals to the first system
+    when the second system is very busy and vise versa.
+    """
+    all_individuals_to_first = calculate_class_2_individuals_best_response(
+        lambda_2=0.3,
+        lambda_1_1=0.1,
+        lambda_1_2=3,
+        mu_1=10,
+        mu_2=2,
+        num_of_servers_1=8,
+        num_of_servers_2=4,
+        threshold_1=6,
+        threshold_2=3,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
+        use_simulation=True,
+        runtime=500,
+        num_of_trials=5,
+        warm_up_time=100,
+        seed_num_1=10,
+        seed_num_2=10,
+    )
+    assert all_individuals_to_first == 1
+
+    all_individuals_to_second = calculate_class_2_individuals_best_response(
+        lambda_2=0.3,
+        lambda_1_1=3,
+        lambda_1_2=0.1,
+        mu_1=2,
+        mu_2=10,
+        num_of_servers_1=4,
+        num_of_servers_2=8,
+        threshold_1=3,
+        threshold_2=6,
+        system_capacity_1=float("inf"),
+        system_capacity_2=float("inf"),
+        buffer_capacity_1=float("inf"),
+        buffer_capacity_2=float("inf"),
+        use_simulation=True,
+        runtime=500,
+        num_of_trials=5,
+        warm_up_time=100,
+        seed_num_1=10,
+        seed_num_2=10,
+    )
+    assert all_individuals_to_second == 0
 
 
 def test_get_routing_matrix_example_1():
@@ -413,10 +293,10 @@ def test_get_routing_matrix_example_3():
     )
 
 
-def test_get_individual_entries_of_matrices_example():
+def test_get_individual_entries_of_matrices_markov_example():
     """
     Tests that the function returns a dask task and that the computed task
-    returns the expected tuple
+    returns the expected tuple while using the markov model
     """
     task = get_individual_entries_of_matrices(
         lambda_2=2,
@@ -440,6 +320,43 @@ def test_get_individual_entries_of_matrices_example():
     values = da.compute(task)
     assert np.allclose(
         values, ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+    )
+
+
+def test_get_individual_entries_of_matrices_simulation_example():
+    """
+    Tests that the function returns a dask task and that the computed task
+    returns the expected tuple while using the simuation
+    """
+    task = get_individual_entries_of_matrices(
+        lambda_2=2,
+        lambda_1_1=0.1,
+        lambda_1_2=0.5,
+        mu_1=2,
+        mu_2=1,
+        num_of_servers_1=2,
+        num_of_servers_2=2,
+        threshold_1=3,
+        threshold_2=5,
+        system_capacity_1=4,
+        system_capacity_2=6,
+        buffer_capacity_1=2,
+        buffer_capacity_2=2,
+        target=2,
+        alpha=0.5,
+        use_simulation=True,
+        runtime=300,
+        num_of_trials=3,
+        warm_up_time=5,
+        seed_num_1=0,
+        seed_num_2=0,
+    )
+
+    assert da.is_dask_collection(task)
+    values = da.compute(task)
+    assert np.allclose(
+        values,
+        ((3, 5, 0.7613063676529543, -0.0006520260736895711, -0.027937014444158834),),
     )
 
 

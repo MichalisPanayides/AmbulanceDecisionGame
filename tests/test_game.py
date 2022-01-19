@@ -314,6 +314,7 @@ def test_get_individual_entries_of_matrices_markov_example():
         buffer_capacity_2=2,
         alpha=0.5,
         target=2,
+        use_cache=False,
     )
 
     assert da.is_dask_collection(task)

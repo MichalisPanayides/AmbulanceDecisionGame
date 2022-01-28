@@ -38,6 +38,22 @@ def test_build_model(lambda_2, lambda_1, mu, c):
     assert isinstance(result, ciw.network.Network)
 
 
+def test_build_model_fair_allocation():
+    """
+    Test that the correct busy times for servers are output given specific
+    values and fair allocation of individuals
+    """
+    network = build_model(
+        lambda_2=1, lambda_1=1, mu=2, num_of_servers=2, fair_allocation=True
+    )
+    ciw.seed(0)
+    Q = ciw.Simulation(network)
+    Q.simulate_until_max_time(100)
+    expected_busy_times = [47.813604079373505, 48.03271051578811]
+    simulated_busy_times = [srv.busy_time for srv in Q.nodes[2].servers]
+    assert np.allclose(simulated_busy_times, expected_busy_times)
+
+
 def test_example_model():
     """
     Test to ensure that the correct results are output to a specific problem

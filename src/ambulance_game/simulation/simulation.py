@@ -179,6 +179,7 @@ def simulate_model(
     buffer_capacity=float("inf"),
     num_of_trials=1,
     tracker=ciw.trackers.NodePopulation(),
+    fair_allocation=False,
 ):
     """Simulate the model by using the custom node and returning the simulation object.
 
@@ -222,6 +223,7 @@ def simulate_model(
             num_of_servers=num_of_servers,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
+            fair_allocation=fair_allocation,
         )
         node = build_custom_node(threshold)
         ciw.seed(seed_num + trial)

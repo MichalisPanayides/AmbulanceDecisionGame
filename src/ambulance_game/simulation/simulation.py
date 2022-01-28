@@ -10,30 +10,7 @@ import random
 import ciw
 import numpy as np
 
-from .dists import get_service_distribution
-
-
-def get_arrival_distribution(arrival_rate):
-    """
-    Get the arrival distribution given the arrival rate. This function was
-    created in case the arrival rate is zero. In such a case we need to
-    specify a distribution that does not generate any arrivals.
-
-    Parameters
-    ----------
-    arrival_rate : float
-        The arrival rate of the model
-
-    Returns
-    -------
-    object
-        A ciw object that contains the arrival distribution of the model
-    """
-    if arrival_rate > 0:
-        return ciw.dists.Exponential(arrival_rate)
-    if arrival_rate == 0:
-        return ciw.dists.NoArrivals()
-    raise ValueError("Arrival rate must be a positive number")
+from .dists import get_service_distribution, get_arrival_distribution
 
 
 def build_model(
@@ -43,6 +20,7 @@ def build_model(
     num_of_servers,
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
+    fair_allocation=False,
 ):
     """Builds a ciw object that represents a model of a queuing network with two
     service centres; the service area and the buffer space. individuals arrive at the
@@ -73,11 +51,17 @@ def build_model(
     num_of_servers : integer
         The num_of_servers of the service area
     """
-    service_dist = get_service_distribution(mu)
 
+    def server_busy_time(server, ind):  # pylint: disable=unused-argument
+        return server.busy_time
+
+    service_dist = get_service_distribution(mu)
     arrival_dist_1 = get_arrival_distribution(lambda_1)
     arrival_dist_2 = get_arrival_distribution(lambda_2)
 
+    server_priority_functions = (
+        [None, server_busy_time] if fair_allocation else [None, None]
+    )
     model = ciw.create_network(
         arrival_distributions=[
             arrival_dist_2,
@@ -87,6 +71,7 @@ def build_model(
         routing=[[0.0, 1.0], [0.0, 0.0]],
         number_of_servers=[buffer_capacity, num_of_servers],
         queue_capacities=[0, system_capacity - num_of_servers],
+        server_priority_functions=server_priority_functions,
     )
     return model
 

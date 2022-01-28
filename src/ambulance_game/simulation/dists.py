@@ -153,3 +153,26 @@ def get_service_distribution(mu):
         if is_state_server_dependent(mu):
             return StateServerDependentExponential(mu)
     raise ValueError("mu must be either an integer or a dictionary")
+
+
+def get_arrival_distribution(arrival_rate):
+    """
+    Get the arrival distribution given the arrival rate. This function was
+    created in case the arrival rate is zero. In such a case we need to
+    specify a distribution that does not generate any arrivals.
+
+    Parameters
+    ----------
+    arrival_rate : float
+        The arrival rate of the model
+
+    Returns
+    -------
+    object
+        A ciw object that contains the arrival distribution of the model
+    """
+    if arrival_rate > 0:
+        return ciw.dists.Exponential(arrival_rate)
+    if arrival_rate == 0:
+        return ciw.dists.NoArrivals()
+    raise ValueError("Arrival rate must be a positive number")

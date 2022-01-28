@@ -4,7 +4,6 @@ Simulation module
 
 from .simulation import (
     extract_total_individuals_and_the_ones_within_target_for_both_classes,
-    get_arrival_distribution,
     get_average_simulated_state_probabilities,
     get_average_simulated_state_probabilities_from_simulations,
     get_mean_blocking_difference_using_simulation,
@@ -23,4 +22,5 @@ from .dists import (
     is_server_dependent,
     is_state_server_dependent,
     get_service_distribution,
+    get_arrival_distribution,
 )

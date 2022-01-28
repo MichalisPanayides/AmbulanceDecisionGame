@@ -10,11 +10,11 @@ home-page = "https://github.com/11michalis11/AmbulanceDecisionGame"
 requires-python = ">=3.8"
 requires = [
     "ciw>=2.2.3, <3.0.0",
-    "dask>=2021.08.1, <2021.09.1",
+    "dask>=2021.08.1, <2021.09.0",
     "matplotlib>=3.4.3, <3.5",
-    "nashpy>=0.0.23, <0.1.0",
+    "nashpy==0.0.23",
     "networkx>=2.4, <2.5",
-    "numpy>=1.18.0, <1.19",
+    "numpy>=1.18.0, <1.18.5",
     "scipy>=1.7.1, <1.8",
     "sympy>=1.5.1, <1.6",
 ]

@@ -20,7 +20,7 @@ def build_model(
     num_of_servers,
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
-    fair_allocation=False,
+    server_priority_function=None,
 ):
     """Builds a ciw object that represents a model of a queuing network with two
     service centres; the service area and the buffer space. individuals arrive at the
@@ -52,15 +52,14 @@ def build_model(
         The num_of_servers of the service area
     """
 
-    def server_busy_time(server, ind):  # pylint: disable=unused-argument
-        return server.busy_time
-
     service_dist = get_service_distribution(mu)
     arrival_dist_1 = get_arrival_distribution(lambda_1)
     arrival_dist_2 = get_arrival_distribution(lambda_2)
 
     server_priority_functions = (
-        [None, server_busy_time] if fair_allocation else [None, None]
+        [None, None]
+        if server_priority_function is None
+        else [None, server_priority_function]
     )
     model = ciw.create_network(
         arrival_distributions=[
@@ -179,7 +178,7 @@ def simulate_model(
     buffer_capacity=float("inf"),
     num_of_trials=1,
     tracker=ciw.trackers.NodePopulation(),
-    fair_allocation=False,
+    server_priority_function=None,
 ):
     """Simulate the model by using the custom node and returning the simulation object.
 
@@ -223,7 +222,7 @@ def simulate_model(
             num_of_servers=num_of_servers,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
-            fair_allocation=fair_allocation,
+            server_priority_function=server_priority_function,
         )
         node = build_custom_node(threshold)
         ciw.seed(seed_num + trial)

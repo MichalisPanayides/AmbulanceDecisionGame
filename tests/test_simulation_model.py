@@ -43,8 +43,16 @@ def test_build_model_fair_allocation():
     Test that the correct busy times for servers are output given specific
     values and fair allocation of individuals
     """
+
+    def server_busy_time_priority(srv, ind):  # pylint: disable=unused-argument
+        return srv.busy_time
+
     network = build_model(
-        lambda_2=1, lambda_1=1, mu=2, num_of_servers=2, fair_allocation=True
+        lambda_2=1,
+        lambda_1=1,
+        mu=2,
+        num_of_servers=2,
+        server_priority_function=server_busy_time_priority,
     )
     ciw.seed(0)
     Q = ciw.Simulation(network)

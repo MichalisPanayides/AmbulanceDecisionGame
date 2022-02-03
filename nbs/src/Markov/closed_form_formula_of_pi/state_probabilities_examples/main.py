@@ -157,42 +157,42 @@ def get_symbolic_state_probabilities_1122():
     sym_mu = sym.symbols("mu")
 
     sym_state_probs_1122[0] = (
-        (sym_mu ** 6)
-        + 2 * (sym_lambda_2) * (sym_mu ** 5)
-        + (sym_lambda_2 ** 2) * (sym_mu ** 4)
+        (sym_mu**6)
+        + 2 * (sym_lambda_2) * (sym_mu**5)
+        + (sym_lambda_2**2) * (sym_mu**4)
     )  # (0,0)
-    sym_state_probs_1122[1] = (sym_Lambda * sym_mu ** 3) * (
-        sym_mu ** 2 + 2 * sym_mu * sym_lambda_2 + sym_lambda_2 ** 2
+    sym_state_probs_1122[1] = (sym_Lambda * sym_mu**3) * (
+        sym_mu**2 + 2 * sym_mu * sym_lambda_2 + sym_lambda_2**2
     )  # (0,1)
-    sym_state_probs_1122[2] = (sym_Lambda * sym_lambda_2 * sym_mu ** 2) * (
-        sym_lambda_2 ** 2
+    sym_state_probs_1122[2] = (sym_Lambda * sym_lambda_2 * sym_mu**2) * (
+        sym_lambda_2**2
         + sym_lambda_2 * sym_lambda_1
         + sym_lambda_1 * sym_mu
-        + sym_mu ** 2
+        + sym_mu**2
         + 2 * sym_lambda_2 * sym_mu
     )  # (1,1)
-    sym_state_probs_1122[3] = (sym_Lambda * sym_lambda_2 ** 2 * sym_mu) * (
-        sym_lambda_2 ** 2
+    sym_state_probs_1122[3] = (sym_Lambda * sym_lambda_2**2 * sym_mu) * (
+        sym_lambda_2**2
         + 2 * sym_lambda_1 * sym_lambda_2
         + 3 * sym_lambda_1 * sym_mu
-        + sym_mu ** 2
+        + sym_mu**2
         + 2 * sym_lambda_2 * sym_mu
-        + sym_lambda_1 ** 2
+        + sym_lambda_1**2
     )  # (2,1)
-    sym_state_probs_1122[4] = (sym_Lambda * sym_lambda_1 * sym_mu ** 3) * (
+    sym_state_probs_1122[4] = (sym_Lambda * sym_lambda_1 * sym_mu**3) * (
         sym_lambda_2 + sym_mu
     )  # (0,2)
     sym_state_probs_1122[5] = (
-        sym_Lambda * sym_lambda_1 * sym_lambda_2 * sym_mu ** 2
+        sym_Lambda * sym_lambda_1 * sym_lambda_2 * sym_mu**2
     ) * (
         2 * sym_mu + sym_lambda_1 + sym_lambda_2
     )  # (1,2)
-    sym_state_probs_1122[6] = (sym_Lambda * sym_lambda_1 * sym_lambda_2 ** 2) * (
-        sym_lambda_1 ** 2
+    sym_state_probs_1122[6] = (sym_Lambda * sym_lambda_1 * sym_lambda_2**2) * (
+        sym_lambda_1**2
         + 4 * sym_lambda_1 * sym_mu
         + 2 * sym_lambda_1 * sym_lambda_2
-        + 3 * sym_mu ** 2
-        + sym_lambda_2 ** 2
+        + 3 * sym_mu**2
+        + sym_lambda_2**2
         + 3 * sym_lambda_2 * sym_mu
     )  # (2,2)
 
@@ -406,30 +406,30 @@ def get_symbolic_state_probabilities_1341():
     sym_lambda_2 = sym.symbols("lambda_2")
     sym_mu = sym.symbols("mu")
 
-    sym_state_probs_1341[0] = (sym_lambda_2) * (sym_mu ** 5) + (sym_mu ** 6)  # (0,0)
-    sym_state_probs_1341[1] = sym_Lambda * sym_lambda_2 * (sym_mu ** 4) + sym_Lambda * (
-        sym_mu ** 5
+    sym_state_probs_1341[0] = (sym_lambda_2) * (sym_mu**5) + (sym_mu**6)  # (0,0)
+    sym_state_probs_1341[1] = sym_Lambda * sym_lambda_2 * (sym_mu**4) + sym_Lambda * (
+        sym_mu**5
     )  # (0,1)
-    sym_state_probs_1341[2] = (sym_Lambda ** 2) * sym_lambda_2 * (sym_mu ** 3) + (
-        sym_Lambda ** 2
+    sym_state_probs_1341[2] = (sym_Lambda**2) * sym_lambda_2 * (sym_mu**3) + (
+        sym_Lambda**2
     ) * (
-        sym_mu ** 4
+        sym_mu**4
     )  # (0,2)
-    sym_state_probs_1341[3] = (sym_Lambda ** 3) * sym_lambda_2 * (sym_mu ** 2) + (
-        sym_Lambda ** 3
+    sym_state_probs_1341[3] = (sym_Lambda**3) * sym_lambda_2 * (sym_mu**2) + (
+        sym_Lambda**3
     ) * (
-        sym_mu ** 3
+        sym_mu**3
     )  # (0,3)
     sym_state_probs_1341[4] = (
-        (sym_Lambda ** 3) * sym_lambda_1 * sym_lambda_2 * sym_mu
-        + (sym_Lambda ** 3) * sym_lambda_2 * (sym_mu ** 2)
-        + (sym_Lambda ** 3) * sym_lambda_2 * sym_lambda_2 * sym_mu
+        (sym_Lambda**3) * sym_lambda_1 * sym_lambda_2 * sym_mu
+        + (sym_Lambda**3) * sym_lambda_2 * (sym_mu**2)
+        + (sym_Lambda**3) * sym_lambda_2 * sym_lambda_2 * sym_mu
     )  # (1,3)
-    sym_state_probs_1341[5] = (sym_Lambda ** 3) * sym_lambda_1 * (sym_mu ** 2)  # (0,4)
+    sym_state_probs_1341[5] = (sym_Lambda**3) * sym_lambda_1 * (sym_mu**2)  # (0,4)
     sym_state_probs_1341[6] = (
-        (sym_Lambda ** 3) * (sym_lambda_1 ** 2) * sym_lambda_2
-        + (sym_Lambda ** 3) * sym_lambda_1 * (sym_lambda_2 ** 2)
-        + 2 * (sym_Lambda ** 3) * sym_lambda_1 * sym_lambda_2 * sym_mu
+        (sym_Lambda**3) * (sym_lambda_1**2) * sym_lambda_2
+        + (sym_Lambda**3) * sym_lambda_1 * (sym_lambda_2**2)
+        + 2 * (sym_Lambda**3) * sym_lambda_1 * sym_lambda_2 * sym_mu
     )  # (1,4)
 
     total_1341 = np.sum(sym_state_probs_1341)
@@ -516,67 +516,67 @@ def get_symbolic_state_probabilities_1131():
 
     # (0,0)
     sym_state_probs_1131[0] = (
-        (sym_mu ** 6)
-        + 2 * (sym_lambda_2 * (sym_mu ** 5))
-        + ((sym_lambda_2 ** 2) * (sym_mu ** 4))
-        + (sym_lambda_1 * sym_lambda_2 * (sym_mu ** 4))
+        (sym_mu**6)
+        + 2 * (sym_lambda_2 * (sym_mu**5))
+        + ((sym_lambda_2**2) * (sym_mu**4))
+        + (sym_lambda_1 * sym_lambda_2 * (sym_mu**4))
     )
     # (0,1)
     sym_state_probs_1131[1] = sym_state_probs_1131[0] * sym_Lambda / sym_mu
     # (1,1)
     sym_state_probs_1131[2] = (
-        (sym_Lambda * (sym_lambda_1 ** 2) * sym_lambda_2 * (sym_mu ** 2))
-        + (sym_Lambda * sym_lambda_2 * sym_lambda_1 * (sym_mu ** 3))
-        + 2 * (sym_Lambda * sym_lambda_1 * (sym_lambda_2 ** 2) * (sym_mu ** 2))
-        + 2 * (sym_Lambda * (sym_lambda_2 ** 2) * (sym_mu ** 3))
-        + (sym_Lambda * (sym_lambda_2 ** 3) * (sym_mu ** 2))
-        + (sym_Lambda * sym_lambda_2 * (sym_mu ** 4))
+        (sym_Lambda * (sym_lambda_1**2) * sym_lambda_2 * (sym_mu**2))
+        + (sym_Lambda * sym_lambda_2 * sym_lambda_1 * (sym_mu**3))
+        + 2 * (sym_Lambda * sym_lambda_1 * (sym_lambda_2**2) * (sym_mu**2))
+        + 2 * (sym_Lambda * (sym_lambda_2**2) * (sym_mu**3))
+        + (sym_Lambda * (sym_lambda_2**3) * (sym_mu**2))
+        + (sym_Lambda * sym_lambda_2 * (sym_mu**4))
     )
     # (0,2)
     sym_state_probs_1131[3] = (
-        sym_Lambda * sym_lambda_1 * sym_mu ** 3 * (sym_lambda_2 + sym_mu)
+        sym_Lambda * sym_lambda_1 * sym_mu**3 * (sym_lambda_2 + sym_mu)
     )
     # (1,2)
     sym_state_probs_1131[4] = (sym_Lambda * sym_lambda_2 * sym_lambda_1 * sym_mu) * (
-        (sym_lambda_2 ** 2)
+        (sym_lambda_2**2)
         + 2 * sym_lambda_2 * sym_lambda_1
         + 3 * sym_lambda_2 * sym_mu
-        + (sym_lambda_1 ** 2)
+        + (sym_lambda_1**2)
         + 2 * sym_lambda_1 * sym_mu
-        + 2 * (sym_mu ** 2)
+        + 2 * (sym_mu**2)
     )
     # (0,3)
-    sym_state_probs_1131[5] = sym_Lambda * (sym_lambda_1 ** 2) * (sym_mu ** 3)
+    sym_state_probs_1131[5] = sym_Lambda * (sym_lambda_1**2) * (sym_mu**3)
     # (1,3)
-    sym_state_probs_1131[6] = (sym_Lambda * sym_lambda_2 * (sym_lambda_1 ** 2)) * (
-        (sym_lambda_2 ** 2)
+    sym_state_probs_1131[6] = (sym_Lambda * sym_lambda_2 * (sym_lambda_1**2)) * (
+        (sym_lambda_2**2)
         + 2 * sym_lambda_2 * sym_lambda_1
         + 3 * sym_lambda_2 * sym_mu
-        + (sym_lambda_1 ** 2)
+        + (sym_lambda_1**2)
         + 2 * sym_lambda_1 * sym_mu
-        + 3 * (sym_mu ** 2)
+        + 3 * (sym_mu**2)
     )
 
     denominator = (
-        sym_Lambda * sym_lambda_2 ** 3 * sym_lambda_1 ** 2
-        + sym_Lambda * sym_lambda_2 ** 3 * sym_lambda_1 * sym_mu
-        + sym_Lambda * sym_lambda_2 ** 3 * sym_mu ** 2
-        + 2 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 ** 3
-        + 5 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 ** 2 * sym_mu
-        + 5 * sym_Lambda * sym_lambda_2 ** 2 * sym_lambda_1 * sym_mu ** 2
-        + 3 * sym_Lambda * sym_lambda_2 ** 2 * sym_mu ** 3
-        + sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 4
-        + 3 * sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 3 * sym_mu
-        + 6 * sym_Lambda * sym_lambda_2 * sym_lambda_1 ** 2 * sym_mu ** 2
-        + 5 * sym_Lambda * sym_lambda_2 * sym_lambda_1 * sym_mu ** 3
-        + 3 * sym_Lambda * sym_lambda_2 * sym_mu ** 4
-        + sym_Lambda * sym_lambda_1 ** 2 * sym_mu ** 3
-        + sym_Lambda * sym_lambda_1 * sym_mu ** 4
-        + sym_Lambda * sym_mu ** 5
-        + sym_lambda_2 ** 2 * sym_mu ** 4
-        + sym_lambda_2 * sym_lambda_1 * sym_mu ** 4
-        + 2 * sym_lambda_2 * sym_mu ** 5
-        + sym_mu ** 6
+        sym_Lambda * sym_lambda_2**3 * sym_lambda_1**2
+        + sym_Lambda * sym_lambda_2**3 * sym_lambda_1 * sym_mu
+        + sym_Lambda * sym_lambda_2**3 * sym_mu**2
+        + 2 * sym_Lambda * sym_lambda_2**2 * sym_lambda_1**3
+        + 5 * sym_Lambda * sym_lambda_2**2 * sym_lambda_1**2 * sym_mu
+        + 5 * sym_Lambda * sym_lambda_2**2 * sym_lambda_1 * sym_mu**2
+        + 3 * sym_Lambda * sym_lambda_2**2 * sym_mu**3
+        + sym_Lambda * sym_lambda_2 * sym_lambda_1**4
+        + 3 * sym_Lambda * sym_lambda_2 * sym_lambda_1**3 * sym_mu
+        + 6 * sym_Lambda * sym_lambda_2 * sym_lambda_1**2 * sym_mu**2
+        + 5 * sym_Lambda * sym_lambda_2 * sym_lambda_1 * sym_mu**3
+        + 3 * sym_Lambda * sym_lambda_2 * sym_mu**4
+        + sym_Lambda * sym_lambda_1**2 * sym_mu**3
+        + sym_Lambda * sym_lambda_1 * sym_mu**4
+        + sym_Lambda * sym_mu**5
+        + sym_lambda_2**2 * sym_mu**4
+        + sym_lambda_2 * sym_lambda_1 * sym_mu**4
+        + 2 * sym_lambda_2 * sym_mu**5
+        + sym_mu**6
     )
 
     sym_state_probs_1131 = [i / denominator for i in sym_state_probs_1131]

@@ -316,9 +316,9 @@ def get_rate_of_state_00_graphically(
 
             P00_rate += (
                 spanning_tree_counter
-                * lambda_2 ** down_edges
-                * lambda_1 ** right_edges
-                * mu ** left_edges
+                * lambda_2**down_edges
+                * lambda_1**right_edges
+                * mu**left_edges
             )
 
     P00_rate += mu ** (system_capacity - threshold)

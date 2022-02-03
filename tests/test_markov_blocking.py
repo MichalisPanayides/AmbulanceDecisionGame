@@ -519,77 +519,68 @@ def test_get_mean_blocking_difference_using_markov_example_1():
     Test for getting the weighted mean blocking difference between two systems
     for different values of alpha
     """
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=0,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.3786808388674136, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.5,
+            lambda_2=2,
+            lambda_1_1=2,
+            lambda_1_2=2,
+            mu_1=2,
+            mu_2=2,
+            num_of_servers_1=2,
+            num_of_servers_2=2,
+            threshold_1=3,
+            threshold_2=5,
+            system_capacity_1=5,
+            system_capacity_2=5,
+            buffer_capacity_1=5,
+            buffer_capacity_2=4,
+            alpha=0,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.3786808388674136, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=0.5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.1946865334809922, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.5,
+            lambda_2=2,
+            lambda_1_1=2,
+            lambda_1_2=2,
+            mu_1=2,
+            mu_2=2,
+            num_of_servers_1=2,
+            num_of_servers_2=2,
+            threshold_1=3,
+            threshold_2=5,
+            system_capacity_1=5,
+            system_capacity_2=5,
+            buffer_capacity_1=5,
+            buffer_capacity_2=4,
+            alpha=0.5,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.1946865334809922, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.5,
-                lambda_2=2,
-                lambda_1_1=2,
-                lambda_1_2=2,
-                mu_1=2,
-                mu_2=2,
-                num_of_servers_1=2,
-                num_of_servers_2=2,
-                threshold_1=3,
-                threshold_2=5,
-                system_capacity_1=5,
-                system_capacity_2=5,
-                buffer_capacity_1=5,
-                buffer_capacity_2=4,
-                alpha=1,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.010692228094570821, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.5,
+            lambda_2=2,
+            lambda_1_1=2,
+            lambda_1_2=2,
+            mu_1=2,
+            mu_2=2,
+            num_of_servers_1=2,
+            num_of_servers_2=2,
+            threshold_1=3,
+            threshold_2=5,
+            system_capacity_1=5,
+            system_capacity_2=5,
+            buffer_capacity_1=5,
+            buffer_capacity_2=4,
+            alpha=1,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.010692228094570821, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_get_mean_blocking_difference_using_markov_example_2():
@@ -597,74 +588,65 @@ def test_get_mean_blocking_difference_using_markov_example_2():
     Test for getting the weighted mean blocking difference between two systems
     for different values of alpha
     """
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=0,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.039826434411056905, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.8,
+            lambda_2=4,
+            lambda_1_1=3,
+            lambda_1_2=2,
+            mu_1=3,
+            mu_2=2,
+            num_of_servers_1=3,
+            num_of_servers_2=4,
+            threshold_1=6,
+            threshold_2=5,
+            system_capacity_1=8,
+            system_capacity_2=9,
+            buffer_capacity_1=4,
+            buffer_capacity_2=3,
+            alpha=0,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.039826434411056905, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=0.5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.024201250377136538, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.8,
+            lambda_2=4,
+            lambda_1_1=3,
+            lambda_1_2=2,
+            mu_1=3,
+            mu_2=2,
+            num_of_servers_1=3,
+            num_of_servers_2=4,
+            threshold_1=6,
+            threshold_2=5,
+            system_capacity_1=8,
+            system_capacity_2=9,
+            buffer_capacity_1=4,
+            buffer_capacity_2=3,
+            alpha=0.5,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.024201250377136538, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            get_mean_blocking_difference_using_markov(
-                prop_1=0.8,
-                lambda_2=4,
-                lambda_1_1=3,
-                lambda_1_2=2,
-                mu_1=3,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=6,
-                threshold_2=5,
-                system_capacity_1=8,
-                system_capacity_2=9,
-                buffer_capacity_1=4,
-                buffer_capacity_2=3,
-                alpha=1,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.008576066343216171, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_mean_blocking_difference_using_markov(
+            prop_1=0.8,
+            lambda_2=4,
+            lambda_1_1=3,
+            lambda_1_2=2,
+            mu_1=3,
+            mu_2=2,
+            num_of_servers_1=3,
+            num_of_servers_2=4,
+            threshold_1=6,
+            threshold_2=5,
+            system_capacity_1=8,
+            system_capacity_2=9,
+            buffer_capacity_1=4,
+            buffer_capacity_2=3,
+            alpha=1,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.008576066343216171, NUMBER_OF_DIGITS_TO_ROUND)

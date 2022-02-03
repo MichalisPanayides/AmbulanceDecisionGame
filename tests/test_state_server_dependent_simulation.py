@@ -85,27 +85,18 @@ def test_simulate_state_dependent_model_example_1():
         runtime=100,
     )
 
-    assert (
-        round(
-            sum([w.waiting_time for w in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(69.05359560579672, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-    assert (
-        round(
-            sum([b.time_blocked for b in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(1.8837534828730575, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-    assert (
-        round(
-            sum([s.service_time for s in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(130.39705479506074, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        sum([w.waiting_time for w in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(69.05359560579672, NUMBER_OF_DIGITS_TO_ROUND)
+    assert round(
+        sum([b.time_blocked for b in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(1.8837534828730575, NUMBER_OF_DIGITS_TO_ROUND)
+    assert round(
+        sum([s.service_time for s in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(130.39705479506074, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_simulate_state_dependent_model_example_2():
@@ -123,27 +114,18 @@ def test_simulate_state_dependent_model_example_2():
         runtime=100,
     )
 
-    assert (
-        round(
-            sum([w.waiting_time for w in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(20.192189452374485, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-    assert (
-        round(
-            sum([b.time_blocked for b in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(229.48684030917272, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-    assert (
-        round(
-            sum([s.service_time for s in simulation.get_all_records()]),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(497.47902606711347, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        sum([w.waiting_time for w in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(20.192189452374485, NUMBER_OF_DIGITS_TO_ROUND)
+    assert round(
+        sum([b.time_blocked for b in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(229.48684030917272, NUMBER_OF_DIGITS_TO_ROUND)
+    assert round(
+        sum([s.service_time for s in simulation.get_all_records()]),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(497.47902606711347, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_simulate_state_dependent_model_when_threshold_more_than_system_capacity():

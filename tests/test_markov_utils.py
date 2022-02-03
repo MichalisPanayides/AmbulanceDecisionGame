@@ -337,37 +337,31 @@ def test_get_accepting_proportion_of_class_2_individuals_examples():
         == 0.6
     )
 
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=2,
-                lambda_2=2,
-                mu=2,
-                num_of_servers=2,
-                threshold=2,
-                system_capacity=2,
-                buffer_capacity=2,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.9230769230769231, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_accepting_proportion_of_class_2_individuals(
+            lambda_1=2,
+            lambda_2=2,
+            mu=2,
+            num_of_servers=2,
+            threshold=2,
+            system_capacity=2,
+            buffer_capacity=2,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.9230769230769231, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            get_accepting_proportion_of_class_2_individuals(
-                lambda_1=10,
-                lambda_2=10,
-                mu=2,
-                num_of_servers=5,
-                threshold=5,
-                system_capacity=5,
-                buffer_capacity=5,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.8523592984113859, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        get_accepting_proportion_of_class_2_individuals(
+            lambda_1=10,
+            lambda_2=10,
+            mu=2,
+            num_of_servers=5,
+            threshold=5,
+            system_capacity=5,
+            buffer_capacity=5,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.8523592984113859, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_get_accepting_proportion_of_individuals():

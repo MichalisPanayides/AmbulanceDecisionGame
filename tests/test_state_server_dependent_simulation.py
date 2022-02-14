@@ -17,7 +17,7 @@ NUMBER_OF_DIGITS_TO_ROUND = 8
     mu=floats(min_value=0.5, max_value=2.0),
     num_of_servers=integers(min_value=1, max_value=10),
 )
-@settings(max_examples=10)
+@settings(max_examples=10, deadline=None)
 def test_compare_state_dependent_model_with_non_state_dependent_property_based(
     lambda_2, lambda_1, mu, num_of_servers
 ):

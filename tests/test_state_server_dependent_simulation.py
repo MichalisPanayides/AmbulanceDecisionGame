@@ -407,6 +407,7 @@ def test_compare_state_server_dependent_model_with_normal_property_based(
         NUMBER_OF_DIGITS_TO_ROUND,
     )
 
+
 def test_state_server_dependent_model_server_attributes():
     """
     Test that server objects in the simulation object get two new attributes
@@ -441,4 +442,3 @@ def test_state_server_dependent_model_server_attributes():
     for server in simulation.nodes[2].servers:
         assert hasattr(server, "served_inds")
         assert hasattr(server, "service_times")
-    

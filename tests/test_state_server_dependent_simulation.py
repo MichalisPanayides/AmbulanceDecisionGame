@@ -406,3 +406,39 @@ def test_compare_state_server_dependent_model_with_normal_property_based(
         sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
+
+def test_state_server_dependent_model_server_attributes():
+    """
+    Test that server objects in the simulation object get two new attributes
+    when using the the StateServerDependentExponential class:
+        - served_inds
+        - service_times
+    """
+    num_of_servers = 4
+    system_capacity = 10
+    buffer_capacity = 10
+
+    rates = {}
+    for server in range(1, num_of_servers + 1):
+        rates[server] = {
+            (u, v): 1
+            for u in range(buffer_capacity + 1)
+            for v in range(system_capacity + 1)
+        }
+
+    simulation = simulate_model(
+        lambda_2=2,
+        lambda_1=2,
+        mu=rates,
+        num_of_servers=num_of_servers,
+        threshold=8,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+        seed_num=0,
+        runtime=100,
+    )
+
+    for server in simulation.nodes[2].servers:
+        assert hasattr(server, "served_inds")
+        assert hasattr(server, "service_times")
+    

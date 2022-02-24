@@ -92,7 +92,23 @@ class StateServerDependentExponential(
         server = ind.server.id_number
         state = ind.simulation.statetracker.state
         rate = self.rates[server][tuple(state)]
-        return random.expovariate(rate)
+        service_time = random.expovariate(rate)
+        self.update_server_attributes(ind, service_time)
+        return service_time
+
+    def update_server_attributes(self, ind, service_time):
+        """
+        Updates the server's attributes
+        """
+        if hasattr(ind.server, "served_inds"):
+            ind.server.served_inds.append(self.simulation.current_time)
+        else:
+            ind.server.served_inds = [self.simulation.current_time]
+
+        if hasattr(ind.server, "service_times"):
+            ind.server.service_times.append(service_time)
+        else:
+            ind.server.service_times = [service_time]
 
 
 def is_state_dependent(mu: dict):

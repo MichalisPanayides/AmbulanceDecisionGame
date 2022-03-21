@@ -25,3 +25,5 @@ data/game_data/nbs/*
 dist
 data/initial_rl_experiments/*
 !data/initial_rl_experiments/**.py
+!data/initial_rl_experiments/**.ipynb
+data/more_rl_experiments/**/**.csv

@@ -23,3 +23,5 @@ data/game_data/nbs/*
 !data/game_data/nbs/**.ipynb
 .tox
 dist
+data/initial_rl_experiments/*
+!data/initial_rl_experiments/**.py

@@ -134,6 +134,36 @@ def utility_function_6(Qs, server_id, e_parameter=0.5):
     return e_parameter * mean_served_inds_prop + (1 - e_parameter) * mean_service_rate
 
 
+def utility_function_7(Qs, server_id, e_parameter=0.5):
+    """
+    Utility function 7 is the weighted average of the following
+        - The proportion of individuals not lost to the system
+        - The proportion of time the server was idle
+    """
+    server_all_simulations = [Q.nodes[2].servers[server_id - 1] for Q in Qs]
+    all_lost_individuals = [
+        len(Q.rejection_dict[1][0]) + len(Q.rejection_dict[2][0]) for Q in Qs
+    ]
+    all_accepted_individuals = [len(Q.nodes[-1].all_individuals) for Q in Qs]
+
+    mean_proportion_accepted = np.mean(
+        [
+            accepted_inds / (accepted_inds + lost_inds)
+            for accepted_inds, lost_inds in zip(
+                all_accepted_individuals, all_lost_individuals
+            )
+        ]
+    )
+
+    idle_proportion = np.mean(
+        [
+            (Qs[Q_id].current_time - srv.busy_time) / Qs[Q_id].current_time
+            for Q_id, srv in enumerate(server_all_simulations)
+        ]
+    )
+    return e_parameter * mean_proportion_accepted + (1 - e_parameter) * idle_proportion
+
+
 def get_utility_values(utility_function, Q, e_parameter=0.5):
     """
     Returns a list of utility values for each server in the queue

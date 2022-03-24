@@ -52,8 +52,8 @@ def main(e_parameter):
         "threshold": threshold,
         "system_capacity": system_capacity,
         "buffer_capacity": buffer_capacity,
-        "runtime": 200,  # 10000,
-        "num_of_trials": 2,  # 20,
+        "runtime": 10000,
+        "num_of_trials": 20,
         "seed_num": 0,
         "server_priority_function": team_expertise_priority,
     }
@@ -63,7 +63,7 @@ def main(e_parameter):
     server_utilities = [
         -float("inf") for srv in range(1, parameters["num_of_servers"] + 1)
     ]
-    num_of_iterations = 10  # 100000
+    num_of_iterations = 100000
     current_utility_function = utility_function_7
     all_utilities, all_rates = [], []
 
@@ -90,7 +90,7 @@ def main(e_parameter):
         all_utilities.append(server_utilities.copy())
         all_rates.append(copy.deepcopy(rates))
 
-        filepath = "results/e" + str(e_parameter)  # .replace(".", "")
+        filepath = "results/e" + str(e_parameter)
         output_to_file(str(server_utilities), filepath + "/utilities.csv")
         str_rates = str([list(rates[server].values()) for server in rates])
         output_to_file(str_rates, filepath + "/rates.csv")

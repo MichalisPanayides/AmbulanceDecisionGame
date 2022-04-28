@@ -229,11 +229,16 @@ def get_symbolic_transition_matrix(
     return Q
 
 
-def get_transition_matrix(
+def get_transition_matrix_by_iterating_through_all_entries(
     lambda_2, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
 ):
     """Obtain the numerical transition matrix that consists of all rates between
-    any two states.
+    any two states. This function iterrates through all possible combinations of
+    states and determines the rate of going from one state to another.
+    
+    This is more computationally expensive than the function get_transion_matrix
+    where it first finds the positions of the non-zero entries and then fills
+    them.
 
     Parameters
     ----------
@@ -263,6 +268,139 @@ def get_transition_matrix(
     for (i, origin_state), (j, destination_state) in itertools.product(
         enumerate(all_states), repeat=2
     ):
+        Q[i, j] = get_transition_matrix_entry(
+            origin=origin_state,
+            destination=destination_state,
+            threshold=threshold,
+            lambda_2=lambda_2,
+            lambda_1=lambda_1,
+            Lambda=lambda_2 + lambda_1,
+            mu=mu,
+            num_of_servers=num_of_servers,
+        )
+    sum_of_rates = np.sum(Q, axis=1)
+    np.fill_diagonal(Q, -sum_of_rates)
+    return Q
+
+
+def get_all_pairs_of_states_with_non_zero_entries(  # noqa: C901
+    all_states, threshold, system_capacity, buffer_capacity
+):
+    """
+    Obtain all pairs of states with non-zero entries in the transition matrix.
+
+    Parameters
+    ----------
+    all_states : list
+        The list of all states
+    threshold : int
+        The threshold that indicates when to start blocking class 2 individuals
+    system_capacity : int
+        The total capacity of the system
+    buffer_capacity : int
+        The buffer capacity
+
+    Returns
+    -------
+    list
+        The list of all pairs of states with non-zero entries in the transition matrix
+    """
+
+    def state_after_threshold(index, u, v, pairs):
+        """
+        The case where v > T
+        """
+        if u < buffer_capacity:
+            # going down on the Markov chain model
+            pairs.append(((index, (u, v)), (index + 1, (u + 1, v))))
+        if v > 0:
+            # going left on the Markov chain model
+            pairs.append(((index, (u, v)), (index - buffer_capacity - 1, (u, v - 1))))
+        if v < system_capacity:
+            # going right on the Markov chain model
+            pairs.append(((index, (u, v)), (index + buffer_capacity + 1, (u, v + 1))))
+        return pairs
+
+    def state_before_threshold(index, u, v, pairs):
+        """
+        The case where v < T
+        """
+        if v < system_capacity:
+            # going right on the Markov chain model
+            pairs.append(((index, (u, v)), (index + 1, (u, v + 1))))
+        if v > 0:
+            # going left on the Markov chain model
+            pairs.append(((index, (u, v)), (index - 1, (u, v - 1))))
+        return pairs
+
+    def state_at_threshold(index, u, v, pairs):
+        """
+        The case where v = T
+        """
+        if u == 0:
+            # going left on the Markov chain model
+            pairs.append(((index, (u, v)), (index - 1, (u, v - 1))))
+        if u > 0:
+            # going up on the Markov chain model
+            pairs.append(((index, (u, v)), (index - 1, (u - 1, v))))
+        if u < buffer_capacity:
+            # going down on the Markov chain model
+            pairs.append(((index, (u, v)), (index + 1, (u + 1, v))))
+        if v < system_capacity:
+            # going right on the Markov chain model
+            pairs.append(((index, (u, v)), (index + buffer_capacity + 1, (u, v + 1))))
+        return pairs
+
+    all_pairs = []
+    for index, (u, v) in enumerate(all_states):
+        if v > threshold:
+            all_pairs = state_after_threshold(index, u, v, all_pairs)
+        elif v < threshold:
+            all_pairs = state_before_threshold(index, u, v, all_pairs)
+        elif v == threshold:
+            all_pairs = state_at_threshold(index, u, v, all_pairs)
+    return all_pairs
+
+
+def get_transition_matrix(
+    lambda_2, lambda_1, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+):
+    """
+    Obtain the numerical transition matrix that consists of all rates between
+    any two states. This function first gets the pairs of states with a non-zero
+    enrtry and then calculates the rate of going from one state to another.
+
+    Parameters
+    ----------
+    num_of_servers : int
+        The number of servers
+    threshold : int
+        The threshold that indicates when to start blocking class 2 individuals
+    system_capacity : int
+        The total capacity of the system
+    buffer_capacity : int
+        The buffer capacity
+
+    Returns
+    -------
+    numpy.ndarray
+        The transition matrix Q
+    """
+
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    size = len(all_states)
+    Q = np.zeros((size, size))
+    all_pairs = get_all_pairs_of_states_with_non_zero_entries(
+        all_states=all_states,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    for (i, origin_state), (j, destination_state) in all_pairs:
         Q[i, j] = get_transition_matrix_entry(
             origin=origin_state,
             destination=destination_state,

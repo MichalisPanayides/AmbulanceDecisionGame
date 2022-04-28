@@ -235,7 +235,6 @@ def get_transition_matrix_by_iterating_through_all_entries(
     """Obtain the numerical transition matrix that consists of all rates between
     any two states. This function iterrates through all possible combinations of
     states and determines the rate of going from one state to another.
-    
     This is more computationally expensive than the function get_transion_matrix
     where it first finds the positions of the non-zero entries and then fills
     them.

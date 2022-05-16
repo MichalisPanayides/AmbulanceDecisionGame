@@ -26,6 +26,7 @@ from ambulance_game.markov.markov import (
     get_steady_state_numerically,
     get_symbolic_transition_matrix,
     get_transition_matrix,
+    get_transition_matrix_by_iterating_through_all_entries,
     get_transition_matrix_entry,
     is_steady_state,
     visualise_markov_chain,
@@ -255,6 +256,55 @@ def test_get_transition_matrix(
     matrix_size = s_2_size * (buffer_capacity + 1) + threshold
 
     transition_matrix = get_transition_matrix(
+        lambda_2=lambda_2,
+        lambda_1=lambda_1,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+
+    assert matrix_size == np.shape(transition_matrix)[0]
+    mid = int(matrix_size / 2)
+    assert transition_matrix[0][0] == -sum(transition_matrix[0][1:])
+    assert transition_matrix[-1][-1] == -sum(transition_matrix[-1][:-1])
+
+    mid_row_sum = sum(transition_matrix[mid][:mid]) + sum(
+        transition_matrix[mid][mid + 1 :]
+    )
+    assert np.isclose(transition_matrix[mid][mid], -mid_row_sum)
+
+
+@given(
+    system_capacity=integers(min_value=10, max_value=20),
+    buffer_capacity=integers(min_value=1, max_value=20),
+    lambda_2=floats(
+        min_value=0.05, max_value=100, allow_nan=False, allow_infinity=False
+    ),
+    lambda_1=floats(
+        min_value=0.05, max_value=100, allow_nan=False, allow_infinity=False
+    ),
+    mu=floats(min_value=0.05, max_value=5, allow_nan=False, allow_infinity=False),
+)
+@settings(deadline=None, max_examples=10)
+def test_get_transition_matrix_by_iterating_through_all_entries(
+    system_capacity, buffer_capacity, lambda_2, lambda_1, mu
+):
+    """
+    Test that ensures numeric transition matrix's shape is as expected and that
+    some elements of the diagonal are what they should be. To be exact the first,
+    last and middle row are check to see if the diagonal element of them equals
+    to minus the sum of the entire row.
+    """
+    num_of_servers = 10
+    threshold = 8
+
+    states_after_threshold = system_capacity - threshold + 1
+    s_2_size = states_after_threshold if states_after_threshold >= 0 else 0
+    matrix_size = s_2_size * (buffer_capacity + 1) + threshold
+
+    transition_matrix = get_transition_matrix_by_iterating_through_all_entries(
         lambda_2=lambda_2,
         lambda_1=lambda_1,
         mu=mu,

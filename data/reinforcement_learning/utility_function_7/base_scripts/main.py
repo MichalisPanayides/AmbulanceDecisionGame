@@ -42,7 +42,8 @@ def main(e_parameter):
         rates[server_id] = {}
         for u in range(buffer_capacity + 1):
             for v in range(system_capacity + 1):
-                rates[server_id][(u, v)] = mu
+                if v >= threshold or u == 0:
+                    rates[server_id][(u, v)] = mu
 
     # Model parameters in dictionary format
     parameters = {

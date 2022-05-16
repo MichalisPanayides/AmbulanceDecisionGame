@@ -3,6 +3,7 @@
 
 import copy
 import os
+import itertools
 
 import numpy as np
 
@@ -149,3 +150,69 @@ def output_to_file(utilist, filepath="demo.csv"):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "a") as f:
         f.write(utilist + "\n")
+
+
+def reconstruct_rates(rates_from_file, system_capacity, buffer_capacity, threshold):
+    """
+    Reconstruct rates dictionary where it will be of the form:
+        rates = dict{
+            iteration : dict{
+                server_id: dict{
+                    state: rate
+                    }
+                }
+            }
+
+    I changed main.py after the first two experiments and the results are now
+    saved in two different ways. That's why I needed to ude the two if
+    statements. The two if statements are:
+    - If num_of_states == len(all_states) means that there is one entry for
+            every valid rate for each server
+    - Elif num_of_states == (system_capacity + 1) * (buffer_capacity + 1) means
+            that there is one entry for all possible combinations of (u,v)
+            where some are not valid
+
+    e.g. T=3, N=4, M=2 => state (1,1) does not exist in the first case
+            while it is on the second (stupid Mike)
+    """
+
+    num_of_servers = len(rates_from_file)
+    num_of_iterations = len(rates_from_file[0])
+    num_of_states = len(rates_from_file[0][0])
+
+    all_states = abg.markov.build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    if num_of_states == len(all_states):
+        raise NotImplementedError("This code block is not implemented yet")
+    elif num_of_states == (system_capacity + 1) * (buffer_capacity + 1):
+        rates = {}
+        for iteration in range(num_of_iterations):
+            rates[iteration] = {}
+            for server_id in range(1, num_of_servers + 1):
+                rates[iteration][server_id] = {}
+                for index, (u, v) in enumerate(
+                    itertools.product(
+                        range(buffer_capacity + 1), range(system_capacity + 1)
+                    )
+                ):
+                    if v >= threshold or u == 0:
+                        rates[iteration][server_id][(u, v)] = rates_from_file[
+                            server_id - 1
+                        ][iteration][index]
+        return rates
+    else:
+        raise Exception("Dunno what you on about mate")
+
+
+def reconstruct_rates_matrix_from_dictionary(rates_dict):
+    """
+    Reconstruct rates matrix from dictionary.
+    """
+    buffer_capacity, system_capacity = max(list(rates_dict.keys()))
+    rates_array = np.empty((buffer_capacity + 1, system_capacity + 1)) * np.nan
+    for (u, v), rate in rates_dict.items():
+        rates_array[(u, v)] = rate
+    return rates_array

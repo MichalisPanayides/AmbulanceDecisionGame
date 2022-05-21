@@ -99,6 +99,15 @@ def build_custom_node(threshold=float("inf")):
         methods of the ciw.Node class
         """
 
+        def __init__(self, id_, simulation):
+            """
+            Initializes the node with the given id and simulation using the
+            initialisation of ciw's Node object with the addition of the
+            threshold parameter.
+            """
+            super().__init__(id_, simulation)
+            self.simulation.threshold = threshold
+
         def release_blocked_individual(self):
             """
             Releases an individual who becomes unblocked when

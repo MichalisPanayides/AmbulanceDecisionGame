@@ -27,11 +27,16 @@ def team_expertise_priority(srv, ind):  # pylint: disable=unused-argument
     return np.random.random()
 
 
-def main(e_parameter):
+def main(e_parameter, lambda_1=None, lambda_2=None, mu=None):
+    """The main function"""
     # Model parameters
-    lambda_2 = 1
-    lambda_1 = 0.5
-    mu = 0.7
+    if lambda_1 is None:
+        lambda_1 = 0.5
+    if lambda_2 is None:
+        lambda_2 = 1
+    if mu is None:
+        mu = 0.7
+
     num_of_servers = 4
     threshold = 7
     system_capacity = 10
@@ -42,7 +47,7 @@ def main(e_parameter):
         rates[server_id] = {}
         for u in range(buffer_capacity + 1):
             for v in range(system_capacity + 1):
-                if v >= threshold or u == 0:
+                if v >= threshold or u == 0:  # hope I don't regret adding this
                     rates[server_id][(u, v)] = mu
 
     # Model parameters in dictionary format
@@ -64,15 +69,40 @@ def main(e_parameter):
     server_utilities = [
         -float("inf") for srv in range(1, parameters["num_of_servers"] + 1)
     ]
-    num_of_iterations = 100000
+    num_of_iterations = 5000
     current_utility_function = utility_function_7
-    all_utilities, all_rates = [], []
+
+    # Define the directory name that the results will be stored in
+    key_params = [
+        "lambda_1",
+        "lambda_2",
+        "num_of_servers",
+        "threshold",
+        "system_capacity",
+        "buffer_capacity",
+    ]
+    filename_parameters = {
+        key: value for key, value in parameters.items() if key in key_params
+    }
+    filepath = (
+        "results/e="
+        + str(e_parameter)
+        + ","
+        + str(filename_parameters)
+        .replace(" ", "")
+        .replace("'", "")
+        .replace(":", "=")
+        .replace("{", "")
+        .replace("}", "")
+        + ",mu="
+        + str(mu)
+    )
 
     # Reinforcement learning algorithm
-    Qs = run_simulation(parameters, initial_rates)
+    Qs, state_probs = run_simulation(parameters, initial_rates)
     for _ in range(num_of_iterations):
         new_rates, server_id = pick_policy(Qs, rates, num_of_servers)
-        Qs = run_simulation(parameters, new_rates)
+        Qs, new_state_probs = run_simulation(parameters, new_rates)
         if are_within_limits(new_rates) and accept_policy(
             Qs=Qs,
             utility_function=current_utility_function,
@@ -87,24 +117,34 @@ def main(e_parameter):
                 num_of_servers=parameters["num_of_servers"],
             )
             rates = copy.deepcopy(new_rates)
+            state_probs = copy.deepcopy(new_state_probs)
 
-        all_utilities.append(server_utilities.copy())
-        all_rates.append(copy.deepcopy(rates))
-
-        filepath = "results/e" + str(e_parameter)
         output_to_file(str(server_utilities), filepath + "/utilities.csv")
+
         str_rates = str([list(rates[server].values()) for server in rates])
         output_to_file(str_rates, filepath + "/rates.csv")
+
+        str_state_probs = str(list(state_probs.flatten()))
+        output_to_file(str_state_probs, filepath + "/state_probs.csv")
 
 
 if __name__ == "__main__":
     arguments = sys.argv
-    if len(arguments) == 2:
-        e_value = float(arguments[1])
-    else:
-        raise ValueError("Please provide one parameter for the value of e")
+    arguments = [
+        float(arguments[i]) if i < len(arguments) and arguments[i] != "None" else None
+        for i in range(1, 5)
+    ]
+    e_value = arguments[0]
+    lambda_1_value = arguments[1]
+    lambda_2_value = arguments[2]
+    mu_value = arguments[3]
 
     if e_value < 0 or e_value > 1:
         raise ValueError("Please provide a value of e between 0 and 1")
 
-    main(e_parameter=e_value)
+    main(
+        e_parameter=e_value,
+        lambda_1=lambda_1_value,
+        lambda_2=lambda_2_value,
+        mu=mu_value,
+    )

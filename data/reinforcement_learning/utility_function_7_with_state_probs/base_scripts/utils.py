@@ -104,7 +104,7 @@ def are_within_limits(rates):
     for srv in rates:
         for state in rates[srv]:
             rate = rates[srv][state]
-            if rate < 0 or rate > 5:
+            if rate < 0 or rate > 10:  # Used to be rate > 5
                 print(f"Rate {rate} out of bounds: Server {srv}, State {state}")
                 return False
     return True
@@ -141,7 +141,15 @@ def run_simulation(parameters, rates):
     if not isinstance(simulations, list):
         simulations = [simulations]
 
-    return simulations
+    state_probs = (
+        abg.simulation.get_average_simulated_state_probabilities_from_simulations(
+            simulations=simulations,
+            system_capacity=parameters["system_capacity"],
+            buffer_capacity=parameters["buffer_capacity"],
+        )
+    )
+
+    return simulations, state_probs
 
 
 def output_to_file(utilist, filepath="demo.csv"):
@@ -208,11 +216,12 @@ def reconstruct_rates(rates_from_file, system_capacity, buffer_capacity, thresho
         raise Exception("Dunno what you on about mate")
 
 
-def reconstruct_rates_matrix_from_dictionary(rates_dict):
+def reconstruct_rates_matrix_from_dictionary(
+    rates_dict, system_capacity, buffer_capacity
+):
     """
     Reconstruct rates matrix from dictionary.
     """
-    buffer_capacity, system_capacity = max(list(rates_dict.keys()))
     rates_array = np.empty((buffer_capacity + 1, system_capacity + 1)) * np.nan
     for (u, v), rate in rates_dict.items():
         rates_array[(u, v)] = rate

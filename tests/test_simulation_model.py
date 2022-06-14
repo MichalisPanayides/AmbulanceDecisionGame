@@ -158,9 +158,9 @@ def test_simulate_model_unconstrained():
         )
         rec = simulation.get_all_records()
         sim_results.append(rec)
-        blocks = blocks + sum([b.time_blocked for b in rec])
-        waits = waits + sum([w.waiting_time for w in rec])
-        services = services + sum([s.service_time for s in rec])
+        blocks = blocks + sum(b.time_blocked for b in rec)
+        waits = waits + sum(w.waiting_time for w in rec)
+        services = services + sum(s.service_time for s in rec)
 
     assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 474
@@ -201,9 +201,9 @@ def test_simulate_model_constrained():
         )
         rec = simulation.get_all_records()
         sim_results.append(rec)
-        blocks = blocks + sum([b.time_blocked for b in rec])
-        waits = waits + sum([w.waiting_time for w in rec])
-        services = services + sum([s.service_time for s in rec])
+        blocks = blocks + sum(b.time_blocked for b in rec)
+        waits = waits + sum(w.waiting_time for w in rec)
+        services = services + sum(s.service_time for s in rec)
 
     assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 504

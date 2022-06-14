@@ -51,14 +51,14 @@ def test_compare_state_dependent_model_with_non_state_dependent_property_based(
         system_capacity=10,
         buffer_capacity=10,
     )
-    assert sum([w.waiting_time for w in simulation.get_all_records()]) == sum(
-        [w.waiting_time for w in simulation_extension.get_all_records()]
+    assert sum(w.waiting_time for w in simulation.get_all_records()) == sum(
+        w.waiting_time for w in simulation_extension.get_all_records()
     )
-    assert sum([b.time_blocked for b in simulation.get_all_records()]) == sum(
-        [b.time_blocked for b in simulation_extension.get_all_records()]
+    assert sum(b.time_blocked for b in simulation.get_all_records()) == sum(
+        b.time_blocked for b in simulation_extension.get_all_records()
     )
-    assert sum([s.service_time for s in simulation.get_all_records()]) == sum(
-        [s.service_time for s in simulation_extension.get_all_records()]
+    assert sum(s.service_time for s in simulation.get_all_records()) == sum(
+        s.service_time for s in simulation_extension.get_all_records()
     )
 
 
@@ -86,15 +86,15 @@ def test_simulate_state_dependent_model_example_1():
     )
 
     assert round(
-        sum([w.waiting_time for w in simulation.get_all_records()]),
+        sum(w.waiting_time for w in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(12.225686215156836, NUMBER_OF_DIGITS_TO_ROUND)
     assert round(
-        sum([b.time_blocked for b in simulation.get_all_records()]),
+        sum(b.time_blocked for b in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(0, NUMBER_OF_DIGITS_TO_ROUND)
     assert round(
-        sum([s.service_time for s in simulation.get_all_records()]),
+        sum(s.service_time for s in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(83.72494551403194, NUMBER_OF_DIGITS_TO_ROUND)
 
@@ -115,15 +115,15 @@ def test_simulate_state_dependent_model_example_2():
     )
 
     assert round(
-        sum([w.waiting_time for w in simulation.get_all_records()]),
+        sum(w.waiting_time for w in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(20.192189452374485, NUMBER_OF_DIGITS_TO_ROUND)
     assert round(
-        sum([b.time_blocked for b in simulation.get_all_records()]),
+        sum(b.time_blocked for b in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(229.48684030917272, NUMBER_OF_DIGITS_TO_ROUND)
     assert round(
-        sum([s.service_time for s in simulation.get_all_records()]),
+        sum(s.service_time for s in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(497.47902606711347, NUMBER_OF_DIGITS_TO_ROUND)
 
@@ -251,24 +251,24 @@ def test_compare_server_dependent_model_with_non_state_dependent_property_based(
     )
 
     assert round(
-        sum([w.waiting_time for w in simulation.get_all_records()]),
+        sum(w.waiting_time for w in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([w.waiting_time for w in server_dependent_simulation.get_all_records()]),
+        sum(w.waiting_time for w in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([b.time_blocked for b in simulation.get_all_records()]),
+        sum(b.time_blocked for b in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([b.time_blocked for b in server_dependent_simulation.get_all_records()]),
+        sum(b.time_blocked for b in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([s.service_time for s in simulation.get_all_records()]),
+        sum(s.service_time for s in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
+        sum(s.service_time for s in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
 
@@ -381,21 +381,21 @@ def test_state_server_depedent_simulation_example_1():
     )
 
     assert round(
-        sum([w.waiting_time for w in server_dependent_simulation.get_all_records()]),
+        sum(w.waiting_time for w in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
         31.548765904621085,
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([b.time_blocked for b in server_dependent_simulation.get_all_records()]),
+        sum(b.time_blocked for b in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
         1.1637140067544802,
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
+        sum(s.service_time for s in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
         219.71900780818598,
@@ -444,24 +444,24 @@ def test_compare_state_server_dependent_model_with_normal_property_based(
     )
 
     assert round(
-        sum([w.waiting_time for w in simulation.get_all_records()]),
+        sum(w.waiting_time for w in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([w.waiting_time for w in server_dependent_simulation.get_all_records()]),
+        sum(w.waiting_time for w in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([b.time_blocked for b in simulation.get_all_records()]),
+        sum(b.time_blocked for b in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([b.time_blocked for b in server_dependent_simulation.get_all_records()]),
+        sum(b.time_blocked for b in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
     assert round(
-        sum([s.service_time for s in simulation.get_all_records()]),
+        sum(s.service_time for s in simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     ) == round(
-        sum([s.service_time for s in server_dependent_simulation.get_all_records()]),
+        sum(s.service_time for s in server_dependent_simulation.get_all_records()),
         NUMBER_OF_DIGITS_TO_ROUND,
     )
 

@@ -523,7 +523,7 @@ def test_build_game_using_payoff_matrices_example_1():
 
     assert len(game.payoff_matrices) == 2
     assert (
-        game.__repr__()
+        repr(game)
         == """Bi matrix game with payoff matrices:
 
 Row player:

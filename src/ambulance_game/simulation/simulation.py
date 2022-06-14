@@ -273,11 +273,11 @@ def get_simulated_state_probabilities(
 
     if buffer_capacity is None:
         buffer_capacity = max(
-            [state[0] for state in state_probabilities_dictionary.keys()]
+            state[0] for state in state_probabilities_dictionary.keys()
         )
     if system_capacity is None:
         system_capacity = max(
-            [state[1] for state in state_probabilities_dictionary.keys()]
+            state[1] for state in state_probabilities_dictionary.keys()
         )
     state_probabilities_array = np.full(
         (buffer_capacity + 1, system_capacity + 1), np.NaN

@@ -29,35 +29,26 @@ def test_general_psi_function_examples():
         == 5 / 16
     )
 
-    assert (
-        round(
-            general_psi_function(
-                arg=5, k=1, l=4, exp_rates=(0, 8, 4), freq=(1, 10, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.0021713763145861913, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        general_psi_function(
+            arg=5, k=1, l=4, exp_rates=(0, 8, 4), freq=(1, 10, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.0021713763145861913, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            general_psi_function(
-                arg=2, k=1, l=7, exp_rates=(0, 9, 3), freq=(1, 15, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(-1.8719280000000, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        general_psi_function(
+            arg=2, k=1, l=7, exp_rates=(0, 9, 3), freq=(1, 15, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(-1.8719280000000, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            general_psi_function(
-                arg=0.0001, k=2, l=1, exp_rates=(0, 4, 2), freq=(1, 10, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(-0.009534359306064256, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        general_psi_function(
+            arg=0.0001, k=2, l=1, exp_rates=(0, 4, 2), freq=(1, 10, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(-0.009534359306064256, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_specific_psi_function_examples():
@@ -70,34 +61,25 @@ def test_specific_psi_function_examples():
         )
         == 5 / 16
     )
-    assert (
-        round(
-            specific_psi_function(
-                arg=5, k=1, l=4, exp_rates=(0, 8, 4), freq=(1, 10, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.0021713763145861913, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        specific_psi_function(
+            arg=5, k=1, l=4, exp_rates=(0, 8, 4), freq=(1, 10, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.0021713763145861913, NUMBER_OF_DIGITS_TO_ROUND)
 
-    assert (
-        round(
-            specific_psi_function(
-                arg=2, k=1, l=7, exp_rates=(0, 9, 3), freq=(1, 15, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(-1.8719280000000, NUMBER_OF_DIGITS_TO_ROUND)
-    )
-    assert (
-        round(
-            specific_psi_function(
-                arg=0.0001, k=2, l=1, exp_rates=(0, 4, 2), freq=(1, 10, 1), a=2
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(-0.009534359306064256, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        specific_psi_function(
+            arg=2, k=1, l=7, exp_rates=(0, 9, 3), freq=(1, 15, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(-1.8719280000000, NUMBER_OF_DIGITS_TO_ROUND)
+    assert round(
+        specific_psi_function(
+            arg=0.0001, k=2, l=1, exp_rates=(0, 4, 2), freq=(1, 10, 1), a=2
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(-0.009534359306064256, NUMBER_OF_DIGITS_TO_ROUND)
 
     assert (
         specific_psi_function(arg=None, k=3, l=None, exp_rates=None, freq=None, a=None)

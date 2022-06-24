@@ -176,7 +176,7 @@ def test_get_rate_of_state_00_graphically():
             system_capacity=system_capacity,
             buffer_capacity=2,
         )
-        assert P00_rate == value ** 2
+        assert P00_rate == value**2
 
         system_capacity += 1
 

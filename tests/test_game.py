@@ -50,27 +50,24 @@ def test_calculate_class_2_individuals_best_response_markov_example_2():
     Test for calculating the best response of distributing class 2 individuals
     for slightly larger model.
     """
-    assert (
-        round(
-            calculate_class_2_individuals_best_response(
-                lambda_2=6,
-                lambda_1_1=2,
-                lambda_1_2=3,
-                mu_1=5,
-                mu_2=2,
-                num_of_servers_1=3,
-                num_of_servers_2=4,
-                threshold_1=7,
-                threshold_2=9,
-                system_capacity_1=10,
-                system_capacity_2=10,
-                buffer_capacity_1=10,
-                buffer_capacity_2=10,
-            ),
-            NUMBER_OF_DIGITS_TO_ROUND,
-        )
-        == round(0.8224704160104401, NUMBER_OF_DIGITS_TO_ROUND)
-    )
+    assert round(
+        calculate_class_2_individuals_best_response(
+            lambda_2=6,
+            lambda_1_1=2,
+            lambda_1_2=3,
+            mu_1=5,
+            mu_2=2,
+            num_of_servers_1=3,
+            num_of_servers_2=4,
+            threshold_1=7,
+            threshold_2=9,
+            system_capacity_1=10,
+            system_capacity_2=10,
+            buffer_capacity_1=10,
+            buffer_capacity_2=10,
+        ),
+        NUMBER_OF_DIGITS_TO_ROUND,
+    ) == round(0.8224704160104401, NUMBER_OF_DIGITS_TO_ROUND)
 
 
 def test_calculate_class_2_individuals_best_response_markov_upper_and_lower_bounds():
@@ -314,6 +311,7 @@ def test_get_individual_entries_of_matrices_markov_example():
         buffer_capacity_2=2,
         alpha=0.5,
         target=2,
+        use_cache=False,
     )
 
     assert da.is_dask_collection(task)
@@ -525,7 +523,7 @@ def test_build_game_using_payoff_matrices_example_1():
 
     assert len(game.payoff_matrices) == 2
     assert (
-        game.__repr__()
+        repr(game)
         == """Bi matrix game with payoff matrices:
 
 Row player:

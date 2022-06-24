@@ -99,7 +99,7 @@ def specific_psi_function(
         Hypoexponential distribution.
     """
     if k == 1:
-        psi_val = (1 / (arg ** l)) - (1 / (arg + exp_rates[2]) ** l)
+        psi_val = (1 / (arg**l)) - (1 / (arg + exp_rates[2]) ** l)
         psi_val *= (-1) ** l * math.factorial(l - 1) / exp_rates[2]
         return psi_val
     if k == 2:

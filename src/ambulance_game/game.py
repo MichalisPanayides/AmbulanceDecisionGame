@@ -263,6 +263,7 @@ def get_individual_entries_of_matrices(
     warm_up_time=100,
     seed_num_1=None,
     seed_num_2=None,
+    use_cache=True,
 ):
     """
     Gets the (i,j)th entry of the payoff matrices and the routing matrix where
@@ -293,7 +294,12 @@ def get_individual_entries_of_matrices(
     tuple
         A tuple of the form (i, j, R[i,j], A[i,j], B[i,j])
     """
-    prop_to_hospital_1 = calculate_class_2_individuals_best_response(
+    if use_cache:
+        best_response_function = calculate_class_2_individuals_best_response
+    else:
+        best_response_function = calculate_class_2_individuals_best_response.__wrapped__
+
+    prop_to_hospital_1 = best_response_function(
         lambda_2=lambda_2,
         lambda_1_1=lambda_1_1,
         lambda_1_2=lambda_1_2,
@@ -456,6 +462,7 @@ def get_payoff_matrices(
     warm_up_time=100,
     seed_num_1=None,
     seed_num_2=None,
+    use_cache=True,
 ):
     """
     The function uses the distribution array (that is the array that holds the
@@ -517,6 +524,7 @@ def get_payoff_matrices(
             warm_up_time=warm_up_time,
             seed_num_1=seed_num_1,
             seed_num_2=seed_num_2,
+            use_cache=use_cache,
         )
         for threshold_1, threshold_2 in itertools.product(
             range(1, system_capacity_1 + 1), range(1, system_capacity_2 + 1)

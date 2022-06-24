@@ -10,30 +10,7 @@ import random
 import ciw
 import numpy as np
 
-from .dists import get_service_distribution
-
-
-def get_arrival_distribution(arrival_rate):
-    """
-    Get the arrival distribution given the arrival rate. This function was
-    created in case the arrival rate is zero. In such a case we need to
-    specify a distribution that does not generate any arrivals.
-
-    Parameters
-    ----------
-    arrival_rate : float
-        The arrival rate of the model
-
-    Returns
-    -------
-    object
-        A ciw object that contains the arrival distribution of the model
-    """
-    if arrival_rate > 0:
-        return ciw.dists.Exponential(arrival_rate)
-    if arrival_rate == 0:
-        return ciw.dists.NoArrivals()
-    raise ValueError("Arrival rate must be a positive number")
+from .dists import get_service_distribution, get_arrival_distribution
 
 
 def build_model(
@@ -43,6 +20,7 @@ def build_model(
     num_of_servers,
     system_capacity=float("inf"),
     buffer_capacity=float("inf"),
+    server_priority_function=None,
 ):
     """Builds a ciw object that represents a model of a queuing network with two
     service centres; the service area and the buffer space. individuals arrive at the
@@ -73,11 +51,16 @@ def build_model(
     num_of_servers : integer
         The num_of_servers of the service area
     """
-    service_dist = get_service_distribution(mu)
 
+    service_dist = get_service_distribution(mu)
     arrival_dist_1 = get_arrival_distribution(lambda_1)
     arrival_dist_2 = get_arrival_distribution(lambda_2)
 
+    server_priority_functions = (
+        [None, None]
+        if server_priority_function is None
+        else [None, server_priority_function]
+    )
     model = ciw.create_network(
         arrival_distributions=[
             arrival_dist_2,
@@ -87,6 +70,7 @@ def build_model(
         routing=[[0.0, 1.0], [0.0, 0.0]],
         number_of_servers=[buffer_capacity, num_of_servers],
         queue_capacities=[0, system_capacity - num_of_servers],
+        server_priority_functions=server_priority_functions,
     )
     return model
 
@@ -114,6 +98,15 @@ def build_custom_node(threshold=float("inf")):
         Overrides the default release_blocked_individual and finish_service
         methods of the ciw.Node class
         """
+
+        def __init__(self, id_, simulation):
+            """
+            Initializes the node with the given id and simulation using the
+            initialisation of ciw's Node object with the addition of the
+            threshold parameter.
+            """
+            super().__init__(id_, simulation)
+            self.simulation.threshold = threshold
 
         def release_blocked_individual(self):
             """
@@ -194,6 +187,7 @@ def simulate_model(
     buffer_capacity=float("inf"),
     num_of_trials=1,
     tracker=ciw.trackers.NodePopulation(),
+    server_priority_function=None,
 ):
     """Simulate the model by using the custom node and returning the simulation object.
 
@@ -237,6 +231,7 @@ def simulate_model(
             num_of_servers=num_of_servers,
             system_capacity=system_capacity,
             buffer_capacity=buffer_capacity,
+            server_priority_function=server_priority_function,
         )
         node = build_custom_node(threshold)
         ciw.seed(seed_num + trial)
@@ -278,11 +273,11 @@ def get_simulated_state_probabilities(
 
     if buffer_capacity is None:
         buffer_capacity = max(
-            [state[0] for state in state_probabilities_dictionary.keys()]
+            state[0] for state in state_probabilities_dictionary.keys()
         )
     if system_capacity is None:
         system_capacity = max(
-            [state[1] for state in state_probabilities_dictionary.keys()]
+            state[1] for state in state_probabilities_dictionary.keys()
         )
     state_probabilities_array = np.full(
         (buffer_capacity + 1, system_capacity + 1), np.NaN

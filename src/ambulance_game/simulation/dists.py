@@ -31,8 +31,14 @@ class StateDependentExponential(
         This method is used to sample the service time for an individual based
         on the current state
         """
-        state = ind.simulation.statetracker.state
-        rate = self.rates[tuple(state)]
+        state = (
+            len(ind.simulation.nodes[1].individuals[0]),
+            len(ind.simulation.nodes[2].individuals[0]),
+        )
+        is_invalid_state = state[0] > 0 and state[1] < ind.simulation.threshold
+        if is_invalid_state:
+            state = (state[0] - 1, state[1] + 1)
+        rate = self.rates[state]
         return random.expovariate(rate)
 
 
@@ -89,10 +95,46 @@ class StateServerDependentExponential(
         self.rates = rates
 
     def sample(self, t=None, ind=None):
+        """
+        This method is used to sample the service time for an individual based
+        on the current state and the server that the individual is assigned to.
+        The following steps are being executed:
+            1. Find the server
+            2. Find the state
+            3. Check if the state is valid. Note that there are some cases where
+                the visited state is not valid. These are the cases where the
+                state `(u, T-1)` is visited where `u > 0`. This is meant to be
+                an unreachable state. In such case remap the state to `(u+1, T)`
+            4. Get the service rate for that server and state
+            5. Sample the service time
+            6. Update any possible attributes for the server
+        """
         server = ind.server.id_number
-        state = ind.simulation.statetracker.state
-        rate = self.rates[server][tuple(state)]
-        return random.expovariate(rate)
+        state = (
+            len(ind.simulation.nodes[1].individuals[0]),
+            len(ind.simulation.nodes[2].individuals[0]),
+        )
+        is_invalid_state = state[0] > 0 and state[1] < ind.simulation.threshold
+        if is_invalid_state:
+            state = (state[0] - 1, state[1] + 1)
+        rate = self.rates[server][state]
+        service_time = random.expovariate(rate)
+        self.update_server_attributes(ind, service_time)
+        return service_time
+
+    def update_server_attributes(self, ind, service_time):
+        """
+        Updates the server's attributes
+        """
+        if hasattr(ind.server, "served_inds"):
+            ind.server.served_inds.append(self.simulation.current_time)
+        else:
+            ind.server.served_inds = [self.simulation.current_time]
+
+        if hasattr(ind.server, "service_times"):
+            ind.server.service_times.append(service_time)
+        else:
+            ind.server.service_times = [service_time]
 
 
 def is_state_dependent(mu: dict):
@@ -153,3 +195,26 @@ def get_service_distribution(mu):
         if is_state_server_dependent(mu):
             return StateServerDependentExponential(mu)
     raise ValueError("mu must be either an integer or a dictionary")
+
+
+def get_arrival_distribution(arrival_rate):
+    """
+    Get the arrival distribution given the arrival rate. This function was
+    created in case the arrival rate is zero. In such a case we need to
+    specify a distribution that does not generate any arrivals.
+
+    Parameters
+    ----------
+    arrival_rate : float
+        The arrival rate of the model
+
+    Returns
+    -------
+    object
+        A ciw object that contains the arrival distribution of the model
+    """
+    if arrival_rate > 0:
+        return ciw.dists.Exponential(arrival_rate)
+    if arrival_rate == 0:
+        return ciw.dists.NoArrivals()
+    raise ValueError("Arrival rate must be a positive number")

@@ -12,7 +12,6 @@ from ambulance_game.simulation.simulation import (
     build_custom_node,
     build_model,
     simulate_model,
-    get_arrival_distribution,
     get_average_simulated_state_probabilities,
     get_mean_blocking_difference_using_simulation,
     get_multiple_runs_results,
@@ -22,33 +21,6 @@ from ambulance_game.simulation.simulation import (
 )
 
 NUMBER_OF_DIGITS_TO_ROUND = 8
-
-
-@given(
-    arrival_rate=floats(min_value=0, exclude_min=True),
-)
-def test_get_arrival_distribution_exponential(arrival_rate):
-    """
-    Test that an Exponential distribution object form the ciw library is
-    returned given a positive arrival rate
-    """
-    assert isinstance(get_arrival_distribution(arrival_rate), ciw.dists.Exponential)
-
-
-def test_get_arrival_distribution_no_arrivals():
-    """
-    Test that a NoArrivals distribution object form the ciw library is
-    returned given a zero arrival rate
-    """
-    assert isinstance(get_arrival_distribution(0), ciw.dists.NoArrivals)
-
-
-def test_get_arrival_distribution_value_error():
-    """
-    Test that a ValueError is raised when a negative number is given
-    """
-    with pytest.raises(ValueError):
-        get_arrival_distribution(-2)
 
 
 @given(
@@ -64,6 +36,30 @@ def test_build_model(lambda_2, lambda_1, mu, c):
     result = build_model(lambda_2, lambda_1, mu, c)
 
     assert isinstance(result, ciw.network.Network)
+
+
+def test_build_model_fair_allocation():
+    """
+    Test that the correct busy times for servers are output given specific
+    values and fair allocation of individuals
+    """
+
+    def server_busy_time_priority(srv, ind):  # pylint: disable=unused-argument
+        return srv.busy_time
+
+    network = build_model(
+        lambda_2=1,
+        lambda_1=1,
+        mu=2,
+        num_of_servers=2,
+        server_priority_function=server_busy_time_priority,
+    )
+    ciw.seed(0)
+    Q = ciw.Simulation(network)
+    Q.simulate_until_max_time(100)
+    expected_busy_times = [47.813604079373505, 48.03271051578811]
+    simulated_busy_times = [srv.busy_time for srv in Q.nodes[2].servers]
+    assert np.allclose(simulated_busy_times, expected_busy_times)
 
 
 def test_example_model():
@@ -162,9 +158,9 @@ def test_simulate_model_unconstrained():
         )
         rec = simulation.get_all_records()
         sim_results.append(rec)
-        blocks = blocks + sum([b.time_blocked for b in rec])
-        waits = waits + sum([w.waiting_time for w in rec])
-        services = services + sum([s.service_time for s in rec])
+        blocks = blocks + sum(b.time_blocked for b in rec)
+        waits = waits + sum(w.waiting_time for w in rec)
+        services = services + sum(s.service_time for s in rec)
 
     assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 474
@@ -205,9 +201,9 @@ def test_simulate_model_constrained():
         )
         rec = simulation.get_all_records()
         sim_results.append(rec)
-        blocks = blocks + sum([b.time_blocked for b in rec])
-        waits = waits + sum([w.waiting_time for w in rec])
-        services = services + sum([s.service_time for s in rec])
+        blocks = blocks + sum(b.time_blocked for b in rec)
+        waits = waits + sum(w.waiting_time for w in rec)
+        services = services + sum(s.service_time for s in rec)
 
     assert isinstance(simulation, ciw.simulation.Simulation)
     assert len(sim_results[0]) == 504

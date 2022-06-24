@@ -99,6 +99,15 @@ def build_custom_node(threshold=float("inf")):
         methods of the ciw.Node class
         """
 
+        def __init__(self, id_, simulation):
+            """
+            Initializes the node with the given id and simulation using the
+            initialisation of ciw's Node object with the addition of the
+            threshold parameter.
+            """
+            super().__init__(id_, simulation)
+            self.simulation.threshold = threshold
+
         def release_blocked_individual(self):
             """
             Releases an individual who becomes unblocked when
@@ -264,11 +273,11 @@ def get_simulated_state_probabilities(
 
     if buffer_capacity is None:
         buffer_capacity = max(
-            [state[0] for state in state_probabilities_dictionary.keys()]
+            state[0] for state in state_probabilities_dictionary.keys()
         )
     if system_capacity is None:
         system_capacity = max(
-            [state[1] for state in state_probabilities_dictionary.keys()]
+            state[1] for state in state_probabilities_dictionary.keys()
         )
     state_probabilities_array = np.full(
         (buffer_capacity + 1, system_capacity + 1), np.NaN

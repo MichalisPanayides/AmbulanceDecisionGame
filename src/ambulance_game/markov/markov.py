@@ -607,9 +607,9 @@ def get_markov_state_probabilities(
         return states_probabilities_dictionary
     if output == np.ndarray:
         if buffer_capacity is None:
-            buffer_capacity = max([state[0] for state in all_states])
+            buffer_capacity = max(state[0] for state in all_states)
         if system_capacity is None:
-            system_capacity = max([state[1] for state in all_states])
+            system_capacity = max(state[1] for state in all_states)
         states_probabilities_array = np.full(
             (buffer_capacity + 1, system_capacity + 1), np.NaN
         )

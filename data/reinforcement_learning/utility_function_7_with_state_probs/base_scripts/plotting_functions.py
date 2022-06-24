@@ -54,7 +54,7 @@ def read_utilities_from_file(filename):
     Read the utilities from the file.
     """
     my_list = []
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         reader = csv.reader(file)
         for row in reader:
             my_list.append([float(i[1:-1]) for i in row])
@@ -69,7 +69,7 @@ def read_rates_from_file(filename):
     server_2_rates = []
     server_3_rates = []
     server_4_rates = []
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         reader = csv.reader(file)
         for row in reader:
 
@@ -111,7 +111,7 @@ def read_states_from_file(filename):
     Read the states from the file
     """
     state_probs = []
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         reader = csv.reader(file)
         for row in reader:
             state_probs.append(

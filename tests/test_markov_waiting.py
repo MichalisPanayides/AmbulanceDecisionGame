@@ -2,7 +2,7 @@
 Tests for the waiting time functionality
 """
 import numpy as np
-import pytest
+
 from ambulance_game.markov.waiting import (
     get_mean_waiting_time_using_markov_state_probabilities,
     get_waiting_time_for_each_state_recursively,
@@ -140,44 +140,84 @@ def test_mean_waiting_time_formula_using_recursive_for_class_2_individuals_examp
     ), mean_wait
 
 
-# TODO: Make test once closed form formula is found
 def test_mean_waiting_time_formula_using_direct_for_class_1_individuals_example():
     """
     Test for the direct formula for the mean waiting time for class 1 individuals
     """
-    with pytest.raises(NotImplementedError):
-        mean_waiting_time_formula_using_direct_approach(
-            all_states=None,
-            pi=None,
-            class_type=0,
-            lambda_1=None,
-            lambda_2=None,
-            mu=None,
-            num_of_servers=None,
-            threshold=None,
-            system_capacity=None,
-            buffer_capacity=None,
-        )
+    all_states = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 3),
+        (2, 3),
+        (3, 3),
+    ]
+    pi = np.array(
+        [
+            [0.11428571, 0.22857143, 0.22857143, 0.22857143],
+            [np.nan, np.nan, np.nan, 0.11428571],
+            [np.nan, np.nan, np.nan, 0.05714286],
+            [np.nan, np.nan, np.nan, 0.02857143],
+        ]
+    )
+
+    mean_wait = mean_waiting_time_formula_using_direct_approach(
+        all_states=all_states,
+        pi=pi,
+        class_type=0,
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=2,
+        threshold=3,
+        system_capacity=3,
+        buffer_capacity=3,
+    )
+
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.20000000175, NUMBER_OF_DIGITS_TO_ROUND
+    )
 
 
-# TODO: Make test once closed form formula is found
 def test_mean_waiting_time_formula_using_direct_for_class_2_individuals_example():
     """
     Test for the direct formula for the mean waiting time for class 2 individuals
     """
-    with pytest.raises(NotImplementedError):
-        mean_waiting_time_formula_using_direct_approach(
-            all_states=None,
-            pi=None,
-            class_type=1,
-            lambda_1=None,
-            lambda_2=None,
-            mu=None,
-            num_of_servers=None,
-            threshold=None,
-            system_capacity=None,
-            buffer_capacity=None,
-        )
+    all_states = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 3),
+        (2, 3),
+        (3, 3),
+    ]
+    pi = np.array(
+        [
+            [0.11428571, 0.22857143, 0.22857143, 0.22857143],
+            [np.nan, np.nan, np.nan, 0.11428571],
+            [np.nan, np.nan, np.nan, 0.05714286],
+            [np.nan, np.nan, np.nan, 0.02857143],
+        ]
+    )
+
+    mean_wait = mean_waiting_time_formula_using_direct_approach(
+        all_states=all_states,
+        pi=pi,
+        class_type=1,
+        lambda_1=1,
+        lambda_2=1,
+        mu=1,
+        num_of_servers=2,
+        threshold=3,
+        system_capacity=3,
+        buffer_capacity=3,
+    )
+
+    assert round(mean_wait, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        0.32352941297577853, NUMBER_OF_DIGITS_TO_ROUND
+    )
 
 
 def test_mean_waiting_time_formula_using_closed_form_for_class_1_individuals_example():
@@ -460,6 +500,26 @@ def test_get_mean_waiting_time_example_8():
         buffer_capacity=10,
         class_type=None,
         waiting_formula=mean_waiting_time_formula_using_closed_form_approach,
+    )
+    assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
+        1.1051493390764142, NUMBER_OF_DIGITS_TO_ROUND
+    )
+
+
+def test_get_mean_waiting_time_example_9():
+    """
+    Example on getting the mean waiting time from a closed form formula
+    """
+    mean_waiting_time = get_mean_waiting_time_using_markov_state_probabilities(
+        lambda_2=0.2,
+        lambda_1=0.2,
+        mu=0.2,
+        num_of_servers=3,
+        threshold=4,
+        system_capacity=10,
+        buffer_capacity=10,
+        class_type=None,
+        waiting_formula=mean_waiting_time_formula_using_direct_approach,
     )
     assert round(mean_waiting_time, NUMBER_OF_DIGITS_TO_ROUND) == round(
         1.1051493390764142, NUMBER_OF_DIGITS_TO_ROUND

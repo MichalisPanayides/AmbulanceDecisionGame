@@ -3,6 +3,7 @@ Code to calculate the mean waiting time.
 """
 
 import functools
+import itertools
 
 import numpy as np
 
@@ -170,6 +171,157 @@ def mean_waiting_time_formula_using_recursive_approach(
     return mean_waiting_time / probability_of_accepting
 
 
+def get_coefficients_row_of_array_for_state(
+    state, class_type, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+):
+    """
+    For direct approach: Constructs a row of the coefficients matrix. The row to
+    be constructed corresponds to the waiting time equation for a given state
+    (u,v) where:
+
+    w(u,v) = 0                      , if (u,v) not in WaitingStates
+           = c(u,v) + w(u - 1, v)   , if u > 0 and v = T
+           = c(u,v) + w(u, v - 1)   ,
+
+    i.e. the waiting time for state (u,v) is equal to:
+        -> the sojourn time of that state PLUS
+        -> the waiting time of the next state
+
+    The equations can also be written as:
+        -w(u,v) + w(u - 1, v) = -c(u,v)
+        -w(u,v) + w(u, v - 1) = -c(u,v)
+    where all w(u,v) are considered as unknown variables and
+        X = [w(1,T), ... ,w(1,N), w(2,T), ... ,w(2,N), ... , w(M,T), ... , w(M,N)]
+
+    The outputs of this function are:
+        - the vector M_{(u,v)} s.t. M_{(u,v)} * X = -c(u,v)
+        - The value of -c(u,v)
+    """
+    lhs_coefficient_row = np.zeros([buffer_capacity + 1, system_capacity + 1])
+    lhs_coefficient_row[state[0], state[1]] = -1
+    for (u, v) in itertools.product(range(1, buffer_capacity + 1), range(threshold)):
+        lhs_coefficient_row[u, v] = np.NaN
+
+    rhs_value = 0
+    if is_waiting_state(state, num_of_servers):
+        if state[0] >= 1 and state[1] == threshold:
+            next_state = (state[0] - 1, state[1])
+        else:
+            next_state = (state[0], state[1] - 1)
+
+        lhs_coefficient_row[next_state[0], next_state[1]] = 1
+        rhs_value = -expected_time_in_markov_state_ignoring_arrivals(
+            state=state,
+            class_type=class_type,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+        )
+
+    vectorised_array = np.hstack(
+        (
+            lhs_coefficient_row[0, :threshold],
+            lhs_coefficient_row[:, threshold:].flatten("F"),
+        )
+    )
+    return vectorised_array, rhs_value
+
+
+def get_waiting_time_linear_system(
+    class_type, mu, num_of_servers, threshold, system_capacity, buffer_capacity
+):
+    """
+    For direct approach: Obtain the linear system M X = b by finding the array M
+    and the column vector b that are required. Here M is denoted as
+    "all_coefficients_array" and b as "constant_column".
+
+    The function stacks the outputs of get_coefficients_row_of_array_for_state()
+    for all states. In essence all outputs are stacked together to form a square
+    matrix (M) and equivalently a column vector (b) that will be used to find X
+    s.t. M*X=b
+    """
+    all_coefficients_array = np.array([])
+    all_states = build_states(
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    for state in all_states:
+        lhs_vector, rhs_value = get_coefficients_row_of_array_for_state(
+            state=state,
+            class_type=class_type,
+            mu=mu,
+            num_of_servers=num_of_servers,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        )
+        if len(all_coefficients_array) == 0:
+            all_coefficients_array = [lhs_vector]
+            constant_column = [rhs_value]
+        else:
+            all_coefficients_array = np.vstack([all_coefficients_array, lhs_vector])
+            constant_column.append(rhs_value)
+    return all_coefficients_array, constant_column
+
+
+def convert_solution_to_correct_array_format(
+    array, all_states, system_capacity, buffer_capacity
+):
+    """
+    For direct approach: Convert the solution into a format that matches the
+    state probabilities array. The given array is a one-dimensional array with
+    the blocking times of each state given in the following format:
+    [w(1,T), w(1,T+1), ... ,w(1,N), w(2,T), ... ,w(2,N), ... , w(M,T), ... , w(M,N)]
+
+    The converted array becomes:
+
+        w(0,0), w(0,1) , ... , w(0,T), ... , w(0,N)
+                               w(1,T), ... , w(1,N)
+                                  .   .         .
+                                  .      .      .
+                                  .         .   .
+                               w(M,T), ... , w(M,N)
+    """
+    array_with_correct_shape = np.zeros([buffer_capacity + 1, system_capacity + 1])
+    for index, (u, v) in enumerate(all_states):
+        array_with_correct_shape[u, v] = array[index]
+    return array_with_correct_shape
+
+
+def get_waiting_times_of_all_states_using_direct_approach(
+    class_type,
+    all_states,
+    mu,
+    num_of_servers,
+    threshold,
+    system_capacity,
+    buffer_capacity,
+):
+    """
+    For direct approach: Solve M*X = b using numpy.linalg.solve() where:
+        M = The array containing the coefficients of all w(u,v) equations
+        b = Vector of constants of equations
+        X = All w(u,v) variables of the equations
+    """
+    M, b = get_waiting_time_linear_system(
+        class_type=class_type,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    state_waiting_times = np.linalg.solve(M, b)
+    state_waiting_times = convert_solution_to_correct_array_format(
+        array=state_waiting_times,
+        all_states=all_states,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+    return state_waiting_times
+
+
 def mean_waiting_time_formula_using_direct_approach(
     all_states,
     pi,
@@ -186,7 +338,32 @@ def mean_waiting_time_formula_using_direct_approach(
     """
     Get the mean waiting time by using a direct approach.
     """
-    raise NotImplementedError("To be implemented")
+    waiting_times = get_waiting_times_of_all_states_using_direct_approach(
+        class_type=class_type,
+        all_states=all_states,
+        mu=mu,
+        num_of_servers=num_of_servers,
+        threshold=threshold,
+        system_capacity=system_capacity,
+        buffer_capacity=buffer_capacity,
+    )
+
+    mean_waiting_time, prob_accept_class_2_ind = 0, 0
+    for (u, v) in all_states:
+        if is_accepting_state(
+            state=(u, v),
+            class_type=class_type,
+            threshold=threshold,
+            system_capacity=system_capacity,
+            buffer_capacity=buffer_capacity,
+        ):
+            arriving_state = (u, v + 1)
+            if class_type == 1 and v >= threshold:
+                arriving_state = (u + 1, v)
+            mean_waiting_time += waiting_times[arriving_state] * pi[u, v]
+            prob_accept_class_2_ind += pi[u, v]
+
+    return mean_waiting_time / prob_accept_class_2_ind
 
 
 def mean_waiting_time_formula_using_closed_form_approach(

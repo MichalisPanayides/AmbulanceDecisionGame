@@ -244,6 +244,104 @@ instead of \(c^{(1)}(u,v)\).
     {\sum_{(u,v) \in S_A^{(2)}} \pi_{(u,v)}}
 \end{equation}
 
+
+\subsubsection{Direct waiting time formula}
+An alternative approach to getting the waiting time formula from the Markov
+chain would be to simply solve the linear system of equations from equations
+\ref{eq:waiting-time-at-each-state-other} and
+\ref{eq:waiting-time-at-each-state-ambulance} for type 1 and type 2 individuals
+respectively.
+The set of equations that need to be solved for individuals of type \(i\) are
+all \( w^{(i)}(u, v) \) for all possible states \((u,v) \in S\).
+
+\begin{equation*}
+    S_w = \{(u, v) \in S \; | \; v > C \}
+\end{equation*}
+
+\begin{equation*}
+    S_A^{(1)} = \{(u, v) \in S \; | \; v < N \},
+    \qquad
+    S_A^{(2)}=
+    \begin{cases}
+        \{(u, v) \in S \; | \; u < M \} & \textbf{if } T \leq N \\
+        \{(u, v) \in S \; | \; v < N \} & \textbf{otherwise}
+    \end{cases}
+\end{equation*}
+
+
+\begin{equation*}
+    c^{(1)}(u,v) = 
+    \begin{cases}
+        0, & \textbf{if } u > 0 \textbf{ and } v = T \\
+        \frac{1}{\min(v,C) \mu}, & \textbf{otherwise}
+    \end{cases}
+    \qquad
+    c^{(2)}(u,v) = 
+    \begin{cases}
+        0, & \textbf{if } u > 0 \\
+        \frac{1}{\text{min}(v,C)\mu}, & \textbf{otherwise}
+    \end{cases}
+\end{equation*}
+
+
+\begin{equation}
+    w^{(i)}(u,v) = 
+    \begin{cases} 
+        0, & \textbf{if } (u,v) \notin S_b \\
+        c^{(i)}(u,v) + w^{(i)}(u - 1, v), & \textbf{if } u > 0 
+        \textbf{ and } v = T\\
+        c^{(i)}(u,v) + w^{(i)}(u, v-1), & \textbf{otherwise } \\
+    \end{cases}
+\end{equation}
+
+
+\begin{multicols*}{2}
+    \begin{figure}[H]
+        \centering
+        \scalebox{0.60}{\input{MarkovChain/expressions_from_pi/example_model_2231/main.tex}}
+        \caption{Example of Markov chain}
+        \label{fig:example-algeb-waiting}
+    \end{figure}
+    \columnbreak
+    \begin{align}
+        w^{(i)}(1,2) &= c(1,2) + w^{(i)}(0,2) \label{eq:first_eq_of_waiting_example} \\
+        w^{(i)}(1,3) &= c(1,3) + w^{(i)}(1,2) \\
+        % w^{(i)}(1,4) &= c(1,4) + w^{(i)}(1,3) \\
+        w^{(i)}(2,2) &= c(2,2) + w^{(i)}(1,2) \\
+        w^{(i)}(2,3) &= c(2,3) + w^{(i)}(2,2) \label{eq:last_eq_of_waiting_example}
+        % w^{(i)}(2,4) &= c(2,4) + w^{(i)}(2,3) 
+    \end{align}
+\end{multicols*}
+
+
+
+Thus similar to equations \ref{eq:recursive-waiting-time-others} and
+\ref{eq:recursive-waiting-time-ambulance} the mean waiting time for type \(i\)
+individuals is given by:
+
+\begin{equation}
+    W^{(i)} = \frac{\sum_{(u,v) \in S_A^{(i)}} \pi_{(u,v)} w^{(i)}
+    (\mathcal{A}_i(u,v))}{\sum_{(u,v) \in S_A^{(i)}} \pi_{(u,v)}}
+\end{equation}
+
+
+Here \(S_A^{(2)}\) is the set of accepting states of type 2 individuals and 
+\(\mathcal{A}_i(u,v)\) for \(i \in \{1, 2\} \) is the state that the system
+would go to when the system is at state \( (u,v) \) and an individual of type
+\(i\) arrives. 
+
+\begin{equation}\label{eq:arriving_state_class_1}
+    \mathcal{A}_1(u,v) = (u, v + 1)
+\end{equation}
+\begin{equation}\label{eq:arriving_state_class_2}
+    \mathcal{A}_2(u,v) = 
+    \begin{cases}
+        (u, v + 1), & \text{if } v < T \\
+        (u + 1, v), & \text{if } v \geq T \\
+    \end{cases}
+\end{equation}
+
+
 \subsubsection{Mean Waiting Time - Closed-form}
 Upon closer inspection of the recursive formula a more compact formula can arise. 
 The equivalent closed-form formula eliminates the need for recursion and thus makes 

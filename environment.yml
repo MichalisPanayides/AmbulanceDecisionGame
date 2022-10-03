@@ -6,8 +6,7 @@ dependencies:
   - python==3.8.1
   - ipykernel==5.3.4
   - notebook==6.0.3
-  - numpy>=1.22.0
-  - pandas>=1.4.0
+  - numpy>=1.21.6
   - matplotlib==3.4.3
   - scipy==1.7.1
   - networkx==2.4

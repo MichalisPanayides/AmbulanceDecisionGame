@@ -1,3 +1,6 @@
+# v0.0.6
+Use a newer version of numpy
+
 # v0.0.5
 Add direct approach for markov waiting time and improve transition matrix implementation
 

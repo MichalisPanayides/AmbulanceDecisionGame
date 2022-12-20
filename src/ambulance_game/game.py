@@ -256,6 +256,7 @@ def get_individual_entries_of_matrices(
     buffer_capacity_2,
     alpha,
     target,
+    p_hat=0.95,
     alternative_utility=False,
     use_simulation=False,
     runtime=1440,
@@ -267,8 +268,12 @@ def get_individual_entries_of_matrices(
 ):
     """
     Gets the (i,j)th entry of the payoff matrices and the routing matrix where
-    i=threshold_1 and j=threshold_2. This function is wrapped by the dask.delayed
-    decorator and returns the output of the function as a dask task
+    i=threshold_1 and j=threshold_2. The calculated utility function is given
+    by: U_i = - (P(X < target) - p_hat) ** 2)
+      where `P(X < target)` is the number of individuals within `target`
+            `p_hat` is the proportion of individuals that must be within `target`
+    This function is wrapped by the dask.delayed decorator and returns the
+    output of the function as a dask task.
 
     Parameters
     ----------
@@ -287,6 +292,7 @@ def get_individual_entries_of_matrices(
     buffer_capacity_2 : int
     alpha : float
     target : float
+    p_hat : float, optional
     alternative_utility : bool, optional
 
     Returns
@@ -385,8 +391,8 @@ def get_individual_entries_of_matrices(
         utility_1 = proportion_within_target_1
         utility_2 = proportion_within_target_2
     else:
-        utility_1 = -((np.nanmean(proportion_within_target_1) - 0.95) ** 2)
-        utility_2 = -((np.nanmean(proportion_within_target_2) - 0.95) ** 2)
+        utility_1 = 1 - ((np.nanmean(proportion_within_target_1) - p_hat) ** 2)
+        utility_2 = 1 - ((np.nanmean(proportion_within_target_2) - p_hat) ** 2)
 
     return threshold_1, threshold_2, prop_to_hospital_1, utility_1, utility_2
 
@@ -455,6 +461,7 @@ def get_payoff_matrices(
     target,
     alternative_utility=False,
     alpha=0,
+    p_hat=0.95,
     processes=None,
     use_simulation=False,
     runtime=1440,
@@ -517,6 +524,7 @@ def get_payoff_matrices(
             buffer_capacity_2=buffer_capacity_2,
             alpha=alpha,
             target=target,
+            p_hat=p_hat,
             alternative_utility=alternative_utility,
             use_simulation=use_simulation,
             runtime=runtime,
@@ -555,10 +563,11 @@ def build_game_using_payoff_matrices(
     buffer_capacity_1,
     buffer_capacity_2,
     target,
+    alpha=0,
+    p_hat=0.95,
     payoff_matrix_A=None,
     payoff_matrix_B=None,
     alternative_utility=False,
-    alpha=0,
     use_simulation=False,
     runtime=1440,
     num_of_trials=10,
@@ -607,6 +616,7 @@ def build_game_using_payoff_matrices(
             buffer_capacity_2=buffer_capacity_2,
             target=target,
             alpha=alpha,
+            p_hat=p_hat,
             alternative_utility=alternative_utility,
             use_simulation=use_simulation,
             runtime=runtime,

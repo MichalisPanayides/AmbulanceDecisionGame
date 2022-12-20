@@ -1,3 +1,6 @@
+# v0.0.7
+Update players utility function
+
 # v0.0.6
 Use a newer version of numpy
 

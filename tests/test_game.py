@@ -317,7 +317,7 @@ def test_get_individual_entries_of_matrices_markov_example():
     assert da.is_dask_collection(task)
     values = da.compute(task)
     assert np.allclose(
-        values, ((2, 2, 0.5, -0.00046944342133137197, -0.00046944342133137197),)
+        values, ((2, 2, 0.5, 1 - 0.00046944342133137197, 1 - 0.00046944342133137197),)
     )
 
 
@@ -354,7 +354,7 @@ def test_get_individual_entries_of_matrices_simulation_example():
     values = da.compute(task)
     assert np.allclose(
         values,
-        ((3, 5, 0.7613063676529543, -0.0006520260736895711, -0.027937014444158834),),
+        ((3, 5, 0.7613063676529543, 1-0.0006520260736895711, 1-0.027937014444158834),),
     )
 
 
@@ -420,12 +420,12 @@ def test_get_payoff_matrices_example_1():
     )
     assert np.allclose(
         payoff_matrix_A,
-        np.array([[-0.25182247, -0.25182247], [-0.40094816, -0.34137716]]),
+        1 + np.array([[-0.25182247, -0.25182247], [-0.40094816, -0.34137716]]),
     )
 
     assert np.allclose(
         payoff_matrix_B,
-        np.array([[-0.25182247, -0.40094816], [-0.25182247, -0.34137716]]),
+        1 + np.array([[-0.25182247, -0.40094816], [-0.25182247, -0.34137716]]),
     )
 
 
@@ -451,7 +451,7 @@ def test_get_payoff_matrices_example_2():
 
     assert np.allclose(
         payoff_matrix_A,
-        np.array(
+        1 + np.array(
             [
                 [-5.64325041e-04, -5.64325041e-04, -5.64325041e-04, -5.64325041e-04],
                 [-4.11252209e-04, -4.61900039e-04, -5.01311925e-04, -5.64325041e-04],
@@ -463,7 +463,7 @@ def test_get_payoff_matrices_example_2():
 
     assert np.allclose(
         payoff_matrix_B,
-        np.array(
+        1 + np.array(
             [
                 [-5.64325041e-04, -4.11252209e-04, -1.02850193e-04, -2.75913690e-05],
                 [-5.64325041e-04, -4.61900039e-04, -1.82421878e-04, -2.75913690e-05],
@@ -527,12 +527,12 @@ def test_build_game_using_payoff_matrices_example_1():
         == """Bi matrix game with payoff matrices:
 
 Row player:
-[[-0.25182247 -0.25182247]
- [-0.40094816 -0.34137716]]
+[[0.74817753 0.74817753]
+ [0.59905184 0.65862284]]
 
 Column player:
-[[-0.25182247 -0.40094816]
- [-0.25182247 -0.34137716]]"""
+[[0.74817753 0.59905184]
+ [0.74817753 0.65862284]]"""
     )
 
 
@@ -557,7 +557,7 @@ def test_build_game_using_payoff_matrices_example_2():
 
     assert np.allclose(
         game.payoff_matrices[0],
-        np.array(
+        1 + np.array(
             [
                 [-0.00224433, -0.00224433, -0.00224433, -0.00224433, -0.00224433],
                 [-0.00221647, -0.00222381, -0.00222728, -0.00223013, -0.00223415],
@@ -569,7 +569,7 @@ def test_build_game_using_payoff_matrices_example_2():
 
     assert np.allclose(
         game.payoff_matrices[1],
-        np.array(
+        1 + np.array(
             [
                 [-0.00224261, -0.00221144, -0.00203882, -0.00178084, -0.00151419],
                 [-0.00224261, -0.00221978, -0.00210315, -0.00192509, -0.00169457],

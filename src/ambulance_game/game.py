@@ -391,8 +391,8 @@ def get_individual_entries_of_matrices(
         utility_1 = proportion_within_target_1
         utility_2 = proportion_within_target_2
     else:
-        utility_1 = -((np.nanmean(proportion_within_target_1) - p_hat) ** 2)
-        utility_2 = -((np.nanmean(proportion_within_target_2) - p_hat) ** 2)
+        utility_1 = 1 - ((np.nanmean(proportion_within_target_1) - p_hat) ** 2)
+        utility_2 = 1 - ((np.nanmean(proportion_within_target_2) - p_hat) ** 2)
 
     return threshold_1, threshold_2, prop_to_hospital_1, utility_1, utility_2
 
